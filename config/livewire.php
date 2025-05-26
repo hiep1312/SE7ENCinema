@@ -40,6 +40,7 @@ return [
 
     'layout' => 'components.layouts.client',
 
+
     /*
     |---------------------------------------------------------------------------
     | Lazy Loading Placeholder
