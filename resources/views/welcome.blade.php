@@ -10,6 +10,7 @@
 
 <body>
     <div class="text-warning">chào</div>
+    <livewire:counter />
 </body>
 
 </html>
