@@ -13,17 +13,13 @@ class FoodOrderItem extends Model
         'price',
     ];
 
-    protected $casts = [
-        'price' => 'integer',
-    ];
-
     public function booking()
     {
         return $this->belongsTo(Booking::class);
     }
 
-    public function variant()
+    public function foodVariant()
     {
-        return $this->belongsTo(FoodVariant::class, 'food_variant_id');
+        return $this->belongsTo(FoodVariant::class);
     }
 }
