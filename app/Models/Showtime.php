@@ -31,11 +31,6 @@ class Showtime extends Model
         return $this->belongsTo(Movie::class);
     }
 
-    public function bookings()
-    {
-        return $this->hasMany(Booking::class);
-    }
-
     public function isActive()
     {
         return $this->status === 'active';

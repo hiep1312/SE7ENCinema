@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Room extends Model
 {
     use SoftDeletes;
+
     protected $fillable = [
         'name',
         'capacity',
@@ -37,7 +38,7 @@ class Room extends Model
     public function hasActiveShowtimes()
     {
         return $this->showtimes()
-            ->where('end_time', '>=', now())
+            ->where('start_time', '>=', now())
             ->where('status', 'active')
             ->exists();
     }
@@ -54,11 +55,14 @@ class Room extends Model
     }
 
     /**
-     * Lấy suất chiếu gần nhất
+     * Lấy suất chiếu tiếp theo
      */
     public function getNextShowtimeAttribute()
     {
         return $this->showtimes()
+            ->with(['movie' => function($query) {
+                $query->withTrashed();
+            }])
             ->where('start_time', '>=', now())
             ->where('status', 'active')
             ->orderBy('start_time', 'asc')

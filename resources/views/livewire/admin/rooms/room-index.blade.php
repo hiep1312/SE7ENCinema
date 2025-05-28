@@ -69,7 +69,10 @@
                                 <th>Sức chứa</th>
                                 <th>Số ghế hiện tại</th>
                                 <th>Trạng thái</th>
-                                <th>Suất chiếu tiếp theo</th>
+                                <th style="background-color: #ff6b6b; color: white;">
+                                    <i class="fas fa-calendar-alt me-1"></i>
+                                    Suất chiếu tiếp theo
+                                </th>
                                 @if($showDeleted)
                                     <th>Ngày xóa</th>
                                 @else
@@ -111,19 +114,71 @@
                                             <span class="badge bg-secondary">Đã xóa</span>
                                         @endif
                                     </td>
-                                    <td>
+
+                                    <!-- CỘT SUẤT CHIẾU TIẾP THEO -->
+                                    <td style="background-color: #fff5f5; border-left: 3px solid #ff6b6b;">
                                         @if(!$showDeleted && $room->showtimes->count() > 0)
                                             @php $nextShowtime = $room->showtimes->first(); @endphp
-                                            <small class="text-primary">
-                                                {{ $nextShowtime->start_time->format('d/m/Y H:i') }}
-                                            </small>
-                                            @if($room->hasActiveShowtimes())
-                                                <br><span class="badge bg-success">Có suất chiếu</span>
-                                            @endif
+                                            <div class="showtime-info">
+                                                <!-- Tên phim -->
+                                                <div class="movie-title mb-1">
+                                                    <i class="fas fa-film me-1 text-primary"></i>
+                                                    <strong class="text-primary">
+                                                        {{ $nextShowtime->movie->title ?? 'Phim đã xóa' }}
+                                                    </strong>
+                                                </div>
+
+                                                <!-- Thời gian chiếu -->
+                                                <div class="showtime-schedule mb-1">
+                                                    <i class="fas fa-clock me-1 text-success"></i>
+                                                    <span class="text-success">
+                                                        {{ $nextShowtime->start_time->format('d/m/Y') }}
+                                                    </span>
+                                                    <br>
+                                                    <small class="text-muted ms-3">
+                                                        {{ $nextShowtime->start_time->format('H:i') }} -
+                                                        {{ $nextShowtime->end_time->format('H:i') }}
+                                                    </small>
+                                                </div>
+
+                                                <!-- Giá vé -->
+                                                <div class="showtime-price mb-1">
+                                                    <i class="fas fa-money-bill me-1 text-warning"></i>
+                                                    <span class="text-warning">
+                                                        {{ number_format($nextShowtime->price) }}đ
+                                                    </span>
+                                                </div>
+
+                                                <!-- Badge trạng thái -->
+                                                @if($room->hasActiveShowtimes())
+                                                    <span class="badge bg-success">
+                                                        <i class="fas fa-play me-1"></i>Có suất chiếu
+                                                    </span>
+                                                @endif
+
+                                                <!-- Thời gian còn lại -->
+                                                @php
+                                                    $timeUntil = $nextShowtime->start_time->diffForHumans();
+                                                @endphp
+                                                <div class="time-until mt-1">
+                                                    <small class="text-info">
+                                                        <i class="fas fa-hourglass-half me-1"></i>
+                                                        {{ $timeUntil }}
+                                                    </small>
+                                                </div>
+                                            </div>
                                         @else
-                                            <span class="text-muted">Không có</span>
+                                            <!-- Khi không có suất chiếu -->
+                                            <div class="no-showtime text-center py-2">
+                                                <i class="fas fa-calendar-times fa-2x text-muted mb-2"></i>
+                                                <div class="text-muted">
+                                                    <strong>Không có suất chiếu</strong>
+                                                </div>
+                                                <small class="text-muted">Chưa lên lịch chiếu</small>
+                                            </div>
                                         @endif
                                     </td>
+
                                     <td>
                                         @if($showDeleted)
                                             {{ $room->deleted_at->format('d/m/Y H:i') }}
@@ -154,6 +209,12 @@
                                         @else
                                             <!-- Actions for active rooms -->
                                             <div class="btn-group" role="group">
+                                                <a href="{{ route('admin.rooms.detail', $room->id) }}"
+                                                   class="btn btn-sm btn-info d-flex align-items-center"
+                                                   title="Xem chi tiết">
+                                                    <i class="fas fa-eye me-1"></i>
+                                                    <span>Chi tiết</span>
+                                                </a>
                                                 @if($room->canEdit())
                                                     <a href="{{ route('admin.rooms.edit', $room->id) }}"
                                                        class="btn btn-sm btn-warning d-flex align-items-center"
@@ -218,6 +279,41 @@
     </div>
 
     <style>
+        /* Styling cho cột Suất chiếu tiếp theo */
+        .showtime-info {
+            min-width: 200px;
+            padding: 8px;
+        }
+
+        .movie-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .showtime-schedule {
+            font-size: 13px;
+        }
+
+        .showtime-price {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .time-until {
+            font-size: 11px;
+        }
+
+        .no-showtime {
+            min-width: 150px;
+        }
+
+        /* Hover effect cho showtime info */
+        .showtime-info:hover {
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
         /* Đảm bảo các nút có thể click được */
         .btn-group .btn {
             pointer-events: auto;

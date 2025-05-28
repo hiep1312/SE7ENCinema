@@ -15,14 +15,13 @@ class Seat extends Model
         'status',
     ];
 
+    protected $casts = [
+        'price' => 'integer',
+    ];
+
     public function room()
     {
         return $this->belongsTo(Room::class);
-    }
-
-    public function bookings()
-    {
-        return $this->hasMany(Booking::class);
     }
 
     public function getSeatCodeAttribute()

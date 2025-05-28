@@ -95,9 +95,13 @@ class RoomIndex extends Component
             })
             ->withCount('seats')
             ->with(['showtimes' => function($query) {
-                $query->where('start_time', '>=', now())
-                      ->where('status', 'active')
-                      ->orderBy('start_time', 'asc');
+                $query->with(['movie' => function($movieQuery) {
+                        $movieQuery->withTrashed(); // Load cả movie đã bị xóa mềm
+                    }])
+                    ->where('start_time', '>=', now())
+                    ->where('status', 'active')
+                    ->orderBy('start_time', 'asc')
+                    ->limit(1); // Chỉ lấy suất chiếu gần nhất
             }])
             ->orderBy('id', 'desc')
             ->paginate($this->perPage);
