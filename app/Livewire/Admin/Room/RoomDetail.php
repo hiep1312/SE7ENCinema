@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Room;
 use App\Models\Room;
 use Livewire\Component;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
 class RoomDetail extends Component
 {
@@ -17,7 +18,7 @@ class RoomDetail extends Component
     public $totalRevenue = 0;
     public $occupancyRate = 0;
     public $upcomingShowtimes = [];
-    public $recentBookings = [];
+    public $recentBookings;
 
     public function mount($roomId)
     {
@@ -33,9 +34,13 @@ class RoomDetail extends Component
             }
         ])->findOrFail($roomId);
 
+        // Khởi tạo recentBookings là collection rỗng
+        $this->recentBookings = collect();
+
         $this->calculateStatistics();
         $this->loadUpcomingShowtimes();
-        // $this->loadRecentBookings(); // Tạm comment vì chưa có booking model
+        // Tạm thời không gọi loadRecentBookings() nếu chưa có model Booking
+        // $this->loadRecentBookings();
     }
 
     public function setActiveTab($tab)
@@ -82,6 +87,31 @@ class RoomDetail extends Component
             ->orderBy('start_time', 'asc')
             ->limit(5)
             ->get();
+    }
+
+    // Phương thức này sẽ được sử dụng khi có model Booking
+    private function loadRecentBookings()
+    {
+        // Khởi tạo là collection rỗng
+        $this->recentBookings = collect();
+
+        // Phần code này sẽ được uncomment khi có model Booking
+        /*
+        $recentShowtimes = $this->room->showtimes()
+            ->with(['bookings.user', 'movie'])
+            ->where('start_time', '>=', now()->subDays(7))
+            ->orderBy('start_time', 'desc')
+            ->limit(5)
+            ->get();
+
+        foreach ($recentShowtimes as $showtime) {
+            foreach ($showtime->bookings->take(3) as $booking) {
+                $this->recentBookings->push($booking);
+            }
+        }
+
+        $this->recentBookings = $this->recentBookings->sortByDesc('created_at')->take(10);
+        */
     }
 
     public function render()

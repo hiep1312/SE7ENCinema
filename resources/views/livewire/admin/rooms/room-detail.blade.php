@@ -14,7 +14,7 @@
                 </nav>
             </div>
             <div>
-                <a href="{{ route('admin.rooms.edit', $room->id) }}" 
+                <a href="{{ route('admin.rooms.edit', $room->id) }}"
                    class="btn btn-warning me-2 @if(!$room->canEdit()) disabled @endif">
                     <i class="fas fa-edit me-1"></i>Chỉnh sửa
                 </a>
@@ -55,9 +55,9 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <h6 class="card-title">Booking (30 ngày)</h6>
+                                <h6 class="card-title">Suất chiếu (30 ngày)</h6>
                                 <h3 class="mb-0">{{ number_format($totalBookings) }}</h3>
-                                <small>lượt đặt</small>
+                                <small>suất</small>
                             </div>
                             <div class="align-self-center">
                                 <i class="fas fa-ticket fa-2x opacity-75"></i>
@@ -103,29 +103,24 @@
         <!-- Tabs Navigation -->
         <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
-                <button class="nav-link @if($activeTab === 'overview') active @endif" 
+                <button class="nav-link @if($activeTab === 'overview') active @endif"
                         wire:click="setActiveTab('overview')">
                     <i class="fas fa-info-circle me-1"></i>Tổng quan
                 </button>
             </li>
             <li class="nav-item">
-                <button class="nav-link @if($activeTab === 'seats') active @endif" 
+                <button class="nav-link @if($activeTab === 'seats') active @endif"
                         wire:click="setActiveTab('seats')">
                     <i class="fas fa-chair me-1"></i>Sơ đồ ghế
                 </button>
             </li>
             <li class="nav-item">
-                <button class="nav-link @if($activeTab === 'showtimes') active @endif" 
+                <button class="nav-link @if($activeTab === 'showtimes') active @endif"
                         wire:click="setActiveTab('showtimes')">
                     <i class="fas fa-calendar me-1"></i>Suất chiếu
                 </button>
             </li>
-            <li class="nav-item">
-                <button class="nav-link @if($activeTab === 'bookings') active @endif" 
-                        wire:click="setActiveTab('bookings')">
-                    <i class="fas fa-ticket me-1"></i>Đặt vé
-                </button>
-            </li>
+
         </ul>
 
         <!-- Tab Content -->
@@ -217,9 +212,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <hr>
-                                
+
                                 <h6>Giá vé theo loại ghế:</h6>
                                 <ul class="list-unstyled">
                                     @foreach($seatStats as $type => $seats)
@@ -318,7 +313,7 @@
                                             <div>
                                                 <h6 class="mb-1">{{ $showtime->movie->title ?? 'N/A' }}</h6>
                                                 <small class="text-muted">
-                                                    {{ $showtime->start_time->format('d/m/Y H:i') }} - 
+                                                    {{ $showtime->start_time->format('d/m/Y H:i') }} -
                                                     {{ $showtime->end_time->format('H:i') }}
                                                 </small>
                                             </div>
@@ -369,65 +364,6 @@
                     </div>
                 </div>
             @endif
-
-            <!-- Bookings Tab -->
-            @if($activeTab === 'bookings')
-                <div class="card">
-                    <div class="card-header">
-                        <h5><i class="fas fa-ticket me-2"></i>Đặt vé gần đây</h5>
-                    </div>
-                    <div class="card-body">
-                        @if($recentBookings->count() > 0)
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Khách hàng</th>
-                                            <th>Phim</th>
-                                            <th>Suất chiếu</th>
-                                            <th>Ghế</th>
-                                            <th>Tổng tiền</th>
-                                            <th>Trạng thái</th>
-                                            <th>Ngày đặt</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($recentBookings as $booking)
-                                            <tr>
-                                                <td>{{ $booking->user->name ?? 'N/A' }}</td>
-                                                <td>{{ $booking->showtime->movie->title ?? 'N/A' }}</td>
-                                                <td>{{ $booking->showtime->start_time->format('d/m H:i') }}</td>
-                                                <td>
-                                                    @foreach($booking->seats as $seat)
-                                                        <span class="badge bg-secondary">{{ $seat->seat_code }}</span>
-                                                    @endforeach
-                                                </td>
-                                                <td>{{ number_format($booking->total_price) }}đ</td>
-                                                <td>
-                                                    @switch($booking->status)
-                                                        @case('confirmed')
-                                                            <span class="badge bg-success">Đã xác nhận</span>
-                                                            @break
-                                                        @case('pending')
-                                                            <span class="badge bg-warning">Chờ xử lý</span>
-                                                            @break
-                                                        @case('canceled')
-                                                            <span class="badge bg-danger">Đã hủy</span>
-                                                            @break
-                                                    @endswitch
-                                                </td>
-                                                <td>{{ $booking->created_at->format('d/m H:i') }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @else
-                            <p class="text-muted text-center py-3">Chưa có đặt vé nào gần đây</p>
-                        @endif
-                    </div>
-                </div>
-            @endif
         </div>
     </div>
 
@@ -447,48 +383,48 @@
             cursor: pointer;
             transition: transform 0.2s;
         }
-        
+
         .seat:hover {
             transform: scale(1.1);
         }
-        
+
         .seat-standard { background-color: #28a745; }
         .seat-vip { background-color: #ffc107; color: #000; }
         .seat-couple { background-color: #e83e8c; }
-        
+
         .row-label {
             width: 30px;
             text-align: center;
         }
-        
+
         .seats-container {
             display: flex;
             flex-wrap: wrap;
             gap: 2px;
         }
-        
+
         .seats-grid {
             max-height: 600px;
             overflow-y: auto;
         }
-        
+
         /* Tab styling */
         .nav-tabs .nav-link {
             border: none;
             color: #6c757d;
         }
-        
+
         .nav-tabs .nav-link.active {
             background-color: #007bff;
             color: white;
             border-radius: 0.375rem 0.375rem 0 0;
         }
-        
+
         /* Card hover effects */
         .card {
             transition: box-shadow 0.3s;
         }
-        
+
         .card:hover {
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
