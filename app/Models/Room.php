@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Room extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'name',
         'capacity',
@@ -14,7 +17,9 @@ class Room extends Model
     ];
 
     protected $casts = [
+        'capacity' => 'integer',
         'last_maintenance_date' => 'date',
+        'deleted_at' => 'datetime',
     ];
 
     public function seats()
@@ -25,5 +30,55 @@ class Room extends Model
     public function showtimes()
     {
         return $this->hasMany(Showtime::class);
+    }
+
+    /**
+     * Kiểm tra xem phòng có suất chiếu đang hoạt động không
+     */
+    public function hasActiveShowtimes()
+    {
+        return $this->showtimes()
+            ->where('end_time', '>=', now())
+            ->where('status', 'active')
+            ->exists();
+    }
+
+    /**
+     * Kiểm tra xem phòng có suất chiếu trong tương lai không
+     */
+    public function hasFutureShowtimes()
+    {
+        return $this->showtimes()
+            ->where('start_time', '>', now())
+            ->where('status', 'active')
+            ->exists();
+    }
+
+    /**
+     * Lấy suất chiếu gần nhất
+     */
+    public function getNextShowtimeAttribute()
+    {
+        return $this->showtimes()
+            ->where('start_time', '>=', now())
+            ->where('status', 'active')
+            ->orderBy('start_time', 'asc')
+            ->first();
+    }
+
+    /**
+     * Kiểm tra có thể chỉnh sửa không
+     */
+    public function canEdit()
+    {
+        return !$this->hasActiveShowtimes();
+    }
+
+    /**
+     * Kiểm tra có thể xóa không
+     */
+    public function canDelete()
+    {
+        return !$this->hasFutureShowtimes();
     }
 }

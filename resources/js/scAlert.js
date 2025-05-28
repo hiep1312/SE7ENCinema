@@ -184,6 +184,8 @@ document.addEventListener('livewire:init', () => {
             stop && e.stopPropagation();
 
             Swal.fire(options).then(result => {
+                console.log(typeof $wire[model], $wire[model]);
+                debugger
                 model && (typeof $wire[model]==='function' ? $wire[model](result) : $wire[model] = result);
                 live && $wire.$commit();
             });
