@@ -7,9 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 class Movie extends Model
 {
     protected $fillable = [
-        'title', 'description', 'duration', 'release_date', 'end_date',
-        'director', 'actors', 'age_restriction', 'poster',
-        'trailer_url', 'format', 'price', 'status',
+        'title',
+        'description',
+        'duration',
+        'release_date',
+        'end_date',
+        'director',
+        'actors',
+        'age_restriction',
+        'poster',
+        'trailer_url',
+        'format',
+        'price',
+        'status',
     ];
 
     protected $casts = [
@@ -19,6 +29,6 @@ class Movie extends Model
 
     public function genres()
     {
-        return $this->belongsToMany(Genre::class, 'movie_genres');
+        return $this->belongsToMany(Genre::class, 'movie_genres', 'movie_id', 'genre_id');
     }
 }

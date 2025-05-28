@@ -9,4 +9,5 @@ class MovieGenre extends Model
     protected $fillable = ['movie_id', 'genre_id'];
 
     public $timestamps = false;
+    
 }

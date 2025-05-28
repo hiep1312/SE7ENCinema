@@ -2,22 +2,43 @@
 
 namespace Database\Seeders;
 
-use App\Models\Genre;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Genre;
 
 class GenreSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
+    public function run()
     {
-        foreach (range(1, 10) as $i) {
-            Genre::create([
-                'name' => fake()->unique()->words(2, true),
-                'description' => fake()->sentence(),
-            ]);
+        $genres = [
+            'Hành động',
+            'Phiêu lưu',
+            'Hài',
+            'Tình cảm',
+            'Chính kịch',
+            'Kinh dị',
+            'Khoa học viễn tưởng',
+            'Giả tưởng',
+            'Hình sự',
+            'Tài liệu',
+            'Hoạt hình',
+            'Gia đình',
+            'Âm nhạc',
+            'Lịch sử',
+            'Chiến tranh',
+            'Thể thao',
+            'Trinh thám',
+            'Viễn Tây',
+            'Chính trị',
+            'Kinh doanh',
+            'Siêu anh hùng',
+            'Kinh dị tâm lý',
+            'Phép thuật',
+            'Thiếu nhi',
+            'Phim ngắn'
+        ];
+
+        foreach ($genres as $name) {
+            Genre::updateOrCreate(['name' => $name]);
         }
     }
 }

@@ -28,5 +28,6 @@ class DatabaseSeeder extends Seeder
             FoodVariantSeeder::class,
             FoodOrderItemSeeder::class,
         ]);
+        
     }
 }
