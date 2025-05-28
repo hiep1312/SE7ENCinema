@@ -1,3 +1,4 @@
+        <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title"> Chart-js </h3>
@@ -63,5 +64,4 @@
               </div>
             </div>
           </div>
-
-
+        </div>

@@ -105,6 +105,14 @@
         </a>
       </li>
       <li class="nav-item menu-items">
+            <a class="nav-link" href="{{ route('admin.pages.icons.mdi') }}">
+              <span class="menu-icon">
+                <i class="mdi mdi-contacts"></i>
+              </span>
+              <span class="menu-title">Icons</span>
+            </a>
+          </li>
+      <li class="nav-item menu-items">
         <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
           <span class="menu-icon">
             <i class="mdi mdi-security"></i>
@@ -114,11 +122,11 @@
         </a>
         <div class="collapse" id="auth">
           <ul class="nav flex-column sub-menu">
-            <li class="nav-item"> <a class="nav-link" href="pages/samples/blank-page.html"> Blank Page </a></li>
-            <li class="nav-item"> <a class="nav-link" href="pages/samples/error-404.html"> 404 </a></li>
-            <li class="nav-item"> <a class="nav-link" href="pages/samples/error-500.html"> 500 </a></li>
-            <li class="nav-item"> <a class="nav-link" href="pages/samples/login.html"> Login </a></li>
-            <li class="nav-item"> <a class="nav-link" href="pages/samples/register.html"> Register </a></li>
+            <li class="nav-item"> <a class="nav-link" href="{{ route('admin.pages.samples.blank-page') }}"> Blank Page </a></li>
+            <li class="nav-item"> <a class="nav-link" href="{{ route('admin.pages.samples.error-404') }}"> 404 </a></li>
+            <li class="nav-item"> <a class="nav-link" href="{{ route('admin.pages.samples.error-500') }}"> 500 </a></li>
+            <li class="nav-item"> <a class="nav-link" href="{{ route('admin.pages.samples.login') }}"> Login </a></li>
+            <li class="nav-item"> <a class="nav-link" href="{{ route('admin.pages.samples.register') }}"> Register </a></li>
           </ul>
         </div>
       </li>
