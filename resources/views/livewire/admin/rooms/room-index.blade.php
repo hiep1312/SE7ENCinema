@@ -51,8 +51,8 @@
                     </div>
                     <div class="col-md-6">
                         <select wire:model.live="perPage" class="form-select">
-                            <option value="10">10 / trang</option>
-                            <option value="25">25 / trang</option>
+                            <option value="5">5 / trang</option>
+                            <option value="20">20 / trang</option>
                             <option value="50">50 / trang</option>
                         </select>
                     </div>
@@ -144,7 +144,8 @@
                                                 </button>
                                                 <button type="button"
                                                         class="btn btn-sm btn-danger d-flex align-items-center"
-                                                        onclick="confirmForceDelete({{ $room->id }}, '{{ $room->name }}')"
+                                                        wire:click="forceDeleteRoom({{ $room->id }})"
+                                                        wire:confirm="Bạn có chắc chắn muốn XÓA VĨNH VIỄN phòng '{{ $room->name }}'? Hành động này KHÔNG THỂ HOÀN TÁC!"
                                                         title="Xóa vĩnh viễn">
                                                     <i class="fas fa-trash-alt me-1"></i>
                                                     <span>Xóa vĩnh viễn</span>
@@ -169,13 +170,11 @@
                                                         <span>Sửa</span>
                                                     </button>
                                                 @endif
-
                                                 @if($room->canDelete())
                                                     <button type="button"
                                                             class="btn btn-sm btn-danger d-flex align-items-center"
                                                             wire:click="deleteRoom({{ $room->id }})"
-                                                            wire:sc-confirm.info="Bạn có chắc chắn muốn xóa phòng '{{ $room->name }}'?"
-                                                            wire:sc-model="statusConfirm"
+                                                            wire:confirm="Bạn có chắc chắn muốn xóa phòng '{{ $room->name }}'?"
                                                             title="Xóa">
                                                         <i class="fas fa-trash me-1"></i>
                                                         <span>Xóa</span>
@@ -249,18 +248,4 @@
             font-size: 0.875rem;
         }
     </style>
-
-    <script>
-        function confirmDelete(roomId, roomName) {
-            if (confirm(`Bạn có chắc chắn muốn xóa phòng "${roomName}"?\n\nPhòng sẽ được chuyển vào thùng rác và có thể khôi phục sau này.`)) {
-                @this.deleteRoom(roomId);
-            }
-        }
-
-        function confirmForceDelete(roomId, roomName) {
-            if (confirm(`Bạn có chắc chắn muốn XÓA VĨNH VIỄN phòng "${roomName}"?\n\nHành động này KHÔNG THỂ HOÀN TÁC!\n\nTất cả dữ liệu liên quan sẽ bị mất hoàn toàn.`)) {
-                @this.forceDeleteRoom(roomId);
-            }
-        }
-    </script>
 </div>

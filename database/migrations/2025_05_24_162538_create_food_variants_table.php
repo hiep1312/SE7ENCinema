@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('limit')->nullable();
             $table->enum('status', ['available', 'out_of_stock', 'hidden'])->default('available');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

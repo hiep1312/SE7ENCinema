@@ -17,6 +17,7 @@
     },
     "dependencies": {
         "bootstrap": "^5.3.6",
+        "sortablejs": "^1.15.6",
         "sweetalert2": "^11.21.2"
     }
 }

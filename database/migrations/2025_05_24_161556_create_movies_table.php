@@ -27,6 +27,7 @@ return new class extends Migration
             $table->bigInteger('price')->default(0);
             $table->enum('status', ['coming_soon', 'showing', 'ended'])->default('coming_soon');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

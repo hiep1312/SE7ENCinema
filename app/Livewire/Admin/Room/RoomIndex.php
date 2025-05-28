@@ -11,9 +11,8 @@ class RoomIndex extends Component
     use WithPagination;
 
     public $search = '';
-    public $perPage = 3;
+    public $perPage = 5;
     public $showDeleted = false;
-    public $statusCofirm = false;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -29,23 +28,21 @@ class RoomIndex extends Component
 
     public function deleteRoom($roomId)
     {
-        if($this->statusCofirm['isConfirmed']) {
-            try {
-                $room = Room::findOrFail($roomId);
+        try {
+            $room = Room::findOrFail($roomId);
 
-                // Kiểm tra quyền xóa
-                if (!$room->canDelete()) {
-                    session()->flash('error', 'Không thể xóa phòng có suất chiếu trong tương lai!');
-                    return;
-                }
-
-                // Soft delete
-                $room->delete();
-                session()->flash('success', 'Xóa phòng chiếu thành công!');
-
-            } catch (\Exception $e) {
-                session()->flash('error', 'Có lỗi xảy ra khi xóa phòng chiếu: ' . $e->getMessage());
+            // Kiểm tra quyền xóa
+            if (!$room->canDelete()) {
+                session()->flash('error', 'Không thể xóa phòng có suất chiếu trong tương lai!');
+                return;
             }
+
+            // Soft delete
+            $room->delete();
+            session()->flash('success', 'Xóa phòng chiếu thành công!');
+
+        } catch (\Exception $e) {
+            session()->flash('error', 'Có lỗi xảy ra khi xóa phòng chiếu: ' . $e->getMessage());
         }
     }
 

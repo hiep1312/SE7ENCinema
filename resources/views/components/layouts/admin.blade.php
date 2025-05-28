@@ -20,7 +20,7 @@
     <!-- endinject -->
     <!-- Layout styles -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css')}}">
-
+    <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}" />
     {{-- @vite(['resources/css/app.css']) --}}
   </head>
   <body>
