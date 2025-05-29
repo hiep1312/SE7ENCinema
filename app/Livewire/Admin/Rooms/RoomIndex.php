@@ -20,10 +20,9 @@ class RoomIndex extends Component
     {
         if(!$status['isConfirmed']) return;
         $room = Room::findOrFail($roomId);
-        dd($room->hasActiveShowtimes());
 
         // Kiểm tra quyền xóa
-        if (!$room->hasActiveShowtimes()) {
+        if ($room->hasActiveShowtimes()) {
             session()->flash('error', 'Không thể xóa phòng có suất chiếu trong tương lai!');
             return;
         }

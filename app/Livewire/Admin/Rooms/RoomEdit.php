@@ -55,7 +55,7 @@ class RoomEdit extends Component
         $this->room = Room::findOrFail($roomId);
 
         // Kiểm tra quyền chỉnh sửa
-        $this->canEdit = $this->room->canEdit();
+        $this->canEdit = !$this->room->hasActiveShowtimes();
         $this->canRegenerateSeats = !$this->room->hasActiveShowtimes();
 
         if (!$this->canEdit) {

@@ -15,7 +15,7 @@
             </div>
             <div>
                 <a href="{{ route('admin.rooms.edit', $room->id) }}"
-                   class="btn btn-warning me-2 @if(!$room->canEdit()) disabled @endif">
+                   class="btn btn-warning me-2 @if($room->hasActiveShowtimes()) disabled @endif">
                     <i class="fas fa-edit me-1"></i>Chỉnh sửa
                 </a>
                 <a href="{{ route('admin.rooms.index') }}" class="btn btn-secondary">
@@ -25,7 +25,7 @@
         </div>
 
         <!-- Room Status Alert -->
-        @if(!$room->canEdit())
+        @if($room->hasActiveShowtimes())
             <div class="alert alert-warning">
                 <i class="fas fa-exclamation-triangle me-2"></i>
                 Phòng chiếu có suất chiếu đang hoạt động. Một số chức năng bị hạn chế.
