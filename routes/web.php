@@ -1,20 +1,10 @@
 <?php
 
-use App\Livewire\Admin\Rooms\RoomCreate;
-use App\Livewire\Admin\Rooms\RoomDetail;
-use App\Livewire\Admin\Rooms\RoomEdit;
-use App\Livewire\Admin\Rooms\RoomIndex;
 use Illuminate\Support\Facades\Route;
 
 
 
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/rooms', RoomIndex::class)->name('rooms.index');
-    Route::get('/rooms/create', RoomCreate::class)->name('rooms.create');
-    Route::get('/rooms/{roomId}/edit', RoomEdit::class)->name('rooms.edit');
-    Route::get('/rooms/{roomId}/detail', RoomDetail::class)->name('rooms.detail');
-
-
 
     /* Template */
     Route::view('/dashboard', 'livewire.admin.template.dashboard')->name('dashboard');
