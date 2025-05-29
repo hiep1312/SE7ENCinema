@@ -225,15 +225,63 @@ class MovieController extends Controller
 
 
 
-    public function destroy(Movie $movie)
-    {
-        $movie->delete();
-        return redirect()->route('admin.movies.index')->with('success', 'Xóa phim thành công!');
-    }
+  public function destroy($id)
+{
+    $movie = Movie::findOrFail($id);
+    $movie->delete(); // xóa mềm thay vì xóa thật
+
+    return redirect()->route('admin.movies.index')->with('success', 'Đã xóa phim thành công.');
+}
+
     public function show(Movie $movie)
 {
     $movie->load('genres'); // đảm bảo load genres
     return view('admin.movies.show', compact('movie'));
 }
+public function trash(Request $request)
+{
+    $movies = Movie::onlyTrashed()->with('genres');
+
+    if ($request->title) {
+        $movies->where('title', 'like', '%' . $request->title . '%');
+    }
+
+    if ($request->genre_id) {
+        $genreId = $request->genre_id;
+        $movies->whereHas('genres', function ($query) use ($genreId) {
+            $query->where('genres.id', $genreId);
+        });
+    }
+
+    if ($request->deleted_at_from) {
+        $movies->where('deleted_at', '>=', $request->deleted_at_from);
+    }
+
+    if ($request->deleted_at_to) {
+        $movies->where('deleted_at', '<=', $request->deleted_at_to);
+    }
+
+    $movies = $movies->paginate(10);
+    $genres = Genre::all();
+
+    return view('admin.movies.trash', compact('movies', 'genres'));
+}
+
+
+public function restore($id)
+{
+    $movie = Movie::onlyTrashed()->findOrFail($id);
+    $movie->restore();
+
+    return redirect()->route('admin.movies.trash')->with('success', 'Phim đã được khôi phục.');
+}
+public function forceDelete($id)
+{
+    $movie = Movie::onlyTrashed()->findOrFail($id);
+    $movie->forceDelete();
+
+    return redirect()->route('admin.movies.trash')->with('success', 'Xóa phim vĩnh viễn thành công.');
+}
+
 
 }

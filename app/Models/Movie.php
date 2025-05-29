@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Movie extends Model
 {
+    use SoftDeletes; // 👈 Thêm dòng này
+
     protected $fillable = [
         'title',
         'description',
@@ -25,6 +28,7 @@ class Movie extends Model
     protected $casts = [
         'release_date' => 'date',
         'end_date' => 'date',
+        'deleted_at' => 'datetime', // 👈 Thêm dòng này nếu chưa có
     ];
 
     public function genres()

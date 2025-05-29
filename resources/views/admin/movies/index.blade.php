@@ -4,6 +4,8 @@
 <div class="container mt-4">
     <h1>Danh sách phim</h1>
 
+    <a href="{{ route('admin.movies.trash') }}" class="btn btn-outline-secondary mb-3">🗑️ Xem thùng rác</a>
+
     @if(session('success'))
     <div class="alert alert-success">{{ session('success') }}</div>
     @endif
