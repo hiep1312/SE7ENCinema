@@ -13,7 +13,7 @@
         </div>
     @endif
 
-    <div class="container">
+    <div class="container" data-bs-theme="dark">
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2>Thêm phòng chiếu mới</h2>
             <a href="{{ route('admin.rooms.index') }}" class="btn btn-secondary">
@@ -101,11 +101,8 @@
                                         <label for="capacity" class="form-label">Tổng sức chứa</label>
                                         <input type="number"
                                                wire:model="capacity"
-                                               class="form-control @if($capacity > 500) is-invalid @endif"
+                                               class="form-control"
                                                readonly>
-                                        @if($capacity > 500)
-                                            <div class="invalid-feedback">Vượt quá giới hạn 500 ghế</div>
-                                        @endif
                                     </div>
                                 </div>
                             </div>

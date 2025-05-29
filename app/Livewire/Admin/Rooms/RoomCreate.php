@@ -1,15 +1,17 @@
 <?php
 
-namespace App\Livewire\Admin\Room;
+namespace App\Livewire\Admin\Rooms;
 
 use App\Models\Room;
 use App\Models\Seat;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
 class RoomCreate extends Component
 {
     public $name = '';
-    public $capacity = '';
+    public $capacity = 0;
     public $status = 'active';
     public $rows = 10;
     public $seatsPerRow = 15;
@@ -39,6 +41,11 @@ class RoomCreate extends Component
         'seatsPerRow.min' => 'Số ghế mỗi hàng tối thiểu là 10',
         'seatsPerRow.max' => 'Số ghế mỗi hàng tối đa là 30',
     ];
+
+    public function mount()
+    {
+        $this->capacity = $this->rows * $this->seatsPerRow;
+    }
 
     public function updated($propertyName)
     {
@@ -132,16 +139,10 @@ class RoomCreate extends Component
         Seat::insert($seats);
     }
 
+    #[Title('Tạo phòng chiếu - SE7ENCinema')]
+    #[Layout('components.layouts.admin')]
     public function render()
     {
         return view('livewire.admin.rooms.room-create');
-    }
-
-    public function mount()
-    {
-        // Set default values to ensure minimum capacity
-        $this->rows = 10;
-        $this->seatsPerRow = 15;
-        $this->capacity = $this->rows * $this->seatsPerRow;
     }
 }

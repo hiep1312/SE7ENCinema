@@ -1,10 +1,11 @@
 <?php
 
-use App\Livewire\Admin\Room\RoomEdit;
+use App\Livewire\Admin\Rooms\RoomCreate;
+use App\Livewire\Admin\Rooms\RoomDetail;
+use App\Livewire\Admin\Rooms\RoomEdit;
+use App\Livewire\Admin\Rooms\RoomIndex;
 use Illuminate\Support\Facades\Route;
-use App\Livewire\Admin\Room\RoomIndex;
-use App\Livewire\Admin\Room\RoomCreate;
-use App\Livewire\Admin\Room\RoomDetail;
+
 
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -12,6 +13,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/rooms/create', RoomCreate::class)->name('rooms.create');
     Route::get('/rooms/{roomId}/edit', RoomEdit::class)->name('rooms.edit');
     Route::get('/rooms/{roomId}/detail', RoomDetail::class)->name('rooms.detail');
+
+
+
+    /* Template */
     Route::view('/dashboard', 'livewire.admin.template.dashboard')->name('dashboard');
     Route::view('/buttons', 'livewire.admin.template.ui-features.buttons')->name('buttons');
     Route::view('/dropdowns', 'livewire.admin.template.ui-features.dropdowns')->name('dropdowns');
@@ -25,7 +30,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::view('/error-500', 'livewire.admin.template.samples.error-500')->name('error-500');
     Route::view('/login', 'livewire.admin.template.samples.login')->name('login');
     Route::view('/register', 'livewire.admin.template.samples.register')->name('register');
-
 });
 
 

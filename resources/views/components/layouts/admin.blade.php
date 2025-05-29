@@ -17,17 +17,17 @@
     <!-- End plugin css for this page -->
     <!-- Layout styles -->
     <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
-    {{-- @vite(['resources/css/app.css']) --}}
+    @vite(['resources/css/app.css'])
 </head>
 
-<body>
+<body data-bs-theme="dark">
     <div class="container-scroller">
         @include('livewire.admin.components.sidebar')
         <div class="container-fluid page-body-wrapper">
-            @include('admin.components.header')
+            @include('livewire.admin.components.header')
             <div class="main-panel">
                 {{ $slot }}
-                @include('admin.components.footer')
+                @include('livewire.admin.components.footer')
             </div>
         </div>
     </div>
@@ -52,7 +52,7 @@
     <!-- Custom js for this page -->
     <script src="{{ asset('admin/assets/js/dashboard.js') }}"></script>
 
-    {{-- @vite(['resources/js/app.js']) --}}
+    @vite(['resources/js/app.js'])
 </body>
 
 </html>

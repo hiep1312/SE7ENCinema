@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin\Room;
+namespace App\Livewire\Admin\Rooms;
 
 use App\Models\Room;
 use Livewire\Component;

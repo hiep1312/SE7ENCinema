@@ -1,7 +1,4 @@
 <div>
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.6.0/css/sharp-solid.css">
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.6.0/css/all.css">
-
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
@@ -16,7 +13,7 @@
         </div>
     @endif
 
-    <div class="container">
+    <div class="container" data-bs-theme="dark">
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2>Quản lý phòng chiếu</h2>
             <div>
@@ -51,7 +48,7 @@
                     </div>
                     <div class="col-md-6">
                         <select wire:model.live="perPage" class="form-select">
-                            <option value="5">5 / trang</option>
+                            <option value="10">10 / trang</option>
                             <option value="20">20 / trang</option>
                             <option value="50">50 / trang</option>
                         </select>
@@ -64,7 +61,7 @@
                     <table class="table table-striped table-hover">
                         <thead class="table-dark">
                             <tr>
-                                <th>ID</th>
+                                <th>STT</th>
                                 <th>Tên phòng</th>
                                 <th>Sức chứa</th>
                                 <th>Số ghế hiện tại</th>
@@ -157,13 +154,10 @@
                                                 @endif
 
                                                 <!-- Thời gian còn lại -->
-                                                @php
-                                                    $timeUntil = $nextShowtime->start_time->diffForHumans();
-                                                @endphp
                                                 <div class="time-until mt-1">
                                                     <small class="text-info">
                                                         <i class="fas fa-hourglass-half me-1"></i>
-                                                        {{ $timeUntil }}
+                                                        {{ $nextShowtime->start_time->diffForHumans() }}
                                                     </small>
                                                 </div>
                                             </div>
@@ -199,8 +193,8 @@
                                                 </button>
                                                 <button type="button"
                                                         class="btn btn-sm btn-danger d-flex align-items-center"
-                                                        wire:click="forceDeleteRoom({{ $room->id }})"
-                                                        wire:confirm="Bạn có chắc chắn muốn XÓA VĨNH VIỄN phòng '{{ $room->name }}'? Hành động này KHÔNG THỂ HOÀN TÁC!"
+                                                        wire:sc-model="forceDeleteRoom({{ $room->id }})"
+                                                        wire:sc-confirm.warning="Bạn có chắc chắn muốn XÓA VĨNH VIỄN phòng '{{ $room->name }}'? Hành động này KHÔNG THỂ HOÀN TÁC!"
                                                         title="Xóa vĩnh viễn">
                                                     <i class="fas fa-trash-alt me-1"></i>
                                                     <span>Xóa vĩnh viễn</span>
@@ -215,27 +209,28 @@
                                                     <i class="fas fa-eye me-1"></i>
                                                     <span>Chi tiết</span>
                                                 </a>
-                                                @if($room->canEdit())
+                                                @if(!$room->hasActiveShowtimes())
                                                     <a href="{{ route('admin.rooms.edit', $room->id) }}"
                                                        class="btn btn-sm btn-warning d-flex align-items-center"
                                                        title="Chỉnh sửa">
-                                                        <i class="fas fa-edit me-1"></i>
-                                                        <span>Sửa</span>
+                                                       <i class="fas fa-edit me-1"></i>
+                                                       <span>Sửa</span>
                                                     </a>
                                                 @else
                                                     <button type="button"
-                                                            class="btn btn-sm btn-warning disabled d-flex align-items-center"
-                                                            title="Không thể sửa - có suất chiếu đang hoạt động"
-                                                            disabled>
+                                                            class="btn btn-sm btn-warning d-flex align-items-center"
+                                                            wire:sc-alert.error="Không thể sửa - có suất chiếu đang hoạt động"
+                                                            wire:sc-model
+                                                            title="Chỉnh sửa">
                                                         <i class="fas fa-edit me-1"></i>
                                                         <span>Sửa</span>
                                                     </button>
                                                 @endif
-                                                @if($room->canDelete())
+                                                @if(!$room->hasActiveShowtimes())
                                                     <button type="button"
                                                             class="btn btn-sm btn-danger d-flex align-items-center"
-                                                            wire:click="deleteRoom({{ $room->id }})"
-                                                            wire:confirm="Bạn có chắc chắn muốn xóa phòng '{{ $room->name }}'?"
+                                                            wire:sc-model="deleteRoom({{ $room->id }})"
+                                                            wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa phòng '{{ $room->name }}'?"
                                                             title="Xóa">
                                                         <i class="fas fa-trash me-1"></i>
                                                         <span>Xóa</span>
@@ -243,8 +238,9 @@
                                                 @else
                                                     <button type="button"
                                                             class="btn btn-sm btn-danger disabled d-flex align-items-center"
-                                                            title="Không thể xóa - có suất chiếu trong tương lai"
-                                                            disabled>
+                                                            wire:sc-alert.error="Không thể xóa - có suất chiếu trong tương lai"
+                                                            wire:sc-model
+                                                            title="Xóa">
                                                         <i class="fas fa-trash me-1"></i>
                                                         <span>Xóa</span>
                                                     </button>
@@ -272,76 +268,8 @@
                         </tbody>
                     </table>
                 </div>
-
                 {{ $rooms->links() }}
             </div>
         </div>
     </div>
-
-    <style>
-        /* Styling cho cột Suất chiếu tiếp theo */
-        .showtime-info {
-            min-width: 200px;
-            padding: 8px;
-        }
-
-        .movie-title {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .showtime-schedule {
-            font-size: 13px;
-        }
-
-        .showtime-price {
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .time-until {
-            font-size: 11px;
-        }
-
-        .no-showtime {
-            min-width: 150px;
-        }
-
-        /* Hover effect cho showtime info */
-        .showtime-info:hover {
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-
-        /* Đảm bảo các nút có thể click được */
-        .btn-group .btn {
-            pointer-events: auto;
-            cursor: pointer;
-        }
-
-        .btn-group .btn.disabled {
-            pointer-events: none;
-            cursor: not-allowed;
-        }
-
-        .btn i {
-            pointer-events: none;
-        }
-
-        .btn span {
-            pointer-events: none;
-        }
-
-        /* Cải thiện hiển thị nút */
-        .btn-group .btn {
-            white-space: nowrap;
-            min-width: auto;
-        }
-
-        .btn-sm {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-        }
-    </style>
 </div>
