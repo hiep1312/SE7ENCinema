@@ -192,13 +192,7 @@ document.addEventListener('livewire:init', () => {
             stop && e.stopPropagation();
 
             Swal.fire(options).then(result => {
-<<<<<<< HEAD
                 model && (typeof $wire[model]==='function' ? (params.length ? $wire[model](result, ...params) : $wire[model](result)) : $wire[model] = params.length ? [result, ...params] : result);
-=======
-                console.log(typeof $wire[model], $wire[model]);
-                debugger
-                model && (typeof $wire[model]==='function' ? $wire[model](result) : $wire[model] = result);
->>>>>>> f21ed9a42dc4e4b506b77e88bd44eabf817ce152
                 live && $wire.$commit();
             });
         }, optionsListener);

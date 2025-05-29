@@ -25,8 +25,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::view('/error-500', 'livewire.admin.template.samples.error-500')->name('error-500');
     Route::view('/login', 'livewire.admin.template.samples.login')->name('login');
     Route::view('/register', 'livewire.admin.template.samples.register')->name('register');
+});
+
+Route::prefix('client')->name('client.')->group(function (){
+    Route::view('/index', 'livewire.client.template.index')->name('index');
+    Route::view('/blog_category', 'livewire.client.template.blogs.blog_category')->name('blog_category');
+    Route::view('/blog_single', 'livewire.client.template.blogs.blog_single')->name('blog_single');
 
 });
 
 
 Route::view('/', 'welcome')->name('welcome');
+Route::view('/clienttest', 'clienttest')->name('clienttest');
