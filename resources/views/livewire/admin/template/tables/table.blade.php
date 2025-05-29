@@ -1,3 +1,5 @@
+          @extends('welcome')
+         @section("content")
 <div class="content-wrapper">
     <div class="page-header">
       <h3 class="page-title"> Basic Tables </h3>
@@ -457,3 +459,4 @@
       </div>
     </div>
   </div>
+@endsection

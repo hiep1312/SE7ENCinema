@@ -25,10 +25,10 @@
     <div class="container-scroller">
         @include('livewire.admin.components.sidebar')
         <div class="container-fluid page-body-wrapper">
-            @livewire('admin.components.header')
+            @include('livewire.admin.components.header')
             <div class="main-panel">
-                {{ $slot }}
-                @livewire('admin.components.footer')
+                @yield('content')
+                @include('livewire.admin.components.footer')
             </div>
         </div>
     </div>

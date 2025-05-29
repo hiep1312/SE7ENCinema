@@ -1,4 +1,6 @@
-          <div class="content-wrapper">
+         @extends('welcome')
+         @section("content")
+<div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title"> Dropdowns </h3>
               <nav aria-label="breadcrumb">
@@ -536,4 +538,4 @@
               </div>
             </div>
           </div>
-
+@endsection

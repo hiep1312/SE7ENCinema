@@ -1,3 +1,5 @@
+          @extends('welcome')
+         @section("content")
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title"> Form elements </h3>
@@ -588,5 +590,4 @@
               </div>
             </div>
           </div>
-
-
+@endsection

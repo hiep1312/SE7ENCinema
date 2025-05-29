@@ -74,14 +74,14 @@
         </a>
         <div class="collapse" id="ui-basic">
           <ul class="nav flex-column sub-menu">
-            <li class="nav-item"> <a class="nav-link" href="{{ route('admin.pages.ui-features.buttons') }}">Buttons</a></li>
-            <li class="nav-item"> <a class="nav-link" href="{{ route('admin.pages.ui-features.dropdowns') }}">Dropdowns</a></li>
-            <li class="nav-item"> <a class="nav-link" href="{{ route('admin.pages.ui-features.typography') }}">Typography</a></li>
+            <li class="nav-item"> <a class="nav-link" href="{{ route('admin.buttons') }}">Buttons</a></li>
+            <li class="nav-item"> <a class="nav-link" href="{{ route('admin.dropdowns') }}">Dropdowns</a></li>
+            <li class="nav-item"> <a class="nav-link" href="{{ route('admin.typography') }}">Typography</a></li>
           </ul>
         </div>
       </li>
       <li class="nav-item menu-items">
-        <a class="nav-link" href="{{ route('admin.pages.forms.basic_elements') }}">
+        <a class="nav-link" href="{{ route('admin.basic_elements') }}">
           <span class="menu-icon">
             <i class="mdi mdi-playlist-play"></i>
           </span>
@@ -89,7 +89,7 @@
         </a>
       </li>
       <li class="nav-item menu-items">
-        <a class="nav-link" href="{{ route('admin.pages.tables.table') }}">
+        <a class="nav-link" href="{{ route('admin.table') }}">
           <span class="menu-icon">
             <i class="mdi mdi-table"></i>
           </span>
@@ -97,7 +97,7 @@
         </a>
       </li>
       <li class="nav-item menu-items">
-        <a class="nav-link" href="{{ route('admin.pages.charts.chartjs') }}">
+        <a class="nav-link" href="{{ route('admin.chartjs') }}">
           <span class="menu-icon">
             <i class="mdi mdi-chart-bar"></i>
           </span>
@@ -105,7 +105,7 @@
         </a>
       </li>
       <li class="nav-item menu-items">
-            <a class="nav-link" href="{{ route('admin.pages.icons.mdi') }}">
+            <a class="nav-link" href="{{ route('admin.mdi') }}">
               <span class="menu-icon">
                 <i class="mdi mdi-contacts"></i>
               </span>
@@ -122,11 +122,11 @@
         </a>
         <div class="collapse" id="auth">
           <ul class="nav flex-column sub-menu">
-            <li class="nav-item"> <a class="nav-link" href="{{ route('admin.pages.samples.blank-page') }}"> Blank Page </a></li>
-            <li class="nav-item"> <a class="nav-link" href="{{ route('admin.pages.samples.error-404') }}"> 404 </a></li>
-            <li class="nav-item"> <a class="nav-link" href="{{ route('admin.pages.samples.error-500') }}"> 500 </a></li>
-            <li class="nav-item"> <a class="nav-link" href="{{ route('admin.pages.samples.login') }}"> Login </a></li>
-            <li class="nav-item"> <a class="nav-link" href="{{ route('admin.pages.samples.register') }}"> Register </a></li>
+            <li class="nav-item"> <a class="nav-link" href="{{ route('admin.blank-page') }}"> Blank Page </a></li>
+            <li class="nav-item"> <a class="nav-link" href="{{ route('admin.error-404') }}"> 404 </a></li>
+            <li class="nav-item"> <a class="nav-link" href="{{ route('admin.error-500') }}"> 500 </a></li>
+            <li class="nav-item"> <a class="nav-link" href="{{ route('admin.login') }}"> Login </a></li>
+            <li class="nav-item"> <a class="nav-link" href="{{ route('admin.register') }}"> Register </a></li>
           </ul>
         </div>
       </li>

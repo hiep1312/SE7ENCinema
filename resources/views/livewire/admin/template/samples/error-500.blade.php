@@ -1,4 +1,5 @@
-
+          @extends('welcome')
+         @section("content")
     <div class="container-scroller">
       <div class="container-fluid page-body-wrapper full-page-wrapper">
         <div class="content-wrapper d-flex align-items-center text-center error-page bg-info">
@@ -30,3 +31,4 @@
       </div>
       <!-- page-body-wrapper ends -->
     </div>
+@endsection
