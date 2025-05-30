@@ -270,35 +270,35 @@
 										</li>
 										<li class="parent"><a href="#">Event</a>
 											<ul class="lg-submenu">
-												<li><a href="event_category.html">Event-Category</a>
+												<li><a href="{{ route('client.event_category')}}">Event-Category</a>
 												</li>
-												<li><a href="event_single.html">Event-Single</a>
+												<li><a href="{{ route('client.event_single')}}">Event-Single</a>
 												</li>
 											</ul>
 										</li>
 										<li class="parent"><a href="#">Movie</a>
 											<ul class="lg-submenu">
-												<li><a href="movie_category.html">Movie-Category</a>
+												<li><a href="{{ route('client.movie_category')}}">Movie-Category</a>
 												</li>
-												<li><a href="movie_single.html">Movie-Single</a>
+												<li><a href="{{ route('client.movie_single')}}">Movie-Single</a>
 												</li>
-												<li><a href="movie_single_second.html">Movie-Single-II</a>
+												<li><a href="{{ route('client.movie_single_second')}}">Movie-Single-II</a>
 												</li>
 											</ul>
 										</li>
-										<li><a href="gallery.html">gallery</a>
+										<li><a href="{{ route('client.gallery')}}">gallery</a>
 										</li>
-										<li><a href="booking_type.html">Booking-Type</a>
+										<li><a href="{{ route('client.booking_type')}}">Booking-Type</a>
 										</li>
-										<li><a href="confirmation_screen.html">Confirmation-Screen</a>
+										<li><a href="{{ route('client.confirmation_screen')}}">Confirmation-Screen</a>
 										</li>
-										<li><a href="movie_booking.html">Movie-Booking</a>
+										<li><a href="{{ route('client.movie_booking')}}">Movie-Booking</a>
 										</li>
-										<li><a href="seat_booking.html">Seat-Booking</a>
+										<li><a href="{{ route('client.seat_booking')}}">Seat-Booking</a>
 										</li>
 									</ul>
 								</li>
-								<li class="parent"><a href="contact.html">contact</a>
+								<li class="parent"><a href="{{ route('client.contact')}}">contact</a>
 								</li>
 							</ul>
 						</div>
@@ -369,17 +369,17 @@
 						<a href="#" class="manu-close"><i class="fa fa-times"></i></a>
 					</div>
 					<ul class="mobile-list-nav">
-						<li><a href="about.html">OVERVIEW</a>
+						<li><a href="{{ route('client.about')}}">OVERVIEW</a>
 						</li>
-						<li><a href="movie_single.html">MOVIE</a>
+						<li><a href="{{ route('client.movie_single')}}">MOVIE</a>
 						</li>
-						<li><a href="event_single.html">EVENT</a>
+						<li><a href="{{ route('client.event_single')}}">EVENT</a>
 						</li>
-						<li><a href="gallery.html">GALLERY</a>
+						<li><a href="{{ route('client.gallery')}}">GALLERY</a>
 						</li>
-						<li><a href="blog_single.html">BLOG</a>
+						<li><a href="{{ route('client.blog_single')}}">BLOG</a>
 						</li>
-						<li><a href="contact.html">CONTACT</a>
+						<li><a href="{{ route('client.contact')}}">CONTACT</a>
 						</li>
 					</ul>
 					<div class="product-heading prs_slidebar_searchbar_wrapper">

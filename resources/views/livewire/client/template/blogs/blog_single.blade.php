@@ -8,7 +8,7 @@
 					<div class="prs_title_heading_wrapper">
 						<h2>Blog Singe Page</h2>
 						<ul>
-							<li><a href="#">Home</a>
+							<li><a href="{{ route('client.index')}}">Home</a>
 							</li>
 							<li>&nbsp;&nbsp; >&nbsp;&nbsp; Blog</li>
 						</ul>

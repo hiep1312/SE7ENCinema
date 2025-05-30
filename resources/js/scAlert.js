@@ -1,7 +1,7 @@
 import Swal from 'sweetalert2';
 const $sc_configAlert = {
     _config: {
-        theme: "light",
+        theme: "dark",
         showClass: undefined,
         hideClass: undefined,
         footer: "",

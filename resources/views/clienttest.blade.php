@@ -32,7 +32,7 @@
         <!-- favicon links -->
         <link rel="shortcut icon" type="image/png" href="{{ asset('client/assets/images/header/favicon.ico') }}" />
 
-        @vite('resources/css/app.css')
+        {{-- @vite('resources/css/app.css') --}}
     </head>
     <body>
         <div>
@@ -70,6 +70,6 @@
         <script src="{{ asset('client/assets/js/plugin/rs_slider/revolution.extension.video.min.js') }}"></script>
         <script src="{{ asset('client/assets/js/contact_form.js') }}"></script>
         <script src="{{ asset('client/assets/js/custom.js') }}"></script>
-        @vite('resources/js/app.js')
+        {{-- @vite('resources/js/app.js') --}}
     </body>
 </html>
