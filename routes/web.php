@@ -1,11 +1,23 @@
 <?php
 
+use App\Livewire\Admin\Food\FoodCreate;
+use App\Livewire\Admin\Food\FoodDelete;
+use App\Livewire\Admin\Food\FoodDetail;
+use App\Livewire\Admin\Food\FoodEdit;
+use App\Livewire\Admin\Food\FoodList;
+
 use Illuminate\Support\Facades\Route;
 
 
 
 Route::prefix('admin')->name('admin.')->group(function () {
-    // return view('admin.user.index');
+    Route::prefix('food')->group(function () {
+        Route::get('/', FoodList::class)->name('food.list');
+        Route::get('/create', FoodCreate::class)->name('food.create');
+        Route::get('delete/{id}', [FoodDelete::class, 'delete'])->name('food.delete');
+        Route::get('/detail/{id}', FoodDetail::class)->name('food.detail');
+        Route::get('/edit/{id}', FoodEdit::class)->name('food.edit');
+    });
 
     /* Template */
     Route::view('/dashboard', 'livewire.admin.template.dashboard')->name('dashboard');
