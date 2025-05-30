@@ -1,7 +1,7 @@
 import Swal from 'sweetalert2';
 const $sc_configAlert = {
     _config: {
-        theme: "light",
+        theme: "dark",
         showClass: undefined,
         hideClass: undefined,
         footer: "",
@@ -121,7 +121,11 @@ document.addEventListener('livewire:init', () => {
 
         const title = el.getAttribute('wire:sc-title') ?? expression;
         const html = el.getAttribute('wire:sc-html') ?? '';
-        const model = el.getAttribute('wire:sc-model');
+        let model = el.getAttribute('wire:sc-model') ?? el.getAttribute('wire:click');
+        const useModelLivewire = el.getAttribute('wire:sc-model') ?? true;
+        let params = [];
+        const checkCallFunction = model.match(/(\w+)(?:\(([^\)]*)\))/u);
+        checkCallFunction && (model = checkCallFunction[1], params = JSON.parse(`[${checkCallFunction[2].replace(/\s+,\s+/g, ', ').replace(/'/g, '"')}]`));
         const live = directive.modifiers.includes('live');
 
         /* Modifier Listener */
@@ -140,11 +144,11 @@ document.addEventListener('livewire:init', () => {
         const options = Object.assign({}, $sc_configAlert._config, optionCustom);
 
         const listener = el.addEventListener('click', function (e){
-            prevent && e.preventDefault();
+            (prevent || useModelLivewire) && e.preventDefault();
             stop && e.stopPropagation();
 
             Swal.fire(options).then(result => {
-                model && (typeof $wire[model]==='function' ? $wire[model](result) : $wire[model] = result);
+                model && (typeof $wire[model]==='function' ? (params.length ? $wire[model](result, ...params) : $wire[model](result)) : $wire[model] = params.length ? [result, ...params] : result);
                 live && $wire.$commit();
             });
         }, optionsListener);
@@ -159,7 +163,11 @@ document.addEventListener('livewire:init', () => {
 
         const title = el.getAttribute('wire:sc-title') ?? expression;
         const html = el.getAttribute('wire:sc-html') ?? '';
-        const model = el.getAttribute('wire:sc-model');
+        let model = el.getAttribute('wire:sc-model') ?? el.getAttribute('wire:click');
+        const useModelLivewire = el.getAttribute('wire:sc-model') ?? true;
+        let params = [];
+        const checkCallFunction = model.match(/(\w+)(?:\(([^\)]*)\))/u);
+        checkCallFunction && (model = checkCallFunction[1], params = JSON.parse(`[${checkCallFunction[2].replace(/\s+,\s+/g, ', ').replace(/'/g, '"')}]`));
         const live = directive.modifiers.includes('live');
 
         /* Modifier Listener */
@@ -180,11 +188,11 @@ document.addEventListener('livewire:init', () => {
         const options = Object.assign({}, $sc_configAlert._config, optionCustom);
 
         const listener = el.addEventListener('click', function (e){
-            prevent && e.preventDefault();
+            (prevent || useModelLivewire) && e.preventDefault();
             stop && e.stopPropagation();
 
             Swal.fire(options).then(result => {
-                model && (typeof $wire[model]==='function' ? $wire[model](result) : $wire[model] = result);
+                model && (typeof $wire[model]==='function' ? (params.length ? $wire[model](result, ...params) : $wire[model](result)) : $wire[model] = params.length ? [result, ...params] : result);
                 live && $wire.$commit();
             });
         }, optionsListener);
@@ -199,7 +207,11 @@ document.addEventListener('livewire:init', () => {
 
         const title = el.getAttribute('wire:sc-title') ?? expression;
         const html = el.getAttribute('wire:sc-html') ?? '';
-        const model = el.getAttribute('wire:sc-model');
+        let model = el.getAttribute('wire:sc-model') ?? el.getAttribute('wire:click');
+        const useModelLivewire = el.getAttribute('wire:sc-model') ?? true;
+        let params = [];
+        const checkCallFunction = model.match(/(\w+)(?:\(([^\)]*)\))/u);
+        checkCallFunction && (model = checkCallFunction[1], params = JSON.parse(`[${checkCallFunction[2].replace(/\s+,\s+/g, ', ').replace(/'/g, '"')}]`));
         const live = directive.modifiers.includes('live');
 
         /* Modifier Listener */
@@ -226,11 +238,11 @@ document.addEventListener('livewire:init', () => {
         const options = Object.assign({}, $sc_configAlert._config, optionCustom);
 
         const listener = el.addEventListener('click', function (e){
-            prevent && e.preventDefault();
+            (prevent || useModelLivewire) && e.preventDefault();
             stop && e.stopPropagation();
 
             Swal.fire(options).then(result => {
-                model && (typeof $wire[model]==='function' ? $wire[model](result) : $wire[model] = result);
+                model && (typeof $wire[model]==='function' ? (params.length ? $wire[model](result, ...params) : $wire[model](result)) : $wire[model] = params.length ? [result, ...params] : result);
                 live && $wire.$commit();
             });
         }, optionsListener);
@@ -245,7 +257,11 @@ document.addEventListener('livewire:init', () => {
         const {expression} = directive;
 
         const title = el.getAttribute('wire:sc-title') ?? expression;
-        const model = el.getAttribute('wire:sc-model');
+        let model = el.getAttribute('wire:sc-model') ?? el.getAttribute('wire:click');
+        const useModelLivewire = el.getAttribute('wire:sc-model') ?? true;
+        let params = [];
+        const checkCallFunction = model.match(/(\w+)(?:\(([^\)]*)\))/u);
+        checkCallFunction && (model = checkCallFunction[1], params = JSON.parse(`[${checkCallFunction[2].replace(/\s+,\s+/g, ', ').replace(/'/g, '"')}]`));
         const live = directive.modifiers.includes('live');
 
         /* Modifier Listener */
@@ -267,11 +283,11 @@ document.addEventListener('livewire:init', () => {
         delete options['backdrop']; delete options['keydownListenerCapture']; delete options['returnFocus'];
 
         const listener = el.addEventListener('click', function (e){
-            prevent && e.preventDefault();
+            (prevent || useModelLivewire) && e.preventDefault();
             stop && e.stopPropagation();
 
             Swal.fire(options).then(result => {
-                model && (typeof $wire[model]==='function' ? $wire[model](result) : $wire[model] = result);
+                model && (typeof $wire[model]==='function' ? (params.length ? $wire[model](result, ...params) : $wire[model](result)) : $wire[model] = params.length ? [result, ...params] : result);
                 live && $wire.$commit();
             });
         }, optionsListener);
@@ -286,7 +302,11 @@ document.addEventListener('livewire:init', () => {
 
         const title = el.getAttribute('wire:sc-title') ?? expression;
         const html = el.getAttribute('wire:sc-html') ?? '';
-        const model = el.getAttribute('wire:sc-model');
+        let model = el.getAttribute('wire:sc-model') ?? el.getAttribute('wire:click');
+        const useModelLivewire = el.getAttribute('wire:sc-model') ?? true;
+        let params = [];
+        const checkCallFunction = model.match(/(\w+)(?:\(([^\)]*)\))/u);
+        checkCallFunction && (model = checkCallFunction[1], params = JSON.parse(`[${checkCallFunction[2].replace(/\s+,\s+/g, ', ').replace(/'/g, '"')}]`));
         const live = directive.modifiers.includes('live');
 
         /* Modifier Listener */
@@ -310,11 +330,11 @@ document.addEventListener('livewire:init', () => {
         const options = Object.assign({}, $sc_configAlert._config, optionCustom);
 
         const listener = el.addEventListener('click', function (e){
-            prevent && e.preventDefault();
+            (prevent || useModelLivewire) && e.preventDefault();
             stop && e.stopPropagation();
 
             Swal.fire(options).then(result => {
-                model && (typeof $wire[model]==='function' ? $wire[model](result) : $wire[model] = result);
+                model && (typeof $wire[model]==='function' ? (params.length ? $wire[model](result, ...params) : $wire[model](result)) : $wire[model] = params.length ? [result, ...params] : result);
                 live && $wire.$commit();
             });
         }, optionsListener);
@@ -334,6 +354,10 @@ document.addEventListener('livewire:init', () => {
     Livewire.on('_scAlert', ([options, model]) => {
         const $wire = Livewire.first();
 
+        let params = [];
+        const checkCallFunction = model.match(/(\w+)(?:\(([^\)]*)\))/u);
+        checkCallFunction && (model = checkCallFunction[1], params = JSON.parse(`[${checkCallFunction[2].replace(/\s+,\s+/g, ', ').replace(/'/g, '"')}]`));
+
         const title = options.title ?? '';
         const html = options.html ?? '';
         const icon = options.icon ?? undefined;
@@ -348,14 +372,18 @@ document.addEventListener('livewire:init', () => {
         const optionsAlert = Object.assign({}, $sc_configAlert._config, optionCustom);
 
         Swal.fire(optionsAlert).then(result => {
-            model && (typeof $wire[model]==='function' ? $wire[model](result) : $wire[model] = result);
-            $wire.$dispatchSelf('_scResult', {result});
+            model && (typeof $wire[model]==='function' ? (params.length ? $wire[model](result, ...params) : $wire[model](result)) : $wire[model] = params.length ? [result, ...params] : result);
+            $wire.$dispatchSelf('_scResult', {result, ...options});
             $wire.$commit();
         });
     });
 
     Livewire.on('_scConfirm', ([options, model]) => {
         const $wire = Livewire.first();
+
+        let params = [];
+        const checkCallFunction = model.match(/(\w+)(?:\(([^\)]*)\))/u);
+        checkCallFunction && (model = checkCallFunction[1], params = JSON.parse(`[${checkCallFunction[2].replace(/\s+,\s+/g, ', ').replace(/'/g, '"')}]`));
 
         const title = options.title ?? '';
         const html = options.html ?? '';
@@ -373,14 +401,18 @@ document.addEventListener('livewire:init', () => {
         const optionsAlert = Object.assign({}, $sc_configAlert._config, optionCustom);
 
         Swal.fire(optionsAlert).then(result => {
-            model && (typeof $wire[model]==='function' ? $wire[model](result) : $wire[model] = result);
-            $wire.$dispatchSelf('_scResult', {result});
+            model && (typeof $wire[model]==='function' ? (params.length ? $wire[model](result, ...params) : $wire[model](result)) : $wire[model] = params.length ? [result, ...params] : result);
+            $wire.$dispatchSelf('_scResult', {result, ...options});
             $wire.$commit();
         });
     });
 
     Livewire.on('_scPrompt', ([options, model]) => {
         const $wire = Livewire.first();
+
+        let params = [];
+        const checkCallFunction = model.match(/(\w+)(?:\(([^\)]*)\))/u);
+        checkCallFunction && (model = checkCallFunction[1], params = JSON.parse(`[${checkCallFunction[2].replace(/\s+,\s+/g, ', ').replace(/'/g, '"')}]`));
 
         const title = options.title ?? '';
         const html = options.html ?? '';
@@ -403,14 +435,18 @@ document.addEventListener('livewire:init', () => {
         const optionsAlert = Object.assign({}, $sc_configAlert._config, optionCustom);
 
         Swal.fire(optionsAlert).then(result => {
-            model && (typeof $wire[model]==='function' ? $wire[model](result) : $wire[model] = result);
-            $wire.$dispatchSelf('_scResult', {result});
+            model && (typeof $wire[model]==='function' ? (params.length ? $wire[model](result, ...params) : $wire[model](result)) : $wire[model] = params.length ? [result, ...params] : result);
+            $wire.$dispatchSelf('_scResult', {result, ...options});
             $wire.$commit();
         });
     });
 
     Livewire.on('_scToast', ([options, model]) => {
         const $wire = Livewire.first();
+
+        let params = [];
+        const checkCallFunction = model.match(/(\w+)(?:\(([^\)]*)\))/u);
+        checkCallFunction && (model = checkCallFunction[1], params = JSON.parse(`[${checkCallFunction[2].replace(/\s+,\s+/g, ', ').replace(/'/g, '"')}]`));
 
         const title = options.title ?? '';
         const toast = true;
@@ -428,14 +464,18 @@ document.addEventListener('livewire:init', () => {
         delete optionsAlert['backdrop']; delete optionsAlert['keydownListenerCapture']; delete optionsAlert['returnFocus'];
 
         Swal.fire(optionsAlert).then(result => {
-            model && (typeof $wire[model]==='function' ? $wire[model](result) : $wire[model] = result);
-            $wire.$dispatchSelf('_scResult', {result});
+            model && (typeof $wire[model]==='function' ? (params.length ? $wire[model](result, ...params) : $wire[model](result)) : $wire[model] = params.length ? [result, ...params] : result);
+            $wire.$dispatchSelf('_scResult', {result, ...options});
             $wire.$commit();
         });
     });
 
     Livewire.on('_scProgress', ([options, model]) => {
         const $wire = Livewire.first();
+
+        let params = [];
+        const checkCallFunction = model.match(/(\w+)(?:\(([^\)]*)\))/u);
+        checkCallFunction && (model = checkCallFunction[1], params = JSON.parse(`[${checkCallFunction[2].replace(/\s+,\s+/g, ', ').replace(/'/g, '"')}]`));
 
         const title = options.title ?? '';
         const html = options.html ?? '';
@@ -456,8 +496,8 @@ document.addEventListener('livewire:init', () => {
         const optionsAlert = Object.assign({}, $sc_configAlert._config, optionCustom);
 
         Swal.fire(optionsAlert).then(result => {
-            model && (typeof $wire[model]==='function' ? $wire[model](result) : $wire[model] = result);
-            $wire.$dispatchSelf('_scResult', {result});
+            model && (typeof $wire[model]==='function' ? (params.length ? $wire[model](result, ...params) : $wire[model](result)) : $wire[model] = params.length ? [result, ...params] : result);
+            $wire.$dispatchSelf('_scResult', {result, ...options});
             $wire.$commit();
         });
     });

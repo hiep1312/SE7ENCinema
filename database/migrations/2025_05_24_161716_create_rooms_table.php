@@ -18,6 +18,7 @@ return new class extends Migration
             $table->enum('status', ['active', 'maintenance', 'inactive'])->default('active');
             $table->date('last_maintenance_date')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
