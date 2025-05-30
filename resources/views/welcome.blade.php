@@ -10,8 +10,7 @@
     </head>
         @livewireStyles
     <body>
-        {{-- <h1>Welcome to Laravel -- Livewire</h1> --}}
-        @include('livewire.admin.components.header');
+        <h1>Welcome to Laravel -- Livewire</h1>
         @livewireScripts
     </body>
 </html>

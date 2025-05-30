@@ -10,12 +10,11 @@
         <meta name="MobileOptimized" content="320" />
 
         <title>{{ $title ?? 'SE7ENCinema' }}</title>
-        @vite('resources/css/app.css')
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body>
         {{ $slot }}
 
 
-        @vite('resources/js/app.js')
     </body>
 </html>

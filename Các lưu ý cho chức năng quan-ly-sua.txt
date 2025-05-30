@@ -1,0 +1,6 @@
+Các lưu ý cho chức năng quan-ly-suat-chieu:
++ Sửa lại tên các trường cho phù hợp: image, giá vé, ngày chiếu(ẩn), status
++ Bỏ xem chi tiết cùng với chỉnh create ở bên tay phải của card
++ Khi thêm thì mặc định nó sẽ hiện ngày hiện tại ra để thêm ở cột (starttime)
++ Update thì chỉ được update khi suất chiếu còn ít nhất 20p trước khi chiếu, những phim đang chiếu(showing, completed) thì không được phép chỉnh sửa nx, check thời gian cũng như phòng khi ma chuyển sang các phòng khác trong lúc update
++ Delete ko được xóa khi phim đang chiếu hoặc đã chiếu, comingsoon cbi bắt đầu trước 20p

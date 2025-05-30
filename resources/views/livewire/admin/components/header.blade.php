@@ -1,13 +1,48 @@
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.6.0/css/sharp-solid.css">
+<link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.6.0/css/all.css">
 
-<header class="bg-dark shadow-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-        <div class="text-xl font-bold text-gray-800">
-            <a href="{{ url('/') }}">MyApp</a>
+<!-- Header full width + Offcanvas -->
+    <nav class="navbar navbar-expand-lg my-3 bg-light w-100">
+        <div class="container-fluid d-flex align-items-center">
+            <button class="btn btn-outline-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <span class="navbar-brand ms-3 text-dark">Chức năng</span>
         </div>
-        <nav class="space-x-4">
-            <a href="{{ url('/') }}" class="text-gray-600 hover:text-gray-900">Home</a>
-            <a href="{{ url('/about') }}" class="text-gray-600 hover:text-gray-900">About</a>
-            <a href="{{ url('/contact') }}" class="text-gray-600 hover:text-gray-900">Contact</a>
-        </nav>
+    </nav>
+<div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+        <div class="offcanvas-header border-bottom border-secondary">
+            <h5 class="offcanvas-title" id="offcanvasMenuLabel">Chức năng</h5>
+            <button type="button" class="btn-close btn-close-dark" data-bs-dismiss="offcanvas" aria-label="Đóng"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item bg-dark text-white">
+                    <a href="#" class="text-decoration-none text-white" wire:click.prevent>
+                        <i class="fas fa-plus-circle me-2"></i>Tạo suất chiếu
+                    </a>
+                </li>
+                <li class="list-group-item bg-dark text-white">
+                    <a href="#" class="text-decoration-none text-white" wire:click.prevent>
+                        <i class="fas fa-calendar-alt me-2"></i>Xem lịch chiếu
+                    </a>
+                </li>
+                <li class="list-group-item bg-dark text-white">
+                    <a href="#" class="text-decoration-none text-white" wire:click.prevent>
+                        <i class="fas fa-search me-2"></i>Tìm kiếm/Lọc
+                    </a>
+                </li>
+                    <li class="list-group-item bg-dark text-white">
+                        <a href="#" class="text-decoration-none text-white" wire:click.prevent>
+                            <i class="fas fa-film me-2"></i>Quản lý phim
+                        </a>
+                    </li>
+                    <li class="list-group-item bg-white text-white">
+                        <a href="#" class="text-decoration-none text-white" wire:click.prevent>
+                            <i class="fas fa-door-open me-2"></i>Quản lý phòng
+                        </a>
+                    </li>
+            </ul>
+        </div>
     </div>
-</header>
