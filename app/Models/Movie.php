@@ -32,6 +32,10 @@ class Movie extends Model
         'deleted_at' => 'datetime',
     ];
 
+        public function genres()
+    {
+        return $this->belongsToMany(Genre::class, 'movie_genres');
+    }
     public function showtimes()
     {
         return $this->hasMany(Showtime::class);

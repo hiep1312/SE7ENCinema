@@ -101,7 +101,7 @@
                                         <label for="capacity" class="form-label">Tổng sức chứa</label>
                                         <input type="number"
                                                wire:model="capacity"
-                                               class="form-control @if($capacity > 500) is-invalid @endif"
+                                               class="form-control bg-dark @if($capacity > 500) is-invalid @endif"
                                                readonly>
                                         @if($capacity > 500)
                                             <div class="invalid-feedback">Vượt quá giới hạn 500 ghế</div>

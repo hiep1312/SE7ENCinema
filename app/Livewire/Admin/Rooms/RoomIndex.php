@@ -13,8 +13,10 @@ class RoomIndex extends Component
     use WithPagination;
 
     public $search = '';
-    public $perPage = 5;
+    public $perPage = 20;
     public $showDeleted = false;
+    public $statusFilter = '';
+    public $showtimeFilter = '';
 
     public function deleteRoom(array $status, int $roomId)
     {
@@ -59,6 +61,13 @@ class RoomIndex extends Component
         session()->flash('success', 'Xóa vĩnh viễn phòng chiếu thành công!');
     }
 
+    public function resetFilters()
+    {
+        $this->search = '';
+        $this->statusFilter = '';
+        $this->showtimeFilter = '';
+    }
+
     #[Title('Danh sách phòng chiếu - SE7ENCinema')]
     #[Layout('components.layouts.admin')]
     public function render()
@@ -68,6 +77,25 @@ class RoomIndex extends Component
         // Hiển thị phòng đã xóa hoặc chưa xóa
         if ($this->showDeleted) {
             $query = Room::onlyTrashed();
+        } else {
+            // Áp dụng các bộ lọc chỉ khi không xem phòng đã xóa
+            if ($this->statusFilter) {
+                $query->where('status', $this->statusFilter);
+            }
+
+            if ($this->showtimeFilter) {
+                if ($this->showtimeFilter === 'has_showtimes') {
+                    $query->whereHas('showtimes', function($q) {
+                        $q->where('start_time', '>=', now())
+                          ->where('status', 'active');
+                    });
+                } elseif ($this->showtimeFilter === 'no_showtimes') {
+                    $query->whereDoesntHave('showtimes', function($q) {
+                        $q->where('start_time', '>=', now())
+                          ->where('status', 'active');
+                    });
+                }
+            }
         }
 
         $rooms = $query

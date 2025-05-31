@@ -15,14 +15,14 @@
 
     <div class="container" data-bs-theme="dark">
         <div class="d-flex justify-content-between align-items-center my-3">
-            <h2>Quản lý phòng chiếu</h2>
+            <h2 class="text-light">Quản lý phòng chiếu</h2>
             <div>
                 @if(!$showDeleted)
-                    <a href="{{ route('admin.rooms.create') }}" class="btn btn-primary me-2">
+                    <a href="{{ route('admin.rooms.create') }}" class="btn btn-success me-2">
                         <i class="fas fa-plus me-1"></i>Thêm phòng chiếu
                     </a>
                 @endif
-                <button wire:click="$toggle('showDeleted')" class="btn btn-outline-secondary">
+                <button wire:click="$toggle('showDeleted')" class="btn btn-outline-danger">
                     @if($showDeleted)
                         <i class="fas fa-eye me-1"></i>Xem phòng hoạt động
                     @else
@@ -32,76 +32,94 @@
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-header">
-                <div class="row">
-                    <div class="col-md-6">
+        <div class="card bg-dark">
+            <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="row g-3">
+                    <!-- Tìm kiếm -->
+                    <div class="col-md-3">
                         <div class="input-group">
                             <input type="text"
                                    wire:model.live.debounce.300ms="search"
-                                   class="form-control"
+                                   class="form-control bg-dark text-light"
                                    placeholder="Tìm kiếm phòng chiếu...">
-                            <span class="input-group-text">
-                                <i class="fas fa-search"></i>
-                            </span>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <select wire:model.live="perPage" class="form-select">
-                            <option value="10">10 / trang</option>
-                            <option value="20">20 / trang</option>
-                            <option value="50">50 / trang</option>
-                        </select>
-                    </div>
+
+                    <!-- Lọc theo trạng thái -->
+                    @if(!$showDeleted)
+                        <div class="col-md-2">
+                            <select wire:model.live="statusFilter" class="form-select bg-dark text-light">
+                                <option value="">Tất cả trạng thái</option>
+                                <option value="active">Hoạt động</option>
+                                <option value="maintenance">Bảo trì</option>
+                                <option value="inactive">Ngừng hoạt động</option>
+                            </select>
+                        </div>
+
+                        <!-- Lọc theo suất chiếu -->
+                        <div class="col-md-2">
+                            <select wire:model.live="showtimeFilter" class="form-select bg-dark text-light">
+                                <option value="">Tất cả suất chiếu</option>
+                                <option value="has_showtimes">Có suất chiếu</option>
+                                <option value="no_showtimes">Không có suất chiếu</option>
+                            </select>
+                        </div>
+
+                        <!-- Reset filters -->
+                        <div class="col-md-2">
+                            <button wire:click="resetFilters" class="btn btn-outline-warning">
+                                <i class="fas fa-refresh me-1"></i>Reset
+                            </button>
+                        </div>
+                    @endif
                 </div>
             </div>
 
-            <div class="card-body">
+            <div class="card-body bg-dark">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
-                        <thead class="table-dark">
+                    <table class="table table-dark table-striped table-hover">
+                        <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                             <tr>
-                                <th>STT</th>
-                                <th>Tên phòng</th>
-                                <th>Sức chứa</th>
-                                <th>Số ghế hiện tại</th>
-                                <th>Trạng thái</th>
-                                <th style="background-color: #ff6b6b; color: white;">
+                                <th class="text-center text-light">STT</th>
+                                <th class="text-light">Tên phòng</th>
+                                <th class="text-center text-light">Sức chứa/Ghế hiện tại</th>
+                                <th class="text-center text-light">Trạng thái</th>
+                                <th class="text-center text-light">Bảo trì lần cuối</th>
+                                <th class="text-center  text-light">
                                     <i class="fas fa-calendar-alt me-1"></i>
                                     Suất chiếu tiếp theo
                                 </th>
                                 @if($showDeleted)
-                                    <th>Ngày xóa</th>
+                                    <th class="text-center text-light">Ngày xóa</th>
                                 @else
-                                    <th>Ngày tạo</th>
+                                    <th class="text-center text-light">Ngày tạo</th>
                                 @endif
-                                <th>Hành động</th>
+                                <th class="text-center text-light">Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($rooms as $room)
-                                <tr class="@if($showDeleted) table-secondary @endif">
-                                    <td>{{ $room->id }}</td>
+                                <tr class="@if($showDeleted)  @endif">
+                                    <td class="text-center  fw-bold">{{ $loop->iteration }}</td>
                                     <td>
-                                        <strong>{{ $room->name }}</strong>
+                                        <strong class="text-info">{{ $room->name }}</strong>
                                         @if($room->trashed())
                                             <span class="badge bg-danger ms-1">Đã xóa</span>
                                         @endif
                                     </td>
-                                    <td>
-                                        <span class="badge bg-info">{{ $room->capacity }} ghế</span>
+                                    <td class="text-center">
+                                        <span class="badge bg-gradient fs-6" style="background: linear-gradient(45deg, #667eea, #764ba2);">
+                                            {{ $room->capacity }}/{{ $room->seats_count }}
+                                        </span>
                                     </td>
-                                    <td>
-                                        <span class="badge bg-secondary">{{ $room->seats_count }} ghế</span>
-                                    </td>
-                                    <td>
+                                    <td class="text-center">
                                         @if(!$showDeleted)
                                             @switch($room->status)
                                                 @case('active')
                                                     <span class="badge bg-success">Hoạt động</span>
                                                     @break
                                                 @case('maintenance')
-                                                    <span class="badge bg-warning">Bảo trì</span>
+                                                    <span class="badge bg-warning text-dark">Bảo trì</span>
                                                     @break
                                                 @case('inactive')
                                                     <span class="badge bg-danger">Ngừng hoạt động</span>
@@ -111,9 +129,16 @@
                                             <span class="badge bg-secondary">Đã xóa</span>
                                         @endif
                                     </td>
+                                    <td class="text-center">
+                                        @if($room->last_maintenance_date)
+                                            <span class="text-success">{{ $room->last_maintenance_date->format('d/m/Y') }}</span>
+                                        @else
+                                            <span class="text-muted">Chưa có</span>
+                                        @endif
+                                    </td>
 
                                     <!-- CỘT SUẤT CHIẾU TIẾP THEO -->
-                                    <td style="background-color: #fff5f5; border-left: 3px solid #ff6b6b;">
+                                    <td class=" bg-opacity-10 border-start border-3">
                                         @if(!$showDeleted && $room->showtimes->count() > 0)
                                             @php $nextShowtime = $room->showtimes->first(); @endphp
                                             <div class="showtime-info">
@@ -172,77 +197,73 @@
                                             </div>
                                         @endif
                                     </td>
-
-                                    <td>
+                                    <td class="text-center">
                                         @if($showDeleted)
-                                            {{ $room->deleted_at->format('d/m/Y H:i') }}
+                                            <span class="text-danger">
+                                                {{ $room->deleted_at ? $room->deleted_at->format('d/m/Y H:i') : 'N/A' }}
+                                            </span>
                                         @else
-                                            {{ $room->created_at->format('d/m/Y H:i') }}
+                                            <span class="text-info">
+                                                {{ $room->created_at ? $room->created_at->format('d/m/Y H:i') : 'N/A' }}
+                                            </span>
                                         @endif
                                     </td>
                                     <td>
                                         @if($showDeleted)
                                             <!-- Actions for deleted rooms -->
-                                            <div class="btn-group" role="group">
+                                            <div class="d-flex gap-3 justify-content-center">
                                                 <button type="button"
                                                         wire:click="restoreRoom({{ $room->id }})"
-                                                        class="btn btn-sm btn-success d-flex align-items-center"
+                                                        class="btn btn-sm btn-success"
                                                         title="Khôi phục">
-                                                    <i class="fas fa-undo me-1"></i>
-                                                    <span>Khôi phục</span>
+                                                    <i class="fas fa-undo"></i>
                                                 </button>
                                                 <button type="button"
-                                                        class="btn btn-sm btn-danger d-flex align-items-center"
+                                                        class="btn btn-sm btn-danger"
                                                         wire:sc-model="forceDeleteRoom({{ $room->id }})"
                                                         wire:sc-confirm.warning="Bạn có chắc chắn muốn XÓA VĨNH VIỄN phòng '{{ $room->name }}'? Hành động này KHÔNG THỂ HOÀN TÁC!"
                                                         title="Xóa vĩnh viễn">
-                                                    <i class="fas fa-trash-alt me-1"></i>
-                                                    <span>Xóa vĩnh viễn</span>
+                                                    <i class="fas fa-trash-alt"></i>
                                                 </button>
                                             </div>
                                         @else
                                             <!-- Actions for active rooms -->
-                                            <div class="btn-group" role="group">
+                                            <div class="d-flex gap-3 justify-content-center">
                                                 <a href="{{ route('admin.rooms.detail', $room->id) }}"
-                                                   class="btn btn-sm btn-info d-flex align-items-center"
+                                                   class="btn btn-sm btn-info"
                                                    title="Xem chi tiết">
-                                                    <i class="fas fa-eye me-1"></i>
-                                                    <span>Chi tiết</span>
+                                                    <i class="fas fa-eye"></i>
                                                 </a>
                                                 @if(!$room->hasActiveShowtimes())
                                                     <a href="{{ route('admin.rooms.edit', $room->id) }}"
-                                                       class="btn btn-sm btn-warning d-flex align-items-center"
+                                                       class="btn btn-sm btn-warning"
                                                        title="Chỉnh sửa">
-                                                       <i class="fas fa-edit me-1"></i>
-                                                       <span>Sửa</span>
+                                                       <i class="fas fa-edit"></i>
                                                     </a>
                                                 @else
                                                     <button type="button"
-                                                            class="btn btn-sm btn-warning d-flex align-items-center"
+                                                            class="btn btn-sm btn-warning"
                                                             wire:sc-alert.error="Không thể sửa - có suất chiếu đang hoạt động"
                                                             wire:sc-model
                                                             title="Chỉnh sửa">
-                                                        <i class="fas fa-edit me-1"></i>
-                                                        <span>Sửa</span>
+                                                        <i class="fas fa-edit"></i>
                                                     </button>
                                                 @endif
                                                 @if(!$room->hasActiveShowtimes())
                                                     <button type="button"
-                                                            class="btn btn-sm btn-danger d-flex align-items-center"
+                                                            class="btn btn-sm btn-danger"
                                                             wire:sc-model="deleteRoom({{ $room->id }})"
                                                             wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa phòng '{{ $room->name }}'?"
                                                             title="Xóa">
-                                                        <i class="fas fa-trash me-1"></i>
-                                                        <span>Xóa</span>
+                                                        <i class="fas fa-trash"></i>
                                                     </button>
                                                 @else
                                                     <button type="button"
-                                                            class="btn btn-sm btn-danger disabled d-flex align-items-center"
+                                                            class="btn btn-sm btn-danger disabled"
                                                             wire:sc-alert.error="Không thể xóa - có suất chiếu trong tương lai"
                                                             wire:sc-model
                                                             title="Xóa">
-                                                        <i class="fas fa-trash me-1"></i>
-                                                        <span>Xóa</span>
+                                                        <i class="fas fa-trash"></i>
                                                     </button>
                                                 @endif
                                             </div>
@@ -268,7 +289,9 @@
                         </tbody>
                     </table>
                 </div>
-                {{ $rooms->links() }}
+                <div class="d-flex justify-content-center">
+                    {{ $rooms->links() }}
+                </div>
             </div>
         </div>
     </div>

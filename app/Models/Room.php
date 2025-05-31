@@ -19,7 +19,11 @@ class Room extends Model
         'capacity' => 'integer',
         'last_maintenance_date' => 'date',
         'deleted_at' => 'datetime',
+        'created_at' => 'datetime',  // Thêm dòng này
+        'updated_at' => 'datetime',  // Thêm dòng này
     ];
+
+    // Hoặc bạn có thể thêm accessor để format ngày
 
     public function seats()
     {
