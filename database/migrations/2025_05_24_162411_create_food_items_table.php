@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->enum('status', ['activate', 'discontinued'])->default('activate');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
