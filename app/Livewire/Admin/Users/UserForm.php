@@ -44,12 +44,12 @@ class UserForm extends Component
         ];
 
         if ($this->userId) {
-            $rules['password'] = 'nullable|min:8|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/';
+            $rules['password'] = 'nullable|min:8';
             $rules['status'] = 'nullable';
             $rules['email'] = 'required|email';
 
         } else {
-            $rules['password'] = 'required|min:8|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/';
+            $rules['password'] = 'required|min:8';
             $rules['status'] = 'in:active,inactive,banned';
             $rules['email'] = 'required|email|unique:users,email';
         }

@@ -5,8 +5,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/user', function () {
     return view('admin.user.index');
 });
-Route::prefix('admin')->name('admin.')->group(function () {
-
+Route::prefix('/admin')->name('admin.')->group(function () {
     /* Template */
     Route::view('/dashboard', 'livewire.admin.template.dashboard')->name('dashboard');
     Route::view('/buttons', 'livewire.admin.template.ui-features.buttons')->name('buttons');
@@ -22,6 +21,3 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::view('/login', 'livewire.admin.template.samples.login')->name('login');
     Route::view('/register', 'livewire.admin.template.samples.register')->name('register');
 });
-
-
-Route::view('/', 'welcome')->name('welcome');
