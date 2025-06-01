@@ -7,6 +7,8 @@ use App\Models\Movie;
 use App\Models\Room;
 use App\Models\Showtime;
 use Carbon\Carbon;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 
 class ShowtimeCreate extends Component
 {
@@ -16,6 +18,7 @@ class ShowtimeCreate extends Component
     public $selectedRoom;
     public $startTime;
     public $price;
+    public $poster;
 
     protected $rules = [
         'selectedMovie' => 'required|exists:movies,id',
@@ -38,30 +41,6 @@ class ShowtimeCreate extends Component
         'price.min' => 'Giá vé phải lớn hơn hoặc bằng 0.',
     ];
 
-    private function isValidCinemaHours($start, $end): bool
-    {
-        $startHour = $start->hour;
-        $startMinute = $start->minute;
-        $endHour = $end->hour;
-        $endMinute = $end->minute;
-
-        if ($startHour < 8) {
-            return false;
-        }
-
-        if ($endHour > 23 || ($endHour == 23 && $endMinute > 0)) {
-            return false;
-        }
-
-        if ($startHour >= 22) {
-            if ($endHour > 22 || ($endHour == 22 && $endMinute > 59)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     private function canModifyShowtime($movieId, $roomId, $startTime): array
     {
         $movie = Movie::find($movieId);
@@ -71,7 +50,7 @@ class ShowtimeCreate extends Component
             return ['success' => false, 'message' => 'Phim không tồn tại.'];
         }
 
-        if (!in_array($movie->status, ['showing', 'coming_soon'])) {
+        if (!in_array($movie->status, ['showing'])) {
             return ['success' => false, 'message' => 'Phim không trong trạng thái phù hợp để tạo suất chiếu.'];
         }
 
@@ -89,19 +68,16 @@ class ShowtimeCreate extends Component
 
         if ($now->isSameDay($start)) {
             $diffInMinutes = $now->diffInMinutes($start, false);
-            if ($diffInMinutes < 59) {
+            if ($diffInMinutes <= 59) {
                 return ['success' => false, 'message' => 'Suất chiếu phải được tạo trước ít nhất 1 tiếng.'];
             }
         } else {
             $diffInHours = $now->diffInHours($start, false);
-            if ($diffInHours < 24) {
+            if ($diffInHours <= 24) {
                 return ['success' => false, 'message' => 'Suất chiếu phải được tạo trước ít nhất 24 giờ.'];
             }
         }
 
-        if (!$this->isValidCinemaHours($start, $end)) {
-            return ['success' => false, 'message' => 'Suất chiếu phải trong khung giờ hoạt động của rạp (8:00 - 23:00). Thời gian kết thúc dự kiến: ' . $end->format('H:i')];
-        }
 
         $query = Showtime::where('room_id', $roomId)
             ->whereIn('status', ['active'])
@@ -153,9 +129,11 @@ class ShowtimeCreate extends Component
             'status' => 'active',
         ]);
 
-        return redirect()->route('manage.showtimes')->with('message', 'Tạo suất chiếu thành công!');
+        return redirect()->route('admin.manage.showtimes')->with('message', 'Tạo suất chiếu thành công!');
     }
 
+    #[Layout('components.layouts.admin')]
+    #[Title('Quản lý suất chiếu')]
     public function render()
     {
         return view('livewire.admin.showtime.showtime-create', [

@@ -1,8 +1,6 @@
 <div class="container-fluid">
     <div class="row">
-        @include('livewire.admin.components.sidebar')
-        <div class="col-md-9" style="min-height: 100vh; width: 80%;">
-            @include('livewire.admin.components.header')
+        <div class="col-md-9" style="min-height: 80vh; width: 100%;">
             <h2 class="mb-4">Tạo Suất Chiếu</h2>
 
             @if (session()->has('message'))
@@ -24,7 +22,7 @@
                     <form wire:submit.prevent="createShowtime">
                         <div class="mb-3">
                             <label for="movie" class="form-label">Phim <span class="text-danger">*</span></label>
-                            <select wire:model="selectedMovie" class="form-select" id="movie">
+                            <select wire:model.live="selectedMovie" class="form-select" id="movie">
                                 <option value="">Chọn phim</option>
                                 @foreach($movies as $movie)
                                     <option value="{{ $movie->id }}">{{ $movie->title }} ({{ $movie->format }}) - {{ $movie->status == 'showing' ? 'Đang chiếu' : 'Sắp chiếu' }}</option>
@@ -66,8 +64,32 @@
                                 <span class="text-danger small">{{ $message }}</span>
                             @enderror
                         </div>
+
+                        {{-- Ảnh phim động theo phim đã chọn --}}
+                        <div class="mb-3">
+                            <label class="form-label">Ảnh phim</label>
+                            @php
+                                $poster = 'https://png.pngtree.com/png-clipart/20190920/original/pngtree-404-robot-mechanical-vector-png-image_4627839.jpg';
+                                $movieTitle = 'Chưa chọn phim';
+                                foreach($movies as $movie) {
+                                    if ($movie->id == $selectedMovie) {
+                                        $poster = $movie->poster ?: $poster;
+                                        $movieTitle = $movie->title;
+                                        break;
+                                    }
+                                }
+                            @endphp
+                            <div class="text-left">
+                                <img src="{{ $poster }}"
+                                     class="img-thumbnail shadow-sm"
+                                     style="width: 200px; height: 300px; object-fit: cover;"
+                                     alt="Poster phim: {{ $movieTitle }}">
+                                <div class="mt-2 text-muted small">{{ $movieTitle }}</div>
+                            </div>
+                        </div>
+
                         <div class="d-flex justify-content-between">
-                            <a href="{{ route('manage.showtimes') }}" class="btn btn-secondary">Quay lại</a>
+                            <a href="{{ route('admin.manage.showtimes') }}" class="btn btn-secondary">Quay lại</a>
                             <button type="submit" class="btn btn-primary">
                                 <span wire:loading.remove>Tạo suất chiếu</span>
                                 <span wire:loading>Đang xử lý...</span>
@@ -78,5 +100,4 @@
             </div>
         </div>
     </div>
-    @include('livewire.admin.components.footer')
 </div>

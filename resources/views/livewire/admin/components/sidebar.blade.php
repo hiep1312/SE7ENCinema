@@ -65,6 +65,14 @@
         </a>
       </li>
       <li class="nav-item menu-items">
+        <a class="nav-link" href="{{ route('admin.manage.showtimes') }}">
+          <span class="menu-icon">
+            <i class="mdi mdi-movie"></i>
+          </span>
+          <span class="menu-title">Quản Lý Suất Chiếu</span>
+        </a>
+      </li>
+      <li class="nav-item menu-items">
         <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
           <span class="menu-icon">
             <i class="mdi mdi-laptop"></i>

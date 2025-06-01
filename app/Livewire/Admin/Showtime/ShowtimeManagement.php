@@ -11,6 +11,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Broadcast;
 use App\Events\ShowtimeEvent;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 
 class ShowtimeManagement extends Component
 {
@@ -23,8 +25,6 @@ class ShowtimeManagement extends Component
     public $searchFormat;
     public $showtimesData = [];
     public $isDateFiltered = false;
-    public $deleteShowtimeId;
-    public $showDeleteModal = false;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -98,10 +98,10 @@ class ShowtimeManagement extends Component
             return false;
         }
 
-        // Nếu cùng ngày, phải trước ít nhất 59 phút
+        // Nếu cùng ngày, phải trước ít nhất 30 phút
         if ($now->isSameDay($startTime)) {
             $diffInMinutes = $now->diffInMinutes($startTime);
-            if ($diffInMinutes < 30) {
+            if ($diffInMinutes <= 60) {
                 return false;
             }
 
@@ -110,7 +110,7 @@ class ShowtimeManagement extends Component
 
         // Sửa logic: Nếu khác ngày thì phải trước ít nhất 1 ngày (24 giờ)
         $diffInHours = $now->diffInHours($startTime, false);
-        if ($diffInHours < 24) {
+        if ($diffInHours <= 24) {
             return false;
         }
 
@@ -120,7 +120,7 @@ class ShowtimeManagement extends Component
 
     public function canDeleteShowtime($showtimeId): array
     {
-        $showtime = Showtime::find($showtimeId);
+        $showtime = Showtime::with(['movie', 'room'])->find($showtimeId);
 
         if (!$showtime) {
             return ['success' => false, 'message' => 'Suất chiếu không tồn tại.'];
@@ -137,24 +137,26 @@ class ShowtimeManagement extends Component
         $now = Carbon::now('Asia/Ho_Chi_Minh');
         $startTime = Carbon::parse($showtime->start_time, 'Asia/Ho_Chi_Minh');
 
-        $realTimeStatus = $this->getRealTimeStatus($showtime);
-
-        if ($realTimeStatus === 'completed') {
+        if ($showtime->isCompleted()) {
             return ['success' => false, 'message' => 'Không thể xóa suất chiếu đã hoàn thành.'];
         }
 
+        if ($showtime->isOngoing()) {
+            return ['success' => false, 'message' => 'Không thể xóa suất chiếu đang diễn ra.'];
+        }
+
         if ($now->gte($startTime)) {
-            return ['success' => false, 'message' => 'Không thể xóa suất chiếu đã bắt đầu hoặc đang diễn ra.'];
+            return ['success' => false, 'message' => 'Không thể xóa suất chiếu đã bắt đầu.'];
         }
 
         if ($now->isSameDay($startTime)) {
             $diffInMinutes = $now->diffInMinutes($startTime, false);
-            if ($diffInMinutes < 60) {
+            if ($diffInMinutes <= 60) {
                 return ['success' => false, 'message' => "Chỉ có thể xóa suất chiếu trước ít nhất 1 tiếng. Thời gian còn lại: {$diffInMinutes} phút."];
             }
         } else {
             $diffInHours = $now->diffInHours($startTime, false);
-            if ($diffInHours < 24) {
+            if ($diffInHours <= 24) {
                 return ['success' => false, 'message' => "Chỉ có thể xóa suất chiếu trước ít nhất 24 giờ. Thời gian còn lại: " . round($diffInHours, 1) . " giờ."];
             }
         }
@@ -164,6 +166,7 @@ class ShowtimeManagement extends Component
 
     public function getShowtimeDisplayData($showtime)
     {
+        $showtime->loadMissing(['movie', 'room']);
         $showtime->refresh();
         $realTimeStatus = $this->getRealTimeStatus($showtime);
         $canEdit = $this->canEditShowtime($showtime);
@@ -222,68 +225,63 @@ class ShowtimeManagement extends Component
         $this->showtimesData = $query->get();
     }
 
-    public function filterByDate()
+        public function filterByDate()
     {
         $this->resetPage();
         $this->isDateFiltered = true;
-        $this->loadShowtimes();
     }
 
-    public function openDeleteModal($id)
+   private function broadcastShowtimeUpdate($showtime, $event, $message)
     {
-        $canDelete = $this->canDeleteShowtime($id);
-        if (!$canDelete['success']) {
-            session()->flash('error', $canDelete['message']);
-            return;
+        try {
+            // Đơn giản hóa - chỉ log thay vì broadcast
+            Log::info("Showtime {$event}: {$message}", [
+                'showtime_id' => $showtime->id,
+                'movie_title' => $showtime->movie->title ?? 'N/A'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Broadcast error: ' . $e->getMessage());
         }
-        $this->deleteShowtimeId = $id;
-        $this->showDeleteModal = true;
-        $this->dispatch('open-delete-modal');
     }
 
-    public function closeDeleteModal()
+   public function deleteShowtime($result, $showtimeId)
     {
-        $this->showDeleteModal = false;
-        $this->deleteShowtimeId = null;
-        $this->dispatch('close-delete-modal');
-    }
+        // Kiểm tra kết quả từ SweetAlert
+        if ($result['isConfirmed']) {
+            $canDelete = $this->canDeleteShowtime($showtimeId);
+            if (!$canDelete['success']) {
+                session()->flash('error', $canDelete['message']);
+                return;
+            }
 
-    private function broadcastShowtimeUpdate($showtime, $event, $message)
-    {
-        Broadcast::channel('showtime-channel', function () {
-            return true;
-        });
-        broadcast(new ShowtimeEvent($showtime, $event, $message))->toOthers();
-    }
+            $showtime = Showtime::with(['movie', 'room'])->find($showtimeId);
+            if (!$showtime) {
+                session()->flash('error', 'Suất chiếu không tồn tại. Vui lòng làm mới trang và thử lại.');
+                return;
+            }
 
-    public function confirmDeleteShowtime(): void
-    {
-        $canDelete = $this->canDeleteShowtime($this->deleteShowtimeId);
-        if (!$canDelete['success']) {
-            session()->flash('error', $canDelete['message']);
-            $this->closeDeleteModal();
-            return;
+            // Kiểm tra dữ liệu liên quan
+            if (!$showtime->movie || !$showtime->room) {
+                session()->flash('error', 'Dữ liệu suất chiếu không hợp lệ (phim hoặc phòng không tồn tại).');
+                return;
+            }
+
+            try {
+                $this->broadcastShowtimeUpdate($showtime, 'showtime-deleted', 'Suất chiếu đã bị xóa');
+                $showtime->delete();
+                $this->loadShowtimes();
+                session()->flash('message', 'Xóa suất chiếu thành công!');
+            } catch (\Exception $e) {
+                Log::error('Delete showtime error', [
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'showtime_id' => $showtimeId,
+                    'exception' => $e
+                ]);
+                session()->flash('error', 'Có lỗi xảy ra khi xóa suất chiếu: ' . $e->getMessage());
+            }
         }
-
-        $showtime = Showtime::findOrFail($this->deleteShowtimeId);
-        $this->broadcastShowtimeUpdate($showtime, 'showtime-deleted', 'Suất chiếu đã bị xóa');
-        $showtime->forceDelete();
-
-        $this->closeDeleteModal();
-        $this->loadShowtimes();
-        session()->flash('message', 'Xóa suất chiếu thành công!');
-    }
-
-    public function updatedSearchMovie()
-    {
-        $this->resetPage();
-        $this->loadShowtimes();
-    }
-
-    public function updatedSearchFormat()
-    {
-        $this->resetPage();
-        $this->loadShowtimes();
     }
 
     public function refreshData()
@@ -304,18 +302,28 @@ class ShowtimeManagement extends Component
         $this->selectedDate = Carbon::today()->format('Y-m-d');
         $this->isDateFiltered = false;
         $this->resetPage();
-        $this->loadShowtimes();
     }
 
+    #[Layout('components.layouts.admin')]
+    #[Title('Quản lý suất chiếu')]
     public function render()
     {
         $this->updateShowtimeStatuses();
-        $query = Showtime::with(['movie', 'room'])->orderBy('start_time', 'desc');
 
+        $query = Showtime::with(['movie', 'room'])->orderBy('start_time', 'desc')
+            ->whereHas('movie', function ($q) {
+                $q->where('status', 'showing');
+            })
+            ->whereHas('room', function ($q) {
+                $q->where('status', 'active');
+            });
+
+        // Filter theo ngày
         if ($this->isDateFiltered && $this->selectedDate) {
             $query->whereDate('start_time', $this->selectedDate);
         }
 
+        // Filter theo tên phim và format
         if ($this->searchMovie || $this->searchFormat) {
             $query->whereHas('movie', function ($q) {
                 if ($this->searchMovie) {
@@ -328,6 +336,7 @@ class ShowtimeManagement extends Component
         }
 
         $showtimes = $query->paginate(15);
+
         return view('livewire.admin.showtime.showtime-management', compact('showtimes'));
     }
 }

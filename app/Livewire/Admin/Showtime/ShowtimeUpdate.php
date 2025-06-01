@@ -4,10 +4,11 @@ namespace App\Livewire\Admin\Showtime;
 
 use Livewire\Component;
 use App\Models\Movie;
-use Illuminate\Support\Facades\Redirect;
 use App\Models\Room;
 use App\Models\Showtime;
 use Carbon\Carbon;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 
 class ShowtimeUpdate extends Component
 {
@@ -18,6 +19,7 @@ class ShowtimeUpdate extends Component
     public $editRoom;
     public $editStartTime;
     public $editPrice;
+    public $poster;
 
     protected $rules = [
         'editMovie' => 'required|exists:movies,id',
@@ -26,29 +28,6 @@ class ShowtimeUpdate extends Component
         'editPrice' => 'nullable|numeric|min:0',
     ];
 
-    private function isValidCinemaHours($start, $end): bool
-    {
-        $startHour = $start->hour;
-        $startMinute = $start->minute;
-        $endHour = $end->hour;
-        $endMinute = $end->minute;
-
-        if ($startHour < 8) {
-            return false;
-        }
-
-        if ($endHour > 23 || ($endHour == 23 && $endMinute > 0)) {
-            return false;
-        }
-
-        if ($startHour >= 22) {
-            if ($endHour > 22 || ($endHour == 22 && $endMinute > 59)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
 
     private function canModifyShowtime($movieId, $roomId, $startTime, $excludeId = null): array
     {
@@ -77,18 +56,14 @@ class ShowtimeUpdate extends Component
 
         if ($now->isSameDay($start)) {
             $diffInMinutes = $now->diffInMinutes($start, false);
-            if ($diffInMinutes < 59) {
+            if ($diffInMinutes <= 59) {
                 return ['success' => false, 'message' => 'Suất chiếu phải được tạo trước ít nhất 1 tiếng.'];
             }
         } else {
             $diffInHours = $now->diffInHours($start, false);
-            if ($diffInHours < 24) {
+            if ($diffInHours <= 24) {
                 return ['success' => false, 'message' => 'Suất chiếu phải được tạo trước ít nhất 24 giờ.'];
             }
-        }
-
-        if (!$this->isValidCinemaHours($start, $end)) {
-            return ['success' => false, 'message' => 'Suất chiếu phải trong khung giờ hoạt động của rạp (8:00 - 23:00). Thời gian kết thúc dự kiến: ' . $end->format('H:i')];
         }
 
         $query = Showtime::where('room_id', $roomId)
@@ -184,7 +159,7 @@ class ShowtimeUpdate extends Component
         $canEdit = $this->canEditShowtime($showtime);
         if (!$canEdit['can_edit']) {
             session()->flash('error', $canEdit['message']);
-            return redirect()->route('manage.showtimes');
+            return redirect()->route('admin.manage.showtimes');
         }
 
         $this->editShowtimeId = $id;
@@ -210,6 +185,7 @@ class ShowtimeUpdate extends Component
         $start = Carbon::parse($this->editStartTime, 'Asia/Ho_Chi_Minh');
         $end = $start->copy()->addMinutes($movie->duration);
 
+
         $showtime->update([
             'movie_id' => $this->editMovie,
             'room_id' => $this->editRoom,
@@ -218,9 +194,11 @@ class ShowtimeUpdate extends Component
             'price' => $this->editPrice ?: $movie->price,
         ]);
 
-        return redirect()->route('admin.showtime.showtime-management')->with('message', 'Cập nhật suất chiếu thành công!');
+        return redirect()->route('admin.manage.showtimes')->with('message', 'Cập nhật suất chiếu thành công!');
     }
 
+    #[Layout('components.layouts.admin')]
+    #[Title('Quản lý suất chiếu')]
     public function render()
     {
         return view('livewire.admin.showtime.showtime-update', [

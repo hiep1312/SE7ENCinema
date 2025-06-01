@@ -23,7 +23,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::view('/error-500', 'livewire.admin.template.samples.error-500')->name('error-500');
     Route::view('/login', 'livewire.admin.template.samples.login')->name('login');
     Route::view('/register', 'livewire.admin.template.samples.register')->name('register');
+    Route::get('/showtime', ShowtimeManagement::class)->name('manage.showtimes');
+    Route::get('/showtime/create', ShowtimeCreate::class)->name('showtime.create');
+    Route::get('/showtime/update/{id}', ShowtimeUpdate::class)->name('showtime.update');
 });
-Route::get('/showtime', ShowtimeManagement::class)->name('manage.showtimes');
-Route::get('/showtime/create', ShowtimeCreate::class)->name('showtime.create');
-Route::get('/showtime/update/{id}', ShowtimeUpdate::class)->name('showtime.update');

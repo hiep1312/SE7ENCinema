@@ -5,9 +5,7 @@
         </div>
     </div>
     <div class="row">
-        @include('livewire.admin.components.sidebar')
-        <div class="col-md-9" style="min-height: 100vh; width: 80%;">
-            @include('livewire.admin.components.header')
+        <div class="col-md-9" style="min-height: 50vh; width: 100%;">
             <h2 class="mb-4">Quản lý suất chiếu</h2>
 
             @if (session()->has('message'))
@@ -37,7 +35,7 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="searchMovie" class="form-label">Tìm phim</label>
-                            <input type="text" wire:model.live="searchMovie" class="form-control" id="searchMovie" placeholder="Nhập tên phim">
+                            <input type="text" wire:model.live="searchMovie" class="form-control" id="searchMovie" placeholder="Nhập tên phim" value="{{ $searchMovie }}" autocomplete="on">
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="searchFormat" class="form-label">Định dạng</label>
@@ -60,7 +58,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="card-title mt-3">Danh sách suất chiếu</h5>
-                        <a href="{{ route('showtime.create') }}" class="btn text-success">
+                        <a href="{{ route('admin.showtime.create') }}" class="btn text-success">
                             <i class="fa-solid fa-square-plus" style="font-size: 40px;"></i>
                         </a>
                     </div>
@@ -95,12 +93,11 @@
                                         <td>{{ $showtime->room->name ?? 'N/A' }}</td>
                                         <td>
                                             @if($showtime->movie && $showtime->movie->poster)
-                                                <img src="https://png.pngtree.com/png-clipart/20190920/original/pngtree-404-robot-mechanical-vector-png-image_4627839.jpg"
+                                                <img src="{{ $showtime->movie->poster }}"
                                                      class="img-thumbnail"
-                                                     width="50" height="75"
+                                                     width="150" height="225"
                                                      alt="No image"
-                                                     loading="lazy"
-                                                     style="object-fit: cover;">
+                                                     >
                                             @else
                                                 <img src="https://png.pngtree.com/png-clipart/20190920/original/pngtree-404-robot-mechanical-vector-png-image_4627839.jpg"
                                                      class="img-thumbnail"
@@ -135,7 +132,7 @@
                                             @endphp
                                             <div class="btn-group" role="group">
                                                 @if($this->canEditShowtime($showtime))
-                                                    <a href="{{ route('showtime.update', $showtime->id) }}" class="btn btn-sm btn-warning" title="Chỉnh sửa suất chiếu">
+                                                    <a href="{{ route('admin.showtime.update', $showtime->id) }}" class="btn btn-sm btn-warning" title="Chỉnh sửa suất chiếu">
                                                         <i class="fas fa-edit"></i> Sửa
                                                     </a>
                                                 @else
@@ -144,7 +141,12 @@
                                                     </button>
                                                 @endif
                                                 @if($canDelete['success'])
-                                                    <button class="btn btn-sm btn-danger" wire:click="openDeleteModal({{ $showtime->id }})" title="Xóa suất chiếu">
+                                                    <button class="btn btn-sm btn-danger"
+                                                            wire:sc-confirm.warning.close="Bạn có chắc chắn muốn xóa suất chiếu này?"
+                                                            wire:sc-title="Xác nhận xóa suất chiếu"
+                                                            wire:sc-html="<div class='text-center'><strong>Phim:</strong> {{ addslashes($showtime->movie->title ?? 'N/A') }}<br><strong>Thời gian:</strong> {{ $showtime->start_time->format('d/m/Y H:i') }}<br><p class='text-danger mt-2'>Hành động này không thể hoàn tác!</p></div>"
+                                                            wire:sc-model="deleteShowtime({{ $showtime->id }})"
+                                                            title="Xóa suất chiếu">
                                                         <i class="fas fa-trash"></i> Xóa
                                                     </button>
                                                 @else
@@ -164,5 +166,4 @@
             </div>
         </div>
     </div>
-    @include('livewire.admin.components.footer')
 </div>
