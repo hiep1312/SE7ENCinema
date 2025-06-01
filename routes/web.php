@@ -1,6 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Livewire\Admin\Movies\MovieIndex;
+use App\Livewire\Admin\Movies\MovieCreate;
+use App\Livewire\Admin\Movies\MovieEdit;
+use App\Livewire\Admin\Movies\MovieShow;
+use App\Livewire\Admin\Movies\MovieTrash;
 
 
 
@@ -20,6 +25,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::view('/error-500', 'livewire.admin.template.samples.error-500')->name('error-500');
     Route::view('/login', 'livewire.admin.template.samples.login')->name('login');
     Route::view('/register', 'livewire.admin.template.samples.register')->name('register');
+    Route::get('/test', MovieTrash::class)->name('test'); 
+    Route::get('/movies', MovieIndex::class)->name('index');
+    Route::get('/create', MovieCreate::class)->name('create');
+    Route::get('/{movie}/edit', MovieEdit::class)->name('edit');
+    Route::get('/{movie}', MovieShow::class)->name('show');
 });
 
 
