@@ -1,11 +1,17 @@
 <?php
 
+use App\Livewire\Admin\Users\UserDetail;
+use App\Livewire\Admin\Users\UserEdit;
+use App\Livewire\Admin\Users\UserIndex;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function () {
-    return view('admin.user.index');
-});
 Route::prefix('/admin')->name('admin.')->group(function () {
+    Route::prefix('/users')->name('users.')->group(function () {
+        Route::get('/', UserIndex::class)->name('index');
+        Route::get('/{userId}/detail', UserDetail::class)->name('detail');
+        Route::get('/{userId}/edit', UserEdit::class)->name('edit');
+    });
+
     /* Template */
     Route::view('/dashboard', 'livewire.admin.template.dashboard')->name('dashboard');
     Route::view('/buttons', 'livewire.admin.template.ui-features.buttons')->name('buttons');

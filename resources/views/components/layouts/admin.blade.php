@@ -18,6 +18,8 @@
     <!-- Layout styles -->
     <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
     @vite(['resources/css/app.css'])
+    @stack('styles')
+    <!-- End layout styles -->
 </head>
 
 <body data-bs-theme="dark">
