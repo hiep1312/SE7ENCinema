@@ -40,7 +40,7 @@
 
         <div class="mb-3">
             <label for="end_date" class="form-label">Ngày kết thúc</label>
-            <input wire:model="end_date" type="date" class="form-control @error('end_date') is-invalid @enderror" id="end_date" min="{{ $release_date ?? now()->format('Y-m-d') }}">
+            <input wire:model="end_date" type="date" class="form-control @error('end_date') is-invalid @enderror" id="end_date">
             <small class="form-text text-muted">Ngày kết thúc phải sau hoặc bằng ngày phát hành.</small>
             @error('end_date')
                 <div class="invalid-feedback">{{ $message }}</div>
@@ -138,4 +138,18 @@
         <button type="submit" class="btn btn-primary">Thêm phim</button>
         <a href="{{ route('admin.index') }}" class="btn btn-secondary">Quay lại</a>
     </form>
+
+    @push('scripts')
+        <script>
+            document.getElementById('release_date').addEventListener('change', function() {
+                const releaseDate = this.value;
+                const endDateInput = document.getElementById('end_date');
+                if (releaseDate) {
+                    endDateInput.setAttribute('min', releaseDate);
+                } else {
+                    endDateInput.removeAttribute('min');
+                }
+            });
+        </script>
+    @endpush
 </div>

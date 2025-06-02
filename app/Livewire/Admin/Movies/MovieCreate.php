@@ -83,8 +83,6 @@ class MovieCreate extends Component
 
     public function mount()
     {
-        $this->release_date = now()->format('Y-m-d'); // Giá trị mặc định là 02/06/2025
-        $this->end_date = now()->addDay()->format('Y-m-d'); // Giá trị mặc định là 03/06/2025
         $this->age_restriction = '';
         $this->format = '';
         $this->price = null;

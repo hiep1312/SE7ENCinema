@@ -24,14 +24,14 @@
                     @endforeach
                 </select>
             </div>
-            <!-- <div class="col-md-3">
+            <div class="col-md-3">
                 <select wire:model.live="status" class="form-select">
                     <option value="">-- Tất cả trạng thái --</option>
                     <option value="coming_soon">Sắp chiếu</option>
                     <option value="showing">Đang chiếu</option>
                     <option value="ended">Đã kết thúc</option>
                 </select>
-            </div> -->
+            </div>
         </div>
     </div>
 

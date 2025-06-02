@@ -115,7 +115,7 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                                     </div>
                                     <div class="modal-body">
-                                        Bạn có chắc muốn xóa vĩnh viễn phim <strong>{{ $movie->title }}</strong>? Hành động này không thể hoàn tác.
+                                        Bạn có chắc muốn xóa vĩnh viễn phim <strong>{{ $movie->title }}</strong>?.
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
