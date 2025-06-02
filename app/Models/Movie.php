@@ -152,4 +152,62 @@ class Movie extends Model
     {
         return $this->hasMany(Showtime::class);
     }
+
+    public function showtimes()
+    {
+        return $this->hasMany(Showtime::class);
+    }
+
+    /**
+     * Kiểm tra xem phim có suất chiếu đang hoạt động không
+     */
+    public function hasActiveShowtimes()
+    {
+        return $this->showtimes()
+            ->where('end_time', '>=', now())
+            ->where('status', 'active')
+            ->exists();
+    }
+
+    /**
+     * Kiểm tra xem phim có suất chiếu trong tương lai không
+     */
+    public function hasFutureShowtimes()
+    {
+        return $this->showtimes()
+            ->where('start_time', '>', now())
+            ->where('status', 'active')
+            ->exists();
+    }
+
+    /**
+     * Lấy thời lượng phim dưới dạng giờ:phút
+     */
+    public function getFormattedDurationAttribute()
+    {
+        $hours = floor($this->duration / 60);
+        $minutes = $this->duration % 60;
+
+        if ($hours > 0) {
+            return $hours . 'h ' . $minutes . 'm';
+        }
+
+        return $minutes . 'm';
+    }
+
+    /**
+     * Kiểm tra phim có đang chiếu không
+     */
+    public function isShowing()
+    {
+        return $this->status === 'showing';
+    }
+
+    /**
+     * Kiểm tra phim có sắp chiếu không
+     */
+    public function isComingSoon()
+    {
+        return $this->status === 'coming_soon';
+    }
 }
