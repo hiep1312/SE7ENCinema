@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Booking;
+use App\Models\Rating;
+use App\Models\Comment;
 
 class User extends Authenticatable
 {
@@ -47,4 +50,18 @@ class User extends Authenticatable
     protected $casts = [
         'password' => 'hashed',
     ];
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }
