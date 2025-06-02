@@ -87,12 +87,13 @@ class FoodEdit extends Component
         // Validate món ăn chính
         $this->validate([
             'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
+            'description' => ['required', 'string'],
             'status' => ['required', Rule::in(['activate', 'discontinued'])],
             'image' => ['nullable'],
         ], [
             'name.required' => 'Tên món không được để trống.',
             'name.max' => 'Tên món không được vượt quá 255 ký tự.',
+            'description.required' => 'Mô tả món ăn là bắt buộc.',
             'status.required' => 'Trạng thái là bắt buộc.',
             'status.in' => 'Trạng thái không hợp lệ.',
         ]);

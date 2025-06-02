@@ -21,7 +21,7 @@ class FoodCreate extends Component
 
     protected $rules = [
         'name' => 'required|string|max:255',
-        'description' => 'nullable|string|max:255',
+        'description' => 'required|string|max:255',
         'photo' => 'nullable|image',
         'status' => 'required|in:activate,discontinued',
 
@@ -35,9 +35,10 @@ class FoodCreate extends Component
         'variants.*.image' => 'nullable|image',
     ];
 
-        protected $messages = [
+    protected $messages = [
         'name.required' => 'Tên món ăn là bắt buộc.',
         'name.max' => 'Tên món ăn không được vượt quá 255 ký tự.',
+        'description.required' => 'Mô tả món ăn là bắt buộc.',
         'description.max' => 'Mô tả món ăn không được vượt quá 255 ký tự.',
         'photo.image' => 'Ảnh món ăn phải là một tệp hình ảnh hợp lệ.',
         'status.in' => 'Trạng thái món ăn không hợp lệ.',
@@ -57,12 +58,12 @@ class FoodCreate extends Component
         'variants.*.image.image' => 'Ảnh biến thể phải là một tệp hình ảnh hợp lệ.',
     ];
 
-        public function addVariant()
+    public function addVariant()
     {
-        $this->variants[] = ['name' => '', 'price' => '', 'quantity' => '','limit' => '', 'status' => 'available', 'image' => null];
+        $this->variants[] = ['name' => '', 'price' => '', 'quantity' => '', 'limit' => '', 'status' => 'available', 'image' => null];
     }
 
-    
+
     public function removeVariant($index)
     {
         unset($this->variants[$index]);
@@ -75,7 +76,6 @@ class FoodCreate extends Component
     {
         $this->validate();
 
-        
 
         $imagePath = null;
         if ($this->photo) {

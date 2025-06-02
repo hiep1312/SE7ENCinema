@@ -48,7 +48,21 @@
                                     <td>{{ number_format($variant->price, 0, ',', '.') }}₫</td>
                                     <td>{{ $variant->quantity_available }}</td>
                                     <td>{{ $variant->limit }}</td>
-                                    <td>{{ $variant->status }}</td>
+                                    <td class="text-center">
+                                        @php
+                                            $status = $variant->status;
+                                            $badgeClass = 'badge bg-secondary'; // mặc định xám
+
+                                            if ($status === 'available') {
+                                                $badgeClass = 'badge bg-success'; // xanh
+                                            } elseif ($status === 'out_of_stock') {
+                                                $badgeClass = 'badge bg-danger'; // đỏ
+                                            }
+                                        @endphp
+                                        <span class="{{ $badgeClass }}">
+                                            {{ ucfirst($status) }}
+                                        </span>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

@@ -11,13 +11,6 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::prefix('food')->group(function () {
-        Route::get('/', FoodList::class)->name('food.list');
-        Route::get('/create', FoodCreate::class)->name('food.create');
-        Route::get('delete/{id}', [FoodDelete::class, 'delete'])->name('food.delete');
-        Route::get('/detail/{id}', FoodDetail::class)->name('food.detail');
-        Route::get('/edit/{id}', FoodEdit::class)->name('food.edit');
-    });
 
     /* Template */
     Route::view('/dashboard', 'livewire.admin.template.dashboard')->name('dashboard');
@@ -33,6 +26,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::view('/error-500', 'livewire.admin.template.samples.error-500')->name('error-500');
     Route::view('/login', 'livewire.admin.template.samples.login')->name('login');
     Route::view('/register', 'livewire.admin.template.samples.register')->name('register');
+});
+
+Route::prefix('admin/food')->group(function () {
+
+    Route::get('/', FoodList::class)->name('admin.food.list');
+    Route::get('/create', FoodCreate::class)->name('admin.food.create');
+    Route::get('delete/{id}', [FoodDelete::class, 'delete'])->name('admin.food.delete');
+    Route::get('/detail/{id}', FoodDetail::class)->name('admin.food.detail');
+    Route::get('/edit/{id}', FoodEdit::class)->name('admin.food.edit');
 });
 
 

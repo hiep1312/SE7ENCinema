@@ -36,7 +36,7 @@ class FoodDelete extends Component
         // Cuối cùng xoá món ăn chính
         $this->foodItem->delete();
 
-        session()->flash('message', 'Food item and its variants deleted successfully.');
+        session()->flash('success', 'Sản phẩm và các biến thể đã được xoá thành công.');
         return redirect()->route('admin.food.list');
     }
 }

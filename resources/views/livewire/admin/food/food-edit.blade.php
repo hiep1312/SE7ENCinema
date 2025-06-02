@@ -75,6 +75,11 @@
                                         <img src="{{ asset('storage/' . $variant['existing_image']) }}" width="100"
                                             class="img-thumbnail mb-2">
                                     @endif
+                                    @if (isset($variant['image']) && is_object($variant['image']))
+                                        <div class="mb-2">Ảnh mới (chưa lưu):</div>
+                                        <img src="{{ $variant['image']->temporaryUrl() }}" width="100"
+                                            class="img-thumbnail mb-2">
+                                    @endif
 
                                 </div>
                                 <div class="col">
@@ -101,11 +106,6 @@
                                     </select>
                                 </div>
                                 <div class="col">
-                                    @if (isset($variant['image']) && is_object($variant['image']))
-                                        <div class="mb-2">Ảnh mới (chưa lưu):</div>
-                                        <img src="{{ $variant['image']->temporaryUrl() }}" width="100"
-                                            class="img-thumbnail mb-2">
-                                    @endif
                                     <input type="file" class="form-control" placeholder="ảnh"
                                         wire:model="variants.{{ $index }}.image">
                                 </div>

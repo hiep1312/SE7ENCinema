@@ -3,26 +3,54 @@
 namespace App\Livewire\Admin\Food;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 use App\Models\FoodItem;
 
 class FoodList extends Component
 {
-    public $foodItems = [];
+    use WithPagination;
+
+    public string $search = '';
+    public string $statusFilter = '';
+    public string $sortDate = 'desc'; // 'desc' (mới nhất) hoặc 'asc' (cũ nhất)
+
+    protected $queryString = [
+        'search' => ['except' => ''],
+        'statusFilter' => ['except' => ''],
+        'sortDate' => ['except' => 'desc'],
+    ];
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingStatusFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSortDate()
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {
-        return view('livewire.admin.food.food-list', [
-            'foodItems' => $this->foodItems,
-        ]);
-    }
+        $query = FoodItem::query();
 
-    public function mount()
-    {
-        $this->getFoodItems();
-    }
+        if ($this->search) {
+            $query->where('name', 'like', '%' . $this->search . '%');
+        }
 
-    public function getFoodItems()
-    {
-        $this->foodItems = FoodItem::orderBy('created_at', 'desc')->get();
+        if ($this->statusFilter) {
+            $query->where('status', $this->statusFilter);
+        }
+
+        $foodItems = $query
+            ->orderBy('created_at', $this->sortDate)
+            ->paginate(10);
+
+        return view('livewire.admin.food.food-list', compact('foodItems'));
     }
 }

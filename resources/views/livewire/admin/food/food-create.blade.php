@@ -1,19 +1,5 @@
 <div class="container mt-4">
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-
-    @endif
     <h2 class="mb-4 text-primary">Thêm Món Ăn Mới</h2>
-
-    @if (session()->has('message'))
-        <div class="alert alert-success">{{ session('message') }}</div>
-    @endif
 
     <form wire:submit.prevent="save" enctype="multipart/form-data">
         <div class="mb-3">
@@ -41,7 +27,7 @@
                 <div class="mb-3">
                     <label class="form-label">Xem trước ảnh món ăn:</label>
                     <img src="{{ $photo->temporaryUrl() }}" alt="Xem trước ảnh" class="img-thumbnail"
-                        style="max-height: 200px;">
+                        style="max-height: 150px; margin-top: 30px;">
                 </div>
             @endif
             @error('image')
@@ -68,20 +54,36 @@
                 <div class="card p-3 mb-2">
                     <div class="row">
                         <div class="col">
-                            <input type="text" class="form-control" placeholder="Tên biến thể"
-                                wire:model="variants.{{ $index }}.name">
+                            <input type="text"
+                                class="form-control @error("variants.$index.name") is-invalid @enderror"
+                                placeholder="Tên biến thể" wire:model="variants.{{ $index }}.name">
+                            @error("variants.$index.name")
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col">
-                            <input type="number" class="form-control" placeholder="Giá"
-                                wire:model="variants.{{ $index }}.price">
+                            <input type="number"
+                                class="form-control @error("variants.$index.price") is-invalid @enderror"
+                                placeholder="Giá" wire:model="variants.{{ $index }}.price">
+                            @error("variants.$index.price")
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col">
-                            <input type="number" class="form-control" placeholder="Số lượng"
-                                wire:model="variants.{{ $index }}.quantity">
+                            <input type="number"
+                                class="form-control @error("variants.$index.quantity") is-invalid @enderror"
+                                placeholder="Số lượng" wire:model="variants.{{ $index }}.quantity">
+                            @error("variants.$index.quantity")
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col">
-                            <input type="number" class="form-control" placeholder="Giới hạn số lượng"
-                                wire:model="variants.{{ $index }}.limit">
+                            <input type="number"
+                                class="form-control @error("variants.$index.limit") is-invalid @enderror"
+                                placeholder="Giới hạn số lượng" wire:model="variants.{{ $index }}.limit">
+                            @error("variants.$index.limit")
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col">
                             <select class="form-select" wire:model="variants.{{ $index }}.status">
@@ -91,8 +93,12 @@
                             </select>
                         </div>
                         <div class="col">
-                            <input type="file" class="form-control" placeholder="ảnh"
-                                wire:model="variants.{{ $index }}.image">
+                            <input type="file"
+                                class="form-control @error("variants.$index.image") is-invalid @enderror"
+                                placeholder="ảnh" wire:model="variants.{{ $index }}.image">
+                            @error("variants.$index.image")
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
                             @if (isset($variant['image']) && is_object($variant['image']))
                                 <img src="{{ $variant['image']->temporaryUrl() }}" alt="Xem trước ảnh biến thể"
                                     class="img-thumbnail mt-2" style="max-height: 120px;">
