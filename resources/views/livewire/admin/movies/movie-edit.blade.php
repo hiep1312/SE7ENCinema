@@ -4,8 +4,12 @@
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
+    @if (session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
 
     <form wire:submit.prevent="update">
+        <!-- Title -->
         <div class="mb-3">
             <label for="title" class="form-label">Tiêu đề</label>
             <input wire:model="title" type="text" class="form-control @error('title') is-invalid @enderror" id="title" required>
@@ -14,6 +18,7 @@
             @enderror
         </div>
 
+        <!-- Description -->
         <div class="mb-3">
             <label for="description" class="form-label">Mô tả</label>
             <textarea wire:model="description" class="form-control @error('description') is-invalid @enderror" id="description" rows="5" placeholder="Nhập mô tả chi tiết về phim..."></textarea>
@@ -22,14 +27,16 @@
             @enderror
         </div>
 
+        <!-- Duration -->
         <div class="mb-3">
             <label for="duration" class="form-label">Thời lượng (phút)</label>
-            <input wire:model="duration" type="number" class="form-control @error('duration') is-invalid @enderror" id="duration" min="1" required>
+            <input wire:model="duration" type="number" step="1" class="form-control @error('duration') is-invalid @enderror" id="duration" min="1" required>
             @error('duration')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
 
+        <!-- Release Date -->
         <div class="mb-3">
             <label for="release_date" class="form-label">Ngày phát hành</label>
             <input wire:model="release_date" type="date" class="form-control @error('release_date') is-invalid @enderror" id="release_date" required>
@@ -38,6 +45,7 @@
             @enderror
         </div>
 
+        <!-- End Date -->
         <div class="mb-3">
             <label for="end_date" class="form-label">Ngày kết thúc (không bắt buộc)</label>
             <input wire:model="end_date" type="date" class="form-control @error('end_date') is-invalid @enderror" id="end_date">
@@ -47,6 +55,7 @@
             @enderror
         </div>
 
+        <!-- Director -->
         <div class="mb-3">
             <label for="director" class="form-label">Đạo diễn (không bắt buộc)</label>
             <input wire:model="director" type="text" class="form-control @error('director') is-invalid @enderror" id="director" placeholder="Nhập tên đạo diễn">
@@ -55,6 +64,7 @@
             @enderror
         </div>
 
+        <!-- Actors -->
         <div class="mb-3">
             <label for="actors" class="form-label">Diễn viên (không bắt buộc)</label>
             <textarea wire:model="actors" class="form-control @error('actors') is-invalid @enderror" id="actors" rows="3" placeholder="Nhập danh sách diễn viên..."></textarea>
@@ -63,6 +73,7 @@
             @enderror
         </div>
 
+        <!-- Age Restriction -->
         <div class="mb-3">
             <label for="age_restriction" class="form-label">Độ tuổi hạn chế</label>
             <select wire:model="age_restriction" class="form-select @error('age_restriction') is-invalid @enderror" id="age_restriction">
@@ -78,11 +89,16 @@
             @enderror
         </div>
 
+        <!-- Poster -->
         <div class="mb-3">
             <label for="poster" class="form-label">Poster (ảnh)</label>
             @if($movie->poster)
                 <div class="mb-2">
                     <img src="{{ asset('storage/' . $movie->poster) }}" alt="{{ $movie->title }}" style="width: 120px; height: auto;">
+                    <div class="form-check mt-2">
+                        <input wire:model="delete_poster" class="form-check-input" type="checkbox" id="delete_poster">
+                        <label class="form-check-label" for="delete_poster">Xóa poster hiện tại</label>
+                    </div>
                 </div>
             @endif
             <input wire:model="poster" type="file" class="form-control @error('poster') is-invalid @enderror" id="poster" accept="image/*">
@@ -92,6 +108,7 @@
             @enderror
         </div>
 
+        <!-- Trailer URL -->
         <div class="mb-3">
             <label for="trailer_url" class="form-label">Link trailer</label>
             <input wire:model="trailer_url" type="url" class="form-control @error('trailer_url') is-invalid @enderror" id="trailer_url">
@@ -100,6 +117,7 @@
             @enderror
         </div>
 
+        <!-- Format -->
         <div class="mb-3">
             <label for="format" class="form-label">Định dạng</label>
             <select wire:model="format" class="form-select @error('format') is-invalid @enderror" id="format">
@@ -113,14 +131,16 @@
             @enderror
         </div>
 
+        <!-- Price -->
         <div class="mb-3">
             <label for="price" class="form-label">Giá vé (VNĐ)</label>
-            <input wire:model="price" type="number" class="form-control @error('price') is-invalid @enderror" id="price" min="0" placeholder="Nhập giá vé">
+            <input wire:model="price" type="number" step="1" class="form-control @error('price') is-invalid @enderror" id="price" min="0" max="1000000" placeholder="Nhập giá vé">
             @error('price')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
 
+        <!-- Genres -->
         <div class="mb-3">
             <label class="form-label">Thể loại</label>
             <div class="row">

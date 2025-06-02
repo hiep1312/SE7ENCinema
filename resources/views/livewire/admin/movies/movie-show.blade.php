@@ -85,7 +85,7 @@
                             <th>Ngày kết thúc</th>
                             <td>{{ $movie->end_date ? \Carbon\Carbon::parse($movie->end_date)->format('d/m/Y') : 'Chưa có' }}</td>
                         </tr>
-                        <tr>
+                        <!-- <tr>
                             <th>Trạng thái</th>
                             <td>
                                 @switch($movie->status)
@@ -95,7 +95,7 @@
                                     @default <span class="badge bg-light text-dark">Không xác định</span>
                                 @endswitch
                             </td>
-                        </tr>
+                        </tr> -->
                     </table>
                 </div>
             </div>

@@ -35,39 +35,39 @@ class MovieIndex extends Component
         $this->resetPage();
     }
 
-    public function updateStatus($movieId, $status)
-    {
-        $movie = Movie::findOrFail($movieId);
-        $today = now()->startOfDay();
-        $releaseDate = \Carbon\Carbon::parse($movie->release_date);
-        $endDate = $movie->end_date ? \Carbon\Carbon::parse($movie->end_date) : null;
+    // public function updateStatus($movieId, $status)
+    // {
+    //     $movie = Movie::findOrFail($movieId);
+    //     $today = now()->startOfDay();
+    //     $releaseDate = \Carbon\Carbon::parse($movie->release_date);
+    //     $endDate = $movie->end_date ? \Carbon\Carbon::parse($movie->end_date) : null;
 
-        if ($status == 'coming_soon' && $releaseDate->lte($today)) {
-            session()->flash('error', 'Không thể đặt trạng thái "Sắp chiếu" cho phim đã đến ngày phát hành hoặc đã chiếu.');
-            return;
-        }
+    //     if ($status == 'coming_soon' && $releaseDate->lte($today)) {
+    //         session()->flash('error', 'Không thể đặt trạng thái "Sắp chiếu" cho phim đã đến ngày phát hành hoặc đã chiếu.');
+    //         return;
+    //     }
 
-        if ($status == 'showing') {
-            if ($releaseDate->gt($today)) {
-                session()->flash('error', 'Không thể đặt trạng thái "Đang chiếu" cho phim chưa đến ngày phát hành.');
-                return;
-            }
-            if ($endDate && $endDate->lt($today)) {
-                session()->flash('error', 'Không thể đặt trạng thái "Đang chiếu" cho phim đã kết thúc thời gian chiếu.');
-                return;
-            }
-        }
+    //     if ($status == 'showing') {
+    //         if ($releaseDate->gt($today)) {
+    //             session()->flash('error', 'Không thể đặt trạng thái "Đang chiếu" cho phim chưa đến ngày phát hành.');
+    //             return;
+    //         }
+    //         if ($endDate && $endDate->lt($today)) {
+    //             session()->flash('error', 'Không thể đặt trạng thái "Đang chiếu" cho phim đã kết thúc thời gian chiếu.');
+    //             return;
+    //         }
+    //     }
 
-        if ($status == 'ended') {
-            if (!$endDate || $endDate->gte($today)) {
-                session()->flash('error', 'Không thể đặt trạng thái "Đã kết thúc" khi phim vẫn đang trong thời gian chiếu.');
-                return;
-            }
-        }
+    //     if ($status == 'ended') {
+    //         if (!$endDate || $endDate->gte($today)) {
+    //             session()->flash('error', 'Không thể đặt trạng thái "Đã kết thúc" khi phim vẫn đang trong thời gian chiếu.');
+    //             return;
+    //         }
+    //     }
 
-        $movie->update(['status' => $status]);
-        session()->flash('success', 'Cập nhật trạng thái thành công');
-    }
+    //     $movie->update(['status' => $status]);
+    //     session()->flash('success', 'Cập nhật trạng thái thành công');
+    // }
 
     public function delete($movieId)
     {

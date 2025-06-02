@@ -1,13 +1,15 @@
 <div class="container mt-4">
     <h1>Danh sách phim</h1>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+
     <a href="{{ route('admin.test') }}" class="btn btn-outline-secondary mb-3">🗑️ Xem thùng rác</a>
 
     @if (session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
+        <div class="alert alert-success">{{ session('success') }}</div>
     @endif
     @if (session('error'))
-    <div class="alert alert-danger">{{ session('error') }}</div>
+        <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
     <div class="mb-3">
@@ -19,7 +21,7 @@
                 <select wire:model.live="genreId" class="form-select">
                     <option value="">-- Tất cả thể loại --</option>
                     @foreach($genres as $genre)
-                    <option value="{{ $genre->id }}">{{ $genre->name }}</option>
+                        <option value="{{ $genre->id }}">{{ $genre->name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -52,115 +54,113 @@
                 <th>Thời lượng (phút)</th>
                 <th>Ngày phát hành</th>
                 <th>Ngày kết thúc</th>
-                <th>Trạng thái</th>
+                <!-- <th>Trạng thái</th> -->
                 <th>Hành động</th>
             </tr>
         </thead>
         <tbody>
             @forelse($movies as $movie)
-            <tr>
-                <td>{{ ($movies->currentPage() - 1) * $movies->perPage() + $loop->iteration }}</td>
-                <td>
-                    @if($movie->poster)
-                    <div class="poster-wrapper">
-                        <img src="{{ asset('storage/' . $movie->poster) }}" alt="{{ $movie->title }}" class="img-fluid rounded shadow">
-                        @if($movie->trailer_url)
-                        <button type="button" class="btn-play" data-bs-toggle="modal" data-bs-target="#trailerModal{{ $movie->id }}">
-                            <i class="bi bi-play-circle-fill"></i>
-                        </button>
-                        @endif
-                    </div>
-                    @if($movie->trailer_url)
-                    <div class="modal fade" id="trailerModal{{ $movie->id }}" tabindex="-1" aria-labelledby="trailerModalLabel{{ $movie->id }}" aria-hidden="true">
-                        <div class="modal-dialog modal-lg modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Trailer: {{ $movie->title }}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
-                                </div>
-                                <div class="modal-body ratio ratio-16x9">
-                                    @php
-                                    $youtubeId = null;
-                                    if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\&\?\/]+)/', $movie->trailer_url, $matches)) {
-                                    $youtubeId = $matches[1];
-                                    }
-                                    @endphp
-                                    @if($youtubeId)
-                                    <iframe id="trailerFrame{{ $movie->id }}" src="https://www.youtube.com/embed/{{ $youtubeId }}?rel=0" allowfullscreen></iframe>
-                                    @elseif(Str::endsWith($movie->trailer_url, ['.mp4']))
-                                    <video id="trailerVideo{{ $movie->id }}" controls>
-                                        <source src="{{ $movie->trailer_url }}" type="video/mp4">
-                                    </video>
-                                    @else
-                                    <a href="{{ $movie->trailer_url }}" target="_blank">Xem trailer</a>
-                                    @endif
-                                </div>
+                <tr>
+                    <td>{{ ($movies->currentPage() - 1) * $movies->perPage() + $loop->iteration }}</td>
+                    <td>
+                        @if($movie->poster)
+                            <div class="poster-wrapper">
+                                <img src="{{ asset('storage/' . $movie->poster) }}" alt="{{ $movie->title }}" class="img-fluid rounded shadow">
+                                @if($movie->trailer_url)
+                                    <button type="button" class="btn-play" data-bs-toggle="modal" data-bs-target="#trailerModal{{ $movie->id }}">
+                                        <i class="bi bi-play-circle-fill"></i>
+                                    </button>
+                                @endif
                             </div>
-                        </div>
-                    </div>
-                    @endif
-                    @else
-                    <span>Chưa có poster</span>
-                    @endif
-                </td>
-
-                <td>{{ $movie->title }}</td>
-                <td>{{ \Illuminate\Support\Str::limit($movie->description, 100) }}</td>
-                <td>
-                    @if($movie->genres && $movie->genres->count())
-                    {{ $movie->genres->pluck('name')->implode(', ') }}
-                    @else
-                    <span>Không có</span>
-                    @endif
-                </td>
-                <td>{{ $movie->director ?? 'Chưa có' }}</td>
-                <td>{{ \Illuminate\Support\Str::limit($movie->actors ?? 'Chưa có', 50) }}</td>
-                <td>
-                    @switch($movie->age_restriction)
-                    @case('P') Tất cả @break
-                    @case('K') K @break
-                    @case('T13') T13 @break
-                    @case('T16') T16 @break
-                    @case('T18') T18 @break
-                    @case('C') C @break
-                    @default Không xác định
-                    @endswitch
-                </td>
-                <td>{{ $movie->format }}</td>
-                <td>{{ number_format($movie->price, 0, ',', '.') }} VNĐ</td>
-                <td>{{ $movie->duration }}</td>
-                <td>{{ \Carbon\Carbon::parse($movie->release_date)->format('d/m/Y') }}</td>
-                <td>
-                    @if($movie->end_date)
-                    {{ \Carbon\Carbon::parse($movie->end_date)->format('d/m/Y') }}
-                    @else
-                    <span>Chưa có</span>
-                    @endif
-                </td>
-                <td>
-                    <select wire:model.live="updateStatus.{{ $movie->id }}" class="form-select form-select-sm" wire:change="updateStatus({{ $movie->id }}, $event.target.value)">
-                        <option value="coming_soon" {{ $movie->status == 'coming_soon' ? 'selected' : '' }}>Sắp chiếu</option>
-                        <option value="showing" {{ $movie->status == 'showing' ? 'selected' : '' }}>Đang chiếu</option>
-                        <option value="ended" {{ $movie->status == 'ended' ? 'selected' : '' }}>Đã kết thúc</option>
-                    </select>
-                </td>
-                <td class="text-center">
-                    <a href="{{ route('admin.show', $movie->id) }}" class="btn btn-sm btn-primary me-1" title="Xem chi tiết">
-                        <i class="bi bi-eye-fill"></i>
-                    </a>
-                    <a href="{{ route('admin.edit', $movie->id) }}" class="btn btn-sm btn-warning me-1" title="Sửa">
-                        <i class="bi bi-pencil-fill"></i>
-                    </a>
-                    <button wire:click="delete({{ $movie->id }})" class="btn btn-sm btn-danger" title="Xóa" onclick="return confirm('Bạn có chắc muốn xóa phim này?');">
-                        <i class="bi bi-trash-fill"></i>
-                    </button>
-                </td>
-
-            </tr>
+                            @if($movie->trailer_url)
+                                <div class="modal fade" id="trailerModal{{ $movie->id }}" tabindex="-1" aria-labelledby="trailerModalLabel{{ $movie->id }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Trailer: {{ $movie->title }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                                            </div>
+                                            <div class="modal-body ratio ratio-16x9">
+                                                @php
+                                                    $youtubeId = null;
+                                                    if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\&\?\/]+)/', $movie->trailer_url, $matches)) {
+                                                        $youtubeId = $matches[1];
+                                                    }
+                                                @endphp
+                                                @if($youtubeId)
+                                                    <iframe id="trailerFrame{{ $movie->id }}" src="https://www.youtube.com/embed/{{ $youtubeId }}?rel=0" allowfullscreen></iframe>
+                                                @elseif(Str::endsWith($movie->trailer_url, ['.mp4']))
+                                                    <video id="trailerVideo{{ $movie->id }}" controls>
+                                                        <source src="{{ $movie->trailer_url }}" type="video/mp4">
+                                                    </video>
+                                                @else
+                                                    <a href="{{ $movie->trailer_url }}" target="_blank">Xem trailer</a>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        @else
+                            <span>Chưa có poster</span>
+                        @endif
+                    </td>
+                    <td>{{ $movie->title }}</td>
+                    <td>{{ \Illuminate\Support\Str::limit($movie->description, 100) }}</td>
+                    <td>
+                        @if($movie->genres && $movie->genres->count())
+                            {{ $movie->genres->pluck('name')->implode(', ') }}
+                        @else
+                            <span>Không có</span>
+                        @endif
+                    </td>
+                    <td>{{ $movie->director ?? 'Chưa có' }}</td>
+                    <td>{{ \Illuminate\Support\Str::limit($movie->actors ?? 'Chưa có', 50) }}</td>
+                    <td>
+                        @switch($movie->age_restriction)
+                            @case('P') Tất cả @break
+                            @case('K') K @break
+                            @case('T13') T13 @break
+                            @case('T16') T16 @break
+                            @case('T18') T18 @break
+                            @case('C') C @break
+                            @default Không xác định
+                        @endswitch
+                    </td>
+                    <td>{{ $movie->format }}</td>
+                    <td>{{ number_format($movie->price, 0, ',', '.') }} VNĐ</td>
+                    <td>{{ $movie->duration }}</td>
+                    <td>{{ \Carbon\Carbon::parse($movie->release_date)->format('d/m/Y') }}</td>
+                    <td>
+                        @if($movie->end_date)
+                            {{ \Carbon\Carbon::parse($movie->end_date)->format('d/m/Y') }}
+                        @else
+                            <span>Chưa có</span>
+                        @endif
+                    </td>
+                    <!-- <td>
+                        <select wire:model.live="updateStatus.{{ $movie->id }}" class="form-select form-select-sm" wire:change="updateStatus({{ $movie->id }}, $event.target.value)">
+                            <option value="coming_soon" {{ $movie->status == 'coming_soon' ? 'selected' : '' }}>Sắp chiếu</option>
+                            <option value="showing" {{ $movie->status == 'showing' ? 'selected' : '' }}>Đang chiếu</option>
+                            <option value="ended" {{ $movie->status == 'ended' ? 'selected' : '' }}>Đã kết thúc</option>
+                        </select>
+                    </td> -->
+                    <td>
+                        <a href="{{ route('admin.show', $movie->id) }}" class="btn mb-1" title="Xem chi tiết">
+                            <i class="bi bi-eye" style="color: #00f;"></i>
+                        </a>
+                        <a href="{{ route('admin.edit', $movie->id) }}" class="btn mb-1" title="Sửa">
+                            <i class="bi bi-pencil-square" style="color: #ff0;"></i>
+                        </a>
+                        <button wire:click="delete({{ $movie->id }})" class="btn mb-1" title="Xóa mềm" onclick="return confirm('Bạn có chắc muốn chuyển phim này vào thùng rác?');">
+                            <i class="bi bi-trash" style="color: #f00;"></i>
+                        </button>
+                    </td>
+                </tr>
             @empty
-            <tr>
-                <td colspan="15" class="text-center">Không có phim nào</td>
-            </tr>
+                <tr>
+                    <td colspan="15" class="text-center">Không có phim nào</td>
+                </tr>
             @endforelse
         </tbody>
     </table>

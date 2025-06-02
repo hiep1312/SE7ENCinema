@@ -20,11 +20,11 @@ class MovieCreate extends Component
     public $end_date;
     public $director;
     public $actors;
-    public $age_restriction = 'P';
+    public $age_restriction = '';
     public $poster;
     public $trailer_url;
-    public $format = '2D';
-    public $price = 0;
+    public $format = '';
+    public $price = null;
     public $genre_ids = [];
 
     protected function rules()
@@ -32,8 +32,8 @@ class MovieCreate extends Component
         return [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
-            'duration' => 'required|integer|min:1',
-            'release_date' => 'required|date|after_or_equal:today',
+            'duration' => 'required|integer|min:1|max:300',
+            'release_date' => 'required|date|after_or_equal:' . now()->format('Y-m-d'),
             'end_date' => 'nullable|date|after_or_equal:release_date',
             'director' => 'nullable|string|max:255',
             'actors' => 'nullable|string|max:1000',
@@ -41,42 +41,54 @@ class MovieCreate extends Component
             'poster' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'trailer_url' => 'nullable|url',
             'format' => 'required|in:2D,3D,4DX,IMAX',
-            'price' => 'required|integer|min:0',
+            'price' => 'required|integer|min:0|max:1000000',
             'genre_ids' => 'required|array|min:1',
             'genre_ids.*' => 'exists:genres,id',
         ];
     }
 
     protected $messages = [
-        'title.required' => 'Vui lòng nhập tên phim.',
-        'title.max' => 'Tên phim không được vượt quá 255 ký tự.',
+        'title.required' => 'Vui lòng nhập tiêu đề phim.',
+        'title.string' => 'Tiêu đề phải là chuỗi ký tự.',
+        'title.max' => 'Tiêu đề không được vượt quá 255 ký tự.',
         'description.max' => 'Mô tả không được vượt quá 1000 ký tự.',
         'duration.required' => 'Vui lòng nhập thời lượng phim.',
         'duration.integer' => 'Thời lượng phải là số nguyên.',
         'duration.min' => 'Thời lượng phải lớn hơn hoặc bằng 1 phút.',
+        'duration.max' => 'Thời lượng không được vượt quá 300 phút.',
         'release_date.required' => 'Vui lòng nhập ngày phát hành.',
         'release_date.date' => 'Ngày phát hành không hợp lệ.',
-        'release_date.after_or_equal' => 'Ngày phát hành phải là hôm nay hoặc trong tương lai.',
+        'release_date.after_or_equal' => 'Ngày phát hành phải từ hôm nay (02/06/2025) trở đi.',
         'end_date.date' => 'Ngày kết thúc không hợp lệ.',
-        'end_date.after_or_equal' => 'Ngày kết thúc phải cùng hoặc sau ngày phát hành.',
+        'end_date.after_or_equal' => 'Ngày kết thúc phải sau hoặc bằng ngày phát hành.',
         'director.max' => 'Tên đạo diễn không được vượt quá 255 ký tự.',
         'actors.max' => 'Danh sách diễn viên không được vượt quá 1000 ký tự.',
         'age_restriction.required' => 'Vui lòng chọn độ tuổi hạn chế.',
-        'age_restriction.in' => 'Độ tuổi hạn chế không hợp lệ.',
+        'age_restriction.in' => 'Độ tuổi hạn chế không hợp lệ (P, K, T13, T16, T18, C).',
         'poster.image' => 'Poster phải là file ảnh.',
-        'poster.mimes' => 'Poster chỉ chấp nhận định dạng jpeg, png, jpg.',
+        'poster.mimes' => 'Poster chỉ chấp nhận định dạng JPEG, PNG, JPG.',
         'poster.max' => 'Kích thước poster tối đa 2MB.',
-        'trailer_url.url' => 'Link trailer không hợp lệ.',
-        'format.required' => 'Vui lòng chọn định dạng.',
-        'format.in' => 'Định dạng không hợp lệ.',
+        'trailer_url.url' => 'Link trailer không hợp lệ (phải là URL).',
+        'format.required' => 'Vui lòng chọn định dạng phim.',
+        'format.in' => 'Định dạng không hợp lệ. Vui lòng chọn từ 2D, 3D, 4DX, hoặc IMAX.',
         'price.required' => 'Vui lòng nhập giá vé.',
         'price.integer' => 'Giá vé phải là số nguyên.',
-        'price.min' => 'Giá vé phải lớn hơn hoặc bằng 0.',
-        'genre_ids.required' => 'Vui lòng chọn ít nhất 1 thể loại.',
+        'price.min' => 'Giá vé phải lớn hơn hoặc bằng 0 VNĐ.',
+        'price.max' => 'Giá vé không được vượt quá 1,000,000 VNĐ.',
+        'genre_ids.required' => 'Vui lòng chọn ít nhất một thể loại.',
         'genre_ids.array' => 'Thể loại không hợp lệ.',
-        'genre_ids.min' => 'Phải chọn ít nhất 1 thể loại.',
-        'genre_ids.*.exists' => 'Thể loại chọn không tồn tại.',
+        'genre_ids.min' => 'Vui lòng chọn ít nhất một thể loại.',
+        'genre_ids.*.exists' => 'Thể loại đã chọn không tồn tại.',
     ];
+
+    public function mount()
+    {
+        $this->release_date = now()->format('Y-m-d'); // Giá trị mặc định là 02/06/2025
+        $this->end_date = now()->addDay()->format('Y-m-d'); // Giá trị mặc định là 03/06/2025
+        $this->age_restriction = '';
+        $this->format = '';
+        $this->price = null;
+    }
 
     public function store()
     {
@@ -94,7 +106,7 @@ class MovieCreate extends Component
     }
 
     #[Layout('components.layouts.admin')]
-    #[Title('Quản lý phim')]
+    #[Title('Thêm phim mới')]
 
     public function render()
     {
