@@ -85,17 +85,6 @@
                             <th>Ngày kết thúc</th>
                             <td>{{ $movie->end_date ? \Carbon\Carbon::parse($movie->end_date)->format('d/m/Y') : 'Chưa có' }}</td>
                         </tr>
-                        <!-- <tr>
-                            <th>Trạng thái</th>
-                            <td>
-                                @switch($movie->status)
-                                    @case('coming_soon') <span class="badge bg-warning">Sắp chiếu</span> @break
-                                    @case('showing') <span class="badge bg-success">Đang chiếu</span> @break
-                                    @case('ended') <span class="badge bg-secondary">Đã kết thúc</span> @break
-                                    @default <span class="badge bg-light text-dark">Không xác định</span>
-                                @endswitch
-                            </td>
-                        </tr> -->
                     </table>
                 </div>
             </div>
