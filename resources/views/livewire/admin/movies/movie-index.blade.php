@@ -2,7 +2,6 @@
     <h1>Danh sách phim</h1>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
-
     <a href="{{ route('admin.test') }}" class="btn btn-outline-secondary mb-3">🗑️ Xem thùng rác</a>
 
     @if (session('success'))
@@ -25,14 +24,14 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-3">
+            <!-- <div class="col-md-3">
                 <select wire:model.live="status" class="form-select">
                     <option value="">-- Tất cả trạng thái --</option>
                     <option value="coming_soon">Sắp chiếu</option>
                     <option value="showing">Đang chiếu</option>
                     <option value="ended">Đã kết thúc</option>
                 </select>
-            </div>
+            </div> -->
         </div>
     </div>
 
@@ -54,7 +53,6 @@
                 <th>Thời lượng (phút)</th>
                 <th>Ngày phát hành</th>
                 <th>Ngày kết thúc</th>
-                <!-- <th>Trạng thái</th> -->
                 <th>Hành động</th>
             </tr>
         </thead>
@@ -138,13 +136,6 @@
                             <span>Chưa có</span>
                         @endif
                     </td>
-                    <!-- <td>
-                        <select wire:model.live="updateStatus.{{ $movie->id }}" class="form-select form-select-sm" wire:change="updateStatus({{ $movie->id }}, $event.target.value)">
-                            <option value="coming_soon" {{ $movie->status == 'coming_soon' ? 'selected' : '' }}>Sắp chiếu</option>
-                            <option value="showing" {{ $movie->status == 'showing' ? 'selected' : '' }}>Đang chiếu</option>
-                            <option value="ended" {{ $movie->status == 'ended' ? 'selected' : '' }}>Đã kết thúc</option>
-                        </select>
-                    </td> -->
                     <td>
                         <a href="{{ route('admin.show', $movie->id) }}" class="btn mb-1" title="Xem chi tiết">
                             <i class="bi bi-eye" style="color: #00f;"></i>
@@ -152,14 +143,33 @@
                         <a href="{{ route('admin.edit', $movie->id) }}" class="btn mb-1" title="Sửa">
                             <i class="bi bi-pencil-square" style="color: #ff0;"></i>
                         </a>
-                        <button wire:click="delete({{ $movie->id }})" class="btn mb-1" title="Xóa mềm" onclick="return confirm('Bạn có chắc muốn chuyển phim này vào thùng rác?');">
+                        <button type="button" class="btn mb-1" title="Xóa mềm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $movie->id }}">
                             <i class="bi bi-trash" style="color: #f00;"></i>
                         </button>
+
+                        <!-- Delete Confirmation Modal -->
+                        <div class="modal fade" id="deleteModal{{ $movie->id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ $movie->id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteModalLabel{{ $movie->id }}">Xác nhận xóa phim</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Bạn có chắc muốn chuyển phim <strong>{{ $movie->title }}</strong> vào thùng rác?.
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                        <button type="button" class="btn btn-danger" wire:click="delete({{ $movie->id }})" data-bs-dismiss="modal">Xóa</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="15" class="text-center">Không có phim nào</td>
+                    <td colspan="14" class="text-center">Không có phim nào</td>
                 </tr>
             @endforelse
         </tbody>

@@ -80,12 +80,50 @@
                     <td>{{ $movie->duration }}</td>
                     <td>{{ $movie->deleted_at->format('d/m/Y H:i') }}</td>
                     <td>
-                        <button wire:click="restore({{ $movie->id }})" class="btn btn-sm btn-success mb-1" title="Khôi phục" onclick="return confirm('Khôi phục phim này?')">
+                        <button type="button" class="btn btn-sm btn-success mb-1" title="Khôi phục" data-bs-toggle="modal" data-bs-target="#restoreModal{{ $movie->id }}">
                             <i class="bi bi-arrow-counterclockwise"></i>
                         </button>
-                        <button wire:click="forceDelete({{ $movie->id }})" class="btn btn-sm btn-danger mb-1" title="Xóa vĩnh viễn" onclick="return confirm('Bạn có chắc muốn xóa phim này vĩnh viễn?')">
+                        <button type="button" class="btn btn-sm btn-danger mb-1" title="Xóa vĩnh viễn" data-bs-toggle="modal" data-bs-target="#forceDeleteModal{{ $movie->id }}">
                             <i class="bi bi-trash"></i>
                         </button>
+
+                        <!-- Restore Confirmation Modal -->
+                        <div class="modal fade" id="restoreModal{{ $movie->id }}" tabindex="-1" aria-labelledby="restoreModalLabel{{ $movie->id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="restoreModalLabel{{ $movie->id }}">Xác nhận khôi phục phim</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Bạn có muốn khôi phục phim <strong>{{ $movie->title }}</strong> từ thùng rác?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                        <button type="button" class="btn btn-success" wire:click="restore({{ $movie->id }})" data-bs-dismiss="modal">Khôi phục</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Force Delete Confirmation Modal -->
+                        <div class="modal fade" id="forceDeleteModal{{ $movie->id }}" tabindex="-1" aria-labelledby="forceDeleteModalLabel{{ $movie->id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="forceDeleteModalLabel{{ $movie->id }}">Xác nhận xóa vĩnh viễn</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Bạn có chắc muốn xóa vĩnh viễn phim <strong>{{ $movie->title }}</strong>? Hành động này không thể hoàn tác.
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                        <button type="button" class="btn btn-danger" wire:click="forceDelete({{ $movie->id }})" data-bs-dismiss="modal">Xóa vĩnh viễn</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </td>
                 </tr>
             @empty

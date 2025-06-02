@@ -8,6 +8,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Storage;
 
 class MovieTrash extends Component
 {
@@ -43,16 +44,27 @@ class MovieTrash extends Component
 
     public function restore($movieId)
     {
-        $movie = Movie::onlyTrashed()->findOrFail($movieId);
-        $movie->restore();
-        session()->flash('success', 'Phim đã được khôi phục.');
+        try {
+            $movie = Movie::onlyTrashed()->findOrFail($movieId);
+            $movie->restore();
+            session()->flash('success', 'Phim đã được khôi phục thành công.');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Khôi phục phim thất bại: ' . $e->getMessage());
+        }
     }
 
     public function forceDelete($movieId)
     {
-        $movie = Movie::onlyTrashed()->findOrFail($movieId);
-        $movie->forceDelete();
-        session()->flash('success', 'Xóa phim vĩnh viễn thành công.');
+        try {
+            $movie = Movie::onlyTrashed()->findOrFail($movieId);
+            if ($movie->poster) {
+                Storage::disk('public')->delete($movie->poster);
+            }
+            $movie->forceDelete();
+            session()->flash('success', 'Xóa phim vĩnh viễn thành công.');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Xóa vĩnh viễn thất bại: ' . $e->getMessage());
+        }
     }
 
     #[Layout('components.layouts.admin')]
