@@ -102,7 +102,7 @@
                                 <tr>
                                     <td class="text-center fw-bold">{{ $loop->iteration }}</td>
                                     <td>
-                                        <strong class="text-info">{{ $room->name }}</strong>
+                                        <strong class="text-light">{{ $room->name }}</strong>
                                         @if($room->trashed())
                                             <span class="badge bg-danger ms-1">Đã xóa</span>
                                         @endif
@@ -113,7 +113,7 @@
                                         </span>
                                     </td>
                                     <td class="text-center">
-                                        @if(!$showDeleted)
+                                        @if(!$showDeleted && !$room->trashed())
                                             @switch($room->status)
                                                 @case('active')
                                                     <span class="badge bg-success">Hoạt động</span>
@@ -131,7 +131,7 @@
                                     </td>
                                     <td class="text-center">
                                         @if($room->last_maintenance_date)
-                                            <span class="text-success">{{ $room->last_maintenance_date->format('d/m/Y') }}</span>
+                                            <span class="text-light">{{ $room->last_maintenance_date->format('d/m/Y') }}</span>
                                         @else
                                             <span class="text-muted">Chưa có</span>
                                         @endif
@@ -167,7 +167,7 @@
                                                 <div class="showtime-price mb-1">
                                                     <i class="fas fa-money-bill me-1 text-warning"></i>
                                                     <span class="text-warning">
-                                                        {{ number_format($nextShowtime->price) }}đ
+                                                        {{ number_format($nextShowtime->price,0, '.', '.') }}đ
                                                     </span>
                                                 </div>
 
@@ -199,11 +199,11 @@
                                     </td>
                                     <td class="text-center">
                                         @if($showDeleted)
-                                            <span class="text-danger">
+                                            <span class="text-light">
                                                 {{ $room->deleted_at ? $room->deleted_at->format('d/m/Y H:i') : 'N/A' }}
                                             </span>
                                         @else
-                                            <span class="text-info">
+                                            <span class="text-light">
                                                 {{ $room->created_at ? $room->created_at->format('d/m/Y H:i') : 'N/A' }}
                                             </span>
                                         @endif
@@ -259,7 +259,7 @@
                                                     </button>
                                                 @else
                                                     <button type="button"
-                                                            class="btn btn-sm btn-danger disabled"
+                                                            class="btn btn-sm btn-danger"
                                                             wire:sc-alert.error="Không thể xóa phòng có suất chiếu trong tương lai"
                                                             wire:sc-model
                                                             title="Xóa">
