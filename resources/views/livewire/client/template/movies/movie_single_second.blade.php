@@ -1,5 +1,4 @@
-
-@extends('components.layouts.client')
+@extends('clienttest')
 @section("content")
 	<!-- prs video top Start -->
 	<div class="prs_top_video_section_wrapper">

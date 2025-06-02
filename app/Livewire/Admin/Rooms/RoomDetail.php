@@ -5,239 +5,122 @@ namespace App\Livewire\Admin\Rooms;
 use App\Models\Room;
 use Livewire\Component;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\WithPagination;
 
 class RoomDetail extends Component
 {
-    public $roomId;
+    use WithPagination;
     public $room;
-    public $activeTab = 'overview';
+    public $tabCurrent = 'overview';
 
-    // Statistics
-    public $totalShowtimes = 0;
-    public $averageUtilization = 0;
-    public $maintenanceScore = 0;
-    public $upcomingShowtimes = [];
-    public $recentBookings;
-    public $recentShowtimes;
+    // Biến tính toán thống kê tống quan
+    public $totalShowtimes = 0; /* Tổng số suất chiếu trong 30 */
+    public $averageUtilization = 0; /* Mức độ sử dụng */
+    public $maintenanceScore = 0; /* Điểm bảo trì */
 
-    // Maintenance tracking
-    public $nextMaintenanceDate;
-    public $daysUntilMaintenance;
-    public $hoursUntilMaintenance;
-    public $minutesUntilMaintenance;
-    public $maintenanceStatus;
-    public $daysSinceLastMaintenance;
+    // Biến tính toán thời gian bảo trì
+    public $referenceDate; /* Ngày bảo trì cuối cùng */
+    public $nextMaintenanceDate; /* Ngày bảo trì tiếp theo */
+    public $maintenanceStatus = null; /* Trạng thái bảo trì */
+    public $daysSinceLastMaintenance; /* Số ngày từ lần bảo trì cuối cùng */
+    public $totalSecondsUntilMaintenance; /* Tổng số giây kể từ ngày bảo trì tiếp theo */
+    public $totalDaysIn3Months; /* Tổng số ngày trong 3 tháng */
+    public $realTimeCountdown = []; /* Cập nhật thời gian thực */
 
-    // Thêm các thuộc tính mới cho thời gian đếm ngược chi tiết
-    public $totalSecondsUntilMaintenance;
-    public $realTimeCountdown = [];
+    // Biến chuyển đổi
+    public array $daysOfWeek = [
+        'Monday'    => 'Thứ hai',
+        'Tuesday'   => 'Thứ ba',
+        'Wednesday' => 'Thứ tư',
+        'Thursday'  => 'Thứ năm',
+        'Friday'    => 'Thứ sáu',
+        'Saturday'  => 'Thứ bảy',
+        'Sunday'    => 'Chủ nhật',
+    ];
 
-    public function mount($roomId)
+    public function mount(int $room)
     {
-        $this->roomId = $roomId;
         $this->room = Room::with([
             'seats',
             'showtimes' => function($query) {
-                $query->with(['movie' => function($movieQuery) {
-                        $movieQuery->withTrashed();
-                    }])
-                    ->orderBy('start_time', 'desc');
+                $query->with('movie')->orderBy('start_time', 'desc');
             }
-        ])->findOrFail($roomId);
-
-        // Get recent showtimes separately
-        $this->recentShowtimes = $this->room->showtimes()
-            ->with(['movie' => function($movieQuery) {
-                $movieQuery->withTrashed();
-            }])
-            ->orderBy('start_time', 'desc')
-            ->take(10)
-            ->get();
-
-        // Khởi tạo recentBookings là collection rỗng
-        $this->recentBookings = collect();
+        ])->findOrFail($room);
 
         $this->calculateStatistics();
         $this->calculateMaintenanceInfo();
-        $this->loadUpcomingShowtimes();
     }
 
-    public function setActiveTab($tab)
+    public function calculateMaintenanceInfo()
     {
-        $this->activeTab = $tab;
-    }
+        // Lấy ngày tham chiếu (last_maintenance_date (nếu có) hoặc created_at)
+        $this->referenceDate = Carbon::parse($this->room->last_maintenance_date ?: $this->room->created_at);
+        $this->totalDaysIn3Months = $this->referenceDate->copy()->diffInDays($this->referenceDate->copy()->addMonths(3));
 
-    private function calculateMaintenanceInfo()
-    {
-        // Lấy ngày tham chiếu (last_maintenance_date hoặc created_at)
-        $referenceDate = $this->room->last_maintenance_date
-            ? Carbon::parse($this->room->last_maintenance_date)
-            : Carbon::parse($this->room->created_at);
+        // Tính ngày bảo trì tiếp theo (3 tháng sau đó)
+        $this->nextMaintenanceDate = $this->referenceDate->copy()->addMonths(3);
 
-        // Tính ngày bảo trì tiếp theo (3 tháng từ ngày tham chiếu)
-        $this->nextMaintenanceDate = $referenceDate->copy()->addMonths(3);
+        // Tính số ngày từ lần bảo trì cuối & Tổng số giây kể từ ngày bảo trì tiếp theo
+        $this->daysSinceLastMaintenance = $this->referenceDate->diffInDays(now());
+        $this->totalSecondsUntilMaintenance = now()->diffInSeconds($this->nextMaintenanceDate, true);
 
-        // Tính số ngày từ lần bảo trì cuối
-        $this->daysSinceLastMaintenance = $referenceDate->diffInDays(now());
+        //Tính ngày giờ phút giây kể từ ngày bảo trì tiếp theo
+        $totalSeconds = $this->totalSecondsUntilMaintenance;
+        $daysDiffMaintenanceDate = floor($totalSeconds / 86400);
+        $hoursDiffMaintenanceDate = floor(($totalSeconds % 86400) / 3600);
+        $minutesDiffMaintenanceDate = floor(($totalSeconds % 3600) / 60);
+        $secondsDiffMaintenanceDate = $totalSeconds % 60;
 
-        // Tính thời gian còn lại đến lần bảo trì tiếp theo
-        $now = now();
+        if ($this->nextMaintenanceDate->isPast()) $this->maintenanceStatus = 'overdue';
+        else $secondsDiffMaintenanceDate += 1;
 
-        if ($this->nextMaintenanceDate->isPast()) {
-            // Đã quá hạn bảo trì
-            $this->totalSecondsUntilMaintenance = -$now->diffInSeconds($this->nextMaintenanceDate);
-            $overdueDays = $now->diffInDays($this->nextMaintenanceDate);
-            $overdueHours = $now->copy()->subDays($overdueDays)->diffInHours($this->nextMaintenanceDate);
-            $overdueMinutes = $now->copy()->subDays($overdueDays)->subHours($overdueHours)->diffInMinutes($this->nextMaintenanceDate);
-            $overdueSeconds = $now->copy()->subDays($overdueDays)->subHours($overdueHours)->subMinutes($overdueMinutes)->diffInSeconds($this->nextMaintenanceDate);
+        $this->realTimeCountdown = [
+            'days' => $daysDiffMaintenanceDate,
+            'hours' => $hoursDiffMaintenanceDate,
+            'minutes' => $minutesDiffMaintenanceDate,
+            'seconds' => $secondsDiffMaintenanceDate
+        ];
 
-            $this->daysUntilMaintenance = -$overdueDays;
-            $this->hoursUntilMaintenance = -$overdueHours;
-            $this->minutesUntilMaintenance = -$overdueMinutes;
-            $this->realTimeCountdown = [
-                'days' => -$overdueDays,
-                'hours' => -$overdueHours,
-                'minutes' => -$overdueMinutes,
-                'seconds' => -$overdueSeconds
-            ];
-            $this->maintenanceStatus = 'overdue';
-        } else {
-            // Còn thời gian
-            $this->totalSecondsUntilMaintenance = $now->diffInSeconds($this->nextMaintenanceDate);
-
-            $totalSeconds = $this->totalSecondsUntilMaintenance;
-            $days = floor($totalSeconds / 86400);
-            $hours = floor(($totalSeconds % 86400) / 3600);
-            $minutes = floor(($totalSeconds % 3600) / 60);
-            $seconds = $totalSeconds % 60;
-
-            $this->daysUntilMaintenance = $days;
-            $this->hoursUntilMaintenance = $hours;
-            $this->minutesUntilMaintenance = $minutes;
-
-            $this->realTimeCountdown = [
-                'days' => $days,
-                'hours' => $hours,
-                'minutes' => $minutes,
-                'seconds' => $seconds
-            ];
-
-            // Xác định trạng thái bảo trì
-            if ($days <= 7) {
-                $this->maintenanceStatus = 'urgent';
-            } elseif ($days <= 30) {
-                $this->maintenanceStatus = 'warning';
-            } else {
-                $this->maintenanceStatus = 'normal';
-            }
-        }
-
-        // Cập nhật maintenance score dựa trên thời gian bảo trì
+        // Cập nhật điểm bảo trì
         $this->calculateMaintenanceScore();
     }
 
-    // Thêm phương thức để format số với 2 chữ số thập phân
-    public function formatNumber($number, $decimals = 2)
+    protected function calculateMaintenanceScore()
     {
-        return number_format($number, $decimals, '.', ',');
-    }
-
-    // Thêm phương thức để cập nhật đếm ngược theo thời gian thực
-    public function updateCountdown()
-    {
-        $this->calculateMaintenanceInfo();
-    }
-
-    private function calculateMaintenanceScore()
-    {
-        // Tính điểm bảo trì dựa trên thời gian từ lần bảo trì cuối
-        $maxDays = 90; // 3 tháng
-        $score = max(0, 100 - (($this->daysSinceLastMaintenance / $maxDays) * 100));
-
-        // Điều chỉnh điểm số dựa trên trạng thái
-        switch ($this->maintenanceStatus) {
-            case 'overdue':
-                $score = max(0, $score - 20);
-                break;
-            case 'urgent':
-                $score = max(0, $score - 10);
-                break;
-        }
-
+        // Lấy giá trị lớn nhất của 0 và (tính toán điểm bảo trì dựa trên số ngày 3 tháng (~ 90) x 100 (=> %) (Đảo ngược thành giá trị % (100 - value)))
+        $score = max(0, 100 - (($this->daysSinceLastMaintenance / $this->totalDaysIn3Months) * 100));
         $this->maintenanceScore = round($score);
     }
 
-    private function calculateStatistics()
+    protected function calculateStatistics()
     {
-        // Tính toán thống kê trong 30 ngày qua
-        $thirtyDaysAgo = now()->subDays(30);
-
         $this->totalShowtimes = $this->room->showtimes()
-            ->where('start_time', '>=', $thirtyDaysAgo)
+            ->where('start_time', '>=', now()->subDays(30))
             ->count();
 
-        // Tính mức độ sử dụng trung bình (giả định)
-        $totalDays = 30;
-        $averageShowtimesPerDay = $this->totalShowtimes / $totalDays;
-        $maxShowtimesPerDay = 8; // Giả định tối đa 8 suất/ngày
-        $this->averageUtilization = round(($averageShowtimesPerDay / $maxShowtimesPerDay) * 100);
-    }
-
-    private function loadUpcomingShowtimes()
-    {
-        $this->upcomingShowtimes = $this->room->showtimes()
-            ->with(['movie' => function($query) {
-                $query->withTrashed();
-            }])
-            ->where('start_time', '>=', now())
-            ->where('status', 'active')
-            ->orderBy('start_time', 'asc')
-            ->limit(5)
-            ->get();
-    }
-
-    // Phương thức này sẽ được sử dụng khi có model Booking
-    private function loadRecentBookings()
-    {
-        // Khởi tạo là collection rỗng
-        $this->recentBookings = collect();
-    }
-
-    public function getMaintenanceStatusText()
-    {
-        switch ($this->maintenanceStatus) {
-            case 'overdue':
-                return 'Quá hạn bảo trì';
-            case 'urgent':
-                return 'Cần bảo trì gấp';
-            case 'warning':
-                return 'Sắp đến hạn bảo trì';
-            default:
-                return 'Bình thường';
-        }
-    }
-
-    public function getMaintenanceStatusColor()
-    {
-        switch ($this->maintenanceStatus) {
-            case 'overdue':
-                return 'danger';
-            case 'urgent':
-                return 'warning';
-            case 'warning':
-                return 'info';
-            default:
-                return 'success';
-        }
+        /* Tính mức độ sử dụng: Tổng số suất chiếu của phòng trong 30 ngày / 30 (ngày/tháng) / 8 (suất chiếu/ngày) x 100 => % */
+        $this->averageUtilization = round((($this->totalShowtimes / 30) / 8) * 100);
     }
 
     #[Title('Chi tiết phòng chiếu - SE7ENCinema')]
     #[Layout('components.layouts.admin')]
     public function render()
     {
-        return view('livewire.admin.rooms.room-detail');
+        $recentShowtimes = $this->room->showtimes()
+            ->with('movie')
+            ->where('start_time', '<=', now())
+            ->orderBy('start_time', 'desc')
+            ->paginate(10);
+
+        $upcomingShowtimes = $this->room->showtimes()
+            ->with('movie')
+            ->where('start_time', '>', now())
+            ->where('status', 'active')
+            ->orderBy('start_time', 'asc')
+            ->paginate(10);
+
+        return view('livewire.admin.rooms.room-detail', compact('recentShowtimes', 'upcomingShowtimes'));
     }
 }

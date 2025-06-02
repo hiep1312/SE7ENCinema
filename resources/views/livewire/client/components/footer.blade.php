@@ -72,12 +72,12 @@
                     <ul>
                         <li>
                             <a href="#">
-                                <img src="{{ asset('client/assets/images/content/f1.jpg')}}" alt="footer_img">
+                                <img src="{{ asset('client/assets/images/content/f1.jpg') }}" alt="footer_img">
                             </a>
                         </li>
                         <li>
                             <a href="#">
-                                <img src="{{ asset('client/assets/images/content/f2.jpg')}}" alt="footer_img">
+                                <img src="{{ asset('client/assets/images/content/f2.jpg') }}" alt="footer_img">
                             </a>
                         </li>
                     </ul>
@@ -138,7 +138,8 @@
                 <input type="password" placeholder="Password">
             </div>
             <div class="st_form_pop_fp float_left">
-                <h3><a href="#" data-toggle="modal" data-target="#myModa2" target="_blank">Forgot Password?</a></h3>
+                <h3><a href="#" data-toggle="modal" data-target="#myModa2" target="_blank">Forgot Password?</a>
+                </h3>
             </div>
             <div class="st_form_pop_login_btn float_left"> <a href="page-1-7_profile_settings.html">LOGIN</a>
             </div>
@@ -152,7 +153,8 @@
             <div class="st_form_pop_signin_btn float_left">
                 <h4>Don’t have an account? <a href="#" data-toggle="modal" data-target="#myModa3"
                         target="_blank">Sign Up</a></h4>
-                <h5>I agree to the <a href="#">Terms & Conditions</a> & <a href="#">Privacy Policy</a></h5>
+                <h5>I agree to the <a href="#">Terms & Conditions</a> & <a href="#">Privacy Policy</a>
+                </h5>
             </div>
         </div>
     </div>
@@ -189,21 +191,25 @@
                 <input type="password" placeholder="Password">
             </div>
             <div class="st_form_pop_fp float_left">
-                <h3><a href="#" data-toggle="modal" data-target="#myModa2" target="_blank">Forgot Password?</a></h3>
+                <h3><a href="#" data-toggle="modal" data-target="#myModa2" target="_blank">Forgot
+                        Password?</a></h3>
             </div>
             <div class="st_form_pop_login_btn float_left"> <a href="page-1-7_profile_settings.html">LOGIN</a>
             </div>
             <div class="st_form_pop_or_btn float_left">
                 <h4>or</h4>
             </div>
-            <div class="st_form_pop_facebook_btn float_left"> <a href="#"><i class="fab fa-facebook-f"></i> Connect
+            <div class="st_form_pop_facebook_btn float_left"> <a href="#"><i class="fab fa-facebook-f"></i>
+                    Connect
                     with Facebook</a>
             </div>
-            <div class="st_form_pop_gmail_btn float_left"> <a href="#"><i class="fab fa-google-plus-g"></i> Connect
+            <div class="st_form_pop_gmail_btn float_left"> <a href="#"><i class="fab fa-google-plus-g"></i>
+                    Connect
                     with Google</a>
             </div>
             <div class="st_form_pop_signin_btn st_form_pop_signin_btn_signup float_left">
-                <h5>I agree to the <a href="#">Terms & Conditions</a> & <a href="#">Privacy Policy</a></h5>
+                <h5>I agree to the <a href="#">Terms & Conditions</a> & <a href="#">Privacy Policy</a>
+                </h5>
             </div>
         </div>
     </div>

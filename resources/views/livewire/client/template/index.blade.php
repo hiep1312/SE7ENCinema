@@ -1,4 +1,4 @@
-@extends('components.layouts.client')
+@extends('clienttest')
 @section("content")
 	<!-- prs navigation End -->
 	<!-- prs Slider Start -->

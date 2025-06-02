@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Rooms;
 
 use App\Models\Room;
 use App\Models\Seat;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -11,7 +12,6 @@ use Livewire\Component;
 class RoomCreate extends Component
 {
     public $name = '';
-    public $capacity = 0;
     public $status = 'active';
     public $rows = 10;
     public $seatsPerRow = 15;
@@ -20,7 +20,6 @@ class RoomCreate extends Component
 
     protected $rules = [
         'name' => 'required|string|max:255|unique:rooms,name',
-        'capacity' => 'required|integer|min:50|max:500',
         'status' => 'required|in:active,maintenance,inactive',
         'rows' => 'required|integer|min:5|max:26',
         'seatsPerRow' => 'required|integer|min:10|max:30',
@@ -31,9 +30,6 @@ class RoomCreate extends Component
     protected $messages = [
         'name.required' => 'Tên phòng chiếu là bắt buộc',
         'name.unique' => 'Tên phòng chiếu đã tồn tại',
-        'capacity.required' => 'Sức chứa là bắt buộc',
-        'capacity.min' => 'Sức chứa phải từ 50 ghế trở lên',
-        'capacity.max' => 'Sức chứa không được vượt quá 500 ghế',
         'rows.required' => 'Số hàng ghế là bắt buộc',
         'rows.min' => 'Số hàng ghế tối thiểu là 5',
         'rows.max' => 'Số hàng ghế tối đa là 26',
@@ -41,41 +37,6 @@ class RoomCreate extends Component
         'seatsPerRow.min' => 'Số ghế mỗi hàng tối thiểu là 10',
         'seatsPerRow.max' => 'Số ghế mỗi hàng tối đa là 30',
     ];
-
-    public function mount()
-    {
-        $this->capacity = $this->rows * $this->seatsPerRow;
-    }
-
-    public function updated($propertyName)
-    {
-        $this->validateOnly($propertyName);
-
-        if ($propertyName === 'rows' || $propertyName === 'seatsPerRow') {
-            $this->capacity = $this->rows * $this->seatsPerRow;
-
-            // Ensure capacity doesn't exceed 500
-            if ($this->capacity > 500) {
-                if ($propertyName === 'rows') {
-                    $this->rows = floor(500 / $this->seatsPerRow);
-                } else {
-                    $this->seatsPerRow = floor(500 / $this->rows);
-                }
-                $this->capacity = $this->rows * $this->seatsPerRow;
-            }
-
-            // Ensure minimum capacity
-            if ($this->capacity < 50) {
-                if ($this->rows < 5) {
-                    $this->rows = 5;
-                }
-                if ($this->seatsPerRow < 10) {
-                    $this->seatsPerRow = 10;
-                }
-                $this->capacity = $this->rows * $this->seatsPerRow;
-            }
-        }
-    }
 
     public function createRoom()
     {
@@ -85,18 +46,16 @@ class RoomCreate extends Component
             // Create room
             $room = Room::create([
                 'name' => $this->name,
-                'capacity' => $this->capacity,
+                'capacity' => $this->rows * $this->seatsPerRow,
                 'status' => $this->status,
             ]);
 
             // Generate seats automatically
             $this->generateSeats($room);
 
-            session()->flash('success', 'Tạo phòng chiếu và sơ đồ ghế thành công!');
-            return redirect()->route('admin.rooms.index');
-
+            return redirect()->route('admin.rooms.index')->with('success', 'Tạo phòng chiếu và sơ đồ ghế thành công!');
         } catch (\Exception $e) {
-            session()->flash('error', 'Có lỗi xảy ra khi tạo phòng chiếu: ' . $e->getMessage());
+            session()->flash('error', 'Có lỗi xảy ra trong quá trình tạo phòng chiếu. Vui lòng thử lại!');
         }
     }
 

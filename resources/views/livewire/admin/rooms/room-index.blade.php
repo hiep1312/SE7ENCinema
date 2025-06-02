@@ -1,19 +1,19 @@
 <div>
-    @if (session('success'))
+    @if (session()->has('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
-    @if (session('error'))
+    @if (session()->has('error'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
-    <div class="container" data-bs-theme="dark">
+    <div class="container-lg mb-4">
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2 class="text-light">Quản lý phòng chiếu</h2>
             <div>
@@ -36,7 +36,7 @@
             <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <div class="row g-3">
                     <!-- Tìm kiếm -->
-                    <div class="col-md-3">
+                    <div class="col-md-4 col-lg-3">
                         <div class="input-group">
                             <input type="text"
                                    wire:model.live.debounce.300ms="search"
@@ -47,7 +47,7 @@
 
                     <!-- Lọc theo trạng thái -->
                     @if(!$showDeleted)
-                        <div class="col-md-2">
+                        <div class="col-md-3 col-lg-2">
                             <select wire:model.live="statusFilter" class="form-select bg-dark text-light">
                                 <option value="">Tất cả trạng thái</option>
                                 <option value="active">Hoạt động</option>
@@ -57,7 +57,7 @@
                         </div>
 
                         <!-- Lọc theo suất chiếu -->
-                        <div class="col-md-2">
+                        <div class="col-md-3 col-lg-2">
                             <select wire:model.live="showtimeFilter" class="form-select bg-dark text-light">
                                 <option value="">Tất cả suất chiếu</option>
                                 <option value="has_showtimes">Có suất chiếu</option>
@@ -99,8 +99,8 @@
                         </thead>
                         <tbody>
                             @forelse($rooms as $room)
-                                <tr class="@if($showDeleted)  @endif">
-                                    <td class="text-center  fw-bold">{{ $loop->iteration }}</td>
+                                <tr>
+                                    <td class="text-center fw-bold">{{ $loop->iteration }}</td>
                                     <td>
                                         <strong class="text-info">{{ $room->name }}</strong>
                                         @if($room->trashed())
@@ -188,7 +188,7 @@
                                             </div>
                                         @else
                                             <!-- Khi không có suất chiếu -->
-                                            <div class="no-showtime text-center py-2">
+                                            <div class="text-center py-2">
                                                 <i class="fas fa-calendar-times fa-2x text-muted mb-2"></i>
                                                 <div class="text-muted">
                                                     <strong>Không có suất chiếu</strong>
@@ -213,17 +213,17 @@
                                             <!-- Actions for deleted rooms -->
                                             <div class="d-flex gap-3 justify-content-center">
                                                 <button type="button"
-                                                        wire:click="restoreRoom({{ $room->id }})"
+                                                        wire:click.once="restoreRoom({{ $room->id }})"
                                                         class="btn btn-sm btn-success"
                                                         title="Khôi phục">
-                                                    <i class="fas fa-undo"></i>
+                                                    <i class="fas fa-undo" style="margin-right: 0"></i>
                                                 </button>
                                                 <button type="button"
                                                         class="btn btn-sm btn-danger"
                                                         wire:sc-model="forceDeleteRoom({{ $room->id }})"
                                                         wire:sc-confirm.warning="Bạn có chắc chắn muốn XÓA VĨNH VIỄN phòng '{{ $room->name }}'? Hành động này KHÔNG THỂ HOÀN TÁC!"
                                                         title="Xóa vĩnh viễn">
-                                                    <i class="fas fa-trash-alt"></i>
+                                                    <i class="fas fa-trash-alt" style="margin-right: 0"></i>
                                                 </button>
                                             </div>
                                         @else
@@ -232,21 +232,21 @@
                                                 <a href="{{ route('admin.rooms.detail', $room->id) }}"
                                                    class="btn btn-sm btn-info"
                                                    title="Xem chi tiết">
-                                                    <i class="fas fa-eye"></i>
+                                                    <i class="fas fa-eye" style="margin-right: 0"></i>
                                                 </a>
                                                 @if(!$room->hasActiveShowtimes())
                                                     <a href="{{ route('admin.rooms.edit', $room->id) }}"
                                                        class="btn btn-sm btn-warning"
                                                        title="Chỉnh sửa">
-                                                       <i class="fas fa-edit"></i>
+                                                       <i class="fas fa-edit" style="margin-right: 0"></i>
                                                     </a>
                                                 @else
                                                     <button type="button"
                                                             class="btn btn-sm btn-warning"
-                                                            wire:sc-alert.error="Không thể sửa - có suất chiếu đang hoạt động"
+                                                            wire:sc-alert.error="Không thể sửa phòng có suất chiếu đang hoạt động"
                                                             wire:sc-model
                                                             title="Chỉnh sửa">
-                                                        <i class="fas fa-edit"></i>
+                                                        <i class="fas fa-edit" style="margin-right: 0"></i>
                                                     </button>
                                                 @endif
                                                 @if(!$room->hasActiveShowtimes())
@@ -255,15 +255,15 @@
                                                             wire:sc-model="deleteRoom({{ $room->id }})"
                                                             wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa phòng '{{ $room->name }}'?"
                                                             title="Xóa">
-                                                        <i class="fas fa-trash"></i>
+                                                        <i class="fas fa-trash" style="margin-right: 0"></i>
                                                     </button>
                                                 @else
                                                     <button type="button"
                                                             class="btn btn-sm btn-danger disabled"
-                                                            wire:sc-alert.error="Không thể xóa - có suất chiếu trong tương lai"
+                                                            wire:sc-alert.error="Không thể xóa phòng có suất chiếu trong tương lai"
                                                             wire:sc-model
                                                             title="Xóa">
-                                                        <i class="fas fa-trash"></i>
+                                                        <i class="fas fa-trash" style="margin-right: 0"></i>
                                                     </button>
                                                 @endif
                                             </div>
@@ -289,7 +289,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="d-flex justify-content-center">
+                <div class="mt-3">
                     {{ $rooms->links() }}
                 </div>
             </div>

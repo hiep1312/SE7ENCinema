@@ -1,4 +1,4 @@
-@extends('components.layouts.client')
+@extends('clienttest')
 @section("content")
 	<!-- st top header Start -->
 	<div class="st_bt_top_header_wrapper float_left">

@@ -9,10 +9,12 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/rooms', RoomIndex::class)->name('rooms.index');
-    Route::get('/rooms/create', RoomCreate::class)->name('rooms.create');
-    Route::get('/rooms/{roomId}/edit', RoomEdit::class)->name('rooms.edit');
-    Route::get('/rooms/{roomId}/detail', RoomDetail::class)->name('rooms.detail');
+    Route::prefix('/rooms')->name('rooms.')->group(function () {
+        Route::get('/', RoomIndex::class)->name('index');
+        Route::get('/create', RoomCreate::class)->name('create');
+        Route::get('/edit/{room}', RoomEdit::class)->name('edit');
+        Route::get('/detail/{room}', RoomDetail::class)->name('detail');
+    });
 
 
 
@@ -32,7 +34,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::view('/register', 'livewire.admin.template.samples.register')->name('register');
 });
 
-Route::prefix('client')->name('client.')->group(function (){
+Route::name('client.')->group(function (){
     Route::view('/home', 'livewire.client.template.index')->name('index');
     Route::view('/blog_category', 'livewire.client.template.blogs.blog_category')->name('blog_category');
     Route::view('/blog_single', 'livewire.client.template.blogs.blog_single')->name('blog_single');
@@ -48,7 +50,6 @@ Route::prefix('client')->name('client.')->group(function (){
     Route::view('/seat_booking', 'livewire.client.template.bookings.seat_booking')->name('seat_booking');
     Route::view('/contact', 'livewire.client.template.contact')->name('contact');
     Route::view('/confirmation_screen', 'livewire.client.template.confirmation_screen')->name('confirmation_screen');
-
 });
 
 

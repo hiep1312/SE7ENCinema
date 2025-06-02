@@ -4,10 +4,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{{ $title ?? 'SE7ENCinema' }}</title>
-        <meta name="description" content="Movie Pro" />
-        <meta name="keywords" content="Movie Pro" />
-        <meta name="author" content="" />
-        <meta name="MobileOptimized" content="320" />
+
+        {{-- @vite('resources/css/app.css') --}}
 
         <!-- Template style -->
         <link rel="stylesheet" href="{{ asset('client/assets/css/animate.css') }}" />
@@ -27,12 +25,6 @@
         <link rel="stylesheet" href="{{ asset('client/assets/css/seat.css') }}" />
         <link rel="stylesheet" href="{{ asset('client/assets/css/style.css') }}" />
         <link rel="stylesheet" href="{{ asset('client/assets/css/responsive.css') }}" />
-        <link rel="stylesheet" id="theme-color" href="#" />
-
-        <!-- favicon links -->
-        <link rel="shortcut icon" type="image/png" href="{{ asset('client/assets/images/header/favicon.ico') }}" />
-
-        {{-- @vite('resources/css/app.css') --}}
     </head>
     <body>
         <div>

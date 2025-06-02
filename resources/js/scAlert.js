@@ -143,7 +143,7 @@ document.addEventListener('livewire:init', () => {
 
         const options = Object.assign({}, $sc_configAlert._config, optionCustom);
 
-        const listener = el.addEventListener('click', function (e){
+        const listener = function (e){
             (prevent || useModelLivewire) && e.preventDefault();
             stop && e.stopPropagation();
 
@@ -151,7 +151,9 @@ document.addEventListener('livewire:init', () => {
                 model && (typeof $wire[model]==='function' ? (params.length ? $wire[model](result, ...params) : $wire[model](result)) : $wire[model] = params.length ? [result, ...params] : result);
                 live && $wire.$commit();
             });
-        }, optionsListener);
+        };
+        
+        el.addEventListener('click', listener, optionsListener);
 
         cleanup(() => {
             el.removeEventListener('click', listener);
@@ -187,15 +189,16 @@ document.addEventListener('livewire:init', () => {
 
         const options = Object.assign({}, $sc_configAlert._config, optionCustom);
 
-        const listener = el.addEventListener('click', function (e){
+        const listener = function (e){
             (prevent || useModelLivewire) && e.preventDefault();
             stop && e.stopPropagation();
-
             Swal.fire(options).then(result => {
                 model && (typeof $wire[model]==='function' ? (params.length ? $wire[model](result, ...params) : $wire[model](result)) : $wire[model] = params.length ? [result, ...params] : result);
                 live && $wire.$commit();
             });
-        }, optionsListener);
+        };
+        
+        el.addEventListener('click', listener, optionsListener);
 
         cleanup(() => {
             el.removeEventListener('click', listener);
@@ -237,7 +240,7 @@ document.addEventListener('livewire:init', () => {
 
         const options = Object.assign({}, $sc_configAlert._config, optionCustom);
 
-        const listener = el.addEventListener('click', function (e){
+        const listener = function (e){
             (prevent || useModelLivewire) && e.preventDefault();
             stop && e.stopPropagation();
 
@@ -245,7 +248,9 @@ document.addEventListener('livewire:init', () => {
                 model && (typeof $wire[model]==='function' ? (params.length ? $wire[model](result, ...params) : $wire[model](result)) : $wire[model] = params.length ? [result, ...params] : result);
                 live && $wire.$commit();
             });
-        }, optionsListener);
+        };
+        
+        el.addEventListener('click', listener, optionsListener);
 
         cleanup(() => {
             el.removeEventListener('click', listener);
@@ -282,7 +287,7 @@ document.addEventListener('livewire:init', () => {
         const options = Object.assign({}, $sc_configAlert._config, optionCustom);
         delete options['backdrop']; delete options['keydownListenerCapture']; delete options['returnFocus'];
 
-        const listener = el.addEventListener('click', function (e){
+        const listener = function (e){
             (prevent || useModelLivewire) && e.preventDefault();
             stop && e.stopPropagation();
 
@@ -290,7 +295,9 @@ document.addEventListener('livewire:init', () => {
                 model && (typeof $wire[model]==='function' ? (params.length ? $wire[model](result, ...params) : $wire[model](result)) : $wire[model] = params.length ? [result, ...params] : result);
                 live && $wire.$commit();
             });
-        }, optionsListener);
+        };
+        
+        el.addEventListener('click', listener, optionsListener);
 
         cleanup(() => {
             el.removeEventListener('click', listener);
@@ -329,7 +336,7 @@ document.addEventListener('livewire:init', () => {
 
         const options = Object.assign({}, $sc_configAlert._config, optionCustom);
 
-        const listener = el.addEventListener('click', function (e){
+        const listener = function (e){
             (prevent || useModelLivewire) && e.preventDefault();
             stop && e.stopPropagation();
 
@@ -337,7 +344,9 @@ document.addEventListener('livewire:init', () => {
                 model && (typeof $wire[model]==='function' ? (params.length ? $wire[model](result, ...params) : $wire[model](result)) : $wire[model] = params.length ? [result, ...params] : result);
                 live && $wire.$commit();
             });
-        }, optionsListener);
+        };
+
+        el.addEventListener('click', listener, optionsListener);
 
         cleanup(() => {
             el.removeEventListener('click', listener);
