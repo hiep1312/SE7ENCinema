@@ -147,4 +147,9 @@ class Movie extends Model
     {
         return $this->status === 'coming_soon';
     }
+
+    public function showtimes()
+    {
+        return $this->hasMany(Showtime::class);
+    }
 }

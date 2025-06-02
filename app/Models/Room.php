@@ -19,6 +19,8 @@ class Room extends Model
         'capacity' => 'integer',
         'last_maintenance_date' => 'date',
         'deleted_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function seats()

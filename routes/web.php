@@ -1,16 +1,18 @@
 <?php
 
-use App\Livewire\Admin\Food\FoodCreate;
-use App\Livewire\Admin\Food\FoodDelete;
-use App\Livewire\Admin\Food\FoodDetail;
-use App\Livewire\Admin\Food\FoodEdit;
-use App\Livewire\Admin\Food\FoodList;
-
 use Illuminate\Support\Facades\Route;
-
-
+use App\Livewire\Admin\Rooms\RoomCreate;
+use App\Livewire\Admin\Rooms\RoomDetail;
+use App\Livewire\Admin\Rooms\RoomEdit;
+use App\Livewire\Admin\Rooms\RoomIndex;
 
 Route::prefix('admin')->name('admin.')->group(function () {
+    Route::prefix('/rooms')->name('rooms.')->group(function () {
+        Route::get('/', RoomIndex::class)->name('index');
+        Route::get('/create', RoomCreate::class)->name('create');
+        Route::get('/edit/{room}', RoomEdit::class)->name('edit');
+        Route::get('/detail/{room}', RoomDetail::class)->name('detail');
+    });
 
     /* Template */
     Route::view('/dashboard', 'livewire.admin.template.dashboard')->name('dashboard');
@@ -28,14 +30,24 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::view('/register', 'livewire.admin.template.samples.register')->name('register');
 });
 
-Route::prefix('admin/food')->group(function () {
-
-    Route::get('/', FoodList::class)->name('admin.food.list');
-    Route::get('/create', FoodCreate::class)->name('admin.food.create');
-    Route::get('delete/{id}', [FoodDelete::class, 'delete'])->name('admin.food.delete');
-    Route::get('/detail/{id}', FoodDetail::class)->name('admin.food.detail');
-    Route::get('/edit/{id}', FoodEdit::class)->name('admin.food.edit');
+Route::name('client.')->group(function (){
+    Route::view('/home', 'livewire.client.template.index')->name('index');
+    Route::view('/blog_category', 'livewire.client.template.blogs.blog_category')->name('blog_category');
+    Route::view('/blog_single', 'livewire.client.template.blogs.blog_single')->name('blog_single');
+    Route::view('/movie_booking', 'livewire.client.template.movies.movie_booking')->name('movie_booking');
+    Route::view('/movie_category', 'livewire.client.template.movies.movie_category')->name('movie_category');
+    Route::view('/movie_single_second', 'livewire.client.template.movies.movie_single_second')->name('movie_single_second');
+    Route::view('/movie_single', 'livewire.client.template.movies.movie_single')->name('movie_single');
+    Route::view('/event_category', 'livewire.client.template.events.event_category')->name('event_category');
+    Route::view('/event_single', 'livewire.client.template.events.event_single')->name('event_single');
+    Route::view('/about', 'livewire.client.template.abouts.about')->name('about');
+    Route::view('/gallery', 'livewire.client.template.gallerys.gallery')->name('gallery');
+    Route::view('/booking_type', 'livewire.client.template.bookings.booking_type')->name('booking_type');
+    Route::view('/seat_booking', 'livewire.client.template.bookings.seat_booking')->name('seat_booking');
+    Route::view('/contact', 'livewire.client.template.contact')->name('contact');
+    Route::view('/confirmation_screen', 'livewire.client.template.confirmation_screen')->name('confirmation_screen');
 });
 
 
 Route::view('/', 'welcome')->name('welcome');
+Route::view('/clienttest', 'clienttest')->name('clienttest');
