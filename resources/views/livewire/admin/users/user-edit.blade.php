@@ -18,14 +18,18 @@
                         <div class="text-center mb-4">
                             <div class="position-relative d-inline-block">
                                 @if ($avatar)
-                                    {{-- <img src="{{ $avatar->temporaryUrl() }}"
+                                    <img src="{{ $avatar->temporaryUrl() }}"
                                         class="rounded-circle border border-3 border-primary shadow" width="120"
-                                        height="120" style="object-fit: cover;"> --}}
+                                        height="120" style="object-fit: cover;">
                                 @else
-                                    <div class="bg-light rounded-circle border border-3 border-primary d-flex align-items-center justify-content-center shadow"
-                                        style="width: 120px; height: 120px;">
-                                        <i class="fas fa-user text-muted fs-1"></i>
-                                    </div>
+                                    @if($avatar_user)
+                                        <img src="{{ Storage::url($avatar_user) }}" alt="Customer Avatar" class="avatar">
+                                    @else
+                                        <div class="bg-light rounded-circle border border-3 border-primary d-flex align-items-center justify-content-center shadow"
+                                            style="width: 120px; height: 120px;">
+                                            <i class="fas fa-user text-muted fs-1"></i>
+                                        </div>
+                                    @endif
                                 @endif
                                 <label for="avatar"
                                     class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle p-2 cursor-pointer shadow">

@@ -1,6 +1,6 @@
-@push('styles')
-    @vite('resources/css/components/user-detail.css')
-@endpush
+{{-- @push('styles')
+    @vite('resources/css/components/user-detaill.css')
+@endpush --}}
 <div>
     @if (session('error'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -12,18 +12,6 @@
     {{-- Page Header --}}
     <div class="page-header mt-3">
         <h1 class="page-title">Chi tiết tài khoản</h1>
-        <div class="header-actions">
-            <button class="btn btn-danger" wire:click="deleteCustomer"
-                wire:confirm="Are you sure you want to delete this customer?">
-                <i class="fas fa-trash"></i>
-                Delete customer
-            </button>
-            <button class="btn btn-secondary" wire:click="resetPassword"
-                wire:confirm="Send password reset email to this customer?">
-                <i class="fas fa-key"></i>
-                Reset password
-            </button>
-        </div>
     </div>
 
     {{-- Main Content --}}
@@ -73,7 +61,6 @@
             <div class="orders-section">
                 <div class="section-header">
                     <h2>Hóa đơn</h2>
-                    <span class="count-badge mb-3">({{ $user->bookings_count }})</span>
                 </div>
 
                 <div class="table-container">
@@ -146,7 +133,8 @@
                             @empty
                                 <tr>
                                     <td colspan="7" class="text-center text-muted py-4">
-                                        Không tìm thấy hóa đơn nào
+                                        <i class="fa-solid fa-ticket text-gray-300 m-2" style="font-size: 3rem;"></i>
+                                        <p>Không tìm thấy hóa đơn nào</p>
                                     </td>
                                 </tr>
                             @endforelse
@@ -174,7 +162,6 @@
             <div class="orders-section mt-4">
                 <div class="section-header">
                     <h2>Đánh giá</h2>
-                    <span class="count-badge mb-3">({{ $user->ratings_count }})</span>
                 </div>
 
                 <div class="table-container">
@@ -210,7 +197,8 @@
                             @empty
                                 <tr>
                                     <td colspan="7" class="text-center text-muted py-4">
-                                        Không tìm đánh giá nào
+                                        <i class="fa-solid fa-comments text-gray-300 m-2" style="font-size: 3rem;"></i>
+                                        <p>Không tìm thấy đánh giá nào</p>
                                     </td>
                                 </tr>
                             @endforelse
@@ -221,7 +209,7 @@
                 {{-- Pagination --}}
                 <div class="pagination">
                     <div class="pagination-info">
-                        {{ $bookings->firstItem() }} to {{ $bookings->lastItem() }} items of {{ $bookings->total() }}
+                        {{ $ratings->firstItem() ?? 0 }} to {{ $ratings->lastItem() ?? 0 }} items of {{ $ratings->total() }}
                         @unless($showAllRatings)
                         &nbsp;&nbsp;<a href="#" wire:click.prevent="viewAll('ratings')">View all ›</a>
                         @endunless

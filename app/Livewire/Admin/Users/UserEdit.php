@@ -14,7 +14,7 @@ class UserEdit extends Component
 {
     use WithFileUploads;
     public $userId;
-    public $name, $email, $phone, $address, $birthday, $gender, $role, $status, $avatar;
+    public $name, $email, $phone, $address, $birthday, $gender, $role, $status, $avatar_user, $avatar;
     public function mount($userId)
     {
         $this->userId = $userId;
@@ -24,7 +24,7 @@ class UserEdit extends Component
         $this->email = $user->email;
         $this->phone = $user->phone;
         $this->address = $user->address;
-        $this->avatar = $user->avatar;
+        $this->avatar_user = $user->avatar;
         $this->birthday = $user->birthday;
         $this->gender = $user->gender;
         $this->role = $user->role;
@@ -58,7 +58,6 @@ class UserEdit extends Component
     }
     public function save()
     {
-        // dd($this->avatar);
         $this->validate([
             'email' => [
                 'required',
@@ -66,23 +65,18 @@ class UserEdit extends Component
                 'unique:users,email,' . $this->userId,
             ]
         ]);
-        $avatarPath = $this->avatar;
+        $fileName = $this->userId . '_' . time() . '.' . $this->avatar->getClientOriginalExtension();
         // Xóa ảnh cũ nếu có
-        if ($this->avatar && Storage::disk('public')->exists($this->avatar)) {
-            Storage::disk('public')->delete($this->avatar);
+        if ($this->avatar_user && Storage::disk('public')->exists($this->avatar_user)) {
+            Storage::disk('public')->delete($this->avatar_user);
         }
-        // tạo tên file mới
-        $fileName = 'avatars/' . $this->userId . '_' . time() . '.' . $this->avatar->getClientOriginalExtension();
-
-        $manager = new ImageManager(new Driver());
-        $image = $manager->read($this->avatar->getRealPath());
-
+        $path = $this->avatar->storeAs('avatars', $fileName, 'public');
         $user = User::findOrFail($this->userId);
         $user->update([
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->phone,
-            'avatar' => $this->avatar,
+            'avatar' => $path,
             'address' => $this->address,
             'birthday' => $this->birthday,
             'gender' => $this->gender,

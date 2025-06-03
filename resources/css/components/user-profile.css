@@ -42,3 +42,11 @@ input[readonly] {
 textarea[readonly] {
     background-color: transparent !important;
 }
+.avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin-bottom: 16px;
+    border: 3px solid #3b82f6;
+    object-fit: cover;
+}
