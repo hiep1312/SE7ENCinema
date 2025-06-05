@@ -86,7 +86,7 @@ class FoodEdit extends Component
 
     public function generateVariants()
     {
-        if(count($this->variants) < $this->quantityVariants) $this->variants = array_pad($this->variants, $this->quantityVariants, ['name' => '', 'price' => 0, 'quantity' => 0, 'limit' => null, 'status' => 'available', 'image' => null]);
+        if(count($this->variants) < $this->quantityVariants) $this->variants = array_pad($this->variants, $this->quantityVariants, ['name' => '', 'price' => null, 'quantity' => null, 'limit' => null, 'status' => 'available', 'image' => null]);
         elseif(count($this->variants) > $this->quantityVariants) $this->variants = array_slice($this->variants, 0, $this->quantityVariants);
     }
 
