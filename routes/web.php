@@ -1,5 +1,9 @@
 <?php
 
+use App\Livewire\Admin\Foods\FoodCreate;
+use App\Livewire\Admin\Foods\FoodDetail;
+use App\Livewire\Admin\Foods\FoodEdit;
+use App\Livewire\Admin\Foods\FoodIndex;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\Rooms\RoomCreate;
 use App\Livewire\Admin\Rooms\RoomDetail;
@@ -7,12 +11,23 @@ use App\Livewire\Admin\Rooms\RoomEdit;
 use App\Livewire\Admin\Rooms\RoomIndex;
 
 Route::prefix('admin')->name('admin.')->group(function () {
+    /* Rooms */
     Route::prefix('/rooms')->name('rooms.')->group(function () {
         Route::get('/', RoomIndex::class)->name('index');
         Route::get('/create', RoomCreate::class)->name('create');
         Route::get('/edit/{room}', RoomEdit::class)->name('edit');
         Route::get('/detail/{room}', RoomDetail::class)->name('detail');
     });
+
+    /* Foods */
+    Route::prefix('/foods')->name('foods.')->group(function () {
+        Route::get('/', FoodIndex::class)->name('index');
+        Route::get('/create', FoodCreate::class)->name('create');
+        Route::get('/edit/{food}', FoodEdit::class)->name('edit');
+        Route::get('/detail/{food}', FoodDetail::class)->name('detail');
+    });
+
+
 
     /* Template */
     Route::view('/dashboard', 'livewire.admin.template.dashboard')->name('dashboard');

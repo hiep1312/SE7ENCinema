@@ -1,3 +1,9 @@
+/* Override Library */
+.swal2-modal .swal2-icon, .swal2-modal .swal2-success-ring{
+    margin-top: 42px !important;
+}
+
+/* Custom CSS */
 /* Maintenance countdown styling */
 .maintenance-countdown {
   padding: 10px;
@@ -10,55 +16,6 @@
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Seat styling */
-.seat {
-  width: 30px;
-  height: 30px;
-  margin: 2px;
-  border-radius: 6px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  font-weight: bold;
-  color: white;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.seat:hover {
-  transform: scale(1.1);
-}
-
-.seat-standard {
-  background-color: #28a745;
-}
-
-.seat-vip {
-  background-color: #ffc107;
-  color: #000;
-}
-
-.seat-couple {
-  background-color: #e83e8c;
-}
-
-.row-label {
-  width: 30px;
-  text-align: center;
-}
-
-.seats-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2px;
-}
-
-.seats-grid {
-  max-height: 600px;
-  overflow-y: auto;
 }
 
 /* Tab styling */
@@ -106,16 +63,6 @@
   .maintenance-timer .timer-item {
     padding: 10px;
     margin-bottom: 10px;
-  }
-
-  .seat {
-    width: 25px;
-    height: 25px;
-    font-size: 9px;
-  }
-
-  .seats-container {
-    gap: 1px;
   }
 }
 
@@ -221,30 +168,6 @@
   letter-spacing: 1px;
 }
 
-/* Seat map enhancements */
-.seat-map {
-  background: radial-gradient(circle at center, rgba(255, 193, 7, 0.1) 0%, transparent 70%);
-  padding: 30px;
-  border-radius: 15px;
-}
-
-.screen {
-  position: relative;
-  margin-bottom: 40px;
-}
-
-.screen::before {
-  content: "";
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%;
-  height: 4px;
-  background: linear-gradient(90deg, transparent 0%, #ffc107 50%, transparent 100%);
-  border-radius: 2px;
-}
-
 /* Loading animation */
 .loading-spinner {
   display: inline-block;
@@ -285,8 +208,5 @@
     box-shadow: none !important;
     border: 1px solid #000;
   }
-
-  .seat {
-    border: 1px solid #000;
-  }
 }
+

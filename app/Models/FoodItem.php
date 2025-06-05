@@ -15,6 +15,12 @@ class FoodItem extends Model
         'status',
     ];
 
+    protected $casts = [
+        'deleted_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     public function variants()
     {
         return $this->hasMany(FoodVariant::class);

@@ -18,7 +18,7 @@ const $sc_configAlert = {
         keydownListenerCapture: true,
         confirmButtonText: "OK",
         denyButtonText: "No",
-        cancelButtonText: "Cancel",
+        cancelButtonText: "Hủy",
         confirmButtonColor: undefined,
         denyButtonColor: undefined,
         cancelButtonColor: undefined,

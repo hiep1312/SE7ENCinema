@@ -1,17 +1,9 @@
 <!DOCTYPE html>
 <html lang="vi">
-<<<<<<< HEAD
-=======
-
->>>>>>> main
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>{{ $title ?? 'SE7ENCinema Admin' }}</title>
-<<<<<<< HEAD
-
-=======
->>>>>>> main
     <!-- plugins:css -->
     <link rel="stylesheet" href="{{ asset('admin/assets/vendors/mdi/css/materialdesignicons.min.css') }} ">
     <link rel="stylesheet" href="{{ asset('admin/assets/vendors/css/vendor.bundle.base.css') }}">

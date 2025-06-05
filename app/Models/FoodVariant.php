@@ -26,4 +26,8 @@ class FoodVariant extends Model
     {
         return $this->belongsTo(FoodItem::class);
     }
+
+    public function foodOrderItems(){
+        return $this->hasMany(FoodOrderItem::class);
+    }
 }
