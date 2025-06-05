@@ -66,6 +66,8 @@ class ShowtimeCreate extends Component
             return ['success' => false, 'message' => 'Không thể tạo suất chiếu ngay thời gian hiện tại.'];
         }
 
+
+        // LƯU Ý: Tao có thể tạo lúc éo nào chả được mà m bắt t chỉ được tạo trong thời gian quy đinh vớ vẩn????
         if ($now->isSameDay($start)) {
             $diffInMinutes = $now->diffInMinutes($start, false);
             if ($diffInMinutes <= 59) {
@@ -73,8 +75,8 @@ class ShowtimeCreate extends Component
             }
         } else {
             $diffInHours = $now->diffInHours($start, false);
-            if ($diffInHours <= 24) {
-                return ['success' => false, 'message' => 'Suất chiếu phải được tạo trước ít nhất 24 giờ.'];
+            if ($diffInHours <= 3) {
+                return ['success' => false, 'message' => 'Suất chiếu phải được tạo trước ít nhất 3 giờ.'];
             }
         }
 

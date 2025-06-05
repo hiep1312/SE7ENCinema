@@ -54,6 +54,7 @@ class ShowtimeUpdate extends Component
             return ['success' => false, 'message' => 'Không thể tạo suất chiếu ngay thời gian hiện tại.'];
         }
 
+        // LƯU Ý: Tao có thể tạo lúc éo nào chả được mà m bắt t chỉ được tạo trong thời gian quy đinh vớ vẩn????
         if ($now->isSameDay($start)) {
             $diffInMinutes = $now->diffInMinutes($start, false);
             if ($diffInMinutes <= 59) {
@@ -61,8 +62,8 @@ class ShowtimeUpdate extends Component
             }
         } else {
             $diffInHours = $now->diffInHours($start, false);
-            if ($diffInHours <= 24) {
-                return ['success' => false, 'message' => 'Suất chiếu phải được tạo trước ít nhất 24 giờ.'];
+            if ($diffInHours <= 3) {
+                return ['success' => false, 'message' => 'Suất chiếu phải được tạo trước ít nhất 3 giờ.'];
             }
         }
 
@@ -116,15 +117,15 @@ class ShowtimeUpdate extends Component
 
         if ($now->isSameDay($startTime)) {
             $diffInMinutes = $now->diffInMinutes($startTime, false);
-            if ($diffInMinutes < 59) {
+            if ($diffInMinutes <= 59) {
                 return ['can_edit' => false, 'message' => "Chỉ có thể chỉnh sửa suất chiếu trước ít nhất 1 tiếng. Thời gian còn lại: {$diffInMinutes} phút."];
             }
             return ['can_edit' => true, 'message' => "Có thể chỉnh sửa. Thời gian còn lại: {$diffInMinutes} phút."];
         }
 
         $diffInHours = $now->diffInHours($startTime, false);
-        if ($diffInHours < 24) {
-            return ['can_edit' => false, 'message' => "Chỉ có thể chỉnh sửa suất chiếu trước ít nhất 24 giờ. Thời gian còn lại: " . round($diffInHours, 1) . " giờ."];
+        if ($diffInHours <= 3) {
+            return ['can_edit' => false, 'message' => "Chỉ có thể chỉnh sửa suất chiếu trước ít nhất 3 giờ. Thời gian còn lại: " . round($diffInHours, 1) . " giờ."];
         }
 
         $diffInDays = $now->diffInDays($startTime, false);

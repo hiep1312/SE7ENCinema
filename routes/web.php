@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 
 
+Route::view('/', 'welcome')->name('welcome');
 Route::prefix('admin')->name('admin.')->group(function () {
 
     /* Template */

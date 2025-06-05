@@ -98,19 +98,19 @@ class ShowtimeManagement extends Component
             return false;
         }
 
-        // Nếu cùng ngày, phải trước ít nhất 30 phút
+        // Nếu cùng ngày, phải trước ít nhất 60 phút
         if ($now->isSameDay($startTime)) {
             $diffInMinutes = $now->diffInMinutes($startTime);
-            if ($diffInMinutes <= 60) {
+            if ($diffInMinutes <= 59) {
                 return false;
             }
 
             return true;
         }
 
-        // Sửa logic: Nếu khác ngày thì phải trước ít nhất 1 ngày (24 giờ)
+        // Sửa logic: Nếu khác ngày thì phải trước ít nhất 3 tiếng
         $diffInHours = $now->diffInHours($startTime, false);
-        if ($diffInHours <= 24) {
+        if ($diffInHours <= 3) {
             return false;
         }
 
@@ -151,13 +151,13 @@ class ShowtimeManagement extends Component
 
         if ($now->isSameDay($startTime)) {
             $diffInMinutes = $now->diffInMinutes($startTime, false);
-            if ($diffInMinutes <= 60) {
+            if ($diffInMinutes <= 59) {
                 return ['success' => false, 'message' => "Chỉ có thể xóa suất chiếu trước ít nhất 1 tiếng. Thời gian còn lại: {$diffInMinutes} phút."];
             }
         } else {
             $diffInHours = $now->diffInHours($startTime, false);
-            if ($diffInHours <= 24) {
-                return ['success' => false, 'message' => "Chỉ có thể xóa suất chiếu trước ít nhất 24 giờ. Thời gian còn lại: " . round($diffInHours, 1) . " giờ."];
+            if ($diffInHours <= 3) {
+                return ['success' => false, 'message' => "Chỉ có thể xóa suất chiếu trước ít nhất 3 giờ. Thời gian còn lại: " . round($diffInHours, 1) . " giờ."];
             }
         }
 
