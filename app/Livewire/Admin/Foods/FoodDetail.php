@@ -7,9 +7,11 @@ use App\Models\FoodItem;
 use App\Models\FoodOrderItem;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\WithPagination;
 
 class FoodDetail extends Component
 {
+    use WithPagination;
     public $foodItem;
     public $tabCurrent = 'overview';
 
