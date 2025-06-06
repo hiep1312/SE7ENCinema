@@ -55,7 +55,7 @@ class UserSeeder extends Seeder
         ]);
 
         // Dữ liệu fake
-        foreach (range(1, 17) as $i) { // còn lại tạo cho đủ 20
+        foreach (range(1, 17) as $i) {
             User::create([
                 'email' => fake()->unique()->safeEmail(),
                 'password' => Hash::make('12345678'),
