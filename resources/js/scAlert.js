@@ -18,7 +18,7 @@ const $sc_configAlert = {
         keydownListenerCapture: true,
         confirmButtonText: "OK",
         denyButtonText: "No",
-        cancelButtonText: "Cancel",
+        cancelButtonText: "Hủy",
         confirmButtonColor: undefined,
         denyButtonColor: undefined,
         cancelButtonColor: undefined,
@@ -152,7 +152,7 @@ document.addEventListener('livewire:init', () => {
                 live && $wire.$commit();
             });
         };
-        
+
         el.addEventListener('click', listener, optionsListener);
 
         cleanup(() => {
@@ -197,7 +197,7 @@ document.addEventListener('livewire:init', () => {
                 live && $wire.$commit();
             });
         };
-        
+
         el.addEventListener('click', listener, optionsListener);
 
         cleanup(() => {
@@ -249,7 +249,7 @@ document.addEventListener('livewire:init', () => {
                 live && $wire.$commit();
             });
         };
-        
+
         el.addEventListener('click', listener, optionsListener);
 
         cleanup(() => {
@@ -296,7 +296,7 @@ document.addEventListener('livewire:init', () => {
                 live && $wire.$commit();
             });
         };
-        
+
         el.addEventListener('click', listener, optionsListener);
 
         cleanup(() => {

@@ -19,15 +19,14 @@ class RoomIndex extends Component
 
     public function deleteRoom(array $status, int $roomId)
     {
-        $this->js('console.log', $status, $roomId);
-        if(isset($status['isConfirmed']) && !$status['isConfirmed']) return;
+        if(!$status['isConfirmed']) return;
         $room = Room::find($roomId);
 
         // Kiểm tra xem có suất chiếu đang hoạt động không
-        /* if ($room->hasActiveShowtimes()) {
+        if ($room->hasActiveShowtimes()) {
             session()->flash('error', 'Không thể xóa phòng có suất chiếu trong tương lai!');
             return;
-        } */
+        }
 
         // Soft delete
         $room->delete();

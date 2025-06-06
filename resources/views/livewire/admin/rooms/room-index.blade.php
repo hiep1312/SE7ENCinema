@@ -42,7 +42,7 @@
                                    wire:model.live.debounce.300ms="search"
                                    class="form-control bg-dark text-light"
                                    placeholder="Tìm kiếm phòng chiếu...">
-                                   <span class="input-group-text">
+                            <span class="input-group-text">
                                 <i class="fas fa-search"></i>
                             </span>
                         </div>

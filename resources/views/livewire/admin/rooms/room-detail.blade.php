@@ -173,13 +173,15 @@
             </li>
             <li class="nav-item">
                 <button class="nav-link @if($tabCurrent === 'maintenance') active bg-light text-dark @else text-light @endif"
-                        wire:click="$set('tabCurrent', 'maintenance')">
+                        wire:click="$set('tabCurrent', 'maintenance')"
+                        style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <i class="fas fa-tools me-1"></i>Bảo trì
                 </button>
             </li>
             <li class="nav-item">
                 <button class="nav-link @if($tabCurrent === 'seats') active bg-light text-dark @else text-light @endif"
-                        wire:click="$set('tabCurrent', 'seats')">
+                        wire:click="$set('tabCurrent', 'seats')"
+                        style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <i class="fas fa-chair me-1"></i>Sơ đồ ghế
                 </button>
             </li>
@@ -245,7 +247,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 mt-4 mt-md-0">
                         <div class="card bg-dark border-light">
                             <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                                 <h5><i class="fas fa-chart-bar me-2"></i>Thống kê ghế</h5>
@@ -378,7 +380,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-4 mt-md-0">
                         <div class="card bg-dark border-light">
                             <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                                 <h5><i class="fas fa-clock me-2"></i>Đếm ngược thời gian thực</h5>
@@ -525,7 +527,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 mt-4 mt-md-0">
                         <div class="card bg-dark border-light">
                             <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                                 <h5><i class="fas fa-calendar-plus me-2"></i>Suất chiếu sắp tới</h5>

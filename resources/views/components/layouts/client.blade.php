@@ -66,5 +66,4 @@
     <script src="{{ asset('client/assets/js/custom.js') }}"></script>
     @vite('resources/js/app.js')
 </body>
-
 </html>
