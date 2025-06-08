@@ -105,7 +105,7 @@
                                                 id = "birthday"
                                                 wire:model="birthday"
                                                 class="form-control bg-dark text-light border-light @error('birthday') is-invalid @enderror"
-                                                placeholder="VD: 0123456789" @if($user->birthday) readonly @endif>
+                                                placeholder="VD: 2014-03-22" @if($user->birthday) readonly @endif>
                                             @error('birthday')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -115,9 +115,9 @@
                                         <div class="mb-3">
                                             <label for="gender" class="form-label text-light">Giới tính </label>
                                             <select id="gender" wire:model="gender" class="form-select bg-dark text-light border-light @error('gender') is-invalid @enderror" @if($user->gender) disabled @endif>
-                                                <option value="activate">Nam</option>
-                                                <option value="discontinued">Nữ</option>
-                                                <option value="discontinued">Khác</option>
+                                                <option value="man">Nam</option>
+                                                <option value="woman">Nữ</option>
+                                                <option value="other">Khác</option>
                                             </select>
                                             @error('gender')
                                                 <div class="invalid-feedback">{{ $message }}</div>

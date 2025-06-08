@@ -53,6 +53,7 @@ class UserEdit extends Component
     {
         $this->user = $user;
         $this->fill($user->only('email', 'name', 'phone', 'address', 'birthday', 'gender', 'role', 'status'));
+        $this->birthday = !$this->birthday ?: $this->birthday->format('Y-m-d');
     }
 
     public function updateUser()
