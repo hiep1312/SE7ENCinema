@@ -62,9 +62,7 @@ class RoomIndex extends Component
 
     public function resetFilters()
     {
-        $this->search = '';
-        $this->statusFilter = '';
-        $this->showtimeFilter = '';
+        $this->reset(['search', 'statusFilter', 'showtimeFilter']);
     }
 
     #[Title('Danh sách phòng chiếu - SE7ENCinema')]

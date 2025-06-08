@@ -21,7 +21,7 @@ class RoomEdit extends Component
     protected $rules = [
         'name' => 'required|string|max:255|unique:rooms,name',
         'status' => 'required|in:active,maintenance,inactive',
-        'last_maintenance_date' => 'nullable|date',
+        'last_maintenance_date' => 'nullable|date|before_or_equal:today',
         'rows' => 'required|integer|min:5|max:26',
         'seatsPerRow' => 'required|integer|min:10|max:30',
         'vipRows' => 'nullable|string',
@@ -31,6 +31,7 @@ class RoomEdit extends Component
     protected $messages = [
         'name.required' => 'Tên phòng chiếu là bắt buộc',
         'name.unique' => 'Tên phòng chiếu đã tồn tại',
+        'last_maintenance_date.before_or_equal' => 'Ngày bảo trì không được lớn hơn ngày hôm nay.',
         'rows.required' => 'Số hàng ghế là bắt buộc',
         'rows.min' => 'Số hàng ghế tối thiểu là 5',
         'rows.max' => 'Số hàng ghế tối đa là 26',
