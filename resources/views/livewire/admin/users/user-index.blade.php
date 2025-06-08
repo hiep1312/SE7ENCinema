@@ -39,7 +39,7 @@
                     <div class="col-md-4 col-lg-3">
                         <div class="input-group">
                             <input type="text" wire:model.live.debounce.300ms="search"
-                                class="form-control bg-dark text-light" placeholder="Tìm kiếm món ăn...">
+                                class="form-control bg-dark text-light" placeholder="Tìm kiếm người dùng...">
                             <span class="input-group-text">
                                 <i class="fas fa-search"></i>
                             </span>
