@@ -6,6 +6,7 @@ use App\Models\Room;
 use App\Models\Seat;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -59,7 +60,15 @@ class RoomCreate extends Component
         }
     }
 
-    private function generateSeats($room)
+    #[On('handleGenerate')]
+    public function handleGenerateSeats(string $selector){
+        $this->validate();
+
+        $this->dispatch('generateSeats', $selector);
+    }
+
+
+    /* protected function generateSeats($room)
     {
         $vipRowsArray = $this->vipRows ? explode(',', str_replace(' ', '', $this->vipRows)) : [];
         $coupleRowsArray = $this->coupleRows ? explode(',', str_replace(' ', '', $this->coupleRows)) : [];
@@ -96,7 +105,7 @@ class RoomCreate extends Component
         }
 
         Seat::insert($seats);
-    }
+    } */
 
     #[Title('Tạo phòng chiếu - SE7ENCinema')]
     #[Layout('components.layouts.admin')]

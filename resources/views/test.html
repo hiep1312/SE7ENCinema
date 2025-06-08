@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thiết kế ghế rạp chiếu phim</title>
+    <style>
+        :root {
+            /* Standard seat variables */
+            --seat-standard-width: 43px;
+            --seat-standard-height: 40px;
+            --seat-standard-color: rgba(255, 255, 255, 0.38);
+            --seat-standard-color-hover: #000000;
+            --seat-standard-border: 1px solid #4d4f5c;
+            --seat-standard-font: 16px / 1em sans-serif;
+            --seat-standard-line-height: 1.6em;
+            --seat-standard-background: transparent;
+            --seat-standard-background-hover: #ffd900;
+            --seat-standard-occupied-bg: #3a3c4a;
+            --seat-standard-occupied-border: #3a3c4a;
+
+            /* VIP seat variables */
+            --seat-vip-width: 43px;
+            --seat-vip-height: 40px;
+            --seat-vip-color: #ffffff;
+            --seat-vip-color-hover: #000000;
+            --seat-vip-border: 1px solid #4d4f5c;
+            --seat-vip-background: linear-gradient(135deg, #ffd90036 0%, #ffb24767 50%, #ff8c004e 100%);
+            --seat-vip-background-hover: #ffd700;
+            --seat-vip-occupied-bg: linear-gradient(135deg, #8b7355 0%, #6b5d4f 50%, #4a3f35 100%);
+            --seat-vip-occupied-border: #6b5d4f;
+
+            /* Double seat variables */
+            --seat-double-width: 90px;
+            --seat-double-height: 45px;
+            --seat-double-color: rgba(255, 182, 193, 0.8);
+            --seat-double-color-hover: #000000;
+            --seat-double-border: 1px solid #4d4f5c;
+            --seat-double-background: rgba(255, 182, 193, 0.1);
+            --seat-double-background-hover: #ffd700;
+            --seat-double-occupied-bg: rgba(139, 115, 123, 0.6);
+            --seat-double-occupied-border: #7a6570;
+        }
+
+        body {
+            background: #2c2e3a;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        input {
+            margin: 0;
+        }
+
+        /* Base seat styling */
+        .seat {
+            appearance: none;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        /* Standard Seat */
+        .seat-standard {
+            width: var(--seat-standard-width);
+            height: var(--seat-standard-height);
+        }
+
+        .seat-standard::before {
+            content: attr(data-number);
+            position: absolute;
+            width: 100%;
+            height: 70%;
+            background: var(--seat-standard-background);
+            border-radius: 5px;
+            border: var(--seat-standard-border);
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font: var(--seat-standard-font);
+            color: var(--seat-standard-color);
+            top: 0;
+        }
+
+        .seat-standard::after {
+            content: '';
+            position: absolute;
+            bottom: 1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 25%;
+            border: var(--seat-standard-border);
+            border-radius: 0 0 5px 5px;
+            box-sizing: border-box;
+            background: var(--seat-standard-background);
+        }
+
+        .seat-standard:hover::before,
+        .seat-standard:hover::after,
+        .seat-standard:checked::before,
+        .seat-standard:checked::after {
+            color: var(--seat-standard-color-hover);
+            background: var(--seat-standard-background-hover);
+            border-color: var(--seat-standard-background-hover);
+        }
+
+        .seat-standard:hover,
+        .seat-standard:checked {
+            transform: scale(1.1);
+        }
+
+        /* VIP Seat - Different shape without armrests */
+        .seat-vip {
+            width: var(--seat-vip-width);
+            height: var(--seat-vip-height);
+        }
+
+        .seat-vip::before {
+            content: attr(data-number);
+            position: absolute;
+            width: 100%;
+            height: 65%;
+            background: var(--seat-vip-background);
+            border-radius: 12px 12px 0 0;
+            border: var(--seat-vip-border);
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font: var(--seat-standard-font);
+            color: var(--seat-vip-color);
+            top: 0;
+            box-shadow: inset 0 2px 8px rgba(255, 107, 53, 0.3),
+                0 2px 15px rgba(247, 147, 30, 0.2),
+                0 0 25px rgba(255, 215, 0, 0.2);
+        }
+
+        .seat-vip::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70%;
+            height: 30%;
+            border: var(--seat-vip-border);
+            border-radius: 15px;
+            box-sizing: border-box;
+            background: var(--seat-vip-background);
+            box-shadow: 0 2px 12px rgba(247, 147, 30, 0.2),
+                inset 0 1px 6px rgba(255, 107, 53, 0.3);
+        }
+
+        .seat-vip:hover::before,
+        .seat-vip:hover::after,
+        .seat-vip:checked:before,
+        .seat-vip:checked::after{
+            background: var(--seat-vip-background-hover);
+            border-color: var(--seat-vip-background-hover);
+            color: var(--seat-vip-color-hover);
+            box-shadow: 0 4px 8px rgba(255, 215, 0, 0.4);
+        }
+
+        .seat-vip:hover,
+        .seat-vip:checked {
+            transform: scale(1.1);
+        }
+
+        /* Double Seat - Wider with heart shape detail */
+        .seat-double {
+            width: var(--seat-double-width);
+            height: var(--seat-double-height);
+        }
+
+        .seat-double::before {
+            content: attr(data-number);
+            position: absolute;
+            width: 100%;
+            height: 75%;
+            background: var(--seat-double-background);
+            border-radius: 10px 10px 5px 5px;
+            border: var(--seat-double-border);
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font: var(--seat-standard-font);
+            color: var(--seat-double-color);
+            top: 0;
+        }
+
+        .seat-double::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            height: 22%;
+            border: var(--seat-double-border);
+            border-radius: 0 0 10px 10px;
+            box-sizing: border-box;
+            background: var(--seat-double-background);
+        }
+
+        .seat-double:hover::before,
+        .seat-double:hover::after,
+        .seat-double:checked::before,
+        .seat-double:checked::after {
+            background: var(--seat-double-background-hover);
+            border-color: var(--seat-double-background-hover);
+            color: var(--seat-double-color-hover);
+        }
+
+        .seat-double:hover,
+        .seat-double:checked {
+            transform: scale(1.05);
+        }
+
+        /* Occupied state */
+        .seat-standard.occupied::before {
+            background: var(--seat-standard-occupied-bg) !important;
+            border-color: var(--seat-standard-occupied-border) !important;
+            color: rgba(255, 255, 255, 0.6) !important;
+        }
+
+        .seat-standard.occupied::after {
+            background: var(--seat-standard-occupied-bg) !important;
+            border-color: var(--seat-standard-occupied-border) !important;
+        }
+
+        .seat-vip.occupied::before {
+            background: var(--seat-vip-occupied-bg) !important;
+            border-color: var(--seat-vip-occupied-border) !important;
+            color: rgba(255, 255, 255, 0.7) !important;
+            box-shadow: inset 0 2px 4px rgba(139, 115, 85, 0.4) !important;
+        }
+
+        .seat-vip.occupied::after {
+            background: var(--seat-vip-occupied-bg) !important;
+            border-color: var(--seat-vip-occupied-border) !important;
+            box-shadow: none !important;
+        }
+
+        .seat-double.occupied::before {
+            background: var(--seat-double-occupied-bg) !important;
+            border-color: var(--seat-double-occupied-border) !important;
+            color: rgba(255, 255, 255, 0.6) !important;
+        }
+
+        .seat-double.occupied::after {
+            background: var(--seat-double-occupied-bg) !important;
+            border-color: var(--seat-double-occupied-border) !important;
+        }
+
+        .seat.occupied:hover,
+        .seat.occupied:checked {
+            transform: none !important;
+        }
+
+        /* Aisle */
+        .aisle {
+            /* grid-column: span 1; */
+            border: none;
+            height: var(--seat-standard-height);
+            width: var(--seat-standard-width);
+            background: transparent;
+        }
+
+        /* Door */
+        .door {
+            background: linear-gradient(135deg, #8b4513bc, #a0512dc2);
+            border: 2px solid #D2691E;
+            border-radius: 5px;
+            color: #FFE4B5;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            width: var(--seat-standard-width);
+            height: var(--seat-standard-height);
+        }
+
+        .door::before {
+            content: '🚪';
+            font-size: calc(var(--seat-standard-height) / 2);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .door:hover {
+            background: linear-gradient(135deg, #a0512db8, #cd813f);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div>
+            <input type="checkbox" class="seat seat-standard occupied" data-number="S">
+            <div class="door" style="display: inline-block;"></div>
+            <input type="checkbox" class="seat seat-standard occupied" data-number="S">
+        </div>
+        <div>
+        </div>
+        <div>
+            <input type="checkbox" class="seat seat-vip occupied" data-number="V">
+        </div>
+        <div>
+            <input type="checkbox" class="seat seat-double" data-number="♥">
+        </div>
+    </div>
+</body>
+</html>
