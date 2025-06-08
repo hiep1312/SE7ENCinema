@@ -61,7 +61,7 @@ class UserEdit extends Component
         $this->validate();
 
         $avatarPath = $this->user->avatar;
-        if($this->avatar && $this->avatar instanceof UploadedFile):
+        if ($this->avatar && $this->avatar instanceof UploadedFile):
             !Storage::disk('public')->exists($avatarPath) ?: Storage::disk('public')->delete($avatarPath);
             $avatarPath = $this->avatar->store('users', 'public');
         endif;

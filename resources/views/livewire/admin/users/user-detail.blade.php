@@ -87,7 +87,7 @@
                                 <small>phim</small>
                             </div>
                             <div class="align-self-center">
-                                <i class="fas fa-chair fa-2x opacity-75"></i>
+                                <i class="fa-solid fa-ticket fa-2x opacity-75"></i>
                             </div>
                         </div>
                     </div>
@@ -103,7 +103,7 @@
                                 <small>VNĐ</small>
                             </div>
                             <div class="align-self-center">
-                                <i class="fas fa-ticket fa-2x opacity-75"></i>
+                                <i class="fa-solid fa-money-bill fa-2x opacity-75"></i>
                             </div>
                         </div>
                     </div>
@@ -123,13 +123,13 @@
                 <button class="nav-link @if($tabCurrent === 'orders') active bg-light text-dark @else text-light @endif"
                         wire:click="$set('tabCurrent', 'orders')"
                         style="border-top-left-radius: 0; border-top-right-radius: 0;">
-                    <i class="fas fa-tools me-1"></i> Đơn hàng
+                    <i class="fas fa-receipt me-2"></i> Đơn hàng
                 </button>
             </li>
             <li class="nav-item">
                 <button class="nav-link @if($tabCurrent === 'ratingAndComment') active bg-light text-dark @else text-light @endif"
                         wire:click="$set('tabCurrent', 'ratingAndComment')">
-                    <i class="fas fa-chair me-1"></i> Đánh giá và bình luận
+                    <i class="fa-regular fa-comment me-1"></i> Đánh giá và bình luận
                 </button>
             </li>
         </ul>
@@ -322,7 +322,7 @@
                     <div class="col-md-6">
                         <div class="card bg-dark border-light">
                             <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <h5><i class="fas fa-history me-2"></i>Đánh giá gần đây</h5>
+                                <h5><i class="fa-solid fa-comment-nodes me-2"></i>Đánh giá gần đây</h5>
                             </div>
                             <div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
                                 @if($ratings->count() > 0)
@@ -358,7 +358,7 @@
                     <div class="col-md-6 mt-4 mt-md-0">
                         <div class="card bg-dark border-light">
                             <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <h5><i class="fas fa-calendar-plus me-2"></i>Bình luận gần đây</h5>
+                                <h5><i class="fa-solid fa-comments me-2"></i>Bình luận gần đây</h5>
                             </div>
                             <div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
                                 @if($comments->count() > 0)
