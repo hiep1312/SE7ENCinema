@@ -44,6 +44,7 @@ class UserDetail extends Component
             })
             ->where('updated_at', '<=', now()->subDays(60))
             ->where('updated_at', '>', now()->subDays(90))
+            ->where('id', $this->user->id)
             ->exists();
         $this->getTotalDowntime();
 

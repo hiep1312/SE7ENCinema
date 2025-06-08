@@ -15,8 +15,6 @@ class UserEdit extends Component
     use WithFileUploads;
 
     public $user;
-    /* public $email = '';
-    public $name = ''; */
     public $phone = null;
     public $address = null;
     public $avatar = null;

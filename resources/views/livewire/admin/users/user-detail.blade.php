@@ -128,8 +128,7 @@
             </li>
             <li class="nav-item">
                 <button class="nav-link @if($tabCurrent === 'ratingAndComment') active bg-light text-dark @else text-light @endif"
-                        wire:click="$set('tabCurrent', 'ratingAndComment')"
-                        style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                        wire:click="$set('tabCurrent', 'ratingAndComment')">
                     <i class="fas fa-chair me-1"></i> Đánh giá và bình luận
                 </button>
             </li>
