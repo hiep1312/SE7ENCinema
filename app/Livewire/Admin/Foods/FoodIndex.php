@@ -64,9 +64,7 @@ class FoodIndex extends Component
 
     public function resetFilters()
     {
-        $this->search = '';
-        $this->statusFilter = '';
-        $this->sortDateFilter = 'desc';
+        $this->reset(['search', 'statusFilter', 'sortDateFilter']);
     }
 
     #[Title('Danh sách món ăn - SE7ENCinema')]

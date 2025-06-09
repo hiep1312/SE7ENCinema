@@ -1,5 +1,5 @@
 <div>
-    <div class="container-lg mb-4" wire:poll>
+    <div class="container-lg mb-4" wire:poll="realTimeFoodUpdate">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2 class="text-light">Chi tiết món ăn: {{ $foodItem->name }}</h2>
@@ -98,14 +98,14 @@
                     class="nav-link @if ($tabCurrent === 'variants') active bg-light text-dark @else text-light @endif"
                     wire:click="$set('tabCurrent', 'variants')"
                     style="border-top-left-radius: 0; border-top-right-radius: 0;">
-                    <i class="fas fa-layer-group me-1"></i> Biến thể
+                    <i class="fas fa-layer-group me-1"></i>Biến thể
                 </button>
             </li>
             <li class="nav-item">
                 <button
                     class="nav-link @if ($tabCurrent === 'orders') active bg-light text-dark @else text-light @endif"
                     wire:click="$set('tabCurrent', 'orders')">
-                    <i class="fas fa-shopping-cart me-1"></i> Đơn hàng
+                    <i class="fas fa-shopping-cart me-1"></i>Đơn hàng
                 </button>
             </li>
         </ul>
@@ -119,7 +119,7 @@
                         <div class="card bg-dark border-light">
                             <div class="card-header bg-gradient text-light"
                                 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <h5><i class="fas fa-tags me-2"></i>Thông tin cơ bản</h5>
+                                <h5><i class="fas fa-tags me-2"></i>Thông tin chi tiết</h5>
                             </div>
                             <div class="card-body bg-dark"
                                 style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
@@ -283,7 +283,7 @@
                                                     <th class="text-center text-light">Số lượng</th>
                                                     <th class="text-center text-light">Tổng giá</th>
                                                     <th class="text-center text-light">Tên khách hàng</th>
-                                                    <th class="text-center text-light">Email/SĐT</th>
+                                                    <th class="text-center text-light">Email / SĐT</th>
                                                     <th class="text-center text-light">Địa chỉ</th>
                                                     <th class="text-center text-light">Ngày mua</th>
                                                     <th class="text-center text-light">Hành động</th>
