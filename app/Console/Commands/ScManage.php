@@ -26,7 +26,7 @@ class ScManage extends Command
      */
     public function handle()
     {
-        $versionNow = '1.2.8';
+        $versionNow = '1.2.9';
         $noticeUrl = 'https://discord.gg/aj4A8M7E';
         $bugReportUrl = 'https://discord.gg/RrS9SM6q';
         $remoteVersion = null;
