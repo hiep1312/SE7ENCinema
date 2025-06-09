@@ -112,14 +112,14 @@ class RoomDetail extends Component
             ->with('movie')
             ->where('start_time', '<=', now())
             ->orderBy('start_time', 'desc')
-            ->paginate(10);
+            ->paginate(10, ['*'], 'recent_showtimes');
 
         $upcomingShowtimes = $this->room->showtimes()
             ->with('movie')
             ->where('start_time', '>', now())
             ->where('status', 'active')
             ->orderBy('start_time', 'asc')
-            ->paginate(10);
+            ->paginate(10, ['*'], 'upcoming_showtimes');
 
         return view('livewire.admin.rooms.room-detail', compact('recentShowtimes', 'upcomingShowtimes'));
     }
