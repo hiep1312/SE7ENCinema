@@ -176,3 +176,10 @@
         </div>
     </div>
 </div>
+@script
+<script type="module">
+    console.log(getRowSeat(1));
+</script>
+
+
+@endscript
