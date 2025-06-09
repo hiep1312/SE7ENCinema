@@ -92,7 +92,7 @@
                                             <label for="address" class="form-label text-light">Địa chỉ</label>
                                             <textarea id="address" wire:model="address"
                                                 class="form-control bg-dark text-light border-light @error('address') is-invalid @enderror"
-                                                placeholder="VD: " @if($user->address) readonly @endif></textarea>
+                                                placeholder="VD: 123 Đường Lê Lợi, Phường Bến Thành, Quận 1, TP. Hồ Chí Minh" @if($user->address) readonly @endif></textarea>
                                             @error('address')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
