@@ -46,5 +46,21 @@ class User extends Authenticatable
      */
     protected $casts = [
         'password' => 'hashed',
+        'birthday' => 'date',
     ];
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

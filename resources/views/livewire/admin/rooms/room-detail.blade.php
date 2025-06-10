@@ -201,7 +201,7 @@
                     <div class="col-md-6">
                         <div class="card bg-dark border-light">
                             <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <h5><i class="fas fa-info me-2"></i>Thông tin cơ bản</h5>
+                                <h5><i class="fas fa-info me-2"></i>Thông tin chi tiết</h5>
                             </div>
                             <div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
                                 <table class="table table-borderless text-light">

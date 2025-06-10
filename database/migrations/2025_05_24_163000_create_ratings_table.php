@@ -18,6 +18,7 @@ return new class extends Migration
             $table->tinyInteger('score');
             $table->text('review')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

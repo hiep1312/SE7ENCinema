@@ -44,23 +44,30 @@ class FoodVariantIndex extends Component
             return;
         }
 
-        // Nếu bạn muốn kiểm tra liên kết với món ăn, hoặc bỏ qua luôn như bạn nói thì không cần check.
-
         $variant->delete();
         session()->flash('success', 'Xóa biến thể thành công!');
     }
 
     public function restoreVariant(int $variantId)
     {
-        $variant = FoodVariant::onlyTrashed()->find($variantId);
+        $variant = FoodVariant::onlyTrashed()
+            ->with('foodItem')
+            ->find($variantId);
+
         if (!$variant) {
             session()->flash('error', 'Biến thể không tồn tại.');
+            return;
+        }
+
+        if (!$variant->foodItem || $variant->foodItem->trashed()) {
+            session()->flash('error', 'Không thể khôi phục biến thể vì món ăn liên kết đã bị xóa hoặc không tồn tại.');
             return;
         }
 
         $variant->restore();
         session()->flash('success', 'Khôi phục biến thể thành công!');
     }
+
 
     public function forceDeleteVariant(array $status, int $variantId)
     {

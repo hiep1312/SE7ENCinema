@@ -14,6 +14,10 @@ use App\Livewire\Admin\FoodVariants\FoodVariantDetail;
 use App\Livewire\Admin\FoodVariants\FoodVariantCreate;
 use App\Livewire\Admin\FoodVariants\FoodVariantEdit;
 
+use App\Livewire\Admin\Users\UserCreate;
+use App\Livewire\Admin\Users\UserDetail;
+use App\Livewire\Admin\Users\UserEdit;
+use App\Livewire\Admin\Users\UserIndex;
 
 Route::prefix('admin')->name('admin.')->group(function () {
     /* Rooms */
@@ -39,8 +43,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/create', FoodVariantCreate::class)->name('create');
         Route::get('/detail/{variant}', FoodVariantDetail::class)->name('detail');
         Route::get('/edit/{variant}', FoodVariantEdit::class)->name('edit');
+    /* Users */
+    Route::prefix('/users')->name('users.')->group(function () {
+        Route::get('/', UserIndex::class)->name('index');
+        Route::get('/create', UserCreate::class)->name('create');
+        Route::get('/edit/{user}', UserEdit::class)->name('edit');
+        Route::get('/detail/{user}', UserDetail::class)->name('detail');
     });
 
+    });
 
 
     /* Template */
