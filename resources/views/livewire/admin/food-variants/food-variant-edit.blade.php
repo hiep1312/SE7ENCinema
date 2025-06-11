@@ -141,7 +141,7 @@
                                 </div>
 
                                 @if ($RelatedVariant)
-                                    <div class="row ml-3 mr-3">
+                                    <div class="container">
                                         <div class="col-12">
                                             <div class="card bg-dark border-light">
                                                 <div class="card-header bg-gradient text-light"
@@ -164,7 +164,6 @@
                                                                     <th class="text-center text-light">Giới hạn nhập
                                                                     </th>
                                                                     <th class="text-center text-light">Trạng thái</th>
-                                                                    <th class="text-center text-light">Hành động</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -214,23 +213,6 @@
                                                                                 @break
                                                                             @endswitch
                                                                         </td>
-                                                                        <td>
-                                                                            <div
-                                                                                class="d-flex gap-2 justify-content-center">
-                                                                                <a href="{{ route('admin.foods_variants.detail', $variant->id) }}"
-                                                                                    class="btn btn-sm btn-info"
-                                                                                    title="Xem chi tiết">
-                                                                                    <i class="fas fa-eye"
-                                                                                        style="margin-right: 0"></i>
-                                                                                </a>
-                                                                                <a href="{{ route('admin.foods_variants.edit', $variant->id) }}"
-                                                                                    class="btn btn-sm btn-warning"
-                                                                                    title="Chỉnh sửa">
-                                                                                    <i class="fas fa-edit"
-                                                                                        style="margin-right: 0"></i>
-                                                                                </a>
-                                                                            </div>
-                                                                        </td>
                                                                     </tr>
                                                                     @empty
                                                                         <tr>
@@ -251,7 +233,7 @@
                                         </div>
 
                                     @endif
-                                    <div class="d-flex justify-content-between m-4">
+                                    <div class="d-flex justify-content-between px-4 mt-4 mb-4">
                                         <button type="submit" class="btn btn-success">
                                             <i class="fas fa-save"></i> Lưu thay đổi
                                         </button>

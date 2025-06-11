@@ -146,7 +146,6 @@
                                                     <th class="text-center text-light">Số lượng</th>
                                                     <th class="text-center text-light">Giới hạn nhập</th>
                                                     <th class="text-center text-light">Trạng thái</th>
-                                                    <th class="text-center text-light">Hành động</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -189,19 +188,6 @@
                                                                     <span class="badge bg-danger">Hết hàng</span>
                                                                 @break
                                                             @endswitch
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex gap-2 justify-content-center">
-                                                                <a href="{{ route('admin.foods_variants.detail', $variant->id) }}"
-                                                                    class="btn btn-sm btn-info" title="Xem chi tiết">
-                                                                    <i class="fas fa-eye" style="margin-right: 0"></i>
-                                                                </a>
-                                                                <a href="{{ /* route('admin.foodVariants.edit', $variant->id) */ '#' }}"
-                                                                    class="btn btn-sm btn-warning" title="Chỉnh sửa">
-                                                                    <i class="fas fa-edit"
-                                                                        style="margin-right: 0"></i>
-                                                                </a>
-                                                            </div>
                                                         </td>
                                                     </tr>
                                                     @empty

@@ -13,7 +13,7 @@
         </div>
     @endif
 
-    <div class="container-lg mb-4">
+    <div class="container-lg mb-4" wire:poll.5s>
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2 class="text-light">Quản lý biến thể món ăn</h2>
             <div>
@@ -42,20 +42,24 @@
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
                         </div>
                     </div>
-                    <div class="col-md-3 col-lg-2">
-                        <select wire:model.live="statusFilter" class="form-select bg-dark text-light">
-                            <option value="">Tất cả trạng thái</option>
-                            <option value="available">Còn hàng</option>
-                            <option value="out_of_stock">Hết hàng</option>
-                            <option value="hidden">Ẩn</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3 col-lg-2">
-                        <select wire:model.live="sortDateFilter" class="form-select bg-dark text-light">
-                            <option value="desc">Mới nhất</option>
-                            <option value="asc">Cũ nhất</option>
-                        </select>
-                    </div>
+                    @if (!$showDeleted)
+                        <div class="col-md-3 col-lg-2">
+                            <select wire:model.live="statusFilter" class="form-select bg-dark text-light">
+                                <option value="">Tất cả trạng thái</option>
+                                <option value="available">Còn hàng</option>
+                                <option value="out_of_stock">Hết hàng</option>
+                                <option value="hidden">Ẩn</option>
+                            </select>
+                        </div>
+                    @endif
+                    @if (!$showDeleted)
+                        <div class="col-md-3 col-lg-2">
+                            <select wire:model.live="sortDateFilter" class="form-select bg-dark text-light">
+                                <option value="desc">Mới nhất</option>
+                                <option value="asc">Cũ nhất</option>
+                            </select>
+                        </div>
+                    @endif
                     <div class="col-md-2">
                         <button wire:click="resetFilters" class="btn btn-outline-warning">
                             <i class="fas fa-refresh me-1"></i>Reset
@@ -88,24 +92,36 @@
                                         <img src="{{ asset('storage/' . ($variant->image ?? '404.webp')) }}"
                                             class="rounded" style="width: 60px; height: auto;">
                                     </td>
-                                    <td class="text-light">{{ $variant->name }}</td>
+                                    <td class="text-light">
+                                        <strong>{{ $variant->name }}</strong>
+                                        @if ($variant->trashed())
+                                            <span class="badge bg-danger ms-1">Đã xóa</span>
+                                        @endif
+
+                                    </td>
+
                                     <td class="text-info">{{ $variant->foodItem->name ?? '---' }}</td>
                                     <td class="text-warning">{{ number_format($variant->price) }}đ</td>
                                     <td class="text-light">{{ $variant->quantity_available }}</td>
                                     <td class="text-center">
-                                        @switch($variant->status)
-                                            @case('available')
-                                                <span class="badge bg-success">Còn hàng</span>
-                                            @break
+                                        @if (!$showDeleted && !$variant->trashed())
+                                            @switch($variant->status)
+                                                @case('available')
+                                                    <span class="badge bg-success">Còn hàng</span>
+                                                @break
 
-                                            @case('out_of_stock')
-                                                <span class="badge bg-danger">Hết hàng</span>
-                                            @break
+                                                @case('out_of_stock')
+                                                    <span class="badge bg-danger">Hết hàng</span>
+                                                @break
 
-                                            @case('hidden')
-                                                <span class="badge bg-secondary">Ẩn</span>
-                                            @break
-                                        @endswitch
+                                                @case('hidden')
+                                                    <span class="badge bg-secondary">Ẩn</span>
+                                                @break
+                                            @endswitch
+                                        @else
+                                            <span class="badge bg-secondary">Đã xóa</span>
+                                        @endif
+
                                     </td>
                                     <td class="text-light">{{ $variant->created_at->format('d/m/Y H:i') }}</td>
                                     @if ($showDeleted)
@@ -132,7 +148,8 @@
                                                     class="btn btn-sm btn-info" title="Xem chi tiết">
                                                     <i class="fas fa-eye" style="margin-right: 0"></i>
                                                 </a>
-                                                <a href="{{ route('admin.foods_variants.edit',$variant->id) }}" class="btn btn-sm btn-warning" title="Chỉnh sửa">
+                                                <a href="{{ route('admin.foods_variants.edit', $variant->id) }}"
+                                                    class="btn btn-sm btn-warning" title="Chỉnh sửa">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 <button type="button" class="btn btn-sm btn-danger"

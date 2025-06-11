@@ -97,7 +97,7 @@ class FoodVariantEdit extends Component
         $this->validate();
 
         if ($this->limit > 0 && $this->quantity > $this->limit) {
-            $this->addError('limit', 'Số lượng không được vượt quá giới hạn.');
+            $this->addError('quantity', 'Số lượng không được vượt quá giới hạn.');
             return;
         }
 

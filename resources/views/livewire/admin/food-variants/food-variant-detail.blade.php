@@ -1,5 +1,5 @@
 <div>
-    <div class="container-lg mb-4" wire:poll>
+    <div class="container-lg mb-4" wire:poll="realTimeVariantUpdate">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2 class="text-light">Chi tiết Biến thể: {{ $variantItem->name }}</h2>
@@ -15,7 +15,7 @@
 
         <!-- Quick Stats Cards -->
         <div class="row mb-4 g-3">
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-6 col-md-6">
                 <div class="card text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
@@ -32,42 +32,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="card bg-success text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h6 class="card-title">Số lượng còn lại</h6>
-                                <h3 class="mb-0">
-                                    {{ number_format($variantItem->quantity_available ?? 0, 0, '.', '.') }}
-                                </h3>
-                                <small>sản phẩm</small>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-box-open fa-2x opacity-75"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="card bg-info text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h6 class="card-title">Giá trung bình</h6>
-                                <h3 class="mb-0">
-                                    {{ number_format($variantItem?->avg('price') ?? 0, 0, '.', '.') }}đ</h3>
-                                <small>VNĐ</small>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-coins fa-2x opacity-75"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-6 col-md-6">
                 <div class="card bg-warning text-white">
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
@@ -128,6 +93,7 @@
                                     <tr>
                                         <td><strong class="text-warning">Tên biến thể:</strong></td>
                                         <td>{{ $variantItem->name }}</td>
+                                    </tr>
                                     <tr>
                                         <td><strong class="text-warning">Tên món ăn:</strong></td>
                                         <td>{{ $variantItem->FoodItem->name }}</td>
@@ -281,7 +247,7 @@
                         </div>
                     </div>
                 @elseif($tabCurrent === 'orders')
-                    <div class="row">
+                    <div class="row ml-3 mr-3">
                         <div class="col-12">
                             <div class="card bg-dark border-light">
                                 <div class="card-header bg-gradient text-light"
@@ -311,7 +277,7 @@
                                                         <td class="text-center">
                                                             {{ $foodOrder->booking?->booking_code ?? 'N/A' }}</td>
                                                         <td class="text-center"><strong
-                                                                class="text-light">{{ $foodOrder->variant->name }}</strong>
+                                                                class="text-light">{{ $foodOrder->variant->FoodItem->name }}</strong>
                                                         </td>
                                                         <td class="text-center">
                                                             {{ number_format($foodOrder->quantity, 0, ',', '.') }}</td>

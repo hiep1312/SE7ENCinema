@@ -21,6 +21,7 @@ class FoodDetail extends Component
     }
 
     public function realTimeFoodUpdate(){
+        
         $this->foodItem = FoodItem::with('variants')->find($this->foodItem->id);
     }
 
