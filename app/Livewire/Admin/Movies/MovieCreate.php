@@ -100,7 +100,7 @@ class MovieCreate extends Component
         $movie->genres()->sync($this->genre_ids);
 
         session()->flash('success', 'Thêm phim thành công!');
-        return redirect()->route('admin.index');
+        return redirect()->route('admin.movies.index');
     }
 
     #[Layout('components.layouts.admin')]

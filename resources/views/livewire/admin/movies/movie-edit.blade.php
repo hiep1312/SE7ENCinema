@@ -159,6 +159,6 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Cập nhật phim</button>
-        <a href="{{ route('admin.index') }}" class="btn btn-secondary">Quay lại</a>
+        <a href="{{ route('admin.movies.index') }}" class="btn btn-secondary">Quay lại</a>
     </form>
 </div>

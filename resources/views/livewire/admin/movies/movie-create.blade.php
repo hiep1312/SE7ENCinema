@@ -136,7 +136,7 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Thêm phim</button>
-        <a href="{{ route('admin.index') }}" class="btn btn-secondary">Quay lại</a>
+        <a href="{{ route('admin.movies.index') }}" class="btn btn-secondary">Quay lại</a>
     </form>
 
     @push('scripts')

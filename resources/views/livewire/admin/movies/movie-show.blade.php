@@ -1,7 +1,7 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold text-primary">🎬 Chi tiết phim: {{ $movie->title }}</h2>
-        <a href="{{ route('admin.index') }}" class="btn btn-outline-secondary">
+        <a href="{{ route('admin.movies.index') }}" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left"></i> Quay lại danh sách
         </a>
     </div>

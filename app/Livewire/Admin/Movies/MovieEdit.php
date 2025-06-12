@@ -90,7 +90,7 @@ class MovieEdit extends Component
             $this->movie->genres()->sync($this->genre_ids);
 
             session()->flash('success', 'Cập nhật thành công!');
-            return redirect()->route('admin.index');
+            return redirect()->route('admin.movies.index');
         } catch (\Exception $e) {
             session()->flash('error', 'Cập nhật thất bại: ' . $e->getMessage());
         }

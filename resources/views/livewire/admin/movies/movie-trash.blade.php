@@ -10,7 +10,7 @@
     @endif
 
     <div class="mb-3 d-flex justify-content-between align-items-center">
-        <a href="{{ route('admin.index') }}" class="btn btn-primary">← Quay lại danh sách phim</a>
+        <a href="{{ route('admin.movies.index') }}" class="btn btn-primary">← Quay lại danh sách phim</a>
         
         <div class="d-flex gap-2 align-items-center">
             <input wire:model.live.debounce.500ms="title" type="text" class="form-control form-control-sm" placeholder="Tiêu đề">
@@ -22,7 +22,7 @@
             </select>
             <input wire:model.live="deleted_at_from" type="date" class="form-control form-control-sm" title="Ngày xóa từ">
             <input wire:model.live="deleted_at_to" type="date" class="form-control form-control-sm" title="Ngày xóa đến">
-            <a href="{{ route('admin.test') }}" class="btn btn-sm btn-outline-secondary">Reset</a>
+            <a href="{{ route('admin.movies.test') }}" class="btn btn-sm btn-outline-secondary">Reset</a>
         </div>
     </div>
 

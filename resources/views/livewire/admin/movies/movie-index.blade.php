@@ -2,7 +2,7 @@
     <h1>Danh sách phim</h1>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
-    <a href="{{ route('admin.test') }}" class="btn btn-outline-secondary mb-3">🗑️ Xem thùng rác</a>
+    <a href="{{ route('admin.movies.test') }}" class="btn btn-outline-secondary mb-3">🗑️ Xem thùng rác</a>
 
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
@@ -35,7 +35,7 @@
         </div>
     </div>
 
-    <a href="{{ route('admin.create') }}" class="btn btn-success mb-3">Thêm phim mới</a>
+    <a href="{{ route('admin.movies.create') }}" class="btn btn-success mb-3">Thêm phim mới</a>
 
     <table class="table table-bordered table-striped align-middle">
         <thead>
@@ -137,10 +137,10 @@
                         @endif
                     </td>
                     <td>
-                        <a href="{{ route('admin.show', $movie->id) }}" class="btn mb-1" title="Xem chi tiết">
+                        <a href="{{ route('admin.movies.show', $movie->id) }}" class="btn mb-1" title="Xem chi tiết">
                             <i class="bi bi-eye" style="color: #00f;"></i>
                         </a>
-                        <a href="{{ route('admin.edit', $movie->id) }}" class="btn mb-1" title="Sửa">
+                        <a href="{{ route('admin.movies.edit', $movie->id) }}" class="btn mb-1" title="Sửa">
                             <i class="bi bi-pencil-square" style="color: #ff0;"></i>
                         </a>
                         <button type="button" class="btn mb-1" title="Xóa mềm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $movie->id }}">
