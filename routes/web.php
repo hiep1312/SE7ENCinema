@@ -13,6 +13,7 @@ use App\Livewire\Admin\Users\UserCreate;
 use App\Livewire\Admin\Users\UserDetail;
 use App\Livewire\Admin\Users\UserEdit;
 use App\Livewire\Admin\Users\UserIndex;
+use App\Livewire\Admin\Rating\RatingIndex;
 
 Route::prefix('admin')->name('admin.')->group(function () {
     /* Rooms */
@@ -38,8 +39,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/edit/{user}', UserEdit::class)->name('edit');
         Route::get('/detail/{user}', UserDetail::class)->name('detail');
     });
-
-
+    // Rating 
+    Route::prefix('/ratings')->name('ratings.')->group(function () {
+        Route::get('/', RatingIndex::class)->name('index');
+    });
 
     /* Template */
     Route::view('/dashboard', 'livewire.admin.template.dashboard')->name('dashboard');
@@ -57,7 +60,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::view('/register', 'livewire.admin.template.samples.register')->name('register');
 });
 
-Route::name('client.')->group(function (){
+Route::name('client.')->group(function () {
     Route::view('/home', 'livewire.client.template.index')->name('index');
     Route::view('/blog_category', 'livewire.client.template.blogs.blog_category')->name('blog_category');
     Route::view('/blog_single', 'livewire.client.template.blogs.blog_single')->name('blog_single');
