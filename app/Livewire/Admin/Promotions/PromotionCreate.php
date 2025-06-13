@@ -33,30 +33,24 @@ class PromotionCreate extends Component
         'min_purchase' => 'nullable|numeric|min:0',
         'status' => 'required|in:active,inactive',
     ];
-    /// LƯU Ý:  Cái end_date có thể bỏ cái _or_equal nếu để vào nó sẽ cho bằng giờ phút nó vẫn tạo được nên là nên bỏ nhé !!!! bên edit cx v
+
     protected $messages = [
         'title.required' => 'Tiêu đề khuyến mãi là bắt buộc.',
-        'title.min' => 'Tiêu đề phải có ít nhất 5 ký tự.',
-        'title.max' => 'Tiêu đề không được vượt quá 100 ký tự.',
-
+        'title.max' => 'Tiêu đề không được vượt quá 255 ký tự.',
         'code.required' => 'Mã khuyến mãi là bắt buộc.',
-        'code.min' => 'Mã khuyến mãi phải có ít nhất 3 ký tự.',
-        'code.max' => 'Mã khuyến mãi không được vượt quá 15 ký tự.',
+        'code.min' => 'Mã khuyến mãi phải có ít nhất 4 ký tự.',
+        'code.max' => 'Mã khuyến mãi không được vượt quá 20 ký tự.',
         'code.unique' => 'Mã khuyến mãi đã tồn tại.',
-        'code.regex' => 'Mã khuyến mãi chỉ được chứa chữ cái viết hoa và số.',
-
-        'description.min' => 'Mô tả phải có ít nhất 10 ký tự.',
-        'description.max' => 'Mô tả không được vượt quá 500 ký tự.',
-
+        'description.max' => 'Mô tả không được vượt quá 255 ký tự.',
         'start_date.required' => 'Thời gian bắt đầu là bắt buộc.',
         'start_date.after_or_equal' => 'Thời gian bắt đầu phải từ hiện tại trở đi.',
-
         'end_date.required' => 'Thời gian kết thúc là bắt buộc.',
         'end_date.after' => 'Thời gian kết thúc phải sau thời gian bắt đầu.',
-        'end_date.before_or_equal' => 'Thời gian kết thúc không được quá 1 năm kể từ hiện tại.',
-
         'usage_limit.min' => 'Giới hạn sử dụng phải ít nhất 1 lần.',
-        'usage_limit.max' => 'Giới hạn sử dụng không được vượt quá 10,000 lần.',
+        'discount_value.required' => 'Giá trị giảm giá là bắt buộc.',
+        'discount_value.numeric' => 'Giá trị giảm giá phải là số.',
+        'discount_value.min' => 'Giá trị giảm giá phải lớn hơn 0.',
+        'discount_value.max' => 'Giá trị giảm giá không hợp lệ.',
     ];
 
     // Validation real-time khi thay đổi discount_value
@@ -65,19 +59,10 @@ class PromotionCreate extends Component
         if ($this->discount_type === 'percentage') {
             $this->validate([
                 'discount_value' => 'required|numeric|min:1|max:100'
-            ], [
-                'discount_value.required' => 'Phần trăm (%) giảm giá là bắt buộc.',
-                'discount_value.numeric' => 'Phần trăm (%) giảm giá phải là số.',
-                'discount_value.min' => 'Phần trăm (%) giảm giá phải ít nhất 1%.',
-                'discount_value.max' => 'Phần trăm (%) giảm giá không được quá 100%.',
             ]);
         } elseif ($this->discount_type === 'fixed_amount') {
             $this->validate([
                 'discount_value' => 'required|numeric|min:1'
-            ], [
-                'discount_value.required' => 'Số tiền (đ) giảm giá là bắt buộc.',
-                'discount_value.numeric' => 'Số tiền (đ) giảm giá phải là số.',
-                'discount_value.min' => 'Số tiền (đ) giảm giá phải ít nhất 1đ.',
             ]);
         }
     }
@@ -99,22 +84,14 @@ class PromotionCreate extends Component
     {
         // Validate với rules riêng biệt cho discount_value
         $rules = $this->rules;
-        $messages = $this->messages;
 
         if ($this->discount_type === 'percentage') {
             $rules['discount_value'] = 'required|numeric|min:1|max:100';
-            $messages['discount_value.required'] = 'Phần trăm (%) giảm giá là bắt buộc.';
-            $messages['discount_value.numeric'] = 'Phần trăm (%) giảm giá phải là số.';
-            $messages['discount_value.min'] = 'Phần trăm (%) giảm giá phải ít nhất 1%.';
-            $messages['discount_value.max'] = 'Phần trăm (%) giảm giá không được quá 100%.';
         } elseif ($this->discount_type === 'fixed_amount') {
             $rules['discount_value'] = 'required|numeric|min:1';
-            $messages['discount_value.required'] = 'Số tiền (đ) giảm giá là bắt buộc.';
-            $messages['discount_value.numeric'] = 'Số tiền (đ) giảm giá phải là số.';
-            $messages['discount_value.min'] = 'Số tiền (đ) giảm giá phải ít nhất 1đ.';
         }
 
-        $this->validate($rules, $messages);
+        $this->validate($rules);
 
         Promotion::create([
             'title' => $this->title,

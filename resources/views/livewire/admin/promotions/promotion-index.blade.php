@@ -1,19 +1,19 @@
 <div>
     @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show" wire:ignore role="alert">
             {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
     @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="alert alert-danger alert-dismissible fade show" wire:ignore role="alert">
             {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
-    <div class="container-lg mb-4" wire:poll.10s>
+    <div class="container-lg mb-4" wire:poll.7s>
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2 class="text-light">Quản lý khuyến mãi</h2>
             <div>

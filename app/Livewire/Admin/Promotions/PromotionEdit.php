@@ -43,8 +43,8 @@ class PromotionEdit extends Component
         'description' => 'nullable|string|max:255',
         'discount_type' => 'required|in:percentage,fixed_amount',
         'discount_value' => 'required|numeric|min:0',
-        'start_date' => 'required|date|',
-        'end_date' => 'required|date|after:start_date',
+        'start_date' => 'required|date',
+        'end_date' => 'required|date|after:start_date|after_or_equal:today',
         'usage_limit' => 'required|integer|min:1',
         'min_purchase' => 'required|numeric|min:0',
         'status' => 'required|in:active,inactive,expired',
@@ -52,35 +52,22 @@ class PromotionEdit extends Component
 
     protected $messages = [
         'title.required' => 'Tiêu đề khuyến mãi là bắt buộc.',
-        'title.min' => 'Tiêu đề phải có ít nhất 5 ký tự.',
-        'title.max' => 'Tiêu đề không được vượt quá 100 ký tự.',
-
+        'title.max' => 'Tiêu đề không được vượt quá 255 ký tự.',
         'code.required' => 'Mã khuyến mãi là bắt buộc.',
-        'code.min' => 'Mã khuyến mãi phải có ít nhất 3 ký tự.',
-        'code.max' => 'Mã khuyến mãi không được vượt quá 15 ký tự.',
-        'code.unique' => 'Mã khuyến mãi đã tồn tại.',
-        'code.regex' => 'Mã khuyến mãi chỉ được chứa chữ cái viết hoa và số.',
-
-        'description.required' => 'Mô tả khuyến mãi là bắt buộc.',
-        'description.min' => 'Mô tả phải có ít nhất 10 ký tự.',
-        'description.max' => 'Mô tả không được vượt quá 500 ký tự.',
-
+        'code.min' => 'Mã khuyến mãi phải có ít nhất 4 ký tự.',
+        'code.max' => 'Mã khuyến mãi không được vượt quá 20 ký tự.',
+        'description.max' => 'Mô tả không được vượt quá 255 ký tự.',
         'start_date.required' => 'Thời gian bắt đầu là bắt buộc.',
-
         'end_date.required' => 'Thời gian kết thúc là bắt buộc.',
         'end_date.after' => 'Thời gian kết thúc phải sau thời gian bắt đầu.',
-        'end_date.before_or_equal' => 'Thời gian kết thúc không được quá 1 năm kể từ hiện tại.',
-
+        'end_date.after_or_equal' => 'Thời gian kết thúc phải sau thời gian hiện tại.',
         'usage_limit.required' => 'Giới hạn sử dụng là bắt buộc.',
         'usage_limit.min' => 'Giới hạn sử dụng phải ít nhất 1 lần.',
-        'usage_limit.max' => 'Giới hạn sử dụng không được vượt quá 10,000 lần.',
-
         'min_purchase.required' => 'Giá trị đơn hàng tối thiểu là bắt buộc.',
-        'min_purchase.max' => 'Giá trị đơn hàng tối thiểu không được vượt quá 50,000,000đ.',
-
         'discount_value.required' => 'Giá trị giảm giá là bắt buộc.',
         'discount_value.numeric' => 'Giá trị giảm giá phải là số.',
-        'discount_value.min' => 'Giá trị giảm giá phải ít nhất 0.',
+        'discount_value.min' => 'Giá trị giảm giá phải lớn hơn 0.',
+        'discount_value.max' => 'Giá trị giảm giá không hợp lệ.',
     ];
 
     // Validation real-time khi thay đổi discount_value
@@ -89,19 +76,10 @@ class PromotionEdit extends Component
         if ($this->discount_type === 'percentage') {
             $this->validate([
                 'discount_value' => 'required|numeric|min:1|max:100'
-            ], [
-                'discount_value.required' => 'Phần trăm (%) giảm giá là bắt buộc.',
-                'discount_value.numeric' => 'Phần trăm (%) giảm giá phải là số.',
-                'discount_value.min' => 'Phần trăm (%) giảm giá phải ít nhất 1%.',
-                'discount_value.max' => 'Phần trăm (%) giảm giá không được quá 100%.',
             ]);
         } elseif ($this->discount_type === 'fixed_amount') {
             $this->validate([
                 'discount_value' => 'required|numeric|min:1'
-            ], [
-                'discount_value.required' => 'Số tiền (đ) giảm giá là bắt buộc.',
-                'discount_value.numeric' => 'Số tiền (đ) giảm giá phải là số.',
-                'discount_value.min' => 'Số tiền (đ) giảm giá phải ít nhất 1đ.',
             ]);
         }
     }
@@ -119,22 +97,14 @@ class PromotionEdit extends Component
     {
         // Validate với rules riêng biệt cho discount_value
         $rules = $this->rules;
-        $messages = $this->messages;
 
         if ($this->discount_type === 'percentage') {
             $rules['discount_value'] = 'required|numeric|min:1|max:100';
-            $messages['discount_value.required'] = 'Phần trăm (%) giảm giá là bắt buộc.';
-            $messages['discount_value.numeric'] = 'Phần trăm (%) giảm giá phải là số.';
-            $messages['discount_value.min'] = 'Phần trăm (%) giảm giá phải ít nhất 1%.';
-            $messages['discount_value.max'] = 'Phần trăm (%) giảm giá không được quá 100%.';
         } elseif ($this->discount_type === 'fixed_amount') {
             $rules['discount_value'] = 'required|numeric|min:1';
-            $messages['discount_value.required'] = 'Số tiền (đ) giảm giá là bắt buộc.';
-            $messages['discount_value.numeric'] = 'Số tiền (đ) giảm giá phải là số.';
-            $messages['discount_value.min'] = 'Số tiền (đ) giảm giá phải ít nhất 1đ.';
         }
 
-        $this->validate($rules, $messages);
+        $this->validate($rules);
 
         $promotion = Promotion::findOrFail($this->promotionId);
         $promotion->update([
