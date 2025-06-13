@@ -57,7 +57,7 @@
                                     @if ($image)
                                         <div class="mt-2">
                                             <strong>Hình ảnh xem trước:</strong>
-                                            <img src="{{ $image->temporaryUrl() }}" style="max-width: 200px;">
+                                            <img src="{{ $image->temporaryUrl() }}" style="max-width:100% ; height: auto;">
                                         </div>
                                     @endif
                                 </div>

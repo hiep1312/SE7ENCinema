@@ -33,10 +33,9 @@ class BannerEdit extends Component
         'title.unique' => 'Tiêu đề này đã tồn tại trong hệ thống',
         'image.image' => 'File phải là hình ảnh',
         'image.mimes' => 'Hình ảnh phải có định dạng: jpeg, png, jpg, gif',
-        'start_date.required' => 'Ngày bắt đầu là bắt buộc',
-        'start_date.after_or_equal' => 'Ngày bắt đầu không được nhỏ hơn ngày hôm nay',
         'end_date.required' => 'Ngày kết thúc là bắt buộc',
         'end_date.after' => 'Ngày kết thúc phải sau ngày bắt đầu',
+        'end_date.after_or_equal' => 'Ngày kết thúc phải là ngày hôm nay hoặc sau đó',
         'priority.required' => 'Độ ưu tiên là bắt buộc',
         'priority.min' => 'Độ ưu tiên tối thiểu là 0',
         'priority.max' => 'Độ ưu tiên tối đa là 100',
@@ -82,12 +81,12 @@ class BannerEdit extends Component
 
     public function updateBanner()
     {
+        // dd($this->end_date,$this->banner->end_date->format('Y-m-d\TH:i'),$this->end_date===$this->banner->end_date->format('Y-m-d\TH:i'));
         $this->validate([
             'title' => ['required', 'string', 'max:255', Rule::unique('banners', 'title')->ignore($this->banner->id)],
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
             'link' => 'nullable|string',
-            'start_date' => 'required|date|after_or_equal:today',
-            'end_date' => 'required|date|after:start_date',
+            'end_date' => 'required|date|after:start_date'.($this->end_date===$this->banner->end_date->format('Y-m-d\TH:i') ? "":"|after_or_equal:today"),
             'status' => 'required|in:active,inactive',
             'priority' => ['required', 'integer', 'min:0', 'max:100', Rule::unique('banners', 'priority')->ignore($this->banner->id)],
         ], $this->messages);

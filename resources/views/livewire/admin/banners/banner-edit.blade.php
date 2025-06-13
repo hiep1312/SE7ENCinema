@@ -55,14 +55,14 @@
                             @if ($current_image)
                                 <div class="mt-2">
                                     <p>Hình ảnh hiện tại:</p>
-                                    <img src="{{ asset($current_image) }}" alt="Current Banner" class="img-thumbnail" style="max-width: 200px;">
+                                    <img src="{{ asset($current_image) }}" alt="Current Banner" class="img-thumbnail" style="max-width:100% ; height: auto;">
                                 </div>
                             @endif
 
                             @if ($image)
                                 <div class="mt-2">
                                     <p>Hình ảnh mới (xem trước):</p>
-                                    <img src="{{ $image->temporaryUrl() }}" alt="New Banner Preview" class="img-thumbnail" style="max-width: 200px;">
+                                    <img src="{{ $image->temporaryUrl() }}" alt="New Banner Preview" class="img-thumbnail" style="max-width:100% ; height: auto;">
                                 </div>
                             @endif
                         </div>

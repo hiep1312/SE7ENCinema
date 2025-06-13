@@ -154,15 +154,6 @@
                                         @else
                                             <span class="badge bg-danger">Không hoạt động</span>
                                         @endif
-
-                                        @if($displayStatus === 'expired')
-                                            <div class="mt-1">
-                                                <small class="text-warning">
-                                                    <i class="fas fa-exclamation-triangle me-1"></i>
-                                                    Hết hạn
-                                                </small>
-                                            </div>
-                                        @endif
                                     </td>
                                     <td class="text-center">
                                         <span class="badge bg-{{ $priorityColor }} fs-6">
