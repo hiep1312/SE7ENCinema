@@ -44,7 +44,7 @@
                     <div class="col-md-3 col-lg-2">
                         <select wire:model.live="starFilter" class="form-select bg-dark">
                             <option value="">Tất cả đánh giá</option>
-                            <option value="1">⭐<span> SL: {{$counts[1]}}</span></option>
+                            <option value="1">⭐<span>{{$counts[1]}}</span></option>
                             <option value="2">⭐⭐<span>{{$counts[2]}}</span></option>
                             <option value="3">⭐⭐⭐<span>{{$counts[3]}}</span></option>
                             <option value="4">⭐⭐⭐⭐<span>{{$counts[4]}}</span></option>
