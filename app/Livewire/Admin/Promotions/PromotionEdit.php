@@ -44,7 +44,7 @@ class PromotionEdit extends Component
         'discount_type' => 'required|in:percentage,fixed_amount',
         'discount_value' => 'required|numeric|min:0',
         'start_date' => 'required|date',
-        'end_date' => 'required|date|after:start_date|after_or_equal:today',
+        'end_date' => 'required|date|after:start_date',
         'usage_limit' => 'required|integer|min:1',
         'min_purchase' => 'required|numeric|min:0',
         'status' => 'required|in:active,inactive,expired',
@@ -93,20 +93,30 @@ class PromotionEdit extends Component
         $this->resetErrorBag('discount_value');
     }
 
-    public function save()
+   public function save()
     {
-        // Validate với rules riêng biệt cho discount_value
+        // Bắt đầu với rules cơ bản
         $rules = $this->rules;
 
+        // Logic riêng cho discount_value
         if ($this->discount_type === 'percentage') {
             $rules['discount_value'] = 'required|numeric|min:1|max:100';
         } elseif ($this->discount_type === 'fixed_amount') {
             $rules['discount_value'] = 'required|numeric|min:1';
         }
 
+        // Logic riêng cho end_date
+        $promotion = Promotion::findOrFail($this->promotionId);
+
+        // Nếu end_date không thay đổi so với giá trị hiện tại, không cần check after_or_equal:today
+        if ($this->end_date === $promotion->end_date->format('Y-m-d\TH:i')) {
+            $rules['end_date'] = 'required|date|after:start_date';
+        } else {
+            $rules['end_date'] = 'required|date|after:start_date|after_or_equal:today';
+        }
+
         $this->validate($rules);
 
-        $promotion = Promotion::findOrFail($this->promotionId);
         $promotion->update([
             'title' => $this->title,
             'code' => $this->code,
