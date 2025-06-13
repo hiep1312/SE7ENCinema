@@ -17,23 +17,6 @@ class RatingIndex extends Component
     public $search = '';
     public $starFilter = '';
     public $movieFilter = '';
-    // showdelete để bao giờ cần thì làm khôi phục
-    public $showDeleted = '';
-    public function realtimeCheckOperation()
-    {
-        $this->ratings = Rating::with(['movie', 'user'])
-            ->when($this->search, function ($query) {
-                $query->whereHas('user', function ($query) {
-                    $query->where('name', 'like', '%' . $this->search . '%');
-                });
-            })
-            ->when($this->search, function ($query) {
-                $query->whereHas('movie', function ($query) {
-                    $query->where('title', 'like', '%' . $this->search . '%');
-                });
-            })
-            ->where('score', 'like', '%' . $this->starFilter . '%');
-    }
     public function resetFilters()
     {
         $this->reset(['search', 'movieFilter', 'starFilter']);
@@ -56,7 +39,7 @@ class RatingIndex extends Component
     {
         // đếm số đánh giá theo người dùng và theo phim
         foreach ($this->scores as $score) {
-            $this->counts[$score] = Rating::with(['user'])
+            $this->counts[$score] = Rating::with('user')
                 ->where('score', $score)
                 ->when(
                     $this->movieFilter,
@@ -74,7 +57,7 @@ class RatingIndex extends Component
                 )->count();
         }
         $movies = Movie::select('title', 'id')->get();
-        $query = Rating::with(['movie', 'user'])
+        $query = Rating::with('movie', 'user')
             ->when($this->search, function ($query) {
                 $query->whereHas('user', function ($query) {
                     $query->where('name', 'like', '%' . $this->search . '%');
@@ -86,9 +69,7 @@ class RatingIndex extends Component
                 });
             })
             ->where('score', 'like', '%' . $this->starFilter . '%');
-        if ($this->showDeleted)
-            $query->onlyTrashed();
-        $ratings = $query->orderBy($this->showDeleted ? 'deleted_at' : 'created_at', 'desc')->paginate(15);
+        $ratings = $query->orderBy('created_at', 'desc')->paginate(15);
         return view('livewire.admin.rating.rating-index', compact('ratings', 'movies'));
     }
 }

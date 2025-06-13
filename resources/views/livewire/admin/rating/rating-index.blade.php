@@ -16,15 +16,6 @@
     <div class="container-lg mb-4">
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2 class="text-light">Quản lý đánh giá</h2>
-            <div>
-                {{-- <button wire:click="$toggle('showDeleted')" class="btn btn-outline-danger">
-                    @if ($showDeleted)
-                    <i class="fas fa-eye me-1"></i>Xem đánhg giá
-                    @else
-                    <i class="fas fa-trash me-1"></i>Xem đánh giá đã bị xóa
-                    @endif
-                </button> --}}
-            </div>
         </div>
 
         <div class="card bg-dark">
@@ -50,11 +41,10 @@
                     </div>
 
                     <!-- Lọc theo trạng thái -->
-                    {{-- @if (!$showDeleted) --}}
                     <div class="col-md-3 col-lg-2">
                         <select wire:model.live="starFilter" class="form-select bg-dark">
                             <option value="">Tất cả đánh giá</option>
-                            <option value="1">⭐<span>{{$counts[1]}}</span></option>
+                            <option value="1">⭐<span> SL: {{$counts[1]}}</span></option>
                             <option value="2">⭐⭐<span>{{$counts[2]}}</span></option>
                             <option value="3">⭐⭐⭐<span>{{$counts[3]}}</span></option>
                             <option value="4">⭐⭐⭐⭐<span>{{$counts[4]}}</span></option>
@@ -71,7 +61,7 @@
                 </div>
             </div>
 
-            <div class="card-body bg-dark" wire:poll.5s='realtimeCheckOperation'>
+            <div class="card-body bg-dark" wire:poll.10s>
                 <div class="table-responsive">
                     <table class="table table-dark table-striped table-hover">
                         <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
@@ -119,23 +109,12 @@
                                         {{$rating->created_at->format('d-m-Y')}}
                                     </td>
                                     <td>
-                                        @if ($showDeleted)
-                                            <div class="d-flex gap-3 justify-content-center">
-                                                <button type="button" class="btn btn-sm btn-danger"
-                                                    wire:sc-model="forceDeleteUser({{ $rating->id }})"
-                                                    wire:sc-confirm.warning="Bạn có chắc chắn muốn XÓA VĨNH VIỄN người dùng '{{ $rating->name }}'? Hành động này KHÔNG THỂ HOÀN TÁC!"
-                                                    title="Xóa vĩnh viễn">
-                                                    <i class="fas fa-trash-alt" style="margin-right: 0"></i>
-                                                </button>
-                                            </div>
-                                        @else
-                                            <div class="d-flex gap-2 justify-content-center">
-                                                <button class='btn btn-danger' wire:sc-model="softDelete({{$rating->id}})"
-                                                    wire:sc-confirm.warning="Bạn có chắc muốn xóa đánh giá?">
-                                                    <i class="fas fa-trash" style="margin-right: 0"></i>
-                                                </button>
-                                            </div>
-                                        @endif
+                                        <div class="d-flex gap-2 justify-content-center">
+                                            <button class='btn btn-danger' wire:sc-model="softDelete({{$rating->id}})"
+                                                wire:sc-confirm.warning="Bạn có chắc muốn xóa đánh giá?">
+                                                <i class="fas fa-trash" style="margin-right: 0"></i>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
@@ -144,11 +123,7 @@
                                         <div class="text-muted">
                                             <i class="fas fa-inbox fa-3x mb-3"></i>
                                             <p>
-                                                @if ($showDeleted)
-                                                    Không có bình luận nào đã bị xóa
-                                                @else
-                                                    Không có bình luận nào
-                                                @endif
+                                                Không có bình luận nào
                                             </p>
                                         </div>
                                     </td>
