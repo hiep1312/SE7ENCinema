@@ -3,5 +3,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 /* Custom */
 import './bootstrap';
+import './utils';
 import './scAlert';
-import './scSortableSeat';
+import './scSortable';
+import './generateSeats';
