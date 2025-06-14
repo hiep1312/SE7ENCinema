@@ -53,7 +53,7 @@
                                 <span class="text-danger small">{{ $message }}</span>
                             @enderror
                             <div class="form-text text-muted">
-                                Suất chiếu chỉ được tạo trong khung giờ 8:00 - 23:00 và trước ít nhất 1 tiếng.
+                                Suất chiếu chỉ được tạo trước ít nhất 1 tiếng.
                             </div>
                         </div>
 
