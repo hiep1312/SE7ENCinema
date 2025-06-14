@@ -80,7 +80,9 @@
                                 <th class="text-center text-light">Giá</th>
                                 <th class="text-center text-light">Số lượng</th>
                                 <th class="text-center text-light">Trạng thái</th>
-                                <th class="text-center text-light">Ngày tạo</th>
+                                <th class="text-center text-light">
+                                    {{ $showDeleted ? 'Ngày xoá' : 'Ngày tạo' }}
+                                </th>
                                 <th class="text-center text-light">Hành động</th>
                             </tr>
                         </thead>
@@ -123,7 +125,9 @@
                                         @endif
 
                                     </td>
-                                    <td class="text-light">{{ $variant->created_at->format('d/m/Y H:i') }}</td>
+                                    <td class="text-light">
+                                        {{ optional($showDeleted ? $variant->deleted_at : $variant->created_at)->format('d/m/Y H:i') }}
+                                    </td>
                                     @if ($showDeleted)
                                         <td class="text-center">
                                             <div class="d-flex gap-2 justify-content-center">
@@ -150,12 +154,12 @@
                                                 </a>
                                                 <a href="{{ route('admin.foods_variants.edit', $variant->id) }}"
                                                     class="btn btn-sm btn-warning" title="Chỉnh sửa">
-                                                    <i class="fas fa-edit"></i>
+                                                    <i class="fas fa-edit" style="margin-right: 0"></i>
                                                 </a>
                                                 <button type="button" class="btn btn-sm btn-danger"
                                                     wire:sc-model="deleteVariant({{ $variant->id }})"
                                                     wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa biến thể '{{ $variant->name }}'?">
-                                                    <i class="fas fa-trash-alt"></i>
+                                                    <i class="fas fa-trash-alt" style="margin-right: 0"></i>
                                                 </button>
                                             </div>
                                         </td>

@@ -20,18 +20,11 @@ class FoodVariantIndex extends Component
 
     protected $paginationTheme = 'bootstrap';
 
-    protected $queryString = [
-        'search' => ['except' => ''],
-        'statusFilter' => ['except' => ''],
-        'sortDateFilter' => ['except' => 'desc'],
-    ];
-
 
     public function resetFilters()
     {
-        $this->search = '';
-        $this->statusFilter = '';
-        $this->sortDateFilter = 'desc';
+        $this->reset(['search', 'statusFilter', 'sortDateFilter']);
+        $this->resetPage();
     }
 
     public function deleteVariant(array $status, int $variantId)
@@ -94,25 +87,28 @@ class FoodVariantIndex extends Component
                 $q->withTrashed();
             }])
             ->when($this->showDeleted, function ($q) {
-                $q->onlyTrashed(); // lấy chỉ các biến thể đã bị xoá mềm
+                $q->onlyTrashed();
             })
             ->when($this->search, function ($q) {
                 $q->where(function ($subQuery) {
-                    $subQuery->where('name', 'like', '%' . $this->search . '%') // Tên biến thể
+                    $subQuery->where('name', 'like', '%' . $this->search . '%')
                         ->orWhereHas('foodItem', function ($foodQuery) {
-                            $foodQuery->withTrashed()->where('name', 'like', '%' . $this->search . '%'); // Tên món ăn (cả đã xoá)
+                            $foodQuery->withTrashed()->where('name', 'like', '%' . $this->search . '%');
                         });
                 });
             })
             ->when($this->statusFilter, function ($q) {
                 $q->where('status', $this->statusFilter);
             })
-            ->orderBy('created_at', $this->sortDateFilter);
+            ->when($this->showDeleted, function ($q) {
+                $q->orderBy('deleted_at', 'desc');
+            }, function ($q) {
+                $q->orderBy('created_at', $this->sortDateFilter);
+            });
+
 
         $foodVariants = $query->paginate(10);
 
-        return view('livewire.admin.food-variants.food-variant-index', [
-            'foodVariants' => $foodVariants,
-        ]);
+        return view('livewire.admin.food-variants.food-variant-index', compact('foodVariants'));
     }
 }

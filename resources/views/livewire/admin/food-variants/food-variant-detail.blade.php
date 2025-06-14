@@ -96,7 +96,7 @@
                                     </tr>
                                     <tr>
                                         <td><strong class="text-warning">Tên món ăn:</strong></td>
-                                        <td>{{ $variantItem->FoodItem->name }}</td>
+                                        <td>{{ $variantItem->FoodItem->name ?? 'Không xác định' }}</td>
                                     </tr>
                                     <tr>
                                         <td><strong class="text-warning">Số lượng hiện tại</strong></td>

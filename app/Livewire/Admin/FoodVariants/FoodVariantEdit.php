@@ -11,8 +11,6 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-#[Layout('components.layouts.admin')]
-#[Title('Chỉnh sửa Biến Thể')]
 
 class FoodVariantEdit extends Component
 {
@@ -65,16 +63,19 @@ class FoodVariantEdit extends Component
         $this->variantId = $variant;
         $variantData = FoodVariant::findOrFail($this->variantId);
 
-        $this->name = $variantData->name;
-        $this->foodItemId = $variantData->food_item_id;
-        $this->price = $variantData->price;
-        $this->imageUrl = $variantData->image;
-        $this->quantity = $variantData->quantity_available;
-        $this->limit = $variantData->limit;
-        $this->status = $variantData->status;
+        $this->fill([
+            'name' => $variantData->name,
+            'foodItemId' => $variantData->food_item_id,
+            'price' => $variantData->price,
+            'imageUrl' => $variantData->image,
+            'quantity' => $variantData->quantity_available,
+            'limit' => $variantData->limit,
+            'status' => $variantData->status,
+        ]);
 
         $this->getVariants();
     }
+
 
     public function updatedFoodItemId()
     {
@@ -125,6 +126,9 @@ class FoodVariantEdit extends Component
         session()->flash('success', 'Cập nhật biến thể thành công!');
         return redirect()->route('admin.foods_variants.index');
     }
+
+    #[Layout('components.layouts.admin')]
+    #[Title('Chỉnh sửa Biến Thể')]
 
     public function render()
     {

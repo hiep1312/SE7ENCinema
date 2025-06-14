@@ -31,6 +31,8 @@ class FoodVariantDetail extends Component
 
     public function render()
     {
+        $variant = $this->variantItem;
+
         $foodOrderItems = $this->variantItem->foodOrderItems()->with(['booking' => function ($query) {
             $query->with('user');
             $query->where('status', 'paid');
@@ -43,11 +45,11 @@ class FoodVariantDetail extends Component
         $totalOrderItems = $foodOrderItems->count();
         $foodOrderItems = $foodOrderItems->paginate(20);
 
-        return view('livewire.admin.food-variants.food-variant-detail', [
-            'variant' => $this->variantItem,
-            'foodOrderItems' => $foodOrderItems,
-            'totalOrderItems' => $totalOrderItems,
-            'relatedVariants' => $relatedVariants
-        ]);
+        return view('livewire.admin.food-variants.food-variant-detail', compact(
+            'variant',
+            'foodOrderItems',
+            'totalOrderItems',
+            'relatedVariants'
+        ));
     }
 }

@@ -91,7 +91,7 @@ class FoodVariantCreate extends Component
             'food_item_id' => $this->foodItemId,
             'name' => $this->name,
             'price' => $this->price,
-            'image' => $this->image ? $this->image->store('food_variant_image', 'public') : null,
+            'image' => $this->image ? $this->image->store('food_variants', 'public') : null,
             'quantity_available' => $this->quantity,
             'limit' => $this->limit,
             'status' => $this->status,
