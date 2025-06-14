@@ -18,8 +18,8 @@ class GenreCreate extends Component
     {
         return [
             'name' => 'required|string|max:255|unique:genres,name',
-            'description' => 'nullable|string|max:1000',
-            'movie_ids' => 'nullable|array',
+            'description' => 'nullable|string|max:50',
+            'movie_ids' => 'required|array',
             'movie_ids.*' => 'exists:movies,id',
         ];
     }
@@ -29,7 +29,8 @@ class GenreCreate extends Component
         'name.string' => 'Tên thể loại phải là chuỗi ký tự.',
         'name.max' => 'Tên thể loại không được vượt quá 255 ký tự.',
         'name.unique' => 'Tên thể loại đã tồn tại.',
-        'description.max' => 'Mô tả không được vượt quá 1000 ký tự.',
+        'description.max' => 'Mô tả không được vượt quá 50 ký tự.',
+        'movie_ids.required' => 'Vui lòng chọn ít nhất một phim áp dụng.',
         'movie_ids.array' => 'Danh sách phim không hợp lệ.',
         'movie_ids.*.exists' => 'Phim đã chọn không tồn tại.',
     ];
@@ -56,9 +57,8 @@ class GenreCreate extends Component
 
     public function render()
     {
-        // Lọc phim có trạng thái 'showing' hoặc 'upcoming'
         $movies = Movie::select('id', 'title')
-            ->whereIn('status', ['showing', 'upcoming'])
+            ->whereIn('status', ['showing', 'coming_soon'])
             ->get();
         
         return view('livewire.admin.genres.genre-create', compact('movies'));

@@ -15,6 +15,9 @@
     <div class="container-lg mb-4">
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2 class="text-light">Chi tiết thể loại: {{ $genre->name }}</h2>
+            <a href="{{ route('admin.genres.index') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Quay lại
+            </a>
         </div>
 
         <div class="row">
@@ -103,7 +106,14 @@
                                             Không có trailer
                                             @endif
                                         </td>
-
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-info" title="Xem chi tiết">
+                                                <i class="fas fa-eye" style="margin-right: 0"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-warning" title="Chỉnh sửa">
+                                                <i class="fas fa-edit" style="margin-right: 0"></i>
+                                            </a>
+                                        </td>
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -160,12 +170,7 @@
         @endif
         @endif
         @endforeach
-
-
         <br>
-        <a href="{{ route('admin.genres.index') }}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left"></i> Quay lại
-        </a>
     </div>
 
     @push('scripts')

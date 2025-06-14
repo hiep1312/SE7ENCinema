@@ -3,7 +3,7 @@
 namespace App\Livewire\Admin\Genres;
 
 use App\Models\Genre;
-use App\Models\Movie; // Ensure this import is present
+use App\Models\Movie;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -28,8 +28,8 @@ class GenreEdit extends Component
     {
         return [
             'name' => 'required|string|max:255|unique:genres,name,' . $this->genreId,
-            'description' => 'nullable|string|max:1000',
-            'movie_ids' => 'nullable|array',
+            'description' => 'nullable|string|max:50',
+            'movie_ids' => 'required|array',
             'movie_ids.*' => 'exists:movies,id',
         ];
     }
@@ -39,7 +39,8 @@ class GenreEdit extends Component
         'name.string' => 'Tên thể loại phải là chuỗi ký tự.',
         'name.max' => 'Tên thể loại không được vượt quá 255 ký tự.',
         'name.unique' => 'Tên thể loại đã tồn tại.',
-        'description.max' => 'Mô tả không được vượt quá 1000 ký tự.',
+        'description.max' => 'Mô tả không được vượt quá 50 ký tự.',
+        'movie_ids.required' => 'Vui lòng chọn ít nhất một phim áp dụng.',
         'movie_ids.array' => 'Danh sách phim không hợp lệ.',
         'movie_ids.*.exists' => 'Phim đã chọn không tồn tại.',
     ];
@@ -67,10 +68,10 @@ class GenreEdit extends Component
     {
         try {
             $movies = Movie::select('id', 'title')
-                ->whereIn('status', ['showing', 'upcoming'])
+                ->whereIn('status', ['showing', 'coming_soon'])
                 ->get();
         } catch (\Exception $e) {
-            $movies = collect(); // Return empty collection if Movie class/model fails
+            $movies = collect();
             session()->flash('error', 'Không thể tải danh sách phim do lỗi hệ thống.');
         }
 
