@@ -18,7 +18,7 @@
             <h2 class="text-light">Quản lý đánh giá</h2>
         </div>
 
-        <div class="card bg-dark" wire:poll.5s>
+        <div class="card bg-dark" wire:poll.6s>
             <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <div class="row g-3">
                     <!-- Tìm kiếm -->
@@ -103,7 +103,7 @@
                                         {{ $rating->created_at ? $rating->created_at->format('d/m/Y H:i') : 'N/A' }}
                                     </td>
                                     <td>
-                                        <div class="d-flex gap-2 justify-content-center">
+                                        <div class="d-flex justify-content-center">
                                             <button class='btn btn-sm btn-danger' wire:sc-model="softDeleteRating({{ $rating->id }})"
                                                 wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa đánh giá này không?">
                                                 <i class="fas fa-trash" style="margin-right: 0"></i>
