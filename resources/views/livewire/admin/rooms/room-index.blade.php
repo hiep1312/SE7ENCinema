@@ -32,7 +32,7 @@
             </div>
         </div>
 
-        <div class="card bg-dark" wire:poll.5s>
+        <div class="card bg-dark" wire:poll.6s>
             <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <div class="row g-3">
                     <!-- Tìm kiếm -->
@@ -214,7 +214,7 @@
                                     <td>
                                         @if($showDeleted)
                                             <!-- Actions for deleted rooms -->
-                                            <div class="d-flex gap-3 justify-content-center">
+                                            <div class="d-flex gap-2 justify-content-center">
                                                 <button type="button"
                                                         wire:click.once="restoreRoom({{ $room->id }})"
                                                         class="btn btn-sm btn-success"
@@ -231,7 +231,7 @@
                                             </div>
                                         @else
                                             <!-- Actions for active rooms -->
-                                            <div class="d-flex gap-3 justify-content-center">
+                                            <div class="d-flex gap-2 justify-content-center">
                                                 <a href="{{ route('admin.rooms.detail', $room->id) }}"
                                                    class="btn btn-sm btn-info"
                                                    title="Xem chi tiết">

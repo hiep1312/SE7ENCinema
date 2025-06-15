@@ -9,6 +9,11 @@ use App\Livewire\Admin\Rooms\RoomCreate;
 use App\Livewire\Admin\Rooms\RoomDetail;
 use App\Livewire\Admin\Rooms\RoomEdit;
 use App\Livewire\Admin\Rooms\RoomIndex;
+use App\Livewire\Admin\FoodVariants\FoodVariantIndex;
+use App\Livewire\Admin\FoodVariants\FoodVariantDetail;
+use App\Livewire\Admin\FoodVariants\FoodVariantCreate;
+use App\Livewire\Admin\FoodVariants\FoodVariantEdit;
+
 use App\Livewire\Admin\Users\UserCreate;
 use App\Livewire\Admin\Users\UserDetail;
 use App\Livewire\Admin\Users\UserEdit;
@@ -30,6 +35,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/create', FoodCreate::class)->name('create');
         Route::get('/edit/{food}', FoodEdit::class)->name('edit');
         Route::get('/detail/{food}', FoodDetail::class)->name('detail');
+    });
+
+    /* Foods Variants */
+    Route::prefix('/food-variants')->name('food_variants.')->group(function () {
+        Route::get('/', FoodVariantIndex::class)->name('index');
+        Route::get('/create', FoodVariantCreate::class)->name('create');
+        Route::get('/edit/{variant}', FoodVariantEdit::class)->name('edit');
+        Route::get('/detail/{variant}', FoodVariantDetail::class)->name('detail');
     });
 
     /* Users */

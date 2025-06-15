@@ -32,7 +32,7 @@
             </div>
         </div>
 
-        <div class="card bg-dark" wire:poll.3s="realtimeCheckOperation">
+        <div class="card bg-dark" wire:poll.6s="realtimeCheckOperation">
             <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <div class="row g-3">
                     <!-- Tìm kiếm -->
@@ -170,7 +170,7 @@
                                     </td>
                                     <td>
                                         @if ($showDeleted)
-                                            <div class="d-flex gap-3 justify-content-center">
+                                            <div class="d-flex justify-content-center">
                                                 <button type="button" class="btn btn-sm btn-danger"
                                                     wire:sc-model="forceDeleteUser({{ $user->id }})"
                                                     wire:sc-confirm.warning="Bạn có chắc chắn muốn XÓA VĨNH VIỄN người dùng '{{ $user->name }}'? Hành động này KHÔNG THỂ HOÀN TÁC!"
