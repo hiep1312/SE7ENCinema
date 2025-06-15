@@ -18,13 +18,18 @@ class UserIndex extends Component
     public $statusFilter = '';
 
     public function realtimeCheckOperation(){
-        User::query()
+        $users = User::with('ratings')
             ->where(function ($query) {
                 $query->where('status', 'inactive')
                     ->orWhere('status', 'banned');
             })
             ->where('updated_at', '<=', now()->subDays(90))
-            ->delete();
+            ->get();
+
+        $users->each(function(User $user) {
+            $user->ratings()->delete();
+            $user->delete();
+        });
     }
 
     public function forceDeleteUser(array $status, int $userId)
@@ -40,6 +45,7 @@ class UserIndex extends Component
     public function resetFilters()
     {
         $this->reset(['search', 'roleFilter', 'statusFilter']);
+        $this->resetPage();
     }
 
     #[Title('Danh sách người dùng - SE7ENCinema')]

@@ -1,212 +1,212 @@
 /* Override Library */
-.swal2-modal .swal2-icon, .swal2-modal .swal2-success-ring{
+.swal2-modal .swal2-icon,
+.swal2-modal .swal2-success-ring {
     margin-top: 42px !important;
 }
 
 /* Custom CSS */
 /* Maintenance countdown styling */
 .maintenance-countdown {
-  padding: 10px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .maintenance-timer .timer-item {
-  padding: 15px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Tab styling */
 .nav-tabs {
-  border-bottom: 2px solid #ffc107;
+    border-bottom: 2px solid #ffc107;
 }
 
 .nav-tabs .nav-link {
-  border: none;
-  color: #6c757d;
-  transition: all 0.3s;
+    border: none;
+    color: #6c757d;
+    transition: all 0.3s;
 }
 
 .nav-tabs .nav-link:hover {
-  color: #ffc107;
+    color: #ffc107;
 }
 
 .nav-tabs .nav-link.active {
-  background-color: #ffc107;
-  color: #000;
-  border-radius: 0.375rem 0.375rem 0 0;
+    background-color: #ffc107;
+    color: #000;
+    border-radius: 0.375rem 0.375rem 0 0;
 }
 
 /* Card hover effects */
 .card {
-  transition: box-shadow 0.3s;
+    transition: box-shadow 0.3s;
 }
 
 .card:hover {
-  box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
+    box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
 }
 
 /* Progress bar animation */
 .progress-bar {
-  transition: width 0.6s ease;
+    transition: width 0.6s ease;
 }
 
 /* Additional responsive styles */
 @media (max-width: 768px) {
-  .maintenance-countdown {
-    padding: 8px;
-    margin-bottom: 10px;
-  }
+    .maintenance-countdown {
+        padding: 8px;
+        margin-bottom: 10px;
+    }
 
-  .maintenance-timer .timer-item {
-    padding: 10px;
-    margin-bottom: 10px;
-  }
+    .maintenance-timer .timer-item {
+        padding: 10px;
+        margin-bottom: 10px;
+    }
 }
 
 @media (max-width: 576px) {
-  .maintenance-countdown h2 {
-    font-size: 1.5rem;
-  }
+    .maintenance-countdown h2 {
+        font-size: 1.5rem;
+    }
 
-  .seat {
-    width: 20px;
-    height: 20px;
-    font-size: 8px;
-  }
+    .seat {
+        width: 20px;
+        height: 20px;
+        font-size: 8px;
+    }
 
-  .row-label {
-    width: 25px;
-    font-size: 14px;
-  }
+    .row-label {
+        width: 25px;
+        font-size: 14px;
+    }
 }
 
 /* Animation effects */
 @keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 .maintenance-countdown.urgent {
-  animation: pulse 2s infinite;
+    animation: pulse 2s infinite;
 }
 
 .maintenance-countdown.overdue {
-  animation: pulse 1s infinite;
-  background: rgba(220, 53, 69, 0.2);
+    animation: pulse 1s infinite;
+    background: rgba(220, 53, 69, 0.2);
 }
 
 /* Countdown number styling */
 .countdown-number {
-  font-family: "Courier New", monospace;
-  font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    font-family: "Courier New", monospace;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Status badge styling */
 .status-badge {
-  font-size: 0.875rem;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 /* Maintenance info card styling */
 .maintenance-info-card {
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-  border: 1px solid rgba(255, 193, 7, 0.3);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .maintenance-info-card:hover {
-  border-color: rgba(255, 193, 7, 0.6);
-  box-shadow: 0 6px 20px rgba(255, 193, 7, 0.1);
+    border-color: rgba(255, 193, 7, 0.6);
+    box-shadow: 0 6px 20px rgba(255, 193, 7, 0.1);
 }
 
 /* Timer display styling */
 .timer-display {
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 15px;
-  padding: 20px;
-  margin: 10px 0;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 10px 0;
 }
 
 .timer-unit {
-  display: inline-block;
-  text-align: center;
-  margin: 0 10px;
-  padding: 15px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  min-width: 80px;
+    display: inline-block;
+    text-align: center;
+    margin: 0 10px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    min-width: 80px;
 }
 
 .timer-unit .number {
-  display: block;
-  font-size: 2rem;
-  font-weight: bold;
-  line-height: 1;
-  margin-bottom: 5px;
+    display: block;
+    font-size: 2rem;
+    font-weight: bold;
+    line-height: 1;
+    margin-bottom: 5px;
 }
 
 .timer-unit .label {
-  display: block;
-  font-size: 0.875rem;
-  opacity: 0.8;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+    display: block;
+    font-size: 0.875rem;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 /* Loading animation */
 .loading-spinner {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(255, 193, 7, 0.3);
-  border-radius: 50%;
-  border-top-color: #ffc107;
-  animation: spin 1s ease-in-out infinite;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 193, 7, 0.3);
+    border-radius: 50%;
+    border-top-color: #ffc107;
+    animation: spin 1s ease-in-out infinite;
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Tooltip styling */
 .tooltip-custom {
-  background: rgba(0, 0, 0, 0.9);
-  color: #fff;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  border: 1px solid #ffc107;
+    background: rgba(0, 0, 0, 0.9);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    border: 1px solid #ffc107;
 }
 
 /* Print styles */
 @media print {
-  .maintenance-countdown,
-  .maintenance-timer {
-    background: white !important;
-    color: black !important;
-    border: 1px solid #000;
-  }
+    .maintenance-countdown,
+    .maintenance-timer {
+        background: white !important;
+        color: black !important;
+        border: 1px solid #000;
+    }
 
-  .card {
-    box-shadow: none !important;
-    border: 1px solid #000;
-  }
+    .card {
+        box-shadow: none !important;
+        border: 1px solid #000;
+    }
 }
-
