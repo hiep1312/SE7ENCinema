@@ -93,7 +93,7 @@
                                 <th class="text-center text-light">Thời gian hiển thị</th>
                                 <th class="text-center text-light">Trạng thái</th>
                                 <th class="text-center text-light">Độ ưu tiên</th>
-                                <th class="text-center text-light">Link</th>
+                                <th class="text-center text-light">Link liên kết</th>
                                 <th class="text-center text-light">Ngày tạo</th>
                                 <th class="text-center text-light">Hành động</th>
                             </tr>
@@ -109,8 +109,12 @@
                                     <td>
                                         <img src="{{ asset($banner->image) }}"
                                              alt="{{ $banner->title }}"
-                                             class="img-thumbnail"
-                                             style="width: 80px; height: 50px; object-fit: cover; border-radius: 0;">
+                                             class="img-thumbnail banner-image-clickable"
+                                             style="width: 80px; height: 50px; object-fit: cover; border-radius: 0; cursor: pointer;"
+                                             data-bs-toggle="modal"
+                                             data-bs-target="#bannerImageModal"
+                                             data-banner-id="{{ $banner->id }}"
+                                             onclick="showBannerModal({{ $banner->id }})">
                                     </td>
                                     <td>
                                         <strong class="text-light">{{ $banner->title }}</strong>
@@ -161,18 +165,11 @@
                                         </span>
                                     </td>
                                     <td class="text-center">
-                                        @if($banner->image)
-                                            <a href="{{ asset($banner->image) }}"
-                                               target="_blank"
-                                               class="btn btn-sm btn-outline-primary"
-                                               title="Xem hình ảnh">
-                                                <i class="fas fa-image"></i>
-                                            </a>
-                                        @elseif($banner->link)
+                                        @if($banner->link)
                                             <a href="{{ $banner->link }}"
                                                target="_blank"
                                                class="btn btn-sm btn-outline-primary"
-                                               title="Xem link">
+                                               title="Mở link liên kết">
                                                 <i class="fas fa-external-link-alt"></i>
                                             </a>
                                         @else
@@ -205,8 +202,8 @@
                                             <!-- Delete -->
                                             <button type="button"
                                                     class="btn btn-sm btn-danger"
-                                                    wire:sc-model="deleteBanner({{ $banner->id }})"
-                                                    wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa banner '{{ $banner->title }}'? Hành động này không thể hoàn tác!"
+                                                    wire:click="deleteBanner({{ $banner->id }})"
+                                                    wire:confirm.warning="Bạn có chắc chắn muốn xóa banner '{{ $banner->title }}'? Hành động này không thể hoàn tác!"
                                                     title="Xóa">
                                                 <i class="fas fa-trash" style="margin-right: 0"></i>
                                             </button>
@@ -239,13 +236,92 @@
         </div>
     </div>
 
-    <!-- Auto refresh every 30 seconds to check expired banners -->
+    <!-- Banner Image Modal with Carousel -->
+    <div class="modal fade" id="bannerImageModal" tabindex="-1" aria-labelledby="bannerImageModalLabel" aria-hidden="true" wire:ignore.self>
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content bg-dark">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title text-light" id="bannerImageModalLabel">
+                        <i class="fas fa-images me-2"></i>Xem Banner
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    @if($banners->count() > 0)
+                        <div id="bannerCarousel" class="carousel slide" data-bs-ride="false">
+                            <!-- Carousel Indicators -->
+                            <div class="carousel-indicators">
+                                @foreach($banners as $index => $banner)
+                                    <button type="button"
+                                            data-bs-target="#bannerCarousel"
+                                            data-bs-slide-to="{{ $index }}"
+                                            class="{{ $index === 0 ? 'active' : '' }}"
+                                            aria-current="{{ $index === 0 ? 'true' : 'false' }}"
+                                            aria-label="Banner {{ $index + 1 }}">
+                                    </button>
+                                @endforeach
+                            </div>
+
+                            <!-- Carousel Items -->
+                            <div class="carousel-inner">
+                                @foreach($banners as $index => $banner)
+                                    <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                                        <div class="position-relative">
+                                            <img src="{{ asset($banner->image) }}"
+                                                 class="d-block w-100"
+                                                 alt="{{ $banner->title }}"
+                                                 style="max-height: 70vh; object-fit: contain;"
+                                                 data-banner-id="{{ $banner->id }}">
+
+                                            <!-- Banner Info Overlay -->
+
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <!-- Carousel Controls -->
+                            @if($banners->count() > 1)
+                                <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            @endif
+                        </div>
+                    @endif
+                </div>
+                <div class="modal-footer border-secondary">
+                    <div class="d-flex justify-content-between w-100 align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Sử dụng mũi tên hoặc vuốt để chuyển banner
+                        </small>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i>Đóng
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auto refresh every 30 seconds -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Auto refresh every 30 seconds to check for expired banners
+            // The setInterval below was removed as Livewire's wire:poll.10s
+            // on the main container already handles periodic refreshes,
+            // and updateExpiredBanners is called in the render method.
+            // This prevents redundant calls and potential conflicts with DOM updates.
+            /*
             setInterval(function() {
                 @this.call('updateExpiredBanners');
             }, 30000);
+            */
 
             // Also refresh when page becomes visible again
             document.addEventListener('visibilitychange', function() {
@@ -264,11 +340,81 @@
                     const value = this.value;
                     let displayText = value;
 
-
-
                     valueDisplay.textContent = displayText;
                 });
             }
         });
+
+        // Function to show banner modal at specific index, now using banner ID
+        function showBannerModal(bannerId) {
+            const carousel = document.getElementById('bannerCarousel');
+            if (carousel) {
+                const carouselItems = carousel.querySelectorAll('.carousel-item');
+                let targetIndex = -1;
+
+                carouselItems.forEach((item, index) => {
+                    const img = item.querySelector('img');
+                    if (img && img.dataset.bannerId == bannerId) {
+                        targetIndex = index;
+                    }
+                });
+
+                if (targetIndex !== -1) {
+                    // Ensure Bootstrap Carousel is re-initialized if Livewire re-rendered the modal
+                    const bsCarousel = new bootstrap.Carousel(carousel);
+                    bsCarousel.to(targetIndex);
+                }
+            }
+        }
+
+        // Add keyboard navigation for modal
+        document.addEventListener('keydown', function(e) {
+            const modal = document.getElementById('bannerImageModal');
+            if (modal && modal.classList.contains('show')) { // Check if modal exists and is shown
+                const carousel = document.getElementById('bannerCarousel');
+                const bsCarousel = bootstrap.Carousel.getInstance(carousel); // Get existing instance
+
+                if (bsCarousel) { // Only proceed if an instance exists
+                    if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        bsCarousel.prev();
+                    } else if (e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        bsCarousel.next();
+                    } else if (e.key === 'Escape') {
+                        const bsModal = bootstrap.Modal.getInstance(modal);
+                        if (bsModal) bsModal.hide(); // Hide if instance exists
+                    }
+                }
+            }
+        });
+
+        // Add touch/swipe support for mobile
+        let startX = 0;
+        let endX = 0;
+
+        document.getElementById('bannerCarousel')?.addEventListener('touchstart', function(e) {
+            startX = e.touches[0].clientX;
+        });
+
+        document.getElementById('bannerCarousel')?.addEventListener('touchend', function(e) {
+            endX = e.changedTouches[0].clientX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const carousel = document.getElementById('bannerCarousel');
+            const bsCarousel = bootstrap.Carousel.getInstance(carousel);
+
+            if (bsCarousel) { // Only proceed if an instance exists
+                if (startX - endX > 50) {
+                    // Swipe left - next
+                    bsCarousel.next();
+                } else if (endX - startX > 50) {
+                    // Swipe right - prev
+                    bsCarousel.prev();
+                }
+            }
+        }
     </script>
 </div>

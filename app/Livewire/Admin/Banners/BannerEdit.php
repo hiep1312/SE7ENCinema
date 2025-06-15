@@ -33,9 +33,12 @@ class BannerEdit extends Component
         'title.unique' => 'Tiêu đề này đã tồn tại trong hệ thống',
         'image.image' => 'File phải là hình ảnh',
         'image.mimes' => 'Hình ảnh phải có định dạng: jpeg, png, jpg, gif',
+        'image.max' => 'Kích thước hình ảnh không được vượt quá 2MB',
+        'link.url' => 'Link phải là một URL hợp lệ',
+        'start_date.required' => 'Ngày bắt đầu là bắt buộc',
         'end_date.required' => 'Ngày kết thúc là bắt buộc',
         'end_date.after' => 'Ngày kết thúc phải sau ngày bắt đầu',
-        'end_date.after_or_equal' => 'Ngày kết thúc phải là ngày hôm nay hoặc sau đó',
+        'end_date.after_or_equal' => 'Ngày kết thúc không được nhỏ hơn ngày và giờ hiện tại',
         'priority.required' => 'Độ ưu tiên là bắt buộc',
         'priority.min' => 'Độ ưu tiên tối thiểu là 0',
         'priority.max' => 'Độ ưu tiên tối đa là 100',
@@ -71,25 +74,65 @@ class BannerEdit extends Component
         }
     }
 
+    // Dynamic validation rules
+    protected function rules()
+    {
+        // Kiểm tra xem có phải đang chỉnh sửa banner đã tồn tại và ngày kết thúc không thay đổi
+        $isEndDateUnchanged = $this->end_date === $this->banner->end_date->format('Y-m-d\TH:i');
+
+        return [
+            'title' => ['required', 'string', 'max:255', Rule::unique('banners', 'title')->ignore($this->banner->id)],
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'link' => 'nullable|url',
+            'start_date' => 'required|date',
+            'end_date' => $isEndDateUnchanged
+                ? 'required|date|after:start_date'
+                : 'required|date|after:start_date|after_or_equal:now',
+            'status' => 'required|in:active,inactive',
+            'priority' => ['required', 'integer', 'min:0', 'max:100', Rule::unique('banners', 'priority')->ignore($this->banner->id)],
+        ];
+    }
+
     public function updatedImage()
     {
         $this->validateOnly('image');
-        if ($this->image) {
-            $this->link = $this->image->store('banners', 'public');
+    }
+
+    public function updatedTitle()
+    {
+        $this->validateOnly('title');
+    }
+
+    public function updatedLink()
+    {
+        if ($this->link) {
+            $this->validateOnly('link');
         }
+    }
+
+    public function updatedPriority()
+    {
+        $this->validateOnly('priority');
+        $this->loadPriorities(); // Reload priorities when changed
+    }
+
+    public function updatedStartDate()
+    {
+        $this->validateOnly('start_date');
+        // Validate lại end_date khi start_date thay đổi
+        if ($this->end_date) {
+            $this->validateOnly('end_date');
+        }
+    }
+
+    public function updatedEndDate()
+    {
+        $this->validateOnly('end_date');
     }
 
     public function updateBanner()
     {
-        // dd($this->end_date,$this->banner->end_date->format('Y-m-d\TH:i'),$this->end_date===$this->banner->end_date->format('Y-m-d\TH:i'));
-        $this->validate([
-            'title' => ['required', 'string', 'max:255', Rule::unique('banners', 'title')->ignore($this->banner->id)],
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
-            'link' => 'nullable|string',
-            'end_date' => 'required|date|after:start_date'.($this->end_date===$this->banner->end_date->format('Y-m-d\TH:i') ? "":"|after_or_equal:today"),
-            'status' => 'required|in:active,inactive',
-            'priority' => ['required', 'integer', 'min:0', 'max:100', Rule::unique('banners', 'priority')->ignore($this->banner->id)],
-        ], $this->messages);
+        $this->validate();
 
         try {
             $data = [
@@ -102,6 +145,7 @@ class BannerEdit extends Component
             ];
 
             if ($this->image) {
+                // Xóa ảnh cũ nếu có
                 if ($this->current_image && file_exists(public_path($this->current_image))) {
                     unlink(public_path($this->current_image));
                 }

@@ -24,12 +24,13 @@ class BannerCreate extends Component
     public $used_priorities = [];
     public $available_priorities = [];
 
+    // Cập nhật $rules với validation ngày kết thúc phải sau ngày hiện tại
     protected $rules = [
-        'title' => 'required|string|max:255',
-        'image' => 'required|image|mimes:jpeg,png,jpg,gif',
-        'link' => 'nullable|string', // Đã thay đổi từ 'url' để chấp nhận đường dẫn tệp
-        'start_date' => 'required|date|after_or_equal:today',
-        'end_date' => 'required|date|after:start_date',
+        'title' => 'required|string|max:255|unique:banners,title',
+        'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'link' => 'nullable|url',
+        'start_date' => 'required|date|after_or_equal:now',
+        'end_date' => 'required|date|after:start_date|after_or_equal:now',
         'status' => 'required|in:active,inactive',
         'priority' => 'required|integer|min:0|max:100|unique:banners,priority',
     ];
@@ -37,15 +38,22 @@ class BannerCreate extends Component
     protected $messages = [
         'title.required' => 'Tiêu đề banner là bắt buộc',
         'title.max' => 'Tiêu đề không được vượt quá 255 ký tự',
+        'title.unique' => 'Tiêu đề này đã tồn tại trong hệ thống',
         'image.required' => 'Hình ảnh banner là bắt buộc',
         'image.image' => 'File phải là hình ảnh',
         'image.mimes' => 'Hình ảnh phải có định dạng: jpeg, png, jpg, gif',
-        'start_date.after_or_equal' => 'Ngày bắt đầu không được nhỏ hơn ngày hôm nay',
+        'image.max' => 'Kích thước hình ảnh không được vượt quá 2MB',
+        'link.url' => 'Link phải là một URL hợp lệ',
+        'start_date.required' => 'Ngày bắt đầu là bắt buộc',
+        'start_date.after_or_equal' => 'Ngày bắt đầu không được nhỏ hơn ngày và giờ hiện tại',
+        'end_date.required' => 'Ngày kết thúc là bắt buộc',
         'end_date.after' => 'Ngày kết thúc phải sau ngày bắt đầu',
+        'end_date.after_or_equal' => 'Ngày kết thúc không được nhỏ hơn ngày và giờ hiện tại',
         'priority.required' => 'Độ ưu tiên là bắt buộc',
         'priority.min' => 'Độ ưu tiên tối thiểu là 0',
         'priority.max' => 'Độ ưu tiên tối đa là 100',
         'priority.unique' => 'Độ ưu tiên này đã được sử dụng',
+        'status.required' => 'Trạng thái là bắt buộc',
     ];
 
     public function mount()
@@ -68,9 +76,38 @@ class BannerCreate extends Component
     public function updatedImage()
     {
         $this->validateOnly('image');
-        if ($this->image) {
-            $this->link = $this->image->store('banners', 'public'); // Gán đường dẫn tệp vào link
+    }
+
+    public function updatedTitle()
+    {
+        $this->validateOnly('title');
+    }
+
+    public function updatedLink()
+    {
+        if ($this->link) {
+            $this->validateOnly('link');
         }
+    }
+
+    public function updatedPriority()
+    {
+        $this->validateOnly('priority');
+        $this->loadPriorities(); // Reload priorities when changed
+    }
+
+    public function updatedStartDate()
+    {
+        $this->validateOnly('start_date');
+        // Validate lại end_date khi start_date thay đổi
+        if ($this->end_date) {
+            $this->validateOnly('end_date');
+        }
+    }
+
+    public function updatedEndDate()
+    {
+        $this->validateOnly('end_date');
     }
 
     public function createBanner()

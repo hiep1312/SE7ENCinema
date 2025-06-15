@@ -19,6 +19,13 @@ class BannerIndex extends Component
 
     protected $listeners = ['refreshBanners' => '$refresh'];
 
+    // Thêm $rules property để tránh lỗi nếu có validation
+    protected $rules = [
+        'search' => 'nullable|string|max:255',
+        'statusFilter' => 'nullable|string|in:active,inactive',
+        'priorityFilter' => 'nullable|integer|min:0|max:100',
+    ];
+
     public function updateExpiredBanners()
     {
         // Tự động chuyển trạng thái banner hết hạn thành inactive
@@ -27,37 +34,48 @@ class BannerIndex extends Component
             ->update(['status' => 'inactive']);
     }
 
-    public function deleteBanner(array $status, int $bannerId)
+    // Sửa method deleteBanner - chỉ nhận 1 parameter
+    public function deleteBanner(int $bannerId)
     {
-        if(!$status['isConfirmed']) return;
+        try {
+            $banner = Banner::find($bannerId);
+            if ($banner) {
+                // Xóa file ảnh nếu tồn tại
+                if ($banner->image && file_exists(public_path($banner->image))) {
+                    unlink(public_path($banner->image));
+                }
 
-        $banner = Banner::find($bannerId);
-        if ($banner) {
-            // Xóa file ảnh nếu tồn tại
-            if ($banner->image && file_exists(public_path($banner->image))) {
-                unlink(public_path($banner->image));
+                // Xóa cứng banner
+                $banner->delete();
+                session()->flash('success', 'Xóa banner thành công!');
+            } else {
+                session()->flash('error', 'Không tìm thấy banner cần xóa!');
             }
-
-            // Xóa cứng banner
-            $banner->delete();
-            session()->flash('error', 'Xóa banner thành công!');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Có lỗi xảy ra khi xóa banner. Vui lòng thử lại!');
         }
     }
 
     public function toggleStatus(int $bannerId)
     {
-        $banner = Banner::find($bannerId);
-        if ($banner) {
-            $newStatus = $banner->status === 'active' ? 'inactive' : 'active';
+        try {
+            $banner = Banner::find($bannerId);
+            if ($banner) {
+                $newStatus = $banner->status === 'active' ? 'inactive' : 'active';
 
-            // Kiểm tra nếu banner đã hết hạn thì không cho phép kích hoạt
-            if ($newStatus === 'active' && $banner->end_date < now()) {
-                session()->flash('error', 'Không thể kích hoạt banner đã hết hạn!');
-                return;
+                // Kiểm tra nếu banner đã hết hạn thì không cho phép kích hoạt
+                if ($newStatus === 'active' && $banner->end_date < now()) {
+                    session()->flash('error', 'Không thể kích hoạt banner đã hết hạn!');
+                    return;
+                }
+
+                $banner->update(['status' => $newStatus]);
+                session()->flash('success', 'Cập nhật trạng thái banner thành công!');
+            } else {
+                session()->flash('error', 'Không tìm thấy banner cần cập nhật!');
             }
-
-            $banner->update(['status' => $newStatus]);
-            session()->flash('success', 'Cập nhật trạng thái banner thành công!');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Có lỗi xảy ra khi cập nhật trạng thái. Vui lòng thử lại!');
         }
     }
 
@@ -107,24 +125,8 @@ class BannerIndex extends Component
         }
 
         if ($this->priorityFilter !== null && $this->priorityFilter !== '') {
-    $query->where('priority', '>=', $this->priorityFilter);
-}
-
-// Hoặc nếu bạn muốn filter theo khoảng (range) dựa trên giá trị được chọn
-if ($this->priorityFilter !== null && $this->priorityFilter !== '') {
-    $priority = (int) $this->priorityFilter;
-
-    // Tạo khoảng +/- 5 điểm xung quanh giá trị được chọn
-    $minPriority = max(0, $priority - 5);
-    $maxPriority = min(100, $priority + 5);
-
-    $query->whereBetween('priority', [$minPriority, $maxPriority]);
-}
-
-// Hoặc filter chính xác theo giá trị
-if ($this->priorityFilter !== null && $this->priorityFilter !== '') {
-    $query->where('priority', '=', $this->priorityFilter);
-}
+            $query->where('priority', '=', $this->priorityFilter);
+        }
 
         $banners = $query
             ->orderBy('priority', 'desc')

@@ -67,7 +67,7 @@
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label>Link liên kết</label>
-                            <input type="text" class="form-control" wire:model="link">
+                            <input type="url" class="form-control" wire:model="link" placeholder="https://example.com">
                             @error('link')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror

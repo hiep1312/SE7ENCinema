@@ -71,10 +71,11 @@
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="form-label fw-bold">Link liên kết</label>
-                            <input type="text" class="form-control" wire:model="link" placeholder="Nhập link hoặc để trống" disabled>
+                            <input type="url" class="form-control" wire:model="link" placeholder="https://example.com">
                             @error('link')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
+                            <small class="text-muted">Link sẽ được mở khi click vào banner (không bắt buộc)</small>
                         </div>
 
                         <div class="mb-3">
