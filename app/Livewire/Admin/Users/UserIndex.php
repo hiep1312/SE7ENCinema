@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Users;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Title;
 use Livewire\WithPagination;
 
@@ -36,6 +37,8 @@ class UserIndex extends Component
     {
         if(!$status['isConfirmed']) return;
         $user = User::onlyTrashed()->find($userId);
+        // Kiểm tra avatar, nếu có thì xóa
+        !Storage::disk('public')->exists($user->avatar) ?: Storage::disk('public')->delete($user->avatar);
 
         // Xóa cứng người dùng
         $user->forceDelete();

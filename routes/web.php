@@ -4,6 +4,9 @@ use App\Livewire\Admin\Foods\FoodCreate;
 use App\Livewire\Admin\Foods\FoodDetail;
 use App\Livewire\Admin\Foods\FoodEdit;
 use App\Livewire\Admin\Foods\FoodIndex;
+use App\Livewire\Admin\Banners\BannerCreate;
+use App\Livewire\Admin\Banners\BannerEdit;
+use App\Livewire\Admin\Banners\BannerIndex;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\Rooms\RoomCreate;
 use App\Livewire\Admin\Rooms\RoomDetail;
@@ -21,6 +24,13 @@ use App\Livewire\Admin\Users\UserIndex;
 use App\Livewire\Admin\Ratings\RatingIndex;
 
 Route::prefix('admin')->name('admin.')->group(function () {
+    /* Banners */
+    Route::prefix('/banners')->name('banners.')->group(function () {
+        Route::get('/', BannerIndex::class)->name('index');
+        Route::get('/create', BannerCreate::class)->name('create');
+        Route::get('/edit/{banner}', BannerEdit::class)->name('edit');
+    });
+
     /* Rooms */
     Route::prefix('/rooms')->name('rooms.')->group(function () {
         Route::get('/', RoomIndex::class)->name('index');
@@ -91,7 +101,6 @@ Route::name('client.')->group(function () {
     Route::view('/contact', 'livewire.client.template.contact')->name('contact');
     Route::view('/confirmation_screen', 'livewire.client.template.confirmation_screen')->name('confirmation_screen');
 });
-
 
 Route::view('/', 'welcome')->name('welcome');
 Route::view('/clienttest', 'clienttest')->name('clienttest');
