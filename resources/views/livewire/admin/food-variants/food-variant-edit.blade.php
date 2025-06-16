@@ -22,7 +22,7 @@
                         <h5 class="my-1">Thông tin biến thể món ăn</h5>
                     </div>
                     <div class="card-body bg-dark">
-                        <form wire:submit.prevent="updateFood" enctype="multipart/form-data">
+                        <form wire:submit.prevent="updateVariant" enctype="multipart/form-data">
                             <div class="row align-items-start">
                                 <div class="col-md-3 mb-3">
                                     <div class="mt-1 overflow-auto position-relative" style="max-height: 230px;">

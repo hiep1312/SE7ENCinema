@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\FoodVariants;
 
 use Livewire\Component;
 use App\Models\FoodVariant;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\WithPagination;
@@ -52,6 +53,9 @@ class FoodVariantIndex extends Component
         if (!$status['isConfirmed']) return;
 
         $variant = FoodVariant::onlyTrashed()->find($variantId);
+
+        // Kiểm tra image, nếu có thì xóa
+        !Storage::disk('public')->exists($variant->image) ?: Storage::disk('public')->delete($variant->image);
 
         $variant->forceDelete();
         session()->flash('success', 'Xóa vĩnh viễn biến thể thành công!');

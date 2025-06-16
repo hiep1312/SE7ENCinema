@@ -72,7 +72,7 @@ class FoodVariantEdit extends Component
             ->get());
     }
 
-    public function updateFood()
+    public function updateVariant()
     {
         $this->validate();
 

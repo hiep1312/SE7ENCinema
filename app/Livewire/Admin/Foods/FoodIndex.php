@@ -5,10 +5,10 @@ namespace App\Livewire\Admin\Foods;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\FoodItem;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use SE7ENCinema\scAlert;
-use Illuminate\Support\Str;
 
 class FoodIndex extends Component
 {
@@ -55,6 +55,12 @@ class FoodIndex extends Component
             $this->scConfirm("Phát hiện có biến thể đã bị xóa đang liên kết!", "Bạn có chắc chắn vẫn muốn xóa không? Hành động này sẽ xóa tất cả các biến thể đã bị xóa đang liên kết với món ăn, cùng với món ăn {$food->name} này! Và KHÔNG THỂ HOÀN TÁC!", 'warning', "deleteFood({$foodId}, {$status['isConfirmed']})");
             return;
         }
+
+        // Kiểm tra image, nếu có thì xóa
+        !Storage::disk('public')->exists($food->image) ?: Storage::disk('public')->delete($food->image);
+        $food->variants()->onlyTrashed()->each(function($variant) {
+            !Storage::disk('public')->exists($variant->image) ?: Storage::disk('public')->delete($variant->image);
+        });
 
         // Xóa cứng món ăn và biến thể món ăn
         $food->variants()->onlyTrashed()->forceDelete();
