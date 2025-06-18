@@ -57,7 +57,7 @@ class GenreCreate extends Component
 
     public function render()
     {
-        $movies = Movie::select('id', 'title')
+        $movies = Movie::select('id', 'title', 'poster')
             ->whereIn('status', ['showing', 'coming_soon'])
             ->get();
         

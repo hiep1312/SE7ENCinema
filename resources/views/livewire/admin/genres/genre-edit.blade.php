@@ -2,33 +2,33 @@
     @if (session()->has('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
     @if (session()->has('error'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
-    <div class="container-lg mb-5">
-        <div class="d-flex justify-content-between align-items-center my-4">
+    <div class="container-lg mb-4">
+        <div class="d-flex justify-content-between align-items-center my-3">
             <h2 class="text-light">Chỉnh sửa thể loại: {{ $name }}</h2>
-            <a href="{{ route('admin.genres.index') }}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left"></i> Quay lại
+            <a href="{{ route('admin.genres.index') }}" class="btn btn-outline-secondary d-flex align-items-center transition-all" style="transition: all 0.2s ease;">
+                <i class="fas fa-arrow-left fa-fw me-2"></i> Quay lại
             </a>
         </div>
 
         <div class="row">
             <div class="col-12">
-                <div class="card bg-dark shadow-lg">
+                <div class="card bg-dark border-light shadow-lg">
                     <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                        <h5 class="my-2">Thông tin thể loại</h5>
+                        <h5 class="my-1"><i class="fas fa-tags me-2"></i>Thông tin thể loại</h5>
                     </div>
                     <div class="card-body bg-dark p-4">
                         <form wire:submit.prevent="update" novalidate>
-                            <div class="row g-4">
+                            <div class="row g-3">
                                 <div class="col-12">
                                     <div class="mb-3">
                                         <label for="name" class="form-label text-light fw-bold">Tên thể loại <span class="text-danger">*</span></label>
@@ -49,33 +49,39 @@
                                 </div>
                             </div>
 
+                            <hr class="border-light my-4">
+                            <h5 class="text-light mb-3"><i class="fas fa-film me-2"></i>Phim áp dụng</h5>
                             <div class="mb-4">
-                                <label class="form-label text-light fw-bold">Phim áp dụng</label>
+                                <label class="form-label text-light fw-bold">Phim áp dụng <span class="text-danger">*</span></label>
                                 @if ($movies->isEmpty() && empty($movie_ids))
                                     <div class="alert alert-info bg-dark border-info rounded-3 py-2">
                                         <i class="fas fa-info-circle text-info me-2"></i>
                                         <span class="text-light">Hiện tại không có phim nào đang chiếu hoặc sắp chiếu để gán cho thể loại.</span>
                                     </div>
                                 @else
-                                    <div class="card bg-dark border-light-subtle rounded-3 p-3 mb-3">
-                                        <div class="row row-cols-1 row-cols-md-3 g-3">
-                                            @foreach ($movies as $movie)
-                                                <div class="col">
-                                                    <div class="card h-100 bg-dark-subtle rounded-2 p-2 transition-all duration-300 hover:bg-gradient hover:from-[#667eea] hover:to-[#764ba2] hover:text-white hover:shadow-lg">
-                                                        <div class="form-check d-flex align-items-center h-100">
-                                                            <input wire:model="movie_ids" class="form-check-input me-3" type="checkbox" value="{{ $movie->id }}" id="movie_{{ $movie->id }}" {{ in_array($movie->id, $movie_ids) ? 'checked' : '' }}>
-                                                            <label class="form-check-label text-light flex-grow-1" for="movie_{{ $movie->id }}">{{ $movie->title }}</label>
+                                    <div class="row row-cols-1 row-cols-md-3 g-4">
+                                        @foreach ($movies as $movie)
+                                            <div class="col">
+                                                <div class="card h-100 bg-dark-subtle border-0 shadow-sm rounded-3 overflow-hidden transition-all duration-300 hover:shadow-lg hover:bg-gradient hover:from-[#667eea] hover:to-[#764ba2]">
+                                                    <div class="card-body p-3">
+                                                        <div class="position-relative mb-3">
+                                                            <img src="{{ $movie->poster ? asset('storage/' . $movie->poster) : asset('storage/404.webp') }}" alt="{{ $movie->title }} poster" class="img-fluid rounded-2 w-100" style="height: 200px; object-fit: cover;">
+                                                            <div class="position-absolute top-0 end-0 mt-2 me-2">
+                                                                <input wire:model="movie_ids" class="form-check-input" type="checkbox" value="{{ $movie->id }}" id="movie_{{ $movie->id }}" {{ in_array($movie->id, $movie_ids) ? 'checked' : '' }} style="transform: scale(1.5);">
+                                                            </div>
                                                         </div>
+                                                        <h6 class="text-light mb-1">{{ $movie->title }}</h6>
+                                                        <span class="badge bg-success text-dark">{{ $movie->status == 'showing' ? 'Đang chiếu' : 'Sắp chiếu' }}</span>
                                                     </div>
                                                 </div>
-                                            @endforeach
-                                        </div>
+                                            </div>
+                                        @endforeach
                                     </div>
                                     <small class="text-muted mt-2 d-block">Chọn các phim thuộc thể loại này (chỉ hiển thị phim đang chiếu hoặc sắp chiếu).</small>
                                     @if (!empty($movie_ids))
-                                        <div class="mt-2">
-                                            <small class="text-warning">Phim đã gán trước đó (bao gồm cả phim không còn đang chiếu hoặc sắp chiếu):</small>
-                                            <ul class="list-unstyled text-light">
+                                        <div class="mt-4">
+                                            <h6 class="text-warning fw-bold mb-3">Phim đã gán trước đó</h6>
+                                            <div class="row row-cols-1 row-cols-md-3 g-4">
                                                 @php
                                                     try {
                                                         $existingMovies = \App\Models\Movie::whereIn('id', $movie_ids)->get();
@@ -84,9 +90,21 @@
                                                     }
                                                 @endphp
                                                 @foreach ($existingMovies as $movie)
-                                                    <li>{{ $movie->title }} ({{ $movie->status == 'showing' ? 'Đang chiếu' : ($movie->status == 'upcoming' ? 'Sắp chiếu' : 'Ngừng chiếu') }})</li>
+                                                    <div class="col">
+                                                        <div class="card h-100 bg-dark-subtle border-0 shadow-sm rounded-3 overflow-hidden transition-all duration-300 hover:shadow-lg">
+                                                            <div class="card-body p-3">
+                                                                <div class="position-relative mb-3">
+                                                                    <img src="{{ $movie->poster ? asset('storage/' . $movie->poster) : asset('storage/404.webp') }}" alt="{{ $movie->title }} poster" class="img-fluid rounded-2 w-100" style="height: 150px; object-fit: cover;">
+                                                                </div>
+                                                                <h6 class="text-light mb-1">{{ $movie->title }}</h6>
+                                                                <span class="badge {{ $movie->status == 'showing' ? 'bg-success' : ($movie->status == 'upcoming' ? 'bg-info' : 'bg-secondary') }} text-dark">
+                                                                    {{ $movie->status == 'showing' ? 'Đang chiếu' : ($movie->status == 'upcoming' ? 'Sắp chiếu' : 'Ngừng chiếu') }}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 @endforeach
-                                            </ul>
+                                            </div>
                                         </div>
                                     @endif
                                 @endif
@@ -96,11 +114,11 @@
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center">
-                                <button type="submit" class="btn btn-warning btn-lg">
-                                    <i class="fas fa-save me-2"></i> Cập nhật
+                                <button type="submit" class="btn btn-warning btn-lg d-flex align-items-center transition-all" style="transition: all 0.2s ease;">
+                                    <i class="fas fa-save fa-fw me-2"></i> Cập nhật
                                 </button>
-                                <a href="{{ route('admin.genres.index') }}" class="btn btn-outline-danger btn-lg">
-                                    <i class="fas fa-times me-2"></i> Hủy
+                                <a href="{{ route('admin.genres.index') }}" class="btn btn-outline-danger btn-lg d-flex align-items-center transition-all" style="transition: all 0.2s ease;">
+                                    <i class="fas fa-times fa-fw me-2"></i> Hủy
                                 </a>
                             </div>
                         </form>
@@ -109,4 +127,16 @@
             </div>
         </div>
     </div>
+
+    @push('styles')
+        <style>
+            .transition-all:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+            .card-body {
+                min-height: 300px;
+            }
+        </style>
+    @endpush
 </div>

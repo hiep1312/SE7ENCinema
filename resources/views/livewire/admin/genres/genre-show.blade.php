@@ -107,10 +107,10 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <a href="#" class="btn btn-sm btn-info" title="Xem chi tiết">
+                                            <a href="{{ route('admin.movies.show', $movie->id) }}" class="btn btn-sm btn-info" title="Xem chi tiết">
                                                 <i class="fas fa-eye" style="margin-right: 0"></i>
                                             </a>
-                                            <a href="#" class="btn btn-sm btn-warning" title="Chỉnh sửa">
+                                            <a href="{{ route('admin.movies.edit', $movie->id) }}" class="btn btn-sm btn-warning" title="Chỉnh sửa">
                                                 <i class="fas fa-edit" style="margin-right: 0"></i>
                                             </a>
                                         </td>
@@ -182,16 +182,6 @@
             if (iframe && iframe.dataset.src) {
                 iframe.setAttribute('src', iframe.dataset.src);
                 console.log('Trailer started: ', iframe.dataset.src);
-            }
-        });
-
-        // Xóa src khi đóng modal
-        document.addEventListener('hidden.bs.modal', function(event) {
-            const modal = event.target;
-            const iframe = modal.querySelector('iframe');
-            if (iframe) {
-                iframe.setAttribute('src', '');
-                console.log('Trailer stopped and cleared for modal: ', modal.id);
             }
         });
     </script>

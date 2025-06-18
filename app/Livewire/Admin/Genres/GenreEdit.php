@@ -67,7 +67,7 @@ class GenreEdit extends Component
     public function render()
     {
         try {
-            $movies = Movie::select('id', 'title')
+            $movies = Movie::select('id', 'title', 'poster')
                 ->whereIn('status', ['showing', 'coming_soon'])
                 ->get();
         } catch (\Exception $e) {
