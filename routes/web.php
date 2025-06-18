@@ -43,13 +43,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/detail/{user}', UserDetail::class)->name('detail');
     });
 
-    /* Promotions */
-    Route::prefix('/promotions')->name('promotions.')->group(function () {
-        Route::get('/', PromotionIndex::class)->name('index');
-        Route::get('/create', PromotionCreate::class)->name('create');
-        Route::get('/edit/{promotion}', PromotionEdit::class)->name('edit');
-        Route::get('/detail/{promotion}', PromotionDetail::class)->name('detail');
-    });
 
 
     /* Template */
