@@ -9,6 +9,9 @@ use App\Livewire\Admin\Rooms\RoomCreate;
 use App\Livewire\Admin\Rooms\RoomDetail;
 use App\Livewire\Admin\Rooms\RoomEdit;
 use App\Livewire\Admin\Rooms\RoomIndex;
+use App\Livewire\Admin\Showtimes\ShowtimeCreate;
+use App\Livewire\Admin\Showtimes\ShowtimeEdit;
+use App\Livewire\Admin\Showtimes\ShowtimeIndex;
 use App\Livewire\Admin\Users\UserCreate;
 use App\Livewire\Admin\Users\UserDetail;
 use App\Livewire\Admin\Users\UserEdit;
@@ -39,6 +42,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/detail/{user}', UserDetail::class)->name('detail');
     });
 
+    /* Showtimes */
+    Route::prefix('/showtimes')->name('showtimes.')->group(function () {
+        Route::get('/', ShowtimeIndex::class)->name('index');
+        Route::get('/create', ShowtimeCreate::class)->name('create');
+        Route::get('/edit/{showtime}', ShowtimeEdit::class)->name('edit');
+    });
 
 
     /* Template */
