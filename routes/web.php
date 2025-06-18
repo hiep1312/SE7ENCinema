@@ -4,15 +4,14 @@ use App\Livewire\Admin\Foods\FoodCreate;
 use App\Livewire\Admin\Foods\FoodDetail;
 use App\Livewire\Admin\Foods\FoodEdit;
 use App\Livewire\Admin\Foods\FoodIndex;
-use App\Livewire\Admin\Promotions\PromotionCreate;
-use App\Livewire\Admin\Promotions\PromotionDetail;
-use App\Livewire\Admin\Promotions\PromotionEdit;
-use App\Livewire\Admin\Promotions\PromotionIndex;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\Rooms\RoomCreate;
 use App\Livewire\Admin\Rooms\RoomDetail;
 use App\Livewire\Admin\Rooms\RoomEdit;
 use App\Livewire\Admin\Rooms\RoomIndex;
+use App\Livewire\Admin\Showtimes\ShowtimeCreate;
+use App\Livewire\Admin\Showtimes\ShowtimeEdit;
+use App\Livewire\Admin\Showtimes\ShowtimeIndex;
 use App\Livewire\Admin\Users\UserCreate;
 use App\Livewire\Admin\Users\UserDetail;
 use App\Livewire\Admin\Users\UserEdit;
@@ -43,12 +42,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/detail/{user}', UserDetail::class)->name('detail');
     });
 
-    /* Promotions */
-    Route::prefix('/promotions')->name('promotions.')->group(function () {
-        Route::get('/', PromotionIndex::class)->name('index');
-        Route::get('/create', PromotionCreate::class)->name('create');
-        Route::get('/edit/{promotion}', PromotionEdit::class)->name('edit');
-        Route::get('/detail/{promotion}', PromotionDetail::class)->name('detail');
+    /* Showtimes */
+    Route::prefix('/showtimes')->name('showtimes.')->group(function () {
+        Route::get('/', ShowtimeIndex::class)->name('index');
+        Route::get('/create', ShowtimeCreate::class)->name('create');
+        Route::get('/edit/{showtime}', ShowtimeEdit::class)->name('edit');
     });
 
 
