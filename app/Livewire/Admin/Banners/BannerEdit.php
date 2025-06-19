@@ -24,7 +24,7 @@ class BannerEdit extends Component
     public $priority = 0;
 
     protected $rules = [
-        'title' => 'required|string|max:255',
+        'title' => 'required|string|max:255|unique:banners,title',
         'image' => 'nullable|image|max:20480',
         'link' => 'nullable|url',
         'end_date' => 'nullable|date|after:start_date',
@@ -35,6 +35,7 @@ class BannerEdit extends Component
     protected $messages = [
         'title.required' => 'Tiêu đề banner là bắt buộc',
         'title.max' => 'Tiêu đề không được vượt quá 255 ký tự',
+        'title.unique' => 'Tiêu đề banner này đã tồn tại. Vui lòng chọn tiêu đề khác.',
         'image.image' => 'Ảnh banner phải là một tệp hình ảnh hợp lệ.',
         'image.max' => 'Kích thước ảnh không được vượt quá 20MB',
         'link.url' => 'Đường dẫn liên kết phải là một URL hợp lệ',
@@ -62,6 +63,7 @@ class BannerEdit extends Component
     {
         if($this->end_date !== $this->banner->end_date?->format('Y-m-d\TH:i')) $this->rules['end_date'] .= '|after_or_equal:now';
         $this->rules['priority'] .= ',' . $this->banner->id;
+        $this->rules['title'] .= ',' . $this->banner->id;
         $this->validate();
 
         $imagePath = $this->banner->image;

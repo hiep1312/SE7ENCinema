@@ -21,7 +21,7 @@ class BannerCreate extends Component
     public $priority = 0;
 
     protected $rules = [
-        'title' => 'required|string|max:255',
+        'title' => 'required|string|max:255|unique:banners,title',
         'image' => 'required|image|max:20480',
         'link' => 'nullable|url',
         'start_date' => 'required|date|after_or_equal:now',
@@ -33,6 +33,7 @@ class BannerCreate extends Component
     protected $messages = [
         'title.required' => 'Tiêu đề banner là bắt buộc',
         'title.max' => 'Tiêu đề không được vượt quá 255 ký tự',
+        'title.unique' => 'Tiêu đề banner này đã tồn tại. Vui lòng chọn tiêu đề khác.',
         'image.required' => 'Ảnh banner là bắt buộc',
         'image.image' => 'Ảnh banner phải là một tệp hình ảnh hợp lệ.',
         'image.max' => 'Kích thước ảnh không được vượt quá 20MB',
