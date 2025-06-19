@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('image');
             $table->string('link')->nullable();
             $table->dateTime('start_date');
-            $table->dateTime('end_date');
+            $table->dateTime('end_date')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->integer('priority')->default(0);
             $table->timestamps();

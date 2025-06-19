@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Livewire\Admin\Rooms;
+namespace App\Livewire\Admin\Movies;
 
-use App\Models\Room;
+use App\Models\Movie;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class RoomIndex extends Component
+class MovieIndex extends Component
 {
     use WithPagination;
 
@@ -17,47 +17,47 @@ class RoomIndex extends Component
     public $statusFilter = '';
     public $showtimeFilter = '';
 
-    public function deleteRoom(array $status, int $roomId)
+    public function deleteMovie(array $status, int $movieId)
     {
         if(!$status['isConfirmed']) return;
-        $room = Room::find($roomId);
+        $movie = Movie::find($movieId);
 
         // Kiểm tra xem có suất chiếu đang hoạt động không
-        if ($room->hasActiveShowtimes()) {
-            session()->flash('error', 'Không thể xóa phòng có suất chiếu trong tương lai!');
+        if ($movie->hasActiveShowtimes()) {
+            session()->flash('error', 'Không thể xóa phim có suất chiếu trong tương lai!');
             return;
         }
 
         // Soft delete
-        $room->delete();
-        session()->flash('success', 'Xóa phòng chiếu thành công!');
+        $movie->delete();
+        session()->flash('success', 'Xóa phim thành công!');
     }
 
-    public function restoreRoom(int $roomId)
+    public function restoreMovie(int $movieId)
     {
-        $room = Room::onlyTrashed()->find($roomId);
+        $movie = Movie::onlyTrashed()->find($movieId);
 
-        $room->restore();
-        session()->flash('success', 'Khôi phục phòng chiếu thành công!');
+        $movie->restore();
+        session()->flash('success', 'Khôi phục phim thành công!');
     }
 
-    public function forceDeleteRoom(array $status, int $roomId)
+    public function forceDeleteMovie(array $status, int $movieId)
     {
         if(!$status['isConfirmed']) return;
-        $room = Room::onlyTrashed()->find($roomId);
+        $movie = Movie::onlyTrashed()->find($movieId);
 
         // Kiểm tra quyền xóa cứng
-        if ($room->showtimes()->exists()) {
-            session()->flash('error', 'Không thể xóa vĩnh viễn phòng có lịch sử suất chiếu!');
+        if ($movie->showtimes()->exists()) {
+            session()->flash('error', 'Không thể xóa vĩnh viễn phim có lịch sử suất chiếu!');
             return;
         }
 
-        // Xóa tất cả ghế trước
-        $room->seats()->delete();
+        // Xóa tất cả thể loại trước
+        $movie->genres()->detach();
 
-        // Xóa cứng phòng
-        $room->forceDelete();
-        session()->flash('success', 'Xóa vĩnh viễn phòng chiếu thành công!');
+        // Xóa cứng phim
+        $movie->forceDelete();
+        session()->flash('success', 'Xóa vĩnh viễn phim thành công!');
     }
 
     public function resetFilters()
@@ -66,15 +66,14 @@ class RoomIndex extends Component
         $this->resetPage();
     }
 
-    #[Title('Danh sách phòng chiếu - SE7ENCinema')]
+    #[Title('Danh sách phim - SE7ENCinema')]
     #[Layout('components.layouts.admin')]
     public function render()
     {
-        $query = Room::query();
+        $query = Movie::query();
 
-        // Hiển thị phòng đã xóa hoặc chưa xóa
         if ($this->showDeleted) {
-            $query = Room::onlyTrashed();
+            $query = Movie::onlyTrashed();
         } else {
             // Áp dụng các bộ lọc chỉ khi không xem phòng đã xóa
             if ($this->statusFilter) {
@@ -96,22 +95,21 @@ class RoomIndex extends Component
             }
         }
 
-        $rooms = $query
+        $movies = $query
             ->when($this->search, function ($query) {
                 $query->withTrashed();
-                $query->where('name', 'like', '%' . $this->search . '%');
+                $query->where('title', 'like', '%' . $this->search . '%');
             })
-            ->withCount('seats')
             ->with(['showtimes' => function($query) {
                 $query->with('movie')
                     ->where('start_time', '>=', now())
                     ->where('status', 'active')
                     ->orderBy('start_time', 'asc')
-                    ->limit(1); // Chỉ lấy suất chiếu gần nhất
+                    ->limit(1);
             }])
             ->orderBy('id', 'desc')
             ->paginate(20);
 
-        return view('livewire.admin.rooms.room-index', compact('rooms'));
+        return view('livewire.admin.movies.movie-index', compact('movies'));
     }
 }

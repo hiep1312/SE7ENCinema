@@ -26,7 +26,7 @@
                             <div class="row align-items-start">
                                 <div class="col-md-3 mb-3">
                                         <div class="mt-1 overflow-auto position-relative" style="max-height: 230px;">
-                                            <img src="{{ asset('storage/' . ($foodItem->image ?? '404.webp')) }}" alt="Ảnh biến thể hiện tại" class="img-thumbnail"
+                                            <img src="{{ asset('storage/' . ($foodItem->image ?? '404.webp')) }}" alt="Ảnh món ăn hiện tại" class="img-thumbnail"
                                             style="width: 100%;">
                                             <span class="position-absolute opacity-75 top-0 start-0 mt-2 ms-2 badge rounded bg-danger">
                                                 Ảnh hiện tại
@@ -34,7 +34,7 @@
                                         </div>
                                     @if ($image && $image instanceof Illuminate\Http\UploadedFile)
                                         <div class="mt-2 overflow-auto position-relative" style="max-height: 230px;">
-                                            <img src="{{ $image->temporaryUrl() }}" alt="Ảnh biến thể tải lên" class="img-thumbnail"
+                                            <img src="{{ $image->temporaryUrl() }}" alt="Ảnh món ăn tải lên" class="img-thumbnail"
                                                 style="width: 100%;">
                                             <span class="position-absolute opacity-75 top-0 start-0 mt-2 ms-2 badge rounded bg-success">
                                                 Ảnh mới
@@ -162,7 +162,7 @@
                                                         @if(isset($variant['id']) || $variant['image']) </div><div class="col-sm-9 row g-2"> @endif
                                                         <div class="{{ $columnLayoutVariant }}">
                                                             <div class="mb-3">
-                                                                <label for="variants.{{ $index }}.name" class="form-label text-light">Tên biến thể: *</label>
+                                                                <label for="variants.{{ $index }}.name" class="form-label text-light">Tên biến thể *</label>
                                                                 <input type="text"
                                                                     id = "variants.{{ $index }}.name"
                                                                     wire:model="variants.{{ $index }}.name"
@@ -175,12 +175,12 @@
                                                         </div>
                                                         <div class="{{ $columnLayoutVariant }}">
                                                             <div class="mb-3">
-                                                                <label for="variants.{{ $index }}.price" class="form-label text-light">Giá: *</label>
+                                                                <label for="variants.{{ $index }}.price" class="form-label text-light">Giá *</label>
                                                                 <input type="text"
                                                                     id = "variants.{{ $index }}.price"
                                                                     wire:model="variants.{{ $index }}.price"
                                                                     class="form-control bg-dark text-light border-light @error("variants.$index.price") is-invalid @enderror"
-                                                                    placeholder="VD: 100000">
+                                                                    placeholder="VD: 100000đ" min="0">
                                                                 @error("variants.$index.price")
                                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                                 @enderror
@@ -188,7 +188,7 @@
                                                         </div>
                                                         <div class="{{ $columnLayoutVariant }}">
                                                             <div class="mb-3">
-                                                                <label for="variants.{{ $index }}.quantity" class="form-label text-light">Số lượng: *</label>
+                                                                <label for="variants.{{ $index }}.quantity" class="form-label text-light">Số lượng *</label>
                                                                 <input type="number"
                                                                     id = "variants.{{ $index }}.quantity"
                                                                     wire:model="variants.{{ $index }}.quantity"
@@ -202,7 +202,7 @@
                                                         </div>
                                                         <div class="{{ $columnLayoutVariant }}">
                                                             <div class="mb-3">
-                                                                <label for="variants.{{ $index }}.limit" class="form-label text-light">Giới hạn số lượng nhập: </label>
+                                                                <label for="variants.{{ $index }}.limit" class="form-label text-light">Giới hạn số lượng nhập </label>
                                                                 <input type="number"
                                                                     id = "variants.{{ $index }}.limit"
                                                                     wire:model="variants.{{ $index }}.limit"
@@ -228,7 +228,7 @@
                                                         </div>
                                                         <div class="{{ $columnLayoutVariant }}">
                                                             <div class="mb-3">
-                                                                <label for="variants.{{ $index }}.image" class="form-label text-light">Ảnh biến thể: </label>
+                                                                <label for="variants.{{ $index }}.image" class="form-label text-light">Ảnh biến thể </label>
                                                                 <input type="file"
                                                                     id = "variants.{{ $index }}.image"
                                                                     wire:model.live="variants.{{ $index }}.image"
