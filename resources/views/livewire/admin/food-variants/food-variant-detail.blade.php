@@ -1,13 +1,13 @@
 <div>
-    <div class="container-lg mb-4" wire:poll="realTimeFoodUpdate">
+    <div class="container-lg mb-4" wire:poll="realTimeVariantUpdate">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center my-3">
-            <h2 class="text-light">Chi tiết món ăn: {{ $foodItem->name }}</h2>
+            <h2 class="text-light">Chi tiết Biến thể: {{ $variantItem->name }}</h2>
             <div>
-                <a href="{{ route('admin.foods.edit', $foodItem->id) }}" class="btn btn-warning me-2">
+                <a href="{{ route('admin.food_variants.edit',$variantItem->id) }}" class="btn btn-warning me-2">
                     <i class="fas fa-edit me-1"></i>Chỉnh sửa
                 </a>
-                <a href="{{ route('admin.foods.index') }}" class="btn btn-outline-secondary">
+                <a href="{{ route('admin.food_variants.index') }}" class="btn btn-outline-secondary">
                     <i class="fas fa-arrow-left me-1"></i>Quay lại
                 </a>
             </div>
@@ -15,68 +15,33 @@
 
         <!-- Quick Stats Cards -->
         <div class="row mb-4 g-3">
-            <div class="col-lg-3 col-md-6">
+            <div class="col-md-6">
                 <div class="card text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <h6 class="card-title">Tổng số biến thể</h6>
-                                <h3 class="mb-0">{{ number_format($foodItem->variants->count(), 0, '.', '.') }}</h3>
-                                <small>biến thể</small>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-layer-group fa-2x opacity-75"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="card bg-success text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h6 class="card-title">Số lượng còn lại</h6>
-                                <h3 class="mb-0">
-                                    {{ number_format($foodItem->variants?->sum('quantity_available') ?? 0, 0, '.', '.') }}
-                                </h3>
-                                <small>món ăn</small>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-box-open fa-2x opacity-75"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="card bg-info text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h6 class="card-title">Giá trung bình</h6>
-                                <h3 class="mb-0">
-                                    {{ number_format($foodItem->variants?->avg('price') ?? 0, 0, '.', '.') }}đ</h3>
-                                <small>VNĐ</small>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-coins fa-2x opacity-75"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="card bg-warning text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h6 class="card-title">Số lượng đơn hàng</h6>
+                                <h6 class="card-title">Số lượng đơn hàng (30 ngày)</h6>
                                 <h3 class="mb-0">{{ number_format($totalOrderItemsIn30Days, 0, '.', '.') }}</h3>
                                 <small>đơn hàng</small>
                             </div>
                             <div class="align-self-center">
                                 <i class="fas fa-shopping-cart fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">Doanh thu món ăn (30 ngày)</h6>
+                                <h3 class="mb-0">{{ number_format($totalPriceIn30Days ?? 0, 0, '.', '.') }}đ</h3>
+                                <small>VNĐ</small>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fa-solid fa-money-bill-wave fa-2x opacity-75"></i>
                             </div>
                         </div>
                     </div>
@@ -98,14 +63,14 @@
                     class="nav-link @if ($tabCurrent === 'variants') active bg-light text-dark @else text-light @endif"
                     wire:click="$set('tabCurrent', 'variants')"
                     style="border-top-left-radius: 0; border-top-right-radius: 0;">
-                    <i class="fas fa-layer-group me-1"></i>Biến thể
+                    <i class="fas fa-layer-group me-1"></i> Biến thể cùng loại
                 </button>
             </li>
             <li class="nav-item">
                 <button
                     class="nav-link @if ($tabCurrent === 'orders') active bg-light text-dark @else text-light @endif"
                     wire:click="$set('tabCurrent', 'orders')">
-                    <i class="fas fa-shopping-cart me-1"></i>Đơn hàng
+                    <i class="fas fa-shopping-cart me-1"></i> Đơn hàng
                 </button>
             </li>
         </ul>
@@ -125,30 +90,54 @@
                                 style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
                                 <table class="table table-borderless text-light">
                                     <tr>
-                                        <td><strong class="text-warning">Tên món ăn:</strong></td>
-                                        <td>{{ $foodItem->name }}</td>
+                                        <td><strong class="text-warning">Tên món ăn liên kết:</strong></td>
+                                        <td><strong class="badge bg-gradient text-light" style="background: linear-gradient(to right, #642b73, #c642ab) !important; font-size: 0.875rem !important;">
+                                            {{ $variantItem->FoodItem->name ?? 'N/A' }}
+                                        </strong><br>
                                     </tr>
                                     <tr>
-                                        <td><strong class="text-warning">Mô tả:</strong></td>
-                                        <td class="text-wrap lh-base">{{ $foodItem->description }}</td>
+                                        <td><strong class="text-warning">Tên biến thể:</strong></td>
+                                        <td>{{ $variantItem->name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong class="text-warning">Giá</strong></td>
+                                        <td><span class="text-warning">{{ number_format($variantItem->price, 0, ',', '.') }}đ</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong class="text-warning">Số lượng còn lại</strong></td>
+                                        <td>{{ number_format($variantItem->quantity_available, 0, ',', '.') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong class="text-warning">Giới hạn số lượng nhập</strong></td>
+                                        <td>
+                                            @if($variantItem->limit > 0)
+                                                <span>{{ number_format($variantItem->limit, 0, ',', '.') }}</span>
+                                            @else
+                                                <span class="text-muted">Không có giới hạn</span>
+                                            @endif
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td><strong class="text-warning">Trạng thái:</strong></td>
                                         <td>
-                                            @switch($foodItem->status)
-                                                @case('activate')
-                                                    <span class="badge bg-success">Đang bán</span>
+                                            @switch($variantItem->status)
+                                                @case('available')
+                                                    <span class="badge bg-success">Còn hàng</span>
                                                 @break
 
-                                                @case('discontinued')
-                                                    <span class="badge bg-danger">Ngừng bán</span>
+                                                @case('out_of_stock')
+                                                    <span class="badge bg-danger">Hết hàng</span>
+                                                @break
+
+                                                @case('hidden')
+                                                    <span class="badge bg-danger">Ẩn</span>
                                                 @break
                                             @endswitch
                                         </td>
                                     </tr>
                                     <tr>
                                         <td><strong class="text-warning">Ngày tạo:</strong></td>
-                                        <td>{{ $foodItem->created_at->format('d/m/Y H:i') }}</td>
+                                        <td>{{ $variantItem->created_at->format('d/m/Y H:i') }}</td>
                                     </tr>
                                 </table>
                             </div>
@@ -163,7 +152,7 @@
                             <div class="card-body bg-dark"
                                 style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
                                 <div class="overflow-auto position-relative" style="max-height: 400px;">
-                                    <img src="{{ asset('storage/' . ($foodItem->image ?? '404.webp')) }}"
+                                    <img src="{{ asset('storage/' . ($variantItem->image ?? '404.webp')) }}"
                                         alt="Ảnh biến thể hiện tại" class="img-thumbnail" style="width: 100%;">
                                 </div>
                             </div>
@@ -176,7 +165,7 @@
                         <div class="card bg-dark border-light">
                             <div class="card-header bg-gradient text-light"
                                 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <h5><i class="fas fa-layer-group me-2"></i>Thông tin biến thể chi tiết</h5>
+                                <h5><i class="fas fa-layer-group me-2"></i>Danh sách biến thể cùng loại</h5>
                             </div>
                             <div class="card-body bg-dark"
                                 style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
@@ -194,7 +183,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($foodItem->variants as $variant)
+                                            @forelse ($relatedVariants as $variant)
                                                 <tr wire:key="{{ $variant->id }}">
                                                     <td class="text-center"><strong
                                                             class="text-light">{{ $variant->name }}</strong></td>
@@ -265,7 +254,7 @@
                         </div>
                     </div>
                 @elseif($tabCurrent === 'orders')
-                    <div class="row">
+                    <div class="row ml-3 mr-3">
                         <div class="col-12">
                             <div class="card bg-dark border-light">
                                 <div class="card-header bg-gradient text-light"
@@ -279,11 +268,11 @@
                                             <thead>
                                                 <tr>
                                                     <th class="text-center text-light">Mã đơn hàng</th>
-                                                    <th class="text-center text-light">Tên món ăn</th>
+                                                    <th class="text-center text-light">Tên món ăn / Biến thể</th>
                                                     <th class="text-center text-light">Số lượng</th>
                                                     <th class="text-center text-light">Tổng giá</th>
                                                     <th class="text-center text-light">Tên khách hàng</th>
-                                                    <th class="text-center text-light">Email / SĐT</th>
+                                                    <th class="text-center text-light">Email/SĐT</th>
                                                     <th class="text-center text-light">Địa chỉ</th>
                                                     <th class="text-center text-light">Ngày mua</th>
                                                     <th class="text-center text-light">Hành động</th>
@@ -294,8 +283,9 @@
                                                     <tr wire:key="{{ $foodOrder->id }}">
                                                         <td class="text-center">
                                                             {{ $foodOrder->booking?->booking_code ?? 'N/A' }}</td>
-                                                        <td class="text-center"><strong
-                                                                class="text-light">{{ $foodOrder->variant->name }}</strong>
+                                                        <td class="text-center"><strong class="badge bg-gradient text-light" style="background: linear-gradient(to right, #642b73, #c6426e) !important;">
+                                                            {{ $foodOrder->variant->FoodItem->name }} / {{ $foodOrder->variant->name }}
+                                                        </strong>
                                                         </td>
                                                         <td class="text-center">
                                                             {{ number_format($foodOrder->quantity, 0, ',', '.') }}</td>

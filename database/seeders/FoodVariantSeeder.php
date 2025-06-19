@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\FoodAttribute;
 use App\Models\FoodItem;
 use App\Models\FoodVariant;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -15,13 +16,30 @@ class FoodVariantSeeder extends Seeder
      */
     public function run(): void
     {
-        $items = FoodItem::all()->toArray();
+        $attributes = FoodAttribute::all();
 
-        foreach (Arr::shuffle($items) as $item) {
-            foreach (range(1, rand(1, 3)) as $i) {
+        $popcornPresets = [
+            'Size' => ['S', 'M', 'L', 'XL'],
+            'Vị' => ['Ngọt', 'Mặn', 'Caramel', 'Phô mai', 'Rong biển'],
+            'Kiểu gói' => ['Hộp giấy', 'Ly nhựa', 'Túi giấy', 'Hộp nhựa'],
+        ];
+        $drinkPresets = [
+            'Size' => ['S', 'M', 'L', 'XL'],
+            'Đá' => ['Có đá', 'Ít đá', 'Không đá'],
+            'Hương vị' => ['Đào', 'Chanh', 'Dâu', 'Xoài'],
+        ];
+
+        foreach ($attributes as $attribute) {
+            $values = $popcornPresets[$attribute->name] ?? $drinkPresets[$attribute->name] ?? null;
+
+            if (!$values) continue;
+
+            shuffle($values);
+
+            foreach (array_slice($values, 0, rand(1, 3)) as $value) {
                 FoodVariant::create([
-                    'food_item_id' => $item['id'],
-                    'name' => 'Size ' . fake()->randomElement(['S', 'M', 'L']),
+                    'food_attribute_id' => $attribute->id,
+                    'value' => $value,
                     'price' => fake()->numberBetween(20000, 100000),
                     'image' => fake()->imageUrl(300, 450, 'food'),
                     'quantity_available' => fake()->numberBetween(10, 100),

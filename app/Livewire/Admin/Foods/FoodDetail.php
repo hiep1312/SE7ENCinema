@@ -12,6 +12,7 @@ use Livewire\WithPagination;
 class FoodDetail extends Component
 {
     use WithPagination;
+
     public $foodItem;
     public $tabCurrent = 'overview';
 
@@ -32,8 +33,8 @@ class FoodDetail extends Component
             $query->with('user');
             $query->where('status', 'paid');
         }])->orderBy('created_at', 'desc');
-        $totalOrderItems = $foodOrderItems->count();
+        $totalOrderItemsIn30Days = (clone $foodOrderItems)->whereBetween('created_at', [now()->subDays(30), now()])->count();
         $foodOrderItems = $foodOrderItems->paginate(20);
-        return view('livewire.admin.foods.food-detail', compact('foodOrderItems', 'totalOrderItems'));
+        return view('livewire.admin.foods.food-detail', compact('foodOrderItems', 'totalOrderItemsIn30Days'));
     }
 }
