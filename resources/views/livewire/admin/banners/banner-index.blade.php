@@ -17,7 +17,7 @@
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2 class="text-light">Quản lý banner</h2>
             <div>
-                <a href="{{ route('admin.foods.create') }}" class="btn btn-success me-2">
+                <a href="{{ route('admin.banners.create') }}" class="btn btn-success me-2">
                     <i class="fas fa-plus me-1"></i>Thêm banner
                 </a>
             </div>
@@ -56,8 +56,6 @@
                         </div>
                         <span id="upperValue" x-text="$wire.priorityFilter[1]"></span>
                     </div>
-
-                    <button wire:click="test">test</button>
 
                     <!-- Reset filters -->
                     <div class="col-md-2">
@@ -264,6 +262,7 @@
         const itemActive = framePreview.querySelector('.active');
         itemActive.classList.remove('active');
     });
+
     $js('resetSlider', function() {
         document.getElementById('lowerRange').value = 0;
         document.getElementById('upperRange').value = 100;

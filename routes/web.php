@@ -16,7 +16,10 @@ use App\Livewire\Admin\FoodVariants\FoodVariantIndex;
 use App\Livewire\Admin\FoodVariants\FoodVariantDetail;
 use App\Livewire\Admin\FoodVariants\FoodVariantCreate;
 use App\Livewire\Admin\FoodVariants\FoodVariantEdit;
-
+use App\Livewire\Admin\Movies\MovieCreate;
+use App\Livewire\Admin\Movies\MovieDetail;
+use App\Livewire\Admin\Movies\MovieEdit;
+use App\Livewire\Admin\Movies\MovieIndex;
 use App\Livewire\Admin\Users\UserCreate;
 use App\Livewire\Admin\Users\UserDetail;
 use App\Livewire\Admin\Users\UserEdit;
@@ -66,6 +69,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
     /* Rating */
     Route::prefix('/ratings')->name('ratings.')->group(function () {
         Route::get('/', RatingIndex::class)->name('index');
+    });
+
+    /* Movies */
+    Route::prefix('/movies')->name('movies.')->group(function () {
+        Route::get('/', MovieIndex::class)->name('index');
+        Route::get('/create', MovieCreate::class)->name('create');
+        Route::get('/edit/{movie}', MovieEdit::class)->name('edit');
+        Route::get('/detail/{movie}', MovieDetail::class)->name('detail');
     });
 
     /* Template */

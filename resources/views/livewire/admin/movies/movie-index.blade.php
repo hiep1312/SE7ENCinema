@@ -15,18 +15,18 @@
 
     <div class="container-lg mb-4">
         <div class="d-flex justify-content-between align-items-center my-3">
-            <h2 class="text-light">Quản lý phòng chiếu</h2>
+            <h2 class="text-light">Quản lý phim</h2>
             <div>
                 @if(!$showDeleted)
-                    <a href="{{ route('admin.rooms.create') }}" class="btn btn-success me-2">
-                        <i class="fas fa-plus me-1"></i>Thêm phòng chiếu
+                    <a href="{{ route('admin.movies.create') }}" class="btn btn-success me-2">
+                        <i class="fas fa-plus me-1"></i>Thêm phim
                     </a>
                 @endif
                 <button wire:click="$toggle('showDeleted')" class="btn btn-outline-danger">
                     @if($showDeleted)
-                        <i class="fas fa-eye me-1"></i>Xem phòng hoạt động
+                        <i class="fas fa-eye me-1"></i>Xem phim hoạt động
                     @else
-                        <i class="fas fa-trash me-1"></i>Xem phòng đã xóa
+                        <i class="fas fa-trash me-1"></i>Xem phim đã xóa
                     @endif
                 </button>
             </div>
@@ -53,9 +53,9 @@
                         <div class="col-md-3 col-lg-2">
                             <select wire:model.live="statusFilter" class="form-select bg-dark text-light">
                                 <option value="">Tất cả trạng thái</option>
-                                <option value="active">Hoạt động</option>
-                                <option value="maintenance">Bảo trì</option>
-                                <option value="inactive">Ngừng hoạt động</option>
+                                <option value="coming_soon">Sắp ra mắt</option>
+                                <option value="showing">Đang chiếu</option>
+                                <option value="ended">Đã kết thúc</option>
                             </select>
                         </div>
 
@@ -84,10 +84,12 @@
                         <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                             <tr>
                                 <th class="text-center text-light">STT</th>
-                                <th class="text-center text-light">Tên phòng</th>
-                                <th class="text-center text-light">Sức chứa/Ghế hiện tại</th>
+                                <th class="text-center text-light">Ảnh poster</th>
+                                <th class="text-center text-light">Tiêu đề phim</th>
+                                <th class="text-center text-light">Thời lượng</th>
+                                <th class="text-center text-light">Ngày phát hành</th>
                                 <th class="text-center text-light">Trạng thái</th>
-                                <th class="text-center text-light">Bảo trì lần cuối</th>
+                                <th class="text-center text-light">Giá vé</th>
                                 <th class="text-center text-light">
                                     <i class="fas fa-calendar-alt me-1"></i>
                                     Suất chiếu tiếp theo
@@ -101,31 +103,54 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($rooms as $room)
+                            @forelse($movies as $movie)
                                 <tr>
                                     <td class="text-center fw-bold">{{ $loop->iteration }}</td>
                                     <td>
-                                        <strong class="text-light">{{ $room->name }}</strong>
-                                        @if($room->trashed())
+                                        <div class="mt-1 overflow-auto d-block text-center position-relative"
+                                            style="max-height: 80px; width: 100px;">
+                                            <img src="{{ asset('storage/' . ($movie->poster ?? '404.webp')) }}"
+                                                alt="Ảnh sản phẩm {{ $movie->poster }}" class="rounded"
+                                                style="width: 100%; height: auto;">
+                                            <span class="position-absolute opacity-75 top-0 start-0 mt-2 ms-2 badge rounded-circle bg-success">
+                                                <i class="fas fa-play me-1"></i>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <strong class="text-light text-wrap">{{ $movie->title }}</strong>
+                                        @if($movie->trashed())
                                             <span class="badge bg-danger ms-1">Đã xóa</span>
                                         @endif
                                     </td>
                                     <td class="text-center">
-                                        <span class="badge bg-gradient fs-6" style="background: linear-gradient(45deg, #667eea, #764ba2);">
-                                            {{ $room->capacity }}/{{ $room->seats_count }}
-                                        </span>
+                                        <span class="text-light">{{ $movie->duration }}p</span>
                                     </td>
                                     <td class="text-center">
-                                        @if(!$showDeleted && !$room->trashed())
-                                            @switch($room->status)
-                                                @case('active')
-                                                    <span class="badge bg-success">Hoạt động</span>
+                                        <div class="mb-1">
+                                            <small style="color: #34c759;">
+                                                <i class="fas fa-play me-1"></i>
+                                                {{ $movie->release_date->format('d/m/Y') }}
+                                            </small>
+                                        </div>
+                                        <div>
+                                            <small style="color: #ff4d4f;">
+                                                <i class="fas fa-stop me-1"></i>
+                                                {{ $movie->end_date?->format('d/m/Y') ?? 'Vĩnh viễn' }}
+                                            </small>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        @if(!$showDeleted && !$movie->trashed())
+                                            @switch($movie->status)
+                                                @case('showing')
+                                                    <span class="badge bg-success"><i class="fas fa-play me-1"></i>Đang chiếu</span>
                                                     @break
-                                                @case('maintenance')
-                                                    <span class="badge bg-warning text-dark">Bảo trì</span>
+                                                @case('coming_soon')
+                                                    <span class="badge" style="background-color: #2bbafc; color: #ffffff;"><i class="fas fa-clock me-1"></i>Sắp ra mắt</span>
                                                     @break
-                                                @case('inactive')
-                                                    <span class="badge bg-danger">Ngừng hoạt động</span>
+                                                @case('ended')
+                                                    <span class="badge bg-danger"><i class="fas fa-clock me-1"></i>Đã kết thúc</span>
                                                     @break
                                             @endswitch
                                         @else
@@ -133,23 +158,20 @@
                                         @endif
                                     </td>
                                     <td class="text-center">
-                                        @if($room->last_maintenance_date)
-                                            <span class="text-light">{{ $room->last_maintenance_date->format('d/m/Y') }}</span>
-                                        @else
-                                            <span class="text-muted">Chưa có</span>
-                                        @endif
+                                        <span class="badge bg-gradient fs-6" style="background: linear-gradient(45deg, #667eea, #764ba2);">
+                                            {{ number_format($movie->price, 0, '.', '.') }}đ
+                                        </span>
                                     </td>
 
                                     <!-- CỘT SUẤT CHIẾU TIẾP THEO -->
                                     <td class=" bg-opacity-10 border-start border-3">
-                                        @if(!$showDeleted && $room->showtimes->count() > 0)
-                                            @php $nextShowtime = $room->showtimes->first(); @endphp
+                                        @if(!$showDeleted && $movie->showtimes->count() > 0)
+                                            @php $nextShowtime = $movie->showtimes->first(); @endphp
                                             <div class="showtime-info">
-                                                <!-- Tên phim -->
                                                 <div class="movie-title mb-1">
                                                     <i class="fas fa-film me-1 text-primary"></i>
                                                     <strong class="text-primary">
-                                                        {{ $nextShowtime->movie->title ?? 'Phim đã xóa' }}
+                                                        {{ $nextShowtime->room->name ?? 'Phòng chiếu không tồn tại' }}
                                                     </strong>
                                                 </div>
 
@@ -170,12 +192,12 @@
                                                 <div class="showtime-price mb-1">
                                                     <i class="fas fa-money-bill me-1 text-warning"></i>
                                                     <span class="text-warning">
-                                                        {{ number_format($nextShowtime->price,0, '.', '.') }}đ
+                                                        {{ number_format($nextShowtime->price, 0, '.', '.') }}đ
                                                     </span>
                                                 </div>
 
                                                 <!-- Badge trạng thái -->
-                                                @if($room->hasActiveShowtimes())
+                                                @if($movie->hasActiveShowtimes())
                                                     <span class="badge bg-success">
                                                         <i class="fas fa-play me-1"></i>Có suất chiếu
                                                     </span>
@@ -203,67 +225,55 @@
                                     <td class="text-center">
                                         @if($showDeleted)
                                             <span class="text-light">
-                                                {{ $room->deleted_at ? $room->deleted_at->format('d/m/Y H:i') : 'N/A' }}
+                                                {{ $movie->deleted_at ? $movie->deleted_at->format('d/m/Y H:i') : 'N/A' }}
                                             </span>
                                         @else
                                             <span class="text-light">
-                                                {{ $room->created_at ? $room->created_at->format('d/m/Y H:i') : 'N/A' }}
+                                                {{ $movie->created_at ? $movie->created_at->format('d/m/Y H:i') : 'N/A' }}
                                             </span>
                                         @endif
                                     </td>
                                     <td>
                                         @if($showDeleted)
-                                            <!-- Actions for deleted rooms -->
                                             <div class="d-flex gap-2 justify-content-center">
                                                 <button type="button"
-                                                        wire:click.once="restoreRoom({{ $room->id }})"
+                                                        wire:click.once="restoreMovie({{ $movie->id }})"
                                                         class="btn btn-sm btn-success"
                                                         title="Khôi phục">
                                                     <i class="fas fa-undo" style="margin-right: 0"></i>
                                                 </button>
                                                 <button type="button"
                                                         class="btn btn-sm btn-danger"
-                                                        wire:sc-model="forceDeleteRoom({{ $room->id }})"
-                                                        wire:sc-confirm.warning="Bạn có chắc chắn muốn XÓA VĨNH VIỄN phòng '{{ $room->name }}'? Hành động này KHÔNG THỂ HOÀN TÁC!"
+                                                        wire:sc-model="forceDeleteMovie({{ $movie->id }})"
+                                                        wire:sc-confirm.warning="Bạn có chắc chắn muốn XÓA VĨNH VIỄN phim '{{ $movie->title }}'? Hành động này KHÔNG THỂ HOÀN TÁC!"
                                                         title="Xóa vĩnh viễn">
                                                     <i class="fas fa-trash-alt" style="margin-right: 0"></i>
                                                 </button>
                                             </div>
                                         @else
-                                            <!-- Actions for active rooms -->
                                             <div class="d-flex gap-2 justify-content-center">
-                                                <a href="{{ route('admin.rooms.detail', $room->id) }}"
+                                                <a href="{{ route('admin.movies.detail', $movie->id) }}"
                                                    class="btn btn-sm btn-info"
                                                    title="Xem chi tiết">
                                                     <i class="fas fa-eye" style="margin-right: 0"></i>
                                                 </a>
-                                                @if(!$room->hasActiveShowtimes())
-                                                    <a href="{{ route('admin.rooms.edit', $room->id) }}"
-                                                       class="btn btn-sm btn-warning"
-                                                       title="Chỉnh sửa">
-                                                       <i class="fas fa-edit" style="margin-right: 0"></i>
-                                                    </a>
-                                                @else
-                                                    <button type="button"
-                                                            class="btn btn-sm btn-warning"
-                                                            wire:sc-alert.error="Không thể sửa phòng có suất chiếu đang hoạt động"
-                                                            wire:sc-model
-                                                            title="Chỉnh sửa">
-                                                        <i class="fas fa-edit" style="margin-right: 0"></i>
-                                                    </button>
-                                                @endif
-                                                @if(!$room->hasActiveShowtimes())
+                                                <a href="{{ route('admin.movies.edit', $movie->id) }}"
+                                                    class="btn btn-sm btn-warning"
+                                                    title="Chỉnh sửa">
+                                                    <i class="fas fa-edit" style="margin-right: 0"></i>
+                                                </a>
+                                                @if(!$movie->hasActiveShowtimes())
                                                     <button type="button"
                                                             class="btn btn-sm btn-danger"
-                                                            wire:sc-model="deleteRoom({{ $room->id }})"
-                                                            wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa phòng '{{ $room->name }}'?"
+                                                            wire:sc-model="deleteMovie({{ $movie->id }})"
+                                                            wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa phim '{{ $movie->title }}'?"
                                                             title="Xóa">
                                                         <i class="fas fa-trash" style="margin-right: 0"></i>
                                                     </button>
                                                 @else
                                                     <button type="button"
                                                             class="btn btn-sm btn-danger"
-                                                            wire:sc-alert.error="Không thể xóa phòng có suất chiếu trong tương lai"
+                                                            wire:sc-alert.error="Không thể xóa phim có suất chiếu trong tương lai"
                                                             wire:sc-model
                                                             title="Xóa">
                                                         <i class="fas fa-trash" style="margin-right: 0"></i>
@@ -275,14 +285,14 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="text-center py-4">
+                                    <td colspan="11" class="text-center py-4">
                                         <div class="text-muted">
                                             <i class="fas fa-inbox fa-3x mb-3"></i>
                                             <p>
                                                 @if($showDeleted)
-                                                    Không có phòng chiếu nào đã xóa
+                                                    Không có phim nào đã xóa
                                                 @else
-                                                    Không có phòng chiếu nào
+                                                    Không có phim nào
                                                 @endif
                                             </p>
                                         </div>
@@ -293,7 +303,7 @@
                     </table>
                 </div>
                 <div class="mt-3">
-                    {{ $rooms->links() }}
+                    {{ $movies->links() }}
                 </div>
             </div>
         </div>
