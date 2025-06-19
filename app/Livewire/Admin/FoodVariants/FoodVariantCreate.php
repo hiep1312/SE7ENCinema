@@ -70,14 +70,14 @@ class FoodVariantCreate extends Component
         FoodVariant::create([
             'food_item_id' => $this->foodItemId,
             'name' => $this->name,
-            'image' => !$this->image ?: $this->image->store('food_variants', 'public'),
+            'image' => $this->image ? $this->image->store('food_variants', 'public') : null,
             'price' => $this->price,
             'quantity_available' => $this->quantity,
             'limit' => $this->limit,
             'status' => $this->status,
         ]);
 
-        return redirect()->route('admin.food_variants.index')->with('success', 'Biến thể món ăn đã được tạo thành công.');
+        return redirect()->route('admin.food_variants.index')->with('success', 'Thêm mới biến thể món ăn thành công!');
     }
 
     #[Title('Tạo biến thể món ăn - SE7ENCinema')]

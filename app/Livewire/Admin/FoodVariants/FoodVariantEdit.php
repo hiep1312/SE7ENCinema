@@ -100,9 +100,8 @@ class FoodVariantEdit extends Component
         return redirect()->route('admin.food_variants.index')->with('success', 'Cập nhật biến thể thành công!');
     }
 
+    #[Title('Chỉnh sửa biến Thể')]
     #[Layout('components.layouts.admin')]
-    #[Title('Chỉnh sửa Biến Thể')]
-
     public function render()
     {
         $foods = FoodItem::all();

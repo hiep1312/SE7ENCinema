@@ -62,7 +62,7 @@
                                     <div class="mb-3">
                                         <label for="description" class="form-label text-light">Mô tả</label>
                                         <textarea id="description" wire:model="description" class="form-control bg-dark text-light border-light @error('description') is-invalid @enderror" placeholder="VD: Bắp rang bơ vị ngọt, size lớn, thích hợp cho 2 người"></textarea>
-                                        @error('status')
+                                        @error('description')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>

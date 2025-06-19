@@ -21,8 +21,8 @@ class FoodItem extends Model
         'updated_at' => 'datetime',
     ];
 
-    public function variants()
+    public function attributes()
     {
-        return $this->hasMany(FoodVariant::class);
+        return $this->hasMany(FoodAttribute::class);
     }
 }
