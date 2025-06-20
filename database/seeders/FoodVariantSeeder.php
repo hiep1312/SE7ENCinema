@@ -3,11 +3,13 @@
 namespace Database\Seeders;
 
 use App\Models\FoodAttribute;
+use App\Models\FoodAttributeValue;
 use App\Models\FoodItem;
 use App\Models\FoodVariant;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class FoodVariantSeeder extends Seeder
 {
@@ -16,36 +18,34 @@ class FoodVariantSeeder extends Seeder
      */
     public function run(): void
     {
-        $attributes = FoodAttribute::all();
+        $items = FoodItem::all()->toArray();
 
-        $popcornPresets = [
-            'Size' => ['S', 'M', 'L', 'XL'],
-            'Vị' => ['Ngọt', 'Mặn', 'Caramel', 'Phô mai', 'Rong biển'],
-            'Kiểu gói' => ['Hộp giấy', 'Ly nhựa', 'Túi giấy', 'Hộp nhựa'],
-        ];
-        $drinkPresets = [
-            'Size' => ['S', 'M', 'L', 'XL'],
-            'Đá' => ['Có đá', 'Ít đá', 'Không đá'],
-            'Hương vị' => ['Đào', 'Chanh', 'Dâu', 'Xoài'],
-        ];
+        foreach (Arr::shuffle($items) as $item) {
+            $attributes = FoodAttribute::select('id', 'name')->where('food_item_id', $item['id'])->get();
+            if ($attributes->isEmpty()) continue;
 
-        foreach ($attributes as $attribute) {
-            $values = $popcornPresets[$attribute->name] ?? $drinkPresets[$attribute->name] ?? null;
+            foreach (Arr::shuffle($attributes->toArray()) as $attribute) {
+                $attributeValues = FoodAttributeValue::select('value')->where('food_attribute_id', $attribute['id'])->get()->toArray();
+                if(empty($attributeValues)) continue;
 
-            if (!$values) continue;
+                foreach (Arr::shuffle($attributeValues) as $attributeValue) {
+                    $parts = [$item['name'], $attribute['name'], $attributeValue['value']];
 
-            shuffle($values);
+                    $sku = implode('-', array_map(function ($part) {
+                        $ascii = Str::ascii($part);
+                        return str_replace(' ', '-', trim($ascii));
+                    }, $parts));
 
-            foreach (array_slice($values, 0, rand(1, 3)) as $value) {
-                FoodVariant::create([
-                    'food_attribute_id' => $attribute->id,
-                    'value' => $value,
-                    'price' => fake()->numberBetween(20000, 100000),
-                    'image' => fake()->imageUrl(300, 450, 'food'),
-                    'quantity_available' => fake()->numberBetween(10, 100),
-                    'limit' => fake()->numberBetween(10, 100),
-                    'status' => fake()->randomElement(['available', 'out_of_stock', 'hidden']),
-                ]);
+                    FoodVariant::create([
+                        'food_item_id' => $item['id'],
+                        'sku' => $sku,
+                        'price' => fake()->numberBetween(20000, 100000),
+                        'image' => fake()->imageUrl(300, 450, 'food'),
+                        'quantity_available' => fake()->numberBetween(10, 100),
+                        'limit' => fake()->numberBetween(10, 100),
+                        'status' => fake()->randomElement(['available', 'out_of_stock', 'hidden']),
+                    ]);
+                }
             }
         }
     }

@@ -29,7 +29,7 @@ class CommentSeeder extends Seeder
                 'parent_comment_id' => null,
                 'reply_comment_id' => null,
                 'content' => fake()->paragraph(),
-                'status' => fake()->randomElement(['active', 'hidden', 'reported', 'deleted']),
+                'status' => fake()->randomElement(['active', 'hidden', 'deleted']),
             ]);
             $topLevelComments[] = $comment;
         }
@@ -44,7 +44,7 @@ class CommentSeeder extends Seeder
                     'parent_comment_id' => $top->id,
                     'reply_comment_id' => $previous?->id ?? $top->id,
                     'content' => fake()->sentence(15),
-                    'status' => fake()->randomElement(['active', 'hidden', 'reported', 'deleted']),
+                    'status' => fake()->randomElement(['active', 'hidden', 'deleted']),
                 ]);
                 $previous = $reply;
             }
