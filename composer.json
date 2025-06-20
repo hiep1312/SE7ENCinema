@@ -63,7 +63,7 @@
             "@php artisan test"
         ],
         "db:refresh": [
-            "npx concurrently -c \"#93c5fd,#fdba74\" \"php artisan app:refresh\" \"php artisan migrate --seed\""
+            "@php artisan app:refresh && php artisan migrate --seed"
         ]
     },
     "extra": {
