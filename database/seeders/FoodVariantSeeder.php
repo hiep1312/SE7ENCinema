@@ -38,7 +38,7 @@ class FoodVariantSeeder extends Seeder
 
                     FoodVariant::create([
                         'food_item_id' => $item['id'],
-                        'sku' => $sku,
+                        'sku' => strtolower($sku),
                         'price' => fake()->numberBetween(20000, 100000),
                         'image' => fake()->imageUrl(300, 450, 'food'),
                         'quantity_available' => fake()->numberBetween(10, 100),
