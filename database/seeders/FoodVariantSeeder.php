@@ -18,34 +18,52 @@ class FoodVariantSeeder extends Seeder
      */
     public function run(): void
     {
+        $gerenateCombinations = function (array $attributes, array $prefix = []) use (&$gerenateCombinations) {
+            if(empty($attributes)) return [$prefix];
+
+            $attribute = array_shift($attributes);
+            $combinations = [];
+
+            foreach ($attribute['values'] as $value) {
+                $newPrefix = array_merge($prefix, [
+                    [$attribute['name'], $value['value']]
+                ]);
+                $combinations = array_merge(
+                    $combinations,
+                    $gerenateCombinations($attributes, $newPrefix)
+                );
+            }
+
+            return $combinations;
+        };
+
         $items = FoodItem::all()->toArray();
 
         foreach (Arr::shuffle($items) as $item) {
-            $attributes = FoodAttribute::select('id', 'name')->where('food_item_id', $item['id'])->get();
-            if ($attributes->isEmpty()) continue;
+            $attributes = FoodAttribute::select('id', 'name')->with('values')->where('food_item_id', $item['id'])->get()->toArray();
+            if (empty($attributes)) continue;
 
-            foreach (Arr::shuffle($attributes->toArray()) as $attribute) {
-                $attributeValues = FoodAttributeValue::select('value')->where('food_attribute_id', $attribute['id'])->get()->toArray();
-                if(empty($attributeValues)) continue;
+            $combinations = $gerenateCombinations($attributes);
 
-                foreach (Arr::shuffle($attributeValues) as $attributeValue) {
-                    $parts = [$item['name'], $attribute['name'], $attributeValue['value']];
+            foreach ($combinations as $combo) {
+                $parts = [$item['name']];
 
-                    $sku = implode('-', array_map(function ($part) {
-                        $ascii = Str::ascii($part);
-                        return str_replace(' ', '-', trim($ascii));
-                    }, $parts));
+                foreach ($combo as $part) array_push($parts, ...$part);
 
-                    FoodVariant::create([
-                        'food_item_id' => $item['id'],
-                        'sku' => strtolower($sku),
-                        'price' => fake()->numberBetween(20000, 100000),
-                        'image' => fake()->imageUrl(300, 450, 'food'),
-                        'quantity_available' => fake()->numberBetween(10, 100),
-                        'limit' => fake()->numberBetween(10, 100),
-                        'status' => fake()->randomElement(['available', 'out_of_stock', 'hidden']),
-                    ]);
-                }
+                $sku = implode('-', array_map(function ($part) {
+                    $ascii = Str::ascii($part);
+                    return strtolower(str_replace(' ', '-', trim($ascii)));
+                }, $parts));
+
+                FoodVariant::create([
+                    'food_item_id' => $item['id'],
+                    'sku' => $sku,
+                    'price' => fake()->numberBetween(20000, 100000),
+                    'image' => fake()->imageUrl(300, 450, 'food'),
+                    'quantity_available' => fake()->numberBetween(10, 100),
+                    'limit' => fake()->numberBetween(10, 100),
+                    'status' => fake()->randomElement(['available', 'out_of_stock', 'hidden']),
+                ]);
             }
         }
     }
