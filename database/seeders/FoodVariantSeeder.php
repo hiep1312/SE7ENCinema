@@ -3,11 +3,13 @@
 namespace Database\Seeders;
 
 use App\Models\FoodAttribute;
+use App\Models\FoodAttributeValue;
 use App\Models\FoodItem;
 use App\Models\FoodVariant;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class FoodVariantSeeder extends Seeder
 {
@@ -16,30 +18,46 @@ class FoodVariantSeeder extends Seeder
      */
     public function run(): void
     {
-        $attributes = FoodAttribute::all();
+        $gerenateCombinations = function (array $attributes, array $prefix = []) use (&$gerenateCombinations) {
+            if(empty($attributes)) return [$prefix];
 
-        $popcornPresets = [
-            'Size' => ['S', 'M', 'L', 'XL'],
-            'Vị' => ['Ngọt', 'Mặn', 'Caramel', 'Phô mai', 'Rong biển'],
-            'Kiểu gói' => ['Hộp giấy', 'Ly nhựa', 'Túi giấy', 'Hộp nhựa'],
-        ];
-        $drinkPresets = [
-            'Size' => ['S', 'M', 'L', 'XL'],
-            'Đá' => ['Có đá', 'Ít đá', 'Không đá'],
-            'Hương vị' => ['Đào', 'Chanh', 'Dâu', 'Xoài'],
-        ];
+            $attribute = array_shift($attributes);
+            $combinations = [];
 
-        foreach ($attributes as $attribute) {
-            $values = $popcornPresets[$attribute->name] ?? $drinkPresets[$attribute->name] ?? null;
+            foreach ($attribute['values'] as $value) {
+                $newPrefix = array_merge($prefix, [
+                    [$attribute['name'], $value['value']]
+                ]);
+                $combinations = array_merge(
+                    $combinations,
+                    $gerenateCombinations($attributes, $newPrefix)
+                );
+            }
 
-            if (!$values) continue;
+            return $combinations;
+        };
 
-            shuffle($values);
+        $items = FoodItem::all()->toArray();
 
-            foreach (array_slice($values, 0, rand(1, 3)) as $value) {
+        foreach (Arr::shuffle($items) as $item) {
+            $attributes = FoodAttribute::select('id', 'name')->with('values')->where('food_item_id', $item['id'])->get()->toArray();
+            if (empty($attributes)) continue;
+
+            $combinations = $gerenateCombinations($attributes);
+
+            foreach ($combinations as $combo) {
+                $parts = [$item['name']];
+
+                foreach ($combo as $part) array_push($parts, ...$part);
+
+                $sku = implode('-', array_map(function ($part) {
+                    $ascii = Str::ascii($part);
+                    return strtolower(str_replace(' ', '-', trim($ascii)));
+                }, $parts));
+
                 FoodVariant::create([
-                    'food_attribute_id' => $attribute->id,
-                    'value' => $value,
+                    'food_item_id' => $item['id'],
+                    'sku' => $sku,
                     'price' => fake()->numberBetween(20000, 100000),
                     'image' => fake()->imageUrl(300, 450, 'food'),
                     'quantity_available' => fake()->numberBetween(10, 100),

@@ -17,12 +17,12 @@ class FoodAttributeSeeder extends Seeder
         $foodItems = FoodItem::all();
 
         $popcornPresets = ['Size', 'Vị', 'Kiểu gói'];
-        $drinkPresets = ['Size', 'Đá', 'Hương vị'];
+        $drinkPresets = ['Đá', 'Hương vị', 'Loại đồ uống'];
 
         foreach ($foodItems as $foodItem) {
             $attributeSource = fake()->randomElement([$popcornPresets, $drinkPresets]);
 
-            foreach(range(0, 2) as $i){
+            foreach(range(0, rand(1, 2)) as $i){
                 FoodAttribute::create([
                     'food_item_id' => $foodItem->id,
                     'name' => $attributeSource[$i],

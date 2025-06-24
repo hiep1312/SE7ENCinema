@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('parent_comment_id')->nullable()->constrained('comments')->onDelete('cascade');
             $table->foreignId('reply_comment_id')->nullable()->constrained('comments')->onDelete('cascade');
             $table->text('content');
-            $table->enum('status', ['active', 'hidden', 'reported', 'deleted'])->default('active');
+            $table->enum('status', ['active', 'hidden', 'deleted'])->default('active');
             $table->timestamps();
         });
     }
