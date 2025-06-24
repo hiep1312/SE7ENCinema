@@ -12,6 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
+            $table->timestamp('email_verified_at')->after('email')->nullable();
+
             $table->rememberToken()
                 ->after('status');
 
@@ -42,6 +44,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn([
+                'email_verified_at',
                 'remember_token',
                 'two_factor_secret',
                 'two_factor_recovery_codes',
