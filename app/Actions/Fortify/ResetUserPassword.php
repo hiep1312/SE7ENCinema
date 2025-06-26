@@ -20,6 +20,11 @@ class ResetUserPassword implements ResetsUserPasswords
     {
         Validator::make($input, [
             'password' => $this->passwordRules(),
+        ], [
+            'password.required' => 'Mật khẩu là bắt buộc.',
+            'password.string' => 'Mật khẩu phải là chuỗi ký tự.',
+            'password.confirmed' => 'Xác nhận mật khẩu không khớp.',
+            'password.min' => 'Mật khẩu phải có ít nhất 8 ký tự.',
         ])->validate();
 
         $user->forceFill([
