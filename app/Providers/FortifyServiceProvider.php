@@ -42,23 +42,23 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
 
         RateLimiter::for('login', function (Request $request) {
-            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
+            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())) . '|' . $request->ip());
 
             return Limit::perMinute(5)->by($throttleKey);
         });
 
         /* Configuration fortify */
-        // Fortify::loginView();
-        // Fortify::registerView();
-        // Fortify::requestPasswordResetLinkView();
-        // Fortify::resetPasswordView(function (Request $request) {});
-        // Fortify::verifyEmailView();
-
+        Fortify::loginView(fn() => view('livewire.auth.login'));
+        Fortify::registerView(fn() => view('livewire.auth.register'));
+        Fortify::requestPasswordResetLinkView(fn() => view('livewire.auth.forgot-password'));
+        Fortify::resetPasswordView(fn(Request $request) => view('livewire.auth.reset-password', ['request' => $request]));
+        Fortify::verifyEmailView(fn() => view('livewire.auth.verify-email'));
         Fortify::authenticateUsing(function (Request $request) {
             $user = User::where('email', $request->email)->first();
-
-            if ($user &&
-                Hash::check($request->password, $user->password)) {
+            if (
+                $user &&
+                Hash::check($request->password, $user->password)
+            ) {
                 return $user;
             }
         });
