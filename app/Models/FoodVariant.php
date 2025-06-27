@@ -27,6 +27,10 @@ class FoodVariant extends Model
         return $this->belongsTo(FoodItem::class);
     }
 
+    public function attributeValues(){
+        return $this->belongsToMany(FoodAttributeValue::class, 'food_variant_attribute_values');
+    }
+
     public function foodOrderItems(){
         return $this->hasMany(FoodOrderItem::class);
     }
