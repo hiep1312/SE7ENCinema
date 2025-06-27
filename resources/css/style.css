@@ -505,7 +505,7 @@
 }
 
 .datetime-group {
-    margin-bottom: 2rem;
+    margin-bottom: 1.2rem;
     position: relative;
 }
 
@@ -587,14 +587,8 @@
     border-color: #667eea;
 }
 
-.action-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-}
-
 .btn-custom {
-    padding: 0.7rem 2rem;
+    padding: 0.7rem 1.2rem;
     border-radius: 50px;
     font-weight: 600;
     font-size: 1rem;
@@ -624,4 +618,229 @@
 .btn-secondary-custom:hover {
     transform: translateY(-3px);
     box-shadow: 0 12px 35px rgba(108, 117, 125, 0.4);
+}
+
+.btn-success-custom {
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+    color: white;
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+}
+
+.btn-success-custom:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(40, 167, 69, 0.4);
+}
+
+.error-panel {
+    margin-top: 1.5rem;
+    padding: 1.25rem 1.75rem;
+    background: linear-gradient(135deg,
+        rgba(220, 38, 38, 0.15) 0%,
+        rgba(153, 27, 27, 0.2) 50%,
+        rgba(127, 29, 29, 0.15) 100%);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    box-shadow:
+        0 8px 32px rgba(220, 38, 38, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    display: none;
+    animation: shakeIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    position: relative;
+    overflow: hidden;
+}
+
+.error-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        #ff6b6b 25%,
+        #ff4757 50%,
+        #ff6b6b 75%,
+        transparent 100%);
+    background-size: 200% 100%;
+    animation: errorShimmer 3s ease-in-out infinite;
+}
+
+.error-panel::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 0%,
+        rgba(255, 107, 107, 0.1) 0%,
+        transparent 70%);
+    pointer-events: none;
+}
+
+@keyframes errorShimmer {
+    0%, 100% {
+        background-position: -200% 0;
+        opacity: 0.6;
+    }
+    50% {
+        background-position: 200% 0;
+        opacity: 1;
+    }
+}
+
+@keyframes shakeIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-15px) scale(0.95);
+    }
+    25% {
+        transform: translateX(8px) scale(1.02);
+    }
+    50% {
+        transform: translateX(-5px) scale(1.01);
+    }
+    75% {
+        transform: translateX(3px) scale(1);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+.error-title {
+    font-weight: 700;
+    color: #ff6b6b;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.1rem;
+    text-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+}
+
+.error-content {
+    color: #fca5a5;
+    line-height: 1.6;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.error-icon {
+    animation: pulse 2.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px rgba(255, 107, 107, 0.6));
+    font-size: 1.2rem;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 8px rgba(255, 107, 107, 0.6));
+    }
+    50% {
+        transform: scale(1.15);
+        filter: drop-shadow(0 0 15px rgba(255, 107, 107, 0.8));
+    }
+}
+
+.close-error {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255, 107, 107, 0.2);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    color: #ff6b6b;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(5px);
+}
+
+.close-error:hover {
+    background: rgba(255, 107, 107, 0.3);
+    border-color: rgba(255, 107, 107, 0.5);
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
+}
+
+.close-error:active {
+    transform: scale(0.95) rotate(90deg);
+}
+
+/* Variants cho các loại error khác */
+.error-panel.warning {
+    background: linear-gradient(135deg,
+        rgba(245, 158, 11, 0.15) 0%,
+        rgba(217, 119, 6, 0.2) 50%,
+        rgba(180, 83, 9, 0.15) 100%);
+    border-color: rgba(245, 158, 11, 0.3);
+    box-shadow:
+        0 8px 32px rgba(245, 158, 11, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.error-panel.warning::before {
+    background: linear-gradient(90deg,
+        transparent 0%,
+        #fbbf24 25%,
+        #f59e0b 50%,
+        #fbbf24 75%,
+        transparent 100%);
+}
+
+.error-panel.warning .error-title {
+    color: #fbbf24;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+}
+
+.error-panel.warning .error-content {
+    color: #fde68a;
+}
+
+.error-panel.warning .error-icon {
+    filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.6));
+}
+
+.error-panel.info {
+    background: linear-gradient(135deg,
+        rgba(59, 130, 246, 0.15) 0%,
+        rgba(37, 99, 235, 0.2) 50%,
+        rgba(29, 78, 216, 0.15) 100%);
+    border-color: rgba(59, 130, 246, 0.3);
+    box-shadow:
+        0 8px 32px rgba(59, 130, 246, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.error-panel.info::before {
+    background: linear-gradient(90deg,
+        transparent 0%,
+        #60a5fa 25%,
+        #3b82f6 50%,
+        #60a5fa 75%,
+        transparent 100%);
+}
+
+.error-panel.info .error-title {
+    color: #60a5fa;
+    text-shadow: 0 0 10px rgba(96, 165, 250, 0.3);
+}
+
+.error-panel.info .error-content {
+    color: #bfdbfe;
+}
+
+.error-panel.info .error-icon {
+    filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.6));
 }
