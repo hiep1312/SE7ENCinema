@@ -296,7 +296,7 @@
                                             </div>
                                             <div class="text-center">
                                                 <button type="button" class="btn-custom btn-primary-custom" wire:click="generateShowtimes">
-                                                    <i class="fa-solid fa-spinner"></i>
+                                                    <i class="fa-solid fa-spinner-scale fa-spin-pulse"></i>
                                                     Sinh động suất chiếu
                                                 </button>
                                             </div>
