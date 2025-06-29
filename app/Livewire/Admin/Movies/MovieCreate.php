@@ -28,7 +28,7 @@ class MovieCreate extends Component
     public $trailer_url = null;
     public $format = '2D';
     public $price = null;
-    public $status = "coming_soon";
+    public $status = "showing";
 
     /* Genre */
     public $searchGenre = '';
@@ -126,7 +126,7 @@ class MovieCreate extends Component
 
         $startTime = Carbon::parse($this->baseShowtimeStart);
         $endTime = $this->baseShowtimeEnd ? Carbon::parse($this->baseShowtimeEnd) : $startTime->copy()->endOfDay();
-        $movieDuration = (int) $this->duration;
+        $movieDuration = +$this->duration;
         $currentShowtimes = array_map(function($showtime){
             return date('Y-m-d\TH:i', strtotime($showtime['start_time']));
         }, $this->showtimes);
@@ -194,7 +194,7 @@ class MovieCreate extends Component
                 'movie_id' => $movieAdded->id,
                 'room_id' => $showtime['room_id'],
                 'start_time' => $showtime['start_time'],
-                'end_time' => Carbon::parse($showtime['start_time'])->addMinutes($this->duration),
+                'end_time' => Carbon::parse($showtime['start_time'])->addMinutes(+$this->duration),
                 'price' => $showtime['price'],
             ]);
         }

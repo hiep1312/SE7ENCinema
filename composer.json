@@ -32,7 +32,10 @@
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/",
             "SE7ENCinema\\": "SC-Services/"
-        }
+        },
+        "files": [
+            "SC-Services/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

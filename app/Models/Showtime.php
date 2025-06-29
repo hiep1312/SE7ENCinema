@@ -30,4 +30,9 @@ class Showtime extends Model
     {
         return $this->belongsTo(Movie::class);
     }
+
+    public function booking()
+    {
+        return $this->belongsTo(Booking::class);
+    }
 }

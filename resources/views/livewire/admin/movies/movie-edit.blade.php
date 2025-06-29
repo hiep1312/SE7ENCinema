@@ -16,6 +16,8 @@
         console.log(end_time.toISOString(), new Date(+start_time).toISOString(), $wire.showtimes[index].start_time);
         document.getElementById(`showtimes.${index}.end_time`).value = end_time.toISOString().slice(0, -5);
     }
+
+    const showtimes = @json($showtimes);
 </script>
 @endassets
 <div>
@@ -42,10 +44,10 @@
                         <h5 class="my-1">Thông tin phim</h5>
                     </div>
                     <div class="card-body bg-dark">
-                        <form wire:submit.prevent="updateMovie" enctype="multipart/form-data">
+                        <form wire:submit.prevent="updateMovie" enctype="multipart/form-data" novalidate>
                             <div class="row align-items-start">
                                 <div class="col-md-3 mb-3">
-                                        <div class="mt-1 overflow-auto position-relative" style="max-height: 230px;">
+                                        <div class="mt-1 overflow-auto position-relative" style="max-height: 300px;">
                                             <img src="{{ asset('storage/' . ($movieItem->poster ?? '404.webp')) }}" alt="Ảnh poster hiện tại" class="img-thumbnail"
                                             style="width: 100%;">
                                             <span class="position-absolute opacity-75 top-0 start-0 mt-2 ms-2 badge rounded bg-danger">
@@ -53,7 +55,7 @@
                                             </span>
                                         </div>
                                     @if ($poster && $poster instanceof Illuminate\Http\UploadedFile)
-                                        <div class="mt-2 overflow-auto position-relative" style="max-height: 230px;">
+                                        <div class="mt-2 overflow-auto position-relative" style="max-height: 300px;">
                                             <img src="{{ $poster->temporaryUrl() }}" alt="Ảnh poster tải lên" class="img-thumbnail"
                                                 style="width: 100%;">
                                             <span class="position-absolute opacity-75 top-0 start-0 mt-2 ms-2 badge rounded bg-success">
@@ -81,7 +83,8 @@
                                                 id = "duration"
                                                 wire:model.blur="duration"
                                                 class="form-control bg-dark text-light border-light @error('duration') is-invalid @enderror"
-                                                placeholder="VD: 120" min="1">
+                                                placeholder="VD: 120" min="1"
+                                                {{ $movieItem->hasActiveShowtimes() ? 'readonly' : '' }}>
                                             @error('duration')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -93,7 +96,9 @@
                                             <input type="date"
                                                 id = "release_date"
                                                 wire:model="release_date"
-                                                class="form-control bg-dark text-light border-light @error('release_date') is-invalid @enderror">
+                                                @change="updateStatus"
+                                                class="form-control bg-dark text-light border-light @error('release_date') is-invalid @enderror"
+                                                {{ strtotime($movieItem->release_date) < time() ? 'readonly' : '' }}>
                                             @error('release_date')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -105,7 +110,9 @@
                                             <input type="date"
                                                 id = "end_date"
                                                 wire:model = "end_date"
-                                                class="form-control bg-dark text-light border-light @error('end_date') is-invalid @enderror">
+                                                @change="updateStatus"
+                                                class="form-control bg-dark text-light border-light @error('end_date') is-invalid @enderror"
+                                                {{ $movieItem->hasActiveShowtimes() ? 'readonly' : '' }}>
                                             @error('end_date')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -164,7 +171,7 @@
                                             <label for="trailer_url" class="form-label text-light">Trailer </label>
                                             <input type="url"
                                                 id = "trailer_url"
-                                                wire:model="trailer_url"
+                                                wire:model.live.debounce.500ms="trailer_url"
                                                 class="form-control bg-dark text-light border-light @error('trailer_url') is-invalid @enderror"
                                                 placeholder="VD: https://www.youtube.com/watch?v=TcMBFSGVi1c">
                                             @error('trailer_url')
@@ -218,7 +225,9 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="status" class="form-label text-light">Trạng thái *</label>
-                                            <select id="status" wire:model="status" class="form-select bg-dark text-light border-light @error('status') is-invalid @enderror">
+                                            <select id="status" :value="$wire.status"
+                                                class="form-select bg-dark text-light border-light @error('status') is-invalid @enderror"
+                                                disabled>
                                                 <option value="coming_soon">Sắp ra mắt</option>
                                                 <option value="showing">Đang chiếu</option>
                                                 <option value="ended">Đã kết thúc</option>
@@ -240,10 +249,19 @@
                                     </li>
                                     <li class="nav-item">
                                         <button type="button" class="nav-link @if($tabCurrent === 'genres') active bg-light text-dark @else text-light @endif"
-                                                wire:click="$set('tabCurrent', 'genres')">
+                                                wire:click="$set('tabCurrent', 'genres')"
+                                                @if ($trailer_url) style="border-top-left-radius: 0; border-top-right-radius: 0;" @endif>
                                             <i class="fas fa-tools me-1"></i>Thể loại
                                         </button>
                                     </li>
+                                    @if ($trailer_url)
+                                        <li class="nav-item">
+                                            <button type="button" class="nav-link @if($tabCurrent === 'trailer') active bg-light text-dark @else text-light @endif"
+                                                    wire:click="$set('tabCurrent', 'trailer')">
+                                                <i class="fas fa-tools me-1"></i>Trailer phim
+                                            </button>
+                                        </li>
+                                    @endif
                                 </ul>
                                 <div class="tab-content tab-manager">
                                     <!-- Overview Tab -->
@@ -300,7 +318,7 @@
                                         <hr class="border-light">
                                         <div class="row mt-3">
                                             @foreach($showtimes as $index => $showtime)
-                                                <div class="col-12 mb-4">
+                                                <div class="col-12 mb-4" wire:key="showtime-{{ $index }}">
                                                     <div class="card position-relative overflow-hidden" style="background-color: #1a1a1a; border: 1px solid #333;">
                                                         <!-- Accent line -->
                                                         <div class="position-absolute top-0 start-0 h-100" style="width: 4px; background: linear-gradient(to bottom, #6b7280, #374151);"></div>
@@ -341,12 +359,16 @@
                                                                     <div class="mb-2">
                                                                         <label for="showtimes.{{ $index }}.status" class="form-label text-light">Trạng thái *</label>
                                                                         <select id="showtimes.{{ $index }}.status"
-                                                                            class="form-select bg-dark text-light border-light"
-                                                                            disabled>
-                                                                            <option value="active" selected>Hoạt động</option>
+                                                                            wire:model="showtimes.{{ $index }}.status"
+                                                                            class="form-select bg-dark text-light border-light @error("showtimes.$index.status") is-invalid @enderror"
+                                                                            @if(!isset($showtimes[$index]['id'])) disabled @endif>
+                                                                            <option value="active">Hoạt động</option>
                                                                             <option value="canceled">Hủy chiếu</option>
-                                                                            <option value="completed">Đã hoàn thành</option>
+                                                                            {{-- <option value="completed">Đã hoàn thành</option> --}}
                                                                         </select>
+                                                                        @error("showtimes.$index.status")
+                                                                            <div class="invalid-feedback">{{ $message }}</div>
+                                                                        @enderror
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-4">
@@ -453,6 +475,25 @@
                                                 </div>
                                             </div>
                                         @enderror
+                                    @elseif($tabCurrent === 'trailer')
+                                        <div class="video-container glow-effect mt-1">
+                                            <div class="video-header">
+                                                <div class="video-icon">
+                                                    <i class="fa-brands fa-youtube"></i>
+                                                </div>
+                                                <div>
+                                                    <h3 class="video-title">{{ $title }} | Official Trailer</h3>
+                                                </div>
+                                            </div>
+                                            <div class="video-wrapper">
+                                                <div class="responsive-iframe">
+                                                    <iframe src="{{ getYoutubeEmbedUrl($trailer_url) ?: asset('storage/404.webp') }}"
+                                                        title="YouTube video player" frameborder="0"
+                                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                                        allowfullscreen></iframe>
+                                                </div>
+                                            </div>
+                                        </div>
                                     @endif
                                 </div>
                             </div>
@@ -471,3 +512,25 @@
         </div>
     </div>
 </div>
+@script
+<script>
+    window.updateStatus = function(){
+        const releaseDate = $wire.release_date && Date.parse($wire.release_date);
+        const endDate = $wire.end_date && Date.parse($wire.end_date);
+
+        if(endDate && endDate < Date.now()) $wire.status = "ended";
+        else if(releaseDate && releaseDate > Date.now()) $wire.status = "coming_soon";
+        else $wire.status = "showing";
+    }
+
+    updateStatus();
+
+    const IntervalUpdateShowtime = function(){
+        showtimes.forEach(showtime => {
+            const startTime = Date.parse(showtime['start_time']);
+            if(startTime < Date.now()) $wire.$set('showtimes', $wire.showtimes.filter(st => showtime['id'] !== st['id']), true);
+        });
+    }
+    setInterval(IntervalUpdateShowtime, 5000);
+</script>
+@endscript
