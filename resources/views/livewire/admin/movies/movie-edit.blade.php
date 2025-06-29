@@ -258,7 +258,7 @@
                                         <li class="nav-item">
                                             <button type="button" class="nav-link @if($tabCurrent === 'trailer') active bg-light text-dark @else text-light @endif"
                                                     wire:click="$set('tabCurrent', 'trailer')">
-                                                <i class="fas fa-tools me-1"></i>Trailer phim
+                                                <i class="fas fa-video me-1"></i>Trailer phim
                                             </button>
                                         </li>
                                     @endif
