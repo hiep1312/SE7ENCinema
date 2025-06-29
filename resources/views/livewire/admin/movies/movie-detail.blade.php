@@ -28,7 +28,11 @@
                         <div class="d-flex justify-content-between">
                             <div>
                                 <h6 class="card-title">Điểm đánh giá trung bình</h6>
-                                <h3 class="mb-0" style="color: #ffc107; text-shadow: 0 0 6px rgba(255, 193, 7, 0.8);">{!! Str::repeat('<i class="fas fa-star"></i>', $averageRating = round($movie->ratings->avg('score'), 0, PHP_ROUND_HALF_UP)) !!}</h3>
+                                @if($movie->ratings->avg('score'))
+                                    <h3 class="mb-0" style="color: #ffc107; text-shadow: 0 0 6px rgba(255, 193, 7, 0.8);">{!! Str::repeat('<i class="fas fa-star"></i>', round($movie->ratings->avg('score'), 0, PHP_ROUND_HALF_UP)) !!}</h3>
+                                @else
+                                    <h3 class="mb-0">{!! Str::repeat('<i class="fas fa-star"></i>', 5) !!}</h3>
+                                @endif
                                 <small>Sao</small>
                             </div>
                             <div class="align-self-center">
