@@ -41,7 +41,7 @@
                             <input type="text"
                                    wire:model.live.debounce.300ms="search"
                                    class="form-control bg-dark text-light"
-                                   placeholder="Tìm kiếm phòng chiếu...">
+                                   placeholder="Tìm kiếm phim...">
                             <span class="input-group-text">
                                 <i class="fas fa-search"></i>
                             </span>
@@ -107,13 +107,15 @@
                                 <tr>
                                     <td class="text-center fw-bold">{{ $loop->iteration }}</td>
                                     <td>
-                                        <div class="mt-1 overflow-auto d-block text-center position-relative"
-                                            style="max-height: 80px; width: 100px;">
+                                        <div class="overflow-auto d-block text-center position-relative"
+                                            style="max-height: 90px; width: 100px;">
                                             <img src="{{ asset('storage/' . ($movie->poster ?? '404.webp')) }}"
                                                 alt="Ảnh sản phẩm {{ $movie->poster }}" class="rounded"
                                                 style="width: 100%; height: auto;">
-                                            <span class="position-absolute opacity-75 top-0 start-0 mt-2 ms-2 badge rounded-circle bg-success">
-                                                <i class="fas fa-play me-1"></i>
+                                            <span class="position-absolute opacity-75 top-0 start-0 mt-1 ms-1 badge bg-success" style="border-radius: 50%; cursor: pointer;"
+                                                data-bs-toggle="modal" data-bs-target="#trailerPreview"
+                                                data-trailer-url="{{ getYoutubeEmbedUrl((string)$movie->trailer_url) ?: asset('storage/404.webp') }}" data-trailer-title="{{ $movie->title }}">
+                                                <i class="fas fa-play me-1" style="margin-right: 0 !important;"></i>
                                             </span>
                                         </div>
                                     </td>
@@ -136,7 +138,7 @@
                                         <div>
                                             <small style="color: #ff4d4f;">
                                                 <i class="fas fa-stop me-1"></i>
-                                                {{ $movie->end_date?->format('d/m/Y') ?? 'Vĩnh viễn' }}
+                                                {!! $movie->end_date?->format('d/m/Y') ?? "Vĩnh viễn &nbsp;&nbsp;&nbsp;" !!}
                                             </small>
                                         </div>
                                     </td>
@@ -164,11 +166,11 @@
                                     </td>
 
                                     <!-- CỘT SUẤT CHIẾU TIẾP THEO -->
-                                    <td class=" bg-opacity-10 border-start border-3">
+                                    <td class="bg-opacity-10 border-start border-3">
                                         @if(!$showDeleted && $movie->showtimes->count() > 0)
                                             @php $nextShowtime = $movie->showtimes->first(); @endphp
-                                            <div class="showtime-info">
-                                                <div class="movie-title mb-1">
+                                            <div>
+                                                <div class="mb-1">
                                                     <i class="fas fa-film me-1 text-primary"></i>
                                                     <strong class="text-primary">
                                                         {{ $nextShowtime->room->name ?? 'Phòng chiếu không tồn tại' }}
@@ -176,7 +178,7 @@
                                                 </div>
 
                                                 <!-- Thời gian chiếu -->
-                                                <div class="showtime-schedule mb-1">
+                                                <div class="mb-1">
                                                     <i class="fas fa-clock me-1 text-success"></i>
                                                     <span class="text-success">
                                                         {{ $nextShowtime->start_time->format('d/m/Y') }}
@@ -189,7 +191,7 @@
                                                 </div>
 
                                                 <!-- Giá vé -->
-                                                <div class="showtime-price mb-1">
+                                                <div class="mb-1">
                                                     <i class="fas fa-money-bill me-1 text-warning"></i>
                                                     <span class="text-warning">
                                                         {{ number_format($nextShowtime->price, 0, '.', '.') }}đ
@@ -204,7 +206,7 @@
                                                 @endif
 
                                                 <!-- Thời gian còn lại -->
-                                                <div class="time-until mt-1">
+                                                <div class="mt-1">
                                                     <small class="text-info">
                                                         <i class="fas fa-hourglass-half me-1"></i>
                                                         {{ $nextShowtime->start_time->diffForHumans() }}
@@ -285,7 +287,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="11" class="text-center py-4">
+                                    <td colspan="10" class="text-center py-4">
                                         <div class="text-muted">
                                             <i class="fas fa-inbox fa-3x mb-3"></i>
                                             <p>
@@ -307,5 +309,53 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="trailerPreview" wire:ignore>
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="video-container glow-effect mt-1">
+                            <div class="video-header">
+                                <div class="video-icon">
+                                    <i class="fa-brands fa-youtube"></i>
+                                </div>
+                                <div>
+                                    <h3 class="video-title"><span id="title"></span> | Official Trailer</h3>
+                                </div>
+                            </div>
+                            <div class="video-wrapper">
+                                <div class="responsive-iframe">
+                                    <iframe src=""
+                                        title="YouTube video player" frameborder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                        allowfullscreen></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng trailer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+@script
+<script>
+    const trailerPreview = document.getElementById('trailerPreview');
+    trailerPreview.addEventListener('show.bs.modal', function (event) {
+        const itemActive = event.relatedTarget;
+        const framePreview = event.target;
+
+        framePreview.querySelector('#title').innerText = itemActive.getAttribute('data-trailer-title');
+        framePreview.querySelector('iframe').src = itemActive.getAttribute('data-trailer-url');
+    });
+
+    trailerPreview.addEventListener('hidden.bs.modal', function (event) {
+        const framePreview = event.target;
+
+        framePreview.querySelector('#title').innerText = "";
+        framePreview.querySelector('iframe').src = "";
+    });
+</script>
+@endscript

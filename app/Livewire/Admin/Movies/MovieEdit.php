@@ -31,7 +31,7 @@ class MovieEdit extends Component
     public $trailer_url = null;
     public $format = '2D';
     public $price = null;
-    public $status = "coming_soon";
+    public $status = "showing";
 
     /* Genre */
     public $searchGenre = '';
@@ -77,7 +77,7 @@ class MovieEdit extends Component
         'release_date.required' => 'Vui lòng chọn ngày khởi chiếu.',
         'release_date.date' => 'Ngày khởi chiếu không hợp lệ.',
         'end_date.date' => 'Ngày kết thúc không hợp lệ.',
-        'end_date.after_or_equal' => 'Ngày kết thúc phải sau hoặc bằng ngày khởi chiếu.',
+        'end_date.after_or_equal' => 'Ngày kết thúc phải sau hoặc bằng ngày khởi chiếu, và ngày hiện tại.',
         'director.max' => 'Tên đạo diễn không được vượt quá 255 ký tự.',
         'age_restriction.required' => 'Vui lòng chọn độ tuổi giới hạn.',
         'age_restriction.in' => 'Giá trị độ tuổi không hợp lệ.',
@@ -123,7 +123,7 @@ class MovieEdit extends Component
             'start_time' => $showtime->start_time->format('Y-m-d\TH:i'),
             'price' => $showtime->price,
             'status' => $showtime->status,
-        ]);
+        ])->toArray();
     }
 
     public function toggleShowtime(?int $index = null)
@@ -151,7 +151,7 @@ class MovieEdit extends Component
 
         $startTime = Carbon::parse($this->baseShowtimeStart);
         $endTime = $this->baseShowtimeEnd ? Carbon::parse($this->baseShowtimeEnd) : $startTime->copy()->endOfDay();
-        $movieDuration = (int) $this->duration;
+        $movieDuration = +$this->duration;
         $currentShowtimes = array_map(function($showtime){
             return date('Y-m-d\TH:i', strtotime($showtime['start_time']));
         }, $this->showtimes);
@@ -193,6 +193,8 @@ class MovieEdit extends Component
 
     public function updateMovie()
     {
+        if($this->end_date !== $this->movieItem->end_date?->format('Y-m-d\TH:i')) $this->rules['end_date'] .= '|after_or_equal:now';
+
         $this->validate();
 
         $imagePath = $this->movieItem->poster;
@@ -223,28 +225,22 @@ class MovieEdit extends Component
         $showtimesDeleted = array_diff($currentShowtimes, array_column($this->showtimes, 'id'));
         $this->movieItem->showtimes()->whereIn('id', $showtimesDeleted)->delete();
 
-        foreach ($this->showtimes as $index => $showtime) {
+        foreach ($this->showtimes as $showtime) {
+            $dataUpdate = [
+                'movie_id' => $this->movieItem->id,
+                'room_id' => $showtime['room_id'],
+                'start_time' => $showtime['start_time'],
+                'end_time' => Carbon::parse($showtime['start_time'])->addMinutes(+$this->duration),
+                'price' => $showtime['price'],
+                'status' => $showtime['status'],
+            ];
 
             if(isset($showtime['id']) && in_array($showtime['id'], $currentShowtimes)) {
                 $showtimeEdit = $this->movieItem->showtimes()->find($showtime['id']);
 
-                $showtimeEdit->update([
-                    'movie_id' => $this->movieItem->id,
-                    'room_id' => $showtime['room_id'],
-                    'start_time' => $showtime['start_time'],
-                    'end_time' => Carbon::parse($showtime['start_time'])->addMinutes($this->duration),
-                    'price' => $showtime['price'],
-                    'status' => $showtime['status'],
-                ]);
+                $showtimeEdit->update($dataUpdate);
             }else{
-                $showtimeAdded = Showtime::create([
-                    'movie_id' => $this->movieItem->id,
-                    'room_id' => $showtime['room_id'],
-                    'start_time' => $showtime['start_time'],
-                    'end_time' => Carbon::parse($showtime['start_time'])->addMinutes($this->duration),
-                    'price' => $showtime['price'],
-                    'status' => 'active',
-                ]);
+                Showtime::create(array_merge($dataUpdate, ['status' => 'active']));
             }
         }
 

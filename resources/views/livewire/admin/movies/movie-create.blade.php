@@ -47,7 +47,7 @@
                             <div class="row align-items-start mb-2">
                                 @if ($poster)
                                     <div class="col-md-3 col-5 mb-3">
-                                        <div class="mt-1 overflow-auto" style="max-height: 230px;">
+                                        <div class="mt-1 overflow-auto" style="max-height: 300px;">
                                             <img src="{{ $poster->temporaryUrl() }}" alt="Ảnh món ăn tải lên" class="img-thumbnail"
                                                 style="width: 100%;">
                                         </div>
@@ -83,7 +83,8 @@
                                         <label for="release_date" class="form-label text-light">Ngày khởi chiếu *</label>
                                         <input type="date"
                                             id = "release_date"
-                                            wire:model="release_date"
+                                            wire:model = "release_date"
+                                            @change="updateStatus"
                                             class="form-control bg-dark text-light border-light @error('release_date') is-invalid @enderror">
                                         @error('release_date')
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -96,6 +97,7 @@
                                         <input type="date"
                                             id = "end_date"
                                             wire:model = "end_date"
+                                            @change="updateStatus"
                                             class="form-control bg-dark text-light border-light @error('end_date') is-invalid @enderror">
                                         @error('end_date')
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -155,7 +157,7 @@
                                         <label for="trailer_url" class="form-label text-light">Trailer </label>
                                         <input type="url"
                                             id = "trailer_url"
-                                            wire:model="trailer_url"
+                                            wire:model.live.debounce.500ms="trailer_url"
                                             class="form-control bg-dark text-light border-light @error('trailer_url') is-invalid @enderror"
                                             placeholder="VD: https://www.youtube.com/watch?v=TcMBFSGVi1c">
                                         @error('trailer_url')
@@ -209,7 +211,9 @@
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="status" class="form-label text-light">Trạng thái *</label>
-                                        <select id="status" wire:model="status" class="form-select bg-dark text-light border-light @error('status') is-invalid @enderror">
+                                        <select id="status" :value="$wire.status"
+                                            class="form-select bg-dark text-light border-light @error('status') is-invalid @enderror"
+                                            disabled>
                                             <option value="coming_soon">Sắp ra mắt</option>
                                             <option value="showing">Đang chiếu</option>
                                             <option value="ended">Đã kết thúc</option>
@@ -231,10 +235,19 @@
                                     </li>
                                     <li class="nav-item">
                                         <button type="button" class="nav-link @if($tabCurrent === 'genres') active bg-light text-dark @else text-light @endif"
-                                                wire:click="$set('tabCurrent', 'genres')">
+                                                wire:click="$set('tabCurrent', 'genres')"
+                                                @if ($trailer_url) style="border-top-left-radius: 0; border-top-right-radius: 0;" @endif>
                                             <i class="fas fa-tools me-1"></i>Thể loại
                                         </button>
                                     </li>
+                                    @if ($trailer_url)
+                                        <li class="nav-item">
+                                            <button type="button" class="nav-link @if($tabCurrent === 'trailer') active bg-light text-dark @else text-light @endif"
+                                                    wire:click="$set('tabCurrent', 'trailer')">
+                                                <i class="fas fa-tools me-1"></i>Trailer phim
+                                            </button>
+                                        </li>
+                                    @endif
                                 </ul>
                                 <div class="tab-content tab-manager">
                                     <!-- Overview Tab -->
@@ -336,7 +349,7 @@
                                                                             disabled>
                                                                             <option value="active" selected>Hoạt động</option>
                                                                             <option value="canceled">Hủy chiếu</option>
-                                                                            <option value="completed">Đã hoàn thành</option>
+                                                                            {{-- <option value="completed">Đã hoàn thành</option> --}}
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -444,6 +457,25 @@
                                                 </div>
                                             </div>
                                         @enderror
+                                    @elseif($tabCurrent === 'trailer')
+                                        <div class="video-container glow-effect mt-1">
+                                            <div class="video-header">
+                                                <div class="video-icon">
+                                                    <i class="fa-brands fa-youtube"></i>
+                                                </div>
+                                                <div>
+                                                    <h3 class="video-title">{{ $title }} | Official Trailer</h3>
+                                                </div>
+                                            </div>
+                                            <div class="video-wrapper">
+                                                <div class="responsive-iframe">
+                                                    <iframe src="{{ getYoutubeEmbedUrl($trailer_url) ?: asset('storage/404.webp') }}"
+                                                        title="YouTube video player" frameborder="0"
+                                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                                        allowfullscreen></iframe>
+                                                </div>
+                                            </div>
+                                        </div>
                                     @endif
                                 </div>
                             </div>
@@ -462,3 +494,17 @@
         </div>
     </div>
 </div>
+@script
+<script>
+    window.updateStatus = function(){
+        const releaseDate = $wire.release_date && Date.parse($wire.release_date);
+        const endDate = $wire.end_date && Date.parse($wire.end_date);
+
+        if(endDate && endDate < Date.now()) $wire.status = "ended";
+        else if(releaseDate && releaseDate > Date.now()) $wire.status = "coming_soon";
+        else $wire.status = "showing";
+    }
+
+    updateStatus();
+</script>
+@endscript
