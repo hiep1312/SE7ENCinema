@@ -281,7 +281,7 @@
                                             <div class="col-md-6 datetime-group">
                                                 <label class="datetime-label">
                                                     <span class="label-icon start-icon">
-                                                        <i class="bi bi-play-fill"></i>
+                                                        <i class="bi fa-hourglass-start"></i>
                                                     </span>
                                                     Thời gian bắt đầu
                                                 </label>
@@ -296,7 +296,7 @@
                                             <div class="col-md-6 datetime-group">
                                                 <label class="datetime-label">
                                                     <span class="label-icon end-icon">
-                                                        <i class="bi bi-stop-fill"></i>
+                                                        <i class="bi fa-hourglass-end"></i>
                                                     </span>
                                                     Thời gian kết thúc
                                                 </label>

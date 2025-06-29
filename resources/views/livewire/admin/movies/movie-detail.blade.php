@@ -36,7 +36,7 @@
                                 <small>Sao</small>
                             </div>
                             <div class="align-self-center">
-                                <i class="fas fa-chair fa-2x opacity-75"></i>
+                                <i class="fas fa-star fa-2x opacity-75"></i>
                             </div>
                         </div>
                     </div>
@@ -52,7 +52,7 @@
                                 <small>Suất chiếu</small>
                             </div>
                             <div class="align-self-center">
-                                <i class="fas fa-ticket fa-2x opacity-75"></i>
+                                <i class="fas fa-clock fa-2x opacity-75"></i>
                             </div>
                         </div>
                     </div>
@@ -68,7 +68,7 @@
                                 <small>Trung bình</small>
                             </div>
                             <div class="align-self-center">
-                                <i class="fas fa-chart-line fa-2x opacity-75"></i>
+                                <i class="fas fa-shopping-cart fa-2x opacity-75"></i>
                             </div>
                         </div>
                     </div>
@@ -84,7 +84,7 @@
                                 <small>VNĐ</small>
                             </div>
                             <div class="align-self-center">
-                                <i class="fas fa-tools fa-2x opacity-75"></i>
+                                <i class="fas fa-dollar-sign fa-2x opacity-75"></i>
                             </div>
                         </div>
                     </div>
@@ -111,13 +111,13 @@
                 <button class="nav-link @if($tabCurrent === 'ratingsAndComments') active bg-light text-dark @else text-light @endif"
                         wire:click="$set('tabCurrent', 'ratingsAndComments')"
                         style="border-top-left-radius: 0; border-top-right-radius: 0;">
-                    <i class="fas fa-tools me-1"></i>Đánh giá và bình luận
+                    <i class="fas fa-comments me-1"></i>Đánh giá và bình luận
                 </button>
             </li>
             <li class="nav-item">
                 <button class="nav-link @if($tabCurrent === 'orders') active bg-light text-dark @else text-light @endif"
                         wire:click="$set('tabCurrent', 'orders')">
-                    <i class="fas fa-chair me-1"></i>Đơn hàng
+                    <i class="fas fa-shopping-cart me-1"></i>Đơn hàng
                 </button>
             </li>
         </ul>
@@ -271,7 +271,7 @@
                         <div class="card bg-dark border-light">
                             <div class="card-header bg-gradient text-light"
                                 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <h5><i class="fas fa-image me-2"></i>Trailer phim</h5>
+                                <h5><i class="fas fas fa-play me-2"></i>Trailer phim</h5>
                             </div>
                             <div class="card-body bg-dark"
                                 style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
@@ -369,7 +369,7 @@
                     <div class="col-md-6">
                         <div class="card bg-dark border-light">
                             <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <h5><i class="fa-solid fa-comment-nodes me-2"></i>Đánh giá gần đây</h5>
+                                <h5><i class="fa-solid far fa-star me-2"></i>Đánh giá gần đây</h5>
                             </div>
                             <div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
                                 @if($ratings->count() > 0)
