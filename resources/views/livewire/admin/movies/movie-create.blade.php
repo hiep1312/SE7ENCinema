@@ -230,14 +230,14 @@
                                     <li class="nav-item">
                                         <button type="button" class="nav-link @if($tabCurrent === 'showtimes') active bg-light text-dark @else text-light @endif"
                                                 wire:click="$set('tabCurrent', 'showtimes')">
-                                            <i class="fas fa-info-circle me-1"></i>Suất chiếu
+                                            <i class="fa-solid fa-film me-1"></i>Suất chiếu
                                         </button>
                                     </li>
                                     <li class="nav-item">
                                         <button type="button" class="nav-link @if($tabCurrent === 'genres') active bg-light text-dark @else text-light @endif"
                                                 wire:click="$set('tabCurrent', 'genres')"
                                                 @if ($trailer_url) style="border-top-left-radius: 0; border-top-right-radius: 0;" @endif>
-                                            <i class="fas fa-tools me-1"></i>Thể loại
+                                            <i class="fa-solid fa-photo-film me-1"></i>Thể loại
                                         </button>
                                     </li>
                                     @if ($trailer_url)
@@ -267,7 +267,7 @@
                                             <div class="col-md-6 datetime-group">
                                                 <label class="datetime-label">
                                                     <span class="label-icon start-icon">
-                                                        <i class="bi bi-play-fill"></i>
+                                                        <i class="fas fa-hourglass-start"></i>
                                                     </span>
                                                     Thời gian bắt đầu
                                                 </label>
@@ -282,7 +282,7 @@
                                             <div class="col-md-6 datetime-group">
                                                 <label class="datetime-label">
                                                     <span class="label-icon end-icon">
-                                                        <i class="bi bi-stop-fill"></i>
+                                                        <i class="fas fa-hourglass-end"></i>
                                                     </span>
                                                     Thời gian kết thúc
                                                 </label>
