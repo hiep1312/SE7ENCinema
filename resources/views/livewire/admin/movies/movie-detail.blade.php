@@ -1,5 +1,5 @@
 <div>
-    <div class="container-lg mb-4">
+    <div class="container-lg mb-4" wire:poll>
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2 class="text-light">Chi tiết phim: {{ $movie->title }}</h2>
