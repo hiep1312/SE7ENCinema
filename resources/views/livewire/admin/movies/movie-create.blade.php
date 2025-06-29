@@ -244,7 +244,7 @@
                                         <li class="nav-item">
                                             <button type="button" class="nav-link @if($tabCurrent === 'trailer') active bg-light text-dark @else text-light @endif"
                                                     wire:click="$set('tabCurrent', 'trailer')">
-                                                <i class="fas fa-tools me-1"></i>Trailer phim
+                                                <i class="fas fa-video me-1 me-1"></i>Trailer phim
                                             </button>
                                         </li>
                                     @endif
@@ -267,7 +267,7 @@
                                             <div class="col-md-6 datetime-group">
                                                 <label class="datetime-label">
                                                     <span class="label-icon start-icon">
-                                                        <i class="fas fa-hourglass-start"></i>
+                                                        <i class="fas fa-play me-1" style="margin-right: 0 !important;"></i>
                                                     </span>
                                                     Thời gian bắt đầu
                                                 </label>
@@ -282,7 +282,7 @@
                                             <div class="col-md-6 datetime-group">
                                                 <label class="datetime-label">
                                                     <span class="label-icon end-icon">
-                                                        <i class="fas fa-hourglass-end"></i>
+                                                        <i class="fas fa-stop me-1" style="margin-right: 0 !important;"></i>
                                                     </span>
                                                     Thời gian kết thúc
                                                 </label>
@@ -296,7 +296,7 @@
                                             </div>
                                             <div class="text-center">
                                                 <button type="button" class="btn-custom btn-primary-custom" wire:click="generateShowtimes">
-                                                    <i class="fa-solid fa-spinner-scale fa-spin-pulse"></i>
+                                                    <i class="fa-solid fa-spinner"></i>
                                                     Sinh động suất chiếu
                                                 </button>
                                             </div>
