@@ -14,11 +14,13 @@ class MovieDetail extends Component
 {
     public Movie $movie;
     public $tab = 'movie_info';
+    public $subTab = 'overview'; // Thêm dòng này sau dòng public $tab = 'movie_info';
     public $selectedDate = null;
     public $showMoreComments = [];
-    public $commentsPerPage = 3;
+    public $commentsPerPage = 5;
     public $repliesPerPage = 2;
     public $today;
+    public $currentCommentPage = 1;
 
     // Modal states
     public $showTrailerModal = false;
@@ -27,6 +29,9 @@ class MovieDetail extends Component
     // Rating form
     public $userRating = 0;
     public $userReview = '';
+
+    public $ratingsPerPage = 5;
+    public $currentRatingPage = 1;
 
     public function mount(Movie $movie)
     {
@@ -50,6 +55,14 @@ class MovieDetail extends Component
     public function setTab($tab)
     {
         $this->tab = $tab;
+        if ($tab === 'movie_info') {
+            $this->subTab = 'overview'; // Reset về overview khi chọn movie_info
+        }
+    }
+
+    public function setSubTab($subTab)
+    {
+        $this->subTab = $subTab;
     }
 
     public function selectDate($date)
@@ -182,6 +195,32 @@ class MovieDetail extends Component
         return round($totalScore / $totalRatings, 1);
     }
 
+    public function setCommentPage($page)
+    {
+        $this->currentCommentPage = max(1, min($page, $this->getTotalCommentPages()));
+    }
+
+    public function getTotalCommentPages()
+    {
+        $comments = $this->getCommentsWithReplies();
+        return max(1, ceil($comments->count() / $this->commentsPerPage));
+    }
+
+    public function setRatingPage($page)
+    {
+        $this->currentRatingPage = max(1, min($page, $this->getTotalRatingPages()));
+    }
+
+    public function getTotalRatingPages($activeRatings = null)
+    {
+        if ($activeRatings === null) {
+            $activeRatings = $this->movie->ratings()->whereNull('deleted_at')->count();
+        } else {
+            $activeRatings = $activeRatings->count();
+        }
+        return max(1, ceil($activeRatings / $this->ratingsPerPage));
+    }
+
     #[Layout('components.layouts.client')]
     #[Title('Chi tiết phim')]
     public function render()
@@ -225,6 +264,9 @@ class MovieDetail extends Component
 
         // Bình luận với replies
         $comments = $this->getCommentsWithReplies();
+        $totalCommentPages = $this->getTotalCommentPages();
+        $start = ($this->currentCommentPage - 1) * $this->commentsPerPage;
+        $visibleComments = $comments->slice($start, $this->commentsPerPage);
 
         // Đánh giá (bao gồm cả soft deleted để hiển thị thông báo)
         $allRatings = $this->movie->ratings()
@@ -255,15 +297,27 @@ class MovieDetail extends Component
             ];
         }
 
+        $totalRatingPages = $this->getTotalRatingPages($activeRatings);
+        $startRating = ($this->currentRatingPage - 1) * $this->ratingsPerPage;
+        $visibleRatings = $activeRatings->slice($startRating, $this->ratingsPerPage);
+
         return view('livewire.client.template.movies.movie-detail', [
             'showtimesByDay' => $showtimesByDay,
             'comments' => $comments,
+            'visibleComments' => $visibleComments,
+            'commentsPerPage' => $this->commentsPerPage,
+            'currentCommentPage' => $this->currentCommentPage,
+            'totalCommentPages' => $totalCommentPages,
             'activeRatings' => $activeRatings,
             'hiddenRatings' => $hiddenRatings,
             'avgRating' => $avgRating,
             'totalRatings' => $totalRatings,
             'totalHiddenRatings' => $totalHiddenRatings,
             'ratingDistribution' => $ratingDistribution,
+            'visibleRatings' => $visibleRatings,
+            'ratingsPerPage' => $this->ratingsPerPage,
+            'currentRatingPage' => $this->currentRatingPage,
+            'totalRatingPages' => $totalRatingPages,
         ]);
     }
 }
