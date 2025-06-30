@@ -25,7 +25,8 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('client/assets/css/seat.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('client/assets/css/style.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('client/assets/css/responsive.css') }}" />
-
+    <link rel="stylesheet" type="text/css" href="{{ asset('client/assets/css/movie-detail.css') }}" />
+    @livewireStyles
 </head>
 
 <body>
@@ -65,5 +66,6 @@
     <script src="{{ asset('client/assets/js/contact_form.js') }}"></script>
     <script src="{{ asset('client/assets/js/custom.js') }}"></script>
     @vite('resources/js/app.js')
+    @livewireScripts
 </body>
 </html>
