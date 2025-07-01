@@ -20,7 +20,7 @@
     const showtimes = @json($showtimes);
 </script>
 @endassets
-<div>
+<div class="scRender">
     @if (session()->has('error'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             {{ session('error') }}
