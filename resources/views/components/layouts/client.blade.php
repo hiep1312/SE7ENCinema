@@ -4,9 +4,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'SE7ENCinema' }}</title>
-
-    {{-- @vite('resources/css/app.css') --}}
-
     <!-- Template style -->
     <link rel="stylesheet" type="text/css" href="{{ asset('client/assets/css/animate.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('client/assets/css/bootstrap.css') }}" />
@@ -25,7 +22,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('client/assets/css/seat.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('client/assets/css/style.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('client/assets/css/responsive.css') }}" />
-
+    @vite('resources/css/app.css')
 </head>
 
 <body>
