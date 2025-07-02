@@ -328,7 +328,7 @@
                             </form>
                         @else
                             <li>
-                                <a href="/login" class="button button--tamaya" data-text="Đăng nhập"><span>Đăng
+                                <a href="{{ route('login') }}" class="button button--tamaya" data-text="Đăng nhập"><span>Đăng
                                         nhập</span></a>
                             </li>
                         @endauth
