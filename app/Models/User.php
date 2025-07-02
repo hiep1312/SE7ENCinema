@@ -1,7 +1,10 @@
 <?php
 
 namespace App\Models;
-
+use App\Notifications\CustomVerifyEmail;
+use App\Notifications\CustomResetPassword;
+use App\Notifications\ScResetPassword;
+use App\Notifications\ScVerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -63,5 +66,13 @@ class User extends Authenticatable implements MustVerifyEmail
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new ScVerifyEmail);
+    }
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ScResetPassword($token, $this));
     }
 }
