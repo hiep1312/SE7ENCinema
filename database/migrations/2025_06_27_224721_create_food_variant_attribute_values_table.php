@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('food_variant_attribute_values', function (Blueprint $table) {
             $table->id();
-            $table->string('food_variant_id')->constrained()->onDelete('cascade');
+            $table->foreignId('food_variant_id')->constrained()->onDelete('cascade');
             $table->foreignId('food_attribute_value_id')->constrained()->onDelete('cascade');
         });
     }
