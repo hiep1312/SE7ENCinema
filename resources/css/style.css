@@ -8,6 +8,23 @@
     line-height: var(--bs-body-line-height) !important;
 }
 
+.nav-tabs .nav-link {
+    background: #000000;
+    padding: 0.75rem 1.5rem;
+}
+
+.nav-tabs .nav-item {
+    margin-bottom: -1px !important;
+}
+
+.card .card-body {
+    padding: 1.75rem 1.5625rem;
+}
+
+.card .card-title{
+    margin-bottom: 1.125rem;
+}
+
 /* Custom CSS */
 /* Maintenance countdown styling */
 .maintenance-countdown {

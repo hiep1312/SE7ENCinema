@@ -245,21 +245,23 @@
                                 <ul class="nav nav-tabs bg-dark" role="tablist">
                                     <li class="nav-item">
                                         <button type="button" class="nav-link @if($tabCurrent === 'showtimes') active bg-light text-dark @else text-light @endif"
-                                                wire:click="$set('tabCurrent', 'showtimes')">
+                                                wire:click="$set('tabCurrent', 'showtimes')"
+                                                style="border-top-right-radius: 0;">
                                             <i class="fa-solid fa-film me-1"></i>Suất chiếu
                                         </button>
                                     </li>
                                     <li class="nav-item">
                                         <button type="button" class="nav-link @if($tabCurrent === 'genres') active bg-light text-dark @else text-light @endif"
                                                 wire:click="$set('tabCurrent', 'genres')"
-                                                @if ($trailer_url) style="border-top-left-radius: 0; border-top-right-radius: 0;" @endif>
+                                                @if ($trailer_url) style="border-top-left-radius: 0; border-top-right-radius: 0;" @else style="border-top-left-radius: 0;" @endif>
                                             <i class="fa-solid fa-photo-film me-1"></i>Thể loại
                                         </button>
                                     </li>
                                     @if ($trailer_url)
                                         <li class="nav-item">
                                             <button type="button" class="nav-link @if($tabCurrent === 'trailer') active bg-light text-dark @else text-light @endif"
-                                                    wire:click="$set('tabCurrent', 'trailer')">
+                                                    wire:click="$set('tabCurrent', 'trailer')"
+                                                    style="border-top-left-radius: 0;">
                                                 <i class="fas fa-video me-1"></i>Trailer phim
                                             </button>
                                         </li>
