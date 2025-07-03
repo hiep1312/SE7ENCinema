@@ -4,6 +4,10 @@
     margin-top: 42px !important;
 }
 
+.page-link{
+    line-height: var(--bs-body-line-height) !important;
+}
+
 /* Custom CSS */
 /* Maintenance countdown styling */
 .maintenance-countdown {
@@ -228,8 +232,8 @@
 
 #lowerValue, #upperValue {
     text-align: center;
-    width: 60px;
-    padding: 6px 14px;
+    width: max-content;
+    padding: 5px 14px;
     background: #f0f0f0;
     border-radius: 20px;
     color: #2d7413;
