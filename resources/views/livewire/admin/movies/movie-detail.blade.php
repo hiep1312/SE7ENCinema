@@ -96,7 +96,8 @@
         <ul class="nav nav-tabs bg-dark" role="tablist">
             <li class="nav-item">
                 <button class="nav-link @if($tabCurrent === 'overview') active bg-light text-dark @else text-light @endif"
-                        wire:click="$set('tabCurrent', 'overview')">
+                        wire:click="$set('tabCurrent', 'overview')"
+                        style="border-top-right-radius: 0;">
                     <i class="fas fa-info-circle me-1"></i>Tổng quan
                 </button>
             </li>
@@ -116,7 +117,8 @@
             </li>
             <li class="nav-item">
                 <button class="nav-link @if($tabCurrent === 'orders') active bg-light text-dark @else text-light @endif"
-                        wire:click="$set('tabCurrent', 'orders')">
+                        wire:click="$set('tabCurrent', 'orders')"
+                        style="border-top-left-radius: 0;">
                     <i class="fas fa-shopping-cart me-1"></i>Đơn hàng
                 </button>
             </li>
@@ -475,7 +477,16 @@
                                                         </strong>
                                                     </td>
                                                     <td class="text-center text-muted">
-                                                        {{ $booking->showtime->start_time->format('d/m/Y H:i') }} - {{ $booking->showtime->end_time->format('H:i') }}</td>
+                                                        <i class="fas fa-clock me-1" style="color: #34c759;"></i>
+                                                        <span style="color: #34c759;">
+                                                            {{ $booking->showtime->start_time->format('d/m/Y') }}
+                                                        </span>
+                                                        <br>
+                                                        <small class="text-muted ms-3">
+                                                            {{ $booking->showtime->start_time->format('H:i') }} -
+                                                            {{ $booking->showtime->end_time->format('H:i') }}
+                                                        </small>
+                                                    </td>
                                                     <td class="text-center">
                                                         <strong class="text-light">
                                                             {{ Str::limit($booking->foodOrderItems()->with('variant.foodItem')->get()->pluck('variant.foodItem.name')->implode(', '), 20, '...') }}
