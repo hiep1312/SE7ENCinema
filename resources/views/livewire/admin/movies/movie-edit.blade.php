@@ -1,3 +1,5 @@
+@use('App\Models\Showtime')
+
 @assets
 <script>
     function updateSelected(selectedAll = true){
@@ -323,11 +325,13 @@
                                                         <!-- Accent line -->
                                                         <div class="position-absolute top-0 start-0 h-100" style="width: 4px; background: linear-gradient(to bottom, #6b7280, #374151);"></div>
 
-                                                        <button type="button"
+                                                        @if(!(isset($showtime['id']) && Showtime::find($showtime['id'])?->isLockedForDeletion()))
+                                                            <button type="button"
                                                                 class="btn btn-sm position-absolute delete-btn"
                                                                 wire:click="toggleShowtime({{ $index }})"
                                                                 style="top: 1rem; right: 1rem; color: #6b7280; background: transparent; border: none; border-radius: 50%; padding: 0.5rem; transition: all 0.2s ease;">
                                                                 <i class="fa-solid fa-x" style="margin-right: 0"></i></button>
+                                                        @endif
 
                                                         <div class="card-body p-4">
                                                             <div class="mb-4">

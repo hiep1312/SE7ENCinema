@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Movies;
 
 use App\Models\Movie;
+use App\Models\Showtime;
 use Carbon\Carbon;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -115,12 +116,13 @@ class MovieIndex extends Component
                 $query->where('title', 'like', '%' . $this->search . '%');
             })
             ->with(['showtimes' => function($query) {
-                $query->with('movie')
+                $query->with('room')
                     ->where('start_time', '>=', now())
                     ->where('status', 'active')
                     ->orderBy('start_time', 'asc')
                     ->limit(1);
             }])
+            ->orderBy('status', 'asc')
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 

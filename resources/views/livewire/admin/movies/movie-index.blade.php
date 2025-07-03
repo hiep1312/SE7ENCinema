@@ -110,7 +110,7 @@
                                         <div class="overflow-auto d-block text-center position-relative"
                                             style="max-height: 90px; width: 100px;">
                                             <img src="{{ asset('storage/' . ($movie->poster ?? '404.webp')) }}"
-                                                alt="Ảnh sản phẩm {{ $movie->poster }}" class="rounded"
+                                                alt="Ảnh phim {{ $movie->poster }}" class="rounded"
                                                 style="width: 100%; height: auto;">
                                             <span class="position-absolute opacity-75 top-0 start-0 mt-1 ms-1 badge bg-success" style="border-radius: 50%; cursor: pointer;"
                                                 data-bs-toggle="modal" data-bs-target="#trailerPreview"
@@ -171,7 +171,7 @@
                                             @php $nextShowtime = $movie->showtimes->first(); @endphp
                                             <div>
                                                 <div class="mb-1">
-                                                    <i class="fas fa-film me-1 text-primary"></i>
+                                                    <i class="fa-solid fa-person-booth text-primary"></i>
                                                     <strong class="text-primary">
                                                         {{ $nextShowtime->room->name ?? 'Phòng chiếu không tồn tại' }}
                                                     </strong>
