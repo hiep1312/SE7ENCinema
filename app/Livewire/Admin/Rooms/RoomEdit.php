@@ -46,12 +46,14 @@ class RoomEdit extends Component
         $this->fill($room->only('name', 'status', 'last_maintenance_date'));
         !$this->last_maintenance_date ?: ($this->last_maintenance_date = $this->last_maintenance_date->format('Y-m-d'));
 
-        if($this->room->hasActiveShowtimes()) return to_route('admin.rooms.index')->with('error', "Không thể chỉnh sửa phòng đang có suất chiếu đang hoạt động!");
+        if ($this->room->hasActiveShowtimes())
+            return to_route('admin.rooms.index')->with('error', "Không thể chỉnh sửa phòng đang có suất chiếu đang hoạt động!");
     }
 
     public function updateRoom()
     {
-        if($this->room->hasActiveShowtimes()) return to_route('admin.rooms.index')->with('error', "Không thể chỉnh sửa phòng đang có suất chiếu đang hoạt động!");
+        if ($this->room->hasActiveShowtimes())
+            return to_route('admin.rooms.index')->with('error', "Không thể chỉnh sửa phòng đang có suất chiếu đang hoạt động!");
 
         $this->rules['name'] = $this->rules['name'] . ',' . $this->room->id;
         $this->validate();

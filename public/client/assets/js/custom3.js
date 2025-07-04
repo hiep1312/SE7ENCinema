@@ -3,7 +3,7 @@
 
     var tpj = jQuery;
     var revapi24;
-    // Preloader 
+    // Preloader
     jQuery(window).on('load', function() {
         jQuery("#status").fadeOut();
         jQuery("#preloader").delay(350).fadeOut("slow");
@@ -32,8 +32,8 @@
             classout: 'dl-animate-out-5'
         }
     });
-	
-	
+
+
 	// Menu js for Position fixed
         $(window).scroll(function() {
             var window_top = $(window).scrollTop() + 1;
@@ -43,8 +43,8 @@
                 $('.prs_navigation_main_wrapper').removeClass('menu_fixed animated fadeInDown');
             }
         });
-	
-	 // ===== Scroll to Top ==== 
+
+	 // ===== Scroll to Top ====
         $(window).scroll(function() {
             if ($(this).scrollTop() >= 100) {
                 $('#return-to-top').fadeIn(200);
@@ -57,15 +57,15 @@
                 scrollTop: 0
             }, 500);
         });
-	
-	
+
+
 	/*--------------------------
 nice Select active
----------------------------- */ 
+---------------------------- */
 	$('select').niceSelect();
-       
-	   
-	 
+
+
+
 
 	// Featured Products Js
 	$('.prs_upcom_slider_slides_wrapper .owl-carousel').owlCarousel({
@@ -89,8 +89,8 @@ nice Select active
 			}
 		}
 	});
-	
-	
+
+
 	 $(document).ready(function() {
             $('.prs_feature_slider_wrapper .owl-carousel').owlCarousel({
                 loop: true,
@@ -121,8 +121,8 @@ nice Select active
                 }
             })
         })
-		
-		
+
+
 		 $(document).ready(function() {
             $('.prs_es_speak_slider_wrapper .owl-carousel').owlCarousel({
                 loop: true,
@@ -153,7 +153,7 @@ nice Select active
                 }
             })
         })
-		
+
 		 $(document).ready(function() {
             $('.prs_vp_center_slider .owl-carousel').owlCarousel({
                 loop: true,
@@ -184,9 +184,9 @@ nice Select active
                 }
             })
         })
-	
-	
-	
+
+
+
 	$(document).ready(function() {
             $('.prs_ms_trailer_slider_left_wrapper .owl-carousel').owlCarousel({
                 loop: true,
@@ -217,9 +217,9 @@ nice Select active
                 }
             })
         })
-		
-		
-		
+
+
+
 		$(document).ready(function() {
             $('.prs_ms_scene_slider_wrapper .owl-carousel').owlCarousel({
                 loop: true,
@@ -250,7 +250,7 @@ nice Select active
                 }
             })
         })
-	
+
 	 $(document).ready(function() {
             $('.prs_pn_slider_wraper .owl-carousel').owlCarousel({
                 loop: true,
@@ -281,7 +281,7 @@ nice Select active
                 }
             })
         })
-	
+
 
 	$(".album-slider").bxSlider({
 		minSlides: 1,
@@ -291,12 +291,12 @@ nice Select active
 		ticker: true,
 		tickerHover: true,
 		speed: 20000,
-		useCSS: false, 
+		useCSS: false,
 		infiniteLoop: false
-		
+
 		});
-		
-		
+
+
 		$(".prs_vp_left_slider").bxSlider({
 		minSlides: 1,
 		autoDirection: 'next',
@@ -307,11 +307,11 @@ nice Select active
 		ticker: true,
 		tickerHover: true,
 		speed: 15000,
-		useCSS: false, 
+		useCSS: false,
 		infiniteLoop: false
-		
+
 		});
-		
+
 		$(".prs_vp_right_slider").bxSlider({
 		minSlides: 1,
 		mode: 'vertical',
@@ -322,12 +322,12 @@ nice Select active
 		ticker: true,
 		tickerHover: true,
 		speed: 15000,
-		useCSS: false, 
+		useCSS: false,
 		infiniteLoop: false
-		
+
 		});
-		
-		
+
+
 		/* 09. VENOBOX JS */
             $('.venobox').venobox({
                 numeratio: true,
@@ -338,10 +338,10 @@ nice Select active
             });
 
 
-	
+
 				// Magnific popup-video
 
-	$('.test-popup-link').magnificPopup({ 
+	$('.test-popup-link').magnificPopup({
     type: 'iframe',
     iframe: {
         markup: '<div class="mfp-iframe-scaler">'+
@@ -351,7 +351,7 @@ nice Select active
             '</div>',
         patterns: {
             youtube: {
-                index: 'youtube.com/', 
+                index: 'youtube.com/',
                 id: 'v=',
                 src: 'https://www.youtube.com/embed/ryzOXAO0Ss0'
             }
@@ -360,7 +360,7 @@ nice Select active
     // other options
 });
 
-	
+
 	 $('.second-nav-toggler').on('click', function(e) {
         e.preventDefault();
         var mask = '<div class="mask-overlay">';
@@ -372,22 +372,22 @@ nice Select active
             $('.mask-overlay').remove();
         });
     });
-	
-	
+
+
 			//show hide login form js
 	$('#search_button').on("click", function(e) {
 		$('#search_open').slideToggle();
-		e.stopPropagation(); 
+		e.stopPropagation();
 	});
 
 	$(document).on("click", function(e){
-		if(!(e.target.closest('#search_open'))){	
-			$("#search_open").slideUp();   		
+		if(!(e.target.closest('#search_open'))){
+			$("#search_open").slideUp();
 		}
    });
-	
-		
-	
+
+
+
 
 //  SLICK SLIDER
 //  https://kenwheeler.github.io/slick/
@@ -431,7 +431,7 @@ $(".video-thumbnails").slick({
 });
 
 //  Video Poster Setup
-//  FORKED FROM CRAIG MONEY 
+//  FORKED FROM CRAIG MONEY
 //  https://codepen.io/pixelthing/details/zGZKaQ
 
 $(document).on("click", ".js-videoPoster", function(ev) {
@@ -483,12 +483,12 @@ $(".video-container").on("beforeChange", function(
 
 $(function() {
     $('.no-fouc').removeClass('no-fouc');
-    
+
 });
 
 
 
-	
+
     });
 
 })(jQuery);

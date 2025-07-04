@@ -31,7 +31,6 @@
                 </button>
             </div>
         </div>
-
         <div class="card bg-dark" wire:poll.6s="realtimeCheckOperation">
             <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <div class="row g-3">
