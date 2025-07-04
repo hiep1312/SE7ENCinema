@@ -7,6 +7,10 @@ use App\Livewire\Admin\Foods\FoodIndex;
 use App\Livewire\Admin\Banners\BannerCreate;
 use App\Livewire\Admin\Banners\BannerEdit;
 use App\Livewire\Admin\Banners\BannerIndex;
+use App\Livewire\Admin\Comments\CommentCreate;
+use App\Livewire\Admin\Comments\CommentDetail;
+use App\Livewire\Admin\Comments\CommentEdit;
+use App\Livewire\Admin\Comments\CommentIndex;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\Rooms\RoomCreate;
 use App\Livewire\Admin\Rooms\RoomDetail;
@@ -87,6 +91,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/', ShowtimeIndex::class)->name('index');
         Route::get('/create', ShowtimeCreate::class)->name('create');
         Route::get('/edit/{showtime}', ShowtimeEdit::class)->name('edit');
+    });
+
+    /* Comments */
+    Route::prefix('/comments')->name('comments.')->group(function () {
+        Route::get('/', CommentIndex::class)->name('index');
+        Route::get('/create', CommentCreate::class)->name('create');
+        Route::get('/edit/{comment}', CommentEdit::class)->name('edit');
+        Route::get('/detail/{comment}', CommentDetail::class)->name('detail');
     });
 
     /* Template */
