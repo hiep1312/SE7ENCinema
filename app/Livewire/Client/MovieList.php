@@ -5,24 +5,26 @@ namespace App\Livewire\Client;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Movie;
-use Livewire\Attributes\Layout; 
-use Livewire\Attributes\Title;
-
+use App\Models\Genre;
 
 class MovieList extends Component
 {
     use WithPagination;
 
-    public $activeTab = 'coming_soon'; // 'coming_soon' | 'showing'
-    public $statusFilter = '';
+    public $tabCurrent = 'coming_soon'; // Đổi từ $activeTab thành $tabCurrent
+    public $genreFilter = '';
     public $search = '';
-    public $perPage = 8;
-
-    protected $queryString = ['activeTab', 'statusFilter', 'search'];
+    public $perPage = 9;
 
     public function setTab($tab)
     {
-        $this->activeTab = $tab;
+        $this->tabCurrent = $tab; // Đổi từ $activeTab thành $tabCurrent
+        // $this->resetPage();
+    }
+
+    public function setGenreFilter($genre)
+    {
+        $this->genreFilter = $genre;
         $this->resetPage();
     }
 
@@ -31,37 +33,45 @@ class MovieList extends Component
         $this->resetPage();
     }
 
-    public function updatedStatusFilter()
-    {
-        $this->resetPage();
-    }
-
-
     public function render()
     {
         $query = Movie::query();
 
-        // Lọc theo tab
-        if ($this->activeTab === 'coming_soon') {
+        // Filter by tab
+        if ($this->tabCurrent === 'coming_soon') { // Đổi từ $activeTab thành $tabCurrent
             $query->where('release_date', '>', now());
-        } elseif ($this->activeTab === 'showing') {
-            $query->where('release_date', '<=', now())->where('end_date', '>=', now());
+        } elseif ($this->tabCurrent === 'showing') { // Đổi từ $activeTab thành $tabCurrent
+            $query->where('release_date', '<=', now())
+                  ->where(function ($q) {
+                      $q->where('end_date', '>=', now())
+                        ->orWhereNull('end_date');
+                  });
+        } else { // ended
+            $query->whereNotNull('end_date')
+                  ->where('end_date', '<', now());
         }
 
-        // Lọc theo trạng thái tùy chọn
-        if ($this->statusFilter !== '') {
-            $query->where('status', $this->statusFilter);
+        // Filter by genre
+        if ($this->genreFilter) {
+            $query->whereHas('genres', function ($q) {
+                $q->where('name', $this->genreFilter);
+            });
         }
 
-        // Tìm kiếm tiêu đề phim
+        // Search by title or description
         if (!empty($this->search)) {
-            $query->where('title', 'like', '%' . $this->search . '%');
+            $query->where(function ($q) {
+                $q->where('title', 'like', '%' . $this->search . '%')
+                  ->orWhere('description', 'like', '%' . $this->search . '%');
+            });
         }
 
-        $movies = $query->orderBy('release_date')->paginate($this->perPage);
+        $movies = $query->orderBy('release_date', 'desc')->paginate($this->perPage);
+        $genres = Genre::pluck('name')->sort()->all();
 
         return view('livewire.client.movie-list', [
-            'movies' => $movies
+            'movies' => $movies,
+            'genres' => $genres,
         ]);
     }
 }

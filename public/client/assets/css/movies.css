@@ -1,0 +1,69 @@
+.age-restriction-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    z-index: 10;
+    color: white;
+}
+
+/* Phân loại độ tuổi theo Beta Cinemas */
+.age-P {
+    background-color: #2257e7;
+    /* Xanh lá - Không giới hạn (P) */
+}
+
+.age-K {
+    background-color: #f009dd;
+    /* Xanh dương - Dưới 13 tuổi (K) */
+}
+
+.age-T13 {
+    background-color: #ff9807;
+    /* Vàng - Trên 13+ tuổi (T13) */
+}
+
+.age-T16 {
+    background-color: #f63315;
+    /* Cam - Trên 16+ tuổi (T16) */
+}
+
+.age-T18 {
+    background-color: #536509;
+    /* Đỏ - Trên 18+ tuổi (T18) */
+}
+
+.age-C {
+    background-color: #ac5c5c;
+    /* Đen - Cấm chiếu (C) */
+}
+
+
+.booking-button-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.booking-button {
+    display: inline-block;
+    width: 100%;
+    max-width: 270px;
+    /* bằng chiều rộng ảnh */
+    background-color: rgb(235, 122, 18);
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    border-radius: 6px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.booking-button:hover {
+    background-color: #005fa3;
+}
