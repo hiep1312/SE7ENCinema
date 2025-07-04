@@ -166,6 +166,29 @@
                                 </table>
                             </div>
                         </div>
+                        {{-- Thông tin bình luận cha nếu là bình luận con --}}
+                        @if($comment->parent_comment_id && $comment->parent)
+                            <div class="card bg-dark border-light mb-3">
+                                <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                    <h5><i class="fas fa-reply me-2"></i>Bình luận cha</h5>
+                                </div>
+                                <div class="card-body bg-dark">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-3">
+                                            @if($comment->parent->user->avatar && !str_contains($comment->parent->user->avatar, 'placeholder.com'))
+                                                <img src="{{ asset('storage/' . $comment->parent->user->avatar) }}" alt="{{ $comment->parent->user->name }}" class="rounded-circle" width="40" height="40">
+                                            @else
+                                                <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;"><i class="fas fa-user text-white"></i></div>
+                                            @endif
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-light">{{ $comment->parent->user->name }}</div>
+                                            <div class="text-muted small">{{ Str::limit($comment->parent->content, 100) }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

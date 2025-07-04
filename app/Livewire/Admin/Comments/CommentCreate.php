@@ -197,6 +197,15 @@ class CommentCreate extends Component
         return true;
     }
 
+    public function addChildComment()
+    {
+        $this->childComments[] = [
+            'content' => '',
+            'status' => 'active',
+        ];
+        $this->childCommentCount = count($this->childComments);
+    }
+
     #[Title('Tạo bình luận mới - SE7ENCinema')]
     #[Layout('components.layouts.admin')]
     public function render()

@@ -138,13 +138,20 @@ class CommentEdit extends Component
         }
     }
 
+    public function addChildComment()
+    {
+        $this->childComments[] = [
+            'content' => '',
+            'status' => 'active',
+        ];
+        $this->childCommentCount = count($this->childComments);
+    }
+
     public function updateComment()
     {
         $this->validate([
             'content' => 'required|string|min:1|max:1000',
             'status' => 'required|in:' . implode(',', array_keys($this->statusOptions)),
-            'movieId' => 'required|exists:movies,id',
-            'parentCommentId' => 'nullable|exists:comments,id',
             'replyCommentId' => 'nullable|exists:comments,id',
         ]);
 
@@ -173,8 +180,6 @@ class CommentEdit extends Component
             $this->comment->update([
                 'content' => $this->content,
                 'status' => $this->status,
-                'movie_id' => $this->movieId,
-                'parent_comment_id' => $this->parentCommentId,
                 'reply_comment_id' => $replyCommentId,
             ]);
 

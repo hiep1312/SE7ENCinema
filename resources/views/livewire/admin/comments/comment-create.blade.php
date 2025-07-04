@@ -99,31 +99,6 @@
                                 <small class="text-muted">Tối đa 1000 ký tự</small>
                             </div>
 
-                            <!-- Input số lượng bình luận con -->
-                            <div class="mb-3">
-                                <label for="childCommentCount" class="form-label text-light">Số lượng bình luận con muốn thêm</label>
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <input type="number"
-                                               wire:model.live="childCommentCount"
-                                               wire:change="generateChildComments"
-                                               class="form-control bg-dark text-light border-light"
-                                               min="0"
-                                               max="10"
-                                               placeholder="0">
-                                    </div>
-                                    <div class="col-md-9 d-flex align-items-center">
-                                        <small class="text-muted">
-                                            Nhập số từ 0-10. Sẽ tạo các form bình luận con tương ứng.
-                                            @if($parentCommentId)
-                                                <span class="text-info">Đang tạo bình luận con cho bình luận cha đã chọn.</span>
-                                            @else
-                                                <span class="text-warning">Đang tạo bình luận con cho bình luận chính.</span>
-                                            @endif
-                                        </small>
-                                    </div>
-                                </div>
-                            </div>
 
                             <div class="d-flex justify-content-between">
                                 <button type="submit" class="btn btn-success">
@@ -136,6 +111,15 @@
                                     Hủy bỏ
                                 </a>
                             </div>
+
+                            <!-- Input số lượng bình luận con -->
+                            <div class="mt-3">
+                                <button type="button" class="btn btn-info" wire:click="addChildComment">
+                                    <i class="fas fa-plus"></i> Thêm bình luận con
+                                </button>
+                            </div>
+
+
                         </form>
                     </div>
                 </div>
