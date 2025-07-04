@@ -183,6 +183,7 @@ class MovieDetail extends Component
     /**
      * Tính điểm trung bình đánh giá
      * Công thức: Tổng số điểm / Tổng số lượt đánh giá
+     * Đã cập nhật: Tính cả đánh giá đã bị xóa (soft deleted)
      */
     public function calculateAverageRating($ratings)
     {
@@ -279,27 +280,27 @@ class MovieDetail extends Component
         $activeRatings = $allRatings->whereNull('deleted_at');
         $hiddenRatings = $allRatings->whereNotNull('deleted_at');
 
-        // Tính toán thống kê đánh giá (chỉ tính các đánh giá không bị xóa)
-        $totalRatings = $activeRatings->count();
+        // Tính toán thống kê đánh giá (tính cả đánh giá đã bị xóa)
+        $totalRatings = $allRatings->count();
         $totalHiddenRatings = $hiddenRatings->count();
 
-        // Tính điểm trung bình theo công thức: Tổng điểm / Tổng số lượt đánh giá
-        $avgRating = $this->calculateAverageRating($activeRatings);
+        // Tính điểm trung bình theo công thức: Tổng điểm / Tổng số lượt đánh giá (bao gồm cả đã bị xóa)
+        $avgRating = $this->calculateAverageRating($allRatings);
 
         $ratingDistribution = [];
 
-        // Tạo phân phối đánh giá từ 1-5 sao
+        // Tạo phân phối đánh giá từ 1-5 sao (bao gồm cả đã bị xóa)
         for ($i = 1; $i <= 5; $i++) {
-            $count = $activeRatings->where('score', $i)->count();
+            $count = $allRatings->where('score', $i)->count();
             $ratingDistribution[$i] = [
                 'count' => $count,
                 'percentage' => $totalRatings > 0 ? round(($count / $totalRatings) * 100, 1) : 0
             ];
         }
 
-        $totalRatingPages = $this->getTotalRatingPages($activeRatings);
+        $totalRatingPages = $this->getTotalRatingPages($allRatings);
         $startRating = ($this->currentRatingPage - 1) * $this->ratingsPerPage;
-        $visibleRatings = $activeRatings->slice($startRating, $this->ratingsPerPage);
+        $visibleRatings = $allRatings->slice($startRating, $this->ratingsPerPage);
 
         return view('livewire.client.template.movies.movie-detail', [
             'showtimesByDay' => $showtimesByDay,

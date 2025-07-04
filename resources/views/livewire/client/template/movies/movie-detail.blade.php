@@ -352,7 +352,9 @@
                                             @endfor
                                             <span style="color:#888;font-size:1rem;margin-left:8px;">{{ $rating->score }}/5</span>
                                         </div>
-                                        @if($rating->review)
+                                        @if($rating->deleted_at)
+                                            <div class="rating-review"><em>Nội dung đánh giá đã bị xóa</em></div>
+                                        @elseif($rating->review)
                                             <div class="rating-review">{{ $rating->review }}</div>
                                         @endif
                                     </div>
