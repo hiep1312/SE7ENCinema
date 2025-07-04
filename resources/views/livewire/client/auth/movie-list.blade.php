@@ -184,9 +184,14 @@
                                                             alt="{{ $movie->title }}"
                                                             class="w-full h-64 object-cover" />
                                                         @php
-                                                        $ageClass = 'age-' . strtoupper($movie->age_restriction);
+                                                        $ageCode = strtoupper($movie->age_restriction);
+                                                        $ageClass = 'age-' . $ageCode;
                                                         @endphp
-                                                        <span class="age-restriction-badge {{ $ageClass }}">{{ strtoupper($movie->age_restriction) }}</span>
+
+                                                        <span class="age-restriction-badge {{ $ageClass }}">
+                                                            {{ $ageCode }}
+                                                        </span>
+
                                                         <div class="prs_upcom_movie_img_overlay"></div>
                                                         <div class="prs_upcom_movie_img_btn_wrapper">
                                                             <ul>
@@ -252,9 +257,14 @@
                                                             alt="{{ $movie->title }}"
                                                             class="w-full h-64 object-cover" />
                                                         @php
-                                                        $ageClass = 'age-' . strtoupper($movie->age_restriction);
+                                                        $ageCode = strtoupper($movie->age_restriction);
+                                                        $ageClass = 'age-' . $ageCode;
                                                         @endphp
-                                                        <span class="age-restriction-badge {{ $ageClass }}">{{ strtoupper($movie->age_restriction) }}</span>
+
+                                                        <span class="age-restriction-badge {{ $ageClass }}">
+                                                            {{ $ageCode }}
+                                                        </span>
+
                                                         <div class="prs_upcom_movie_img_overlay"></div>
                                                         <div class="prs_upcom_movie_img_btn_wrapper">
                                                             <ul>
@@ -332,10 +342,18 @@
                     <figure class="album">
                         <div class="prs_upcom_movie_box_wrapper">
                             <div class="prs_upcom_movie_img_box">
-                                <img src=""
+                                <img src="http://giadinh.mediacdn.vn/2016/photo-0-1477471953478.jpg"
                                     alt="{{ $movie->title }}"
                                     class="w-full h-64 object-cover" />
-                                <span class="age-restriction-badge">{{ $movie->age_restriction }}</span>
+                                @php
+                                $ageCode = strtoupper($movie->age_restriction);
+                                $ageClass = 'age-' . $ageCode;
+                                @endphp
+
+                                <span class="age-restriction-badge {{ $ageClass }}">
+                                    {{ $ageCode }}
+                                </span>
+
                                 <div class="prs_upcom_movie_img_overlay"></div>
                                 <div class="prs_upcom_movie_img_btn_wrapper">
                                     <ul>

@@ -69,7 +69,7 @@ class MovieList extends Component
         $movies = $query->orderBy('release_date', 'desc')->paginate($this->perPage);
         $genres = Genre::pluck('name')->sort()->all();
 
-        return view('livewire.client.movie-list', [
+        return view('livewire.client.auth.movie-list', [
             'movies' => $movies,
             'genres' => $genres,
         ]);
