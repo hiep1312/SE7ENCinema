@@ -4,11 +4,18 @@ namespace App\Livewire\Admin\Foods;
 
 use App\Models\FoodItem;
 use App\Models\FoodVariant;
+use App\Models\FoodAttribute;
+use App\Models\FoodAttributeValue;
+use App\Models\FoodVariantAttributeValue;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class FoodCreate extends Component
 {
@@ -18,72 +25,397 @@ class FoodCreate extends Component
     public $description = null;
     public $image = null;
     public $status = 'activate';
-    public $quantityVariants = 0;
-    public $variants = [];
 
-    protected $rules = [
-        'name' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'image' => 'nullable|image|max:20480',
-        'status' => 'required|in:activate,discontinued',
+    public $variantAttributes = [];
+    public $newAttributeName = '';
+    public $newAttributeValues = '';
 
-        'variants.*.name' => 'required|string|max:255',
-        'variants.*.price' => 'required|numeric|min:0',
-        'variants.*.image' => 'nullable|image|max:20480',
-        'variants.*.quantity' => 'required|integer|min:0',
-        'variants.*.limit' => 'nullable|integer|min:0',
-        'variants.*.status' => 'required|in:available,out_of_stock,hidden',
-    ];
+    public $generatedVariants = [];
+    public bool $productVariants = false;
+    public string $variantTab = 'attributes';
+    public $expandedVariants = [];
 
-    protected $messages = [
-        'name.required' => 'Tên món ăn là bắt buộc.',
-        'name.max' => 'Tên món ăn không được vượt quá 255 ký tự.',
-        'image.image' => 'Ảnh món ăn phải là một tệp hình ảnh hợp lệ.',
-        'image.max' => 'Ảnh món ăn không được vượt quá 20MB.',
-        'status.required' => 'Trạng thái món ăn là bắt buộc.',
-        'status.in' => 'Trạng thái món ăn không hợp lệ.',
 
-        'variants.*.name.required' => 'Tên biến thể là bắt buộc.',
-        'variants.*.name.max' => 'Tên biến thể không được vượt quá 255 ký tự.',
-        'variants.*.price.required' => 'Giá biến thể là bắt buộc.',
-        'variants.*.price.numeric' => 'Giá biến thể phải là số.',
-        'variants.*.price.min' => 'Giá biến thể không được nhỏ hơn 0.',
-        'variants.*.image.image' => 'Ảnh biến thể phải là một tệp hình ảnh hợp lệ.',
-        'variants.*.image.max' => 'Ảnh biến thể không được vượt quá 20MB.',
-        'variants.*.quantity.required' => 'Số lượng là bắt buộc.',
-        'variants.*.quantity.integer' => 'Số lượng phải là số nguyên.',
-        'variants.*.quantity.min' => 'Số lượng không được nhỏ hơn 0.',
-        'variants.*.limit.integer' => 'Giới hạn số lượng nhập phải là số nguyên.',
-        'variants.*.limit.min' => 'Giới hạn số lượng nhập không được nhỏ hơn 0.',
-        'variants.*.status.required' => 'Trạng thái biến thể là bắt buộc.',
-        'variants.*.status.in' => 'Trạng thái biến thể không hợp lệ.',
-    ];
+    public string $variantCreateMode = ''; // '', 'auto', 'manual'
+    public $manualAttributeValues = [];
 
-    public function generateVariants()
+
+    public $basePrice = null;
+    public $baseQuantity = null;
+    public $baseLimit = null;
+    public $baseStatus = 'available';
+
+    public $bulkAction = ''; // Liên kết với select box chính
+    public $bulkValue = null;  // Liên kết với các input number và select trạng thái
+    public $bulkImage = null;
+
+
+
+    public function rules()
     {
-        if(count($this->variants) < $this->quantityVariants) $this->variants = array_pad($this->variants, $this->quantityVariants, ['name' => '', 'price' => null, 'quantity' => null, 'limit' => null, 'status' => 'available', 'image' => null]);
-        elseif(count($this->variants) > $this->quantityVariants) $this->variants = array_slice($this->variants, 0, $this->quantityVariants);
+        $rules = [
+            'name' => ['required'],
+            'image' => ['nullable', 'image', 'max:20480'],
+            'status' => ['required', 'in:activate,discontinued'],
+
+            'generatedVariants.*.price' => ['required', 'numeric', 'min:1'],
+            'generatedVariants.*.quantity' => ['required', 'integer', 'min:1'],
+            'generatedVariants.*.limit' => ['nullable', 'integer', 'min:0'],
+            'generatedVariants.*.status' => ['required', 'in:available,out_of_stock,hidden'],
+            'generatedVariants.*.image' => ['nullable', 'image', 'max:20480'],
+        ];
+
+        if (!$this->productVariants) {
+            // Nếu KHÔNG có biến thể thì bắt buộc basePrice/Quantity
+            $rules['basePrice'] = ['required', 'numeric', 'min:1'];
+            $rules['baseQuantity'] = ['required', 'integer', 'min:1'];
+            $rules['baseLimit'] = ['nullable', 'integer', 'min:0'];
+            $rules['baseStatus'] = ['required', 'in:available,out_of_stock,hidden'];
+        }
+
+        return $rules;
     }
 
-    #[Computed]
-    public function listVariants(){
-        $this->generateVariants();
 
-        return $this->variants;
-    }
-
-    public function removeVariant(int $index)
+    public function messages()
     {
-        $this->variants = array_values(array_filter($this->variants, fn($i) => $i !== $index, ARRAY_FILTER_USE_KEY));
-        $this->quantityVariants = count($this->variants);
+        $messages = [
+            'name.required' => 'Tên món ăn là bắt buộc.',
+            'image.image' => 'Ảnh phải là một tệp hình ảnh.',
+            'image.max' => 'Ảnh không được lớn hơn 20MB.',
+            'status.required' => 'Trạng thái là bắt buộc.',
+            'status.in' => 'Trạng thái không hợp lệ.',
+
+            'generatedVariants.*.price.numeric' => 'Giá phải là số.',
+            'generatedVariants.*.price.required' => 'Giá là bắt buộc.',
+            'generatedVariants.*.price.min' => 'Giá phải lớn hơn 0.',
+            'generatedVariants.*.quantity.integer' => 'Số lượng phải là số nguyên.',
+            'generatedVariants.*.quantity.required' => 'Số lượng là bắt buộc.',
+            'generatedVariants.*.quantity.min' => 'Số lượng phải lớn hơn 0.',
+            'generatedVariants.*.limit.integer' => 'Giới hạn phải là số nguyên.',
+            'generatedVariants.*.limit.min' => 'Giới hạn không được âm.',
+            'generatedVariants.*.status.required' => 'Trạng thái là bắt buộc.',
+            'generatedVariants.*.status.in' => 'Trạng thái không hợp lệ.',
+            'generatedVariants.*.image.image' => 'Ảnh phải là tệp hình ảnh.',
+            'generatedVariants.*.image.max' => 'Ảnh không được lớn hơn 20MB.',
+        ];
+
+        if (!$this->productVariants) {
+            $messages['basePrice.numeric'] = 'Giá cơ bản phải là số.';
+            $messages['basePrice.required'] = 'Giá cơ bản là bắt buộc.';
+            $messages['basePrice.min'] = 'Giá cơ bản phải lớn hơn 0.';
+            $messages['baseQuantity.integer'] = 'Số lượng cơ bản phải là số nguyên.';
+            $messages['baseQuantity.required'] = 'Số lượng cơ bản là bắt buộc.';
+            $messages['baseQuantity.min'] = 'Số lượng cơ bản phải lớn hơn 0.';
+            $messages['baseLimit.integer'] = 'Giới hạn cơ bản phải là số nguyên.';
+            $messages['baseLimit.min'] = 'Giới hạn cơ bản không được âm.';
+            $messages['baseStatus.required'] = 'Trạng thái cơ bản là bắt buộc.';
+            $messages['baseStatus.in'] = 'Trạng thái cơ bản không hợp lệ.';
+        }
+
+        return $messages;
     }
+
+
+
+    public function addAttribute()
+    {
+        $name = trim($this->newAttributeName);
+        $values = array_filter(array_map('trim', explode('|', $this->newAttributeValues)));
+
+        if (!$name) {
+            $this->addError('newAttributeName', 'Tên thuộc tính không được để trống.');
+            return;
+        }
+
+        if (empty($values)) {
+            $this->addError('newAttributeValues', 'Phải nhập ít nhất một giá trị.');
+            return;
+        }
+
+        // Kiểm tra trùng tên thuộc tính (KHÔNG phân biệt hoa thường)
+        foreach ($this->variantAttributes as $attr) {
+            if (strcasecmp($attr['name'], $name) === 0) {
+                $this->addError('newAttributeName', 'Thuộc tính đã tồn tại, vui lòng nhập tên khác.');
+                return;
+            }
+        }
+
+        // Nếu không trùng thì thêm
+        $this->variantAttributes[] = [
+            'name' => $name,
+            'values' => $values
+        ];
+
+        // Reset input
+        $this->newAttributeName = '';
+        $this->newAttributeValues = '';
+
+        // Xóa lỗi cũ (nếu có)
+        $this->resetErrorBag(['newAttributeName', 'newAttributeValues']);
+    }
+
+
+
+
+    public function removeAttribute($index)
+    {
+        unset($this->variantAttributes[$index]);
+        $this->variantAttributes = array_values($this->variantAttributes); // reset chỉ số
+    }
+
+    public function removeGeneratedVariant($index)
+    {
+        if (isset($this->generatedVariants[$index])) {
+            unset($this->generatedVariants[$index]);
+            $this->generatedVariants = array_values($this->generatedVariants); // Đặt lại chỉ số mảng
+            // Cập nhật expandedVariants cho phù hợp
+            $this->expandedVariants = array_fill(0, count($this->generatedVariants), false);
+        }
+    }
+
+    public $editingIndex = null;
+
+    public function editAttribute($index)
+    {
+        $this->editingIndex = $index;
+        $this->newAttributeName = $this->variantAttributes[$index]['name'];
+        $this->newAttributeValues = implode('|', $this->variantAttributes[$index]['values']);
+    }
+
+    public function updateAttribute()
+    {
+        $name = trim($this->newAttributeName);
+        $values = array_filter(array_map('trim', explode('|', $this->newAttributeValues)));
+
+        if (!$name) {
+            $this->addError('newAttributeName', 'Tên thuộc tính không được để trống.');
+            return;
+        }
+
+        if (empty($values)) {
+            $this->addError('newAttributeValues', 'Phải nhập ít nhất một giá trị.');
+            return;
+        }
+
+        foreach ($this->variantAttributes as $index => $attr) {
+            if ($index !== $this->editingIndex && strcasecmp($attr['name'], $name) === 0) {
+                $this->addError('newAttributeName', 'Thuộc tính đã tồn tại, vui lòng nhập tên khác.');
+                return;
+            }
+        }
+
+        $this->variantAttributes[$this->editingIndex] = [
+            'name' => $name,
+            'values' => $values
+        ];
+
+        $this->newAttributeName = '';
+        $this->newAttributeValues = '';
+        $this->editingIndex = null;
+
+        $this->resetErrorBag(['newAttributeName', 'newAttributeValues']);
+    }
+
+
+    public function moveUp($index)
+    {
+        if ($index > 0) {
+            [$this->variantAttributes[$index - 1], $this->variantAttributes[$index]] =
+                [$this->variantAttributes[$index], $this->variantAttributes[$index - 1]];
+        }
+    }
+
+    public function moveDown($index)
+    {
+        if ($index < count($this->variantAttributes) - 1) {
+            [$this->variantAttributes[$index + 1], $this->variantAttributes[$index]] =
+                [$this->variantAttributes[$index], $this->variantAttributes[$index + 1]];
+        }
+    }
+
+
+    public function generateVariantsFromAttributes()
+    {
+        if (empty($this->variantAttributes)) return;
+
+        $combinations = [[]];
+
+        foreach ($this->variantAttributes as $attr) {
+            $attrName = $attr['name'];
+            $values = $attr['values'];
+            $newCombinations = [];
+
+            foreach ($combinations as $combination) {
+                foreach ($values as $value) {
+                    $newCombinations[] = array_merge($combination, [
+                        ['attribute' => $attrName, 'value' => $value],
+                    ]);
+                }
+            }
+
+            $combinations = $newCombinations;
+        }
+
+        $this->generatedVariants = [];
+
+        foreach ($combinations as $combo) {
+            $this->generatedVariants[] = [
+                'attribute_values' => $combo,
+                'price' => null,
+                'quantity' => null,
+                'limit' => null,
+                'status' => 'available',
+                'image' => null,
+            ];
+        }
+
+        $this->expandedVariants = array_fill(0, count($this->generatedVariants), false);
+    }
+
+    public function addManualVariant()
+    {
+        // Validate
+        foreach ($this->variantAttributes as $attr) {
+            $attrName = $attr['name'];
+            if (empty($this->manualAttributeValues[$attrName])) {
+                $this->addError("manualAttributeValues.$attrName", "Hãy chọn giá trị cho $attrName.");
+                return;
+            }
+        }
+
+        // Ghép cặp
+        $newPair = [];
+        foreach ($this->variantAttributes as $attr) {
+            $attrName = $attr['name'];
+            $newPair[] = [
+                'attribute' => $attrName,
+                'value' => $this->manualAttributeValues[$attrName],
+            ];
+        }
+
+        // Check duplicate
+        foreach ($this->generatedVariants as $variant) {
+            if ($variant['attribute_values'] == $newPair) {
+                $this->addError('manualAttributeValues', 'Biến thể này đã tồn tại.');
+                return;
+            }
+        }
+
+        // Add
+        array_unshift($this->generatedVariants, [
+            'attribute_values' => $newPair,
+            'price' => null,
+            'quantity' => null,
+            'limit' => null,
+            'status' => 'available',
+            'image' => null,
+        ]);
+
+
+        // Reset
+        $this->manualAttributeValues = [];
+        $this->resetErrorBag(['manualAttributeValues']);
+        $this->variantCreateMode = ''; // Tắt form Thủ công
+
+        // Reset accordion mở rộng
+        $this->expandedVariants = array_fill(0, count($this->generatedVariants), false);
+    }
+
+
+    public function applyBulkAction()
+    {
+        // 1. Validate đầu vào
+        if (empty($this->bulkAction)) {
+            $this->addError('bulkAction', 'Vui lòng chọn một thao tác.');
+            return;
+        }
+
+        $valueToApply = ($this->bulkAction === 'image') ? $this->bulkImage : $this->bulkValue;
+
+        if (is_null($valueToApply) && $this->bulkAction !== 'image') {
+            $this->addError('bulkValue', 'Vui lòng nhập hoặc chọn giá trị để áp dụng.');
+            return;
+        }
+
+        if ($this->bulkAction === 'image' && !$this->bulkImage) {
+            $this->addError('bulkImage', 'Vui lòng chọn một ảnh để áp dụng.');
+            return;
+        }
+
+        // 2. Ánh xạ action
+        $fieldMap = [
+            'price'          => 'price',
+            'quantity'       => 'quantity',
+            'quantity_limit' => 'limit',
+            'status'         => 'status',
+            'image'          => 'image',
+        ];
+
+        $fieldToUpdate = $fieldMap[$this->bulkAction] ?? null;
+
+        if (!$fieldToUpdate) {
+            return;
+        }
+
+        // 3. Lặp qua các biến thể và áp dụng logic
+        foreach ($this->generatedVariants as $index => $variant) {
+            // SỬA LỖI ẢNH: Nếu là hành động ảnh, chỉ áp dụng cho biến thể đầu tiên tìm thấy
+            // và dừng lại ngay lập tức để tránh tái sử dụng file tạm.
+            if ($this->bulkAction === 'image') {
+                if (is_null($variant[$fieldToUpdate])) {
+                    $this->generatedVariants[$index][$fieldToUpdate] = $valueToApply;
+                    break; // Dừng vòng lặp ngay sau khi gán ảnh
+                }
+                continue; // Nếu biến thể này đã có ảnh, bỏ qua và xét biến thể tiếp theo
+            }
+
+            // Logic cho các trường khác (status, price, quantity...)
+            if ($this->bulkAction === 'status' || is_null($variant[$fieldToUpdate])) {
+                $this->generatedVariants[$index][$fieldToUpdate] = $valueToApply;
+            }
+        }
+
+        // 4. Reset các input
+        $this->reset('bulkAction', 'bulkValue', 'bulkImage');
+        $this->resetErrorBag(['bulkAction', 'bulkValue', 'bulkImage']);
+    }
+
+
+
+
 
     public function createFood()
     {
-        $this->validate();
+        if ($this->productVariants && empty($this->generatedVariants)) {
+            $this->addError('generatedVariants', 'Bạn chưa tạo biến thể.');
+            return;
+        }
 
-        $imagePath = '';
-        !$this->image ?: ($imagePath = $this->image->store('foods', 'public'));
+        $validator = Validator::make(
+            $this->all(),
+            $this->rules(),
+            $this->messages()
+        );
+
+        $validator->after(function ($validator) {
+            if (!$this->productVariants) {
+                if (!is_null($this->baseLimit) && $this->baseLimit < $this->baseQuantity) {
+                    $validator->errors()->add('baseLimit', 'Giới hạn cơ bản không được nhỏ hơn số lượng.');
+                }
+            } else {
+                foreach ($this->generatedVariants as $index => $variant) {
+                    if (!is_null($variant['limit']) && $variant['limit'] < $variant['quantity']) {
+                        $validator->errors()->add("generatedVariants.$index.limit", "Giới hạn không được nhỏ hơn số lượng.");
+                    }
+                }
+            }
+        });
+
+        $validator->validate();
+
+        // Nếu hợp lệ, tiếp tục lưu như cũ
+        $imagePath = $this->image ? $this->image->store('foods', 'public') : null;
 
         $food = FoodItem::create([
             'name' => $this->name,
@@ -92,29 +424,85 @@ class FoodCreate extends Component
             'status' => $this->status,
         ]);
 
-        foreach ($this->variants as $index => $variant) {
-            !$variant['limit'] ?: $this->validate([
-                "variants.{$index}.quantity" => "integer|max:{$variant['limit']}"
-            ], [
-                "variants.{$index}.quantity" => "Số lượng đã vượt quá giới hạn số lượng nhập"
-            ]);
+        if ($this->productVariants) {
+            foreach ($this->generatedVariants as $variant) {
+                $variantImagePath = $variant['image'] ? $variant['image']->store('food_variants', 'public') : null;
 
-            $variantImagePath = null;
-            !$variant['image'] ?: $variantImagePath = $variant['image']->store('food_variants', 'public');
+                $skuParts = [$this->name];
+                foreach ($variant['attribute_values'] as $pair) {
+                    $skuParts[] = $pair['attribute'];
+                    $skuParts[] = $pair['value'];
+                }
+                $sku = $this->generateUniqueSku(implode('-', $skuParts));
+
+                $foodVariant = FoodVariant::create([
+                    'food_item_id' => $food->id,
+                    'sku' => $sku,
+                    'price' => $variant['price'],
+                    'image' => $variantImagePath,
+                    'quantity_available' => $variant['quantity'],
+                    'limit' => $variant['limit'],
+                    'status' => $variant['status'],
+                ]);
+
+                // Lưu attribute value ids
+                $attributeValueIds = [];
+
+                foreach ($variant['attribute_values'] as $pair) {
+                    $attribute = FoodAttribute::firstOrCreate([
+                        'food_item_id' => $food->id,
+                        'name' => $pair['attribute'],
+                    ]);
+
+                    $attributeValue = FoodAttributeValue::firstOrCreate([
+                        'food_attribute_id' => $attribute->id,
+                        'value' => $pair['value'],
+                    ]);
+
+                    // Lưu ID
+                    $attributeValueIds[] = $attributeValue->id;
+                }
+
+                // Tạo pivot đúng
+                foreach ($attributeValueIds as $attributeValueId) {
+                    FoodVariantAttributeValue::firstOrCreate([
+                        'food_variant_id' => $foodVariant->id,
+                        'food_attribute_value_id' => $attributeValueId,
+                    ]);
+                }
+            }
+        } else {
+            $sku = $this->generateUniqueSku($this->name);
 
             FoodVariant::create([
                 'food_item_id' => $food->id,
-                'name' => $variant['name'],
-                'price' => $variant['price'],
-                'image' => $variantImagePath,
-                'quantity_available' => $variant['quantity'],
-                'limit' => $variant['limit'],
-                'status' => $variant['status'],
+                'sku' => $sku,
+                'price' => $this->basePrice,
+                'image' => null,
+                'quantity_available' => $this->baseQuantity,
+                'limit' => $this->baseLimit,
+                'status' => $this->baseStatus,
             ]);
         }
 
         return redirect()->route('admin.foods.index')->with('success', 'Thêm món ăn thành công!');
     }
+
+
+
+    private function generateUniqueSku($baseSku)
+    {
+        $sku = Str::slug($baseSku);
+        $counter = 1;
+
+        while (FoodVariant::where('sku', $sku)->exists()) {
+            $sku = Str::slug($baseSku) . '-' . $counter;
+            $counter++;
+        }
+
+        return $sku;
+    }
+
 
     #[Title('Tạo món ăn - SE7ENCinema')]
     #[Layout('components.layouts.admin')]
