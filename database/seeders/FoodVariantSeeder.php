@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\FoodAttribute;
-use App\Models\FoodAttributeValue;
 use App\Models\FoodItem;
 use App\Models\FoodVariant;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -55,7 +54,7 @@ class FoodVariantSeeder extends Seeder
                     return strtolower(str_replace(' ', '-', trim($ascii)));
                 }, $parts));
 
-                FoodVariant::create([
+                $foodVariant = FoodVariant::create([
                     'food_item_id' => $item['id'],
                     'sku' => $sku,
                     'price' => fake()->numberBetween(20000, 100000),
@@ -64,6 +63,8 @@ class FoodVariantSeeder extends Seeder
                     'limit' => fake()->numberBetween(10, 100),
                     'status' => fake()->randomElement(['available', 'out_of_stock', 'hidden']),
                 ]);
+
+                $this->call(FoodVariantAttributeValueSeeder::class, false, [$combo, $foodVariant->id]);
             }
         }
     }

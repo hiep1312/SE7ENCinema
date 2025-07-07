@@ -231,91 +231,91 @@
             <!-- Orders Tab -->
             @elseif($tabCurrent === 'orders')
                 <div class="row">
-                        <div class="col-12">
-                            <div class="card bg-dark border-light">
-                                <div class="card-header bg-gradient text-light"
-                                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                    <h5><i class="fas fa-receipt me-2"></i>Chi tiết các đơn hàng đã đặt</h5>
-                                </div>
-                                <div class="card-body bg-dark"
-                                    style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
-                                    <div class="table-responsive">
-                                        <table class="table table-dark table-striped table-hover text-light border">
-                                            <thead>
-                                                <tr>
-                                                    <th class="text-center text-light">Mã đơn hàng</th>
-                                                    <th class="text-center text-light">Phòng / Tên phim</th>
-                                                    <th class="text-center text-light">Thời lượng</th>
-                                                    <th class="text-center text-light">Thời gian chiếu</th>
-                                                    <th class="text-center text-light">Tên món ăn</th>
-                                                    <th class="text-center text-light">Số lượng</th>
-                                                    <th class="text-center text-light">Tổng giá</th>
-                                                    <th class="text-center text-light">Trạng thái</th>
-                                                    <th class="text-center text-light">Hành động</th>
+                    <div class="col-12">
+                        <div class="card bg-dark border-light">
+                            <div class="card-header bg-gradient text-light"
+                                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <h5><i class="fas fa-receipt me-2"></i>Chi tiết các đơn hàng đã đặt</h5>
+                            </div>
+                            <div class="card-body bg-dark"
+                                style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
+                                <div class="table-responsive">
+                                    <table class="table table-dark table-striped table-hover text-light border">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center text-light">Mã đơn hàng</th>
+                                                <th class="text-center text-light">Phòng / Tên phim</th>
+                                                <th class="text-center text-light">Thời lượng</th>
+                                                <th class="text-center text-light">Thời gian chiếu</th>
+                                                <th class="text-center text-light">Tên món ăn</th>
+                                                <th class="text-center text-light">Số lượng</th>
+                                                <th class="text-center text-light">Tổng giá</th>
+                                                <th class="text-center text-light">Trạng thái</th>
+                                                <th class="text-center text-light">Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse ($bookings as $booking)
+                                                <tr wire:key="{{ $booking->id }}">
+                                                    <td class="text-center">{{ $booking->booking_code ?? 'N/A' }}</td>
+                                                    <td class="text-center">
+                                                        <strong class="badge bg-gradient text-light" style="background: linear-gradient(to right, #642b73, #c6426e) !important;">
+                                                            {{ $booking->showtime->room->name }} / {{ $booking->showtime->movie->title }}
+                                                        </strong>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        {{ $booking->showtime->movie->duration }}</td>
+                                                    <td class="text-center">
+                                                        {{ $booking->showtime->start_time->format('d/m/Y H:i') }} - {{ $booking->showtime->end_time->format('d/m/Y H:i') }}</td>
+                                                    <td class="text-center"><strong
+                                                            class="text-light">{{ Str::limit($booking->foodOrderItems()->with('variant')->get()->pluck('variant.name')->implode(', '), 20, '...') }}</strong>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        {{ $booking->foodOrderItems->sum('quantity') }}</td>
+                                                    <td class="text-center">
+                                                        {{ number_format($booking->total_price, 0, ',', '.') }}đ</td>
+                                                    <td class="text-center">
+                                                            @switch($booking->status)
+                                                            @case('pending')
+                                                                <span class="badge bg-info text-dark">Chờ xử lý</span>
+                                                            @break
+                                                            @case('confirmed')
+                                                                <span class="badge bg-primary">Đã xác nhận</span>
+                                                            @break
+                                                            @case('paid')
+                                                                <span class="badge bg-success">Đã thanh toán</span>
+                                                                @break
+                                                        @endswitch
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <a href="{{ /* route('admin.bookings.detail', $variant->id) */ '#' }}"
+                                                                class="btn btn-sm btn-info" title="Xem chi tiết">
+                                                                <i class="fas fa-eye" style="margin-right: 0"></i>
+                                                            </a>
+                                                        </div>
+                                                    </td>
                                                 </tr>
-                                            </thead>
-                                            <tbody>
-                                                @forelse ($bookings as $booking)
-                                                    <tr wire:key="{{ $booking->id }}">
-                                                        <td class="text-center">{{ $booking->booking_code ?? 'N/A' }}</td>
-                                                        <td class="text-center">
-                                                            <strong class="badge bg-gradient text-light" style="background: linear-gradient(to right, #642b73, #c6426e) !important;">
-                                                                {{ $booking->showtime->room->name }} / {{ $booking->showtime->movie->title }}
-                                                            </strong>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            {{ $booking->showtime->movie->duration }}</td>
-                                                        <td class="text-center">
-                                                            {{ $booking->showtime->start_time->format('d/m/Y H:i') }} - {{ $booking->showtime->end_time->format('d/m/Y H:i') }}</td>
-                                                        <td class="text-center"><strong
-                                                                class="text-light">{{ Str::limit($booking->foodOrderItems()->with('variant')->get()->pluck('variant.name')->implode(', '), 20, '...') }}</strong>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            {{ $booking->foodOrderItems->sum('quantity') }}</td>
-                                                        <td class="text-center">
-                                                            {{ number_format($booking->total_price, 0, ',', '.') }}đ</td>
-                                                        <td class="text-center">
-                                                             @switch($booking->status)
-                                                                @case('pending')
-                                                                    <span class="badge bg-info text-dark">Chờ xử lý</span>
-                                                                @break
-                                                                @case('confirmed')
-                                                                    <span class="badge bg-primary">Đã xác nhận</span>
-                                                                @break
-                                                                @case('paid')
-                                                                    <span class="badge bg-success">Đã thanh toán</span>
-                                                                    @break
-                                                            @endswitch
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex justify-content-center">
-                                                                <a href="{{ /* route('admin.bookings.detail', $variant->id) */ '#' }}"
-                                                                    class="btn btn-sm btn-info" title="Xem chi tiết">
-                                                                    <i class="fas fa-eye" style="margin-right: 0"></i>
-                                                                </a>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="9" class="text-center py-4">
-                                                            <div class="text-muted">
-                                                                <i class="fas fa-inbox fa-3x mb-3"></i>
-                                                                <p>Không có đơn hàng nào đã đặt</p>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="mt-3">
-                                        {{ $bookings->links() }}
-                                    </div>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="9" class="text-center py-4">
+                                                        <div class="text-muted">
+                                                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                                                            <p>Không có đơn hàng nào đã đặt</p>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="mt-3">
+                                    {{ $bookings->links() }}
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
             <!-- Seats Tab -->
             @elseif($tabCurrent === 'ratingAndComment')
                 <div class="row">

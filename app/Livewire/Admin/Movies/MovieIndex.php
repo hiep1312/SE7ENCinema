@@ -3,6 +3,8 @@
 namespace App\Livewire\Admin\Movies;
 
 use App\Models\Movie;
+use App\Models\Showtime;
+use Carbon\Carbon;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -66,10 +68,23 @@ class MovieIndex extends Component
         $this->resetPage();
     }
 
+    public function updateStatusMovies(){
+        Movie::all()->each(function($movie){
+            $releaseDate = Carbon::parse($movie->release_date);
+            $endDate = !$movie->end_date ?: Carbon::parse($movie->end_date);
+            if(is_object($endDate) && $endDate->isPast()) $movie->status = 'ended';
+            else if($releaseDate->isFuture()) $movie->status = 'coming_soon';
+            else $movie->status = 'showing';
+            $movie->save();
+        });
+    }
+
     #[Title('Danh sách phim - SE7ENCinema')]
     #[Layout('components.layouts.admin')]
     public function render()
     {
+        $this->updateStatusMovies();
+
         $query = Movie::query();
 
         if ($this->showDeleted) {
@@ -101,13 +116,14 @@ class MovieIndex extends Component
                 $query->where('title', 'like', '%' . $this->search . '%');
             })
             ->with(['showtimes' => function($query) {
-                $query->with('movie')
+                $query->with('room')
                     ->where('start_time', '>=', now())
                     ->where('status', 'active')
                     ->orderBy('start_time', 'asc')
                     ->limit(1);
             }])
-            ->orderBy('id', 'desc')
+            ->orderBy('status', 'asc')
+            ->orderBy('created_at', 'desc')
             ->paginate(20);
 
         return view('livewire.admin.movies.movie-index', compact('movies'));

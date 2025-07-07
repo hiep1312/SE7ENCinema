@@ -216,12 +216,12 @@
                                                         <div class="{{ $columnLayoutVariant }}">
                                                             <div class="mb-3">
                                                                 <label for="variants.{{ $index }}.status" class="form-label text-light">Trạng thái *</label>
-                                                                <select id="variants.{{ $index }}.status" wire:model="variants.{{ $index }}.status" class="form-select bg-dark text-light border-light @error('variants.{{ $index }}.status') is-invalid @enderror">
+                                                                <select id="variants.{{ $index }}.status" wire:model="variants.{{ $index }}.status" class="form-select bg-dark text-light border-light @error("variants.$index.status") is-invalid @enderror">
                                                                     <option value="available">Còn hàng</option>
                                                                     <option value="out_of_stock">Hết hàng</option>
                                                                     <option value="hidden">Ẩn</option>
                                                                 </select>
-                                                                @error('variants.{{ $index }}.status')
+                                                                @error("variants.$index.status")
                                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                                 @enderror
                                                             </div>
@@ -232,9 +232,9 @@
                                                                 <input type="file"
                                                                     id = "variants.{{ $index }}.image"
                                                                     wire:model.live="variants.{{ $index }}.image"
-                                                                    class="form-control bg-dark text-light border-light @error('variants.{{ $index }}.image') is-invalid @enderror"
+                                                                    class="form-control bg-dark text-light border-light @error("variants.$index.image") is-invalid @enderror"
                                                                     accept="image/*">
-                                                                @error('variants.{{ $index }}.image')
+                                                                @error("variants.$index.image")
                                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                                 @enderror
                                                             </div>
