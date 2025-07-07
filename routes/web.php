@@ -25,13 +25,9 @@ use App\Livewire\Admin\Users\UserDetail;
 use App\Livewire\Admin\Users\UserEdit;
 use App\Livewire\Admin\Users\UserIndex;
 use App\Livewire\Admin\Ratings\RatingIndex;
-<<<<<<< HEAD
-use App\Livewire\Client\MovieDetail as ClientMovieDetail;
-=======
 use App\Livewire\Admin\Showtimes\ShowtimeCreate;
 use App\Livewire\Admin\Showtimes\ShowtimeEdit;
 use App\Livewire\Admin\Showtimes\ShowtimeIndex;
->>>>>>> main
 
 Route::prefix('admin')->name('admin.')->group(function () {
     /* Banners */
@@ -125,7 +121,6 @@ Route::name('client.')->group(function () {
     Route::view('/seat_booking', 'livewire.client.template.bookings.seat_booking')->name('seat_booking');
     Route::view('/contact', 'livewire.client.template.contact')->name('contact');
     Route::view('/confirmation_screen', 'livewire.client.template.confirmation_screen')->name('confirmation_screen');
-    Route::get('/movies/{movie}', ClientMovieDetail::class)->name('movies.detail');
 });
 
 Route::view('/', 'welcome')->name('welcome');
