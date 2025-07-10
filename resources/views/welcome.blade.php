@@ -22,6 +22,7 @@
 </head>
 
 <body>
+    {{--  @role('admin', 'user') --}}
     <div class="container-scroller">
         @include('livewire.admin.components.sidebar')
         <div class="container-fluid page-body-wrapper">
@@ -32,6 +33,15 @@
             </div>
         </div>
     </div>
+    {{-- @endrole
+
+    @role('user')
+        <h2>Đây là user</h2>
+    @endrole
+
+    @guest
+        <h2>Đây là guest</h2>
+    @endguest --}}
 
     @livewireScripts
     <!-- plugins:js -->

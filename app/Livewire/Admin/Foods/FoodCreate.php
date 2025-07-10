@@ -50,6 +50,12 @@ class FoodCreate extends Component
     public $bulkImage = null;
 
 
+    public $availableAttributes = [];
+    public $selectedAttributeId = null;
+    public $selectedAttributeValueIds = [];
+
+
+
 
     public function rules()
     {
@@ -503,11 +509,55 @@ class FoodCreate extends Component
         return $sku;
     }
 
+    public function addExistingAttribute()
+    {
+        if (!$this->selectedAttributeId) {
+            $this->addError('selectedAttributeId', 'Vui lòng chọn thuộc tính.');
+            return;
+        }
+
+        $attribute = FoodAttribute::with('values')->find($this->selectedAttributeId);
+        if (!$attribute) {
+            $this->addError('selectedAttributeId', 'Thuộc tính không tồn tại.');
+            return;
+        }
+
+        $values = FoodAttributeValue::whereIn('id', $this->selectedAttributeValueIds)->pluck('value')->toArray();
+        if (empty($values)) {
+            $this->addError('selectedAttributeValueIds', 'Vui lòng chọn ít nhất một giá trị.');
+            return;
+        }
+
+        // Kiểm tra trùng tên
+        foreach ($this->variantAttributes as $attr) {
+            if (strcasecmp($attr['name'], $attribute->name) === 0) {
+                $this->addError('selectedAttributeId', 'Thuộc tính này đã được thêm.');
+                return;
+            }
+        }
+
+        $this->variantAttributes[] = [
+            'name' => $attribute->name,
+            'values' => $values,
+        ];
+
+        // Reset chọn
+        $this->selectedAttributeId = null;
+        $this->selectedAttributeValueIds = [];
+        $this->resetErrorBag(['selectedAttributeId', 'selectedAttributeValueIds']);
+    }
+
+
+
 
     #[Title('Tạo món ăn - SE7ENCinema')]
     #[Layout('components.layouts.admin')]
     public function render()
     {
+        $this->availableAttributes = FoodAttribute::whereNull('food_item_id')
+            ->with('values')
+            ->get();
+
         return view('livewire.admin.foods.food-create');
     }
 }

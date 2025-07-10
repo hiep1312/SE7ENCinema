@@ -1,5 +1,5 @@
 {{-- resources/views/livewire/admin/foods/edit-food.blade.php --}}
-<div>
+<div class="scRender">
     {{-- Session Messages --}}
     @if (session()->has('error'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -121,6 +121,93 @@
                                 <h6 class="text-primary fw-bold">
                                     {{ $editingAttributeIndex !== null ? 'Chỉnh sửa thuộc tính' : 'Thêm thuộc tính mới' }}
                                 </h6>
+                                {{-- Bắt đầu: Phần chọn thuộc tính có sẵn (áp dụng chuẩn FoodEdit) --}}
+                                <div class="card bg-dark-subtle mb-4 shadow-sm border-secondary">
+                                    <div class="card-body p-4">
+                                        <h5 class="card-title text-light mb-3">🗂️ Thêm thuộc tính có sẵn</h5>
+
+                                        {{-- Hàng chứa Dropdown chọn thuộc tính và Nút Thêm --}}
+                                        <div class="row g-3 align-items-end mb-3">
+                                            {{-- Dropdown chọn thuộc tính --}}
+                                            <div class="col-md position-relative p-3">
+                                                <label for="select-attribute"
+                                                    class="form-label text-light-emphasis fw-semibold">
+                                                    1️⃣ Chọn loại thuộc tính
+                                                </label>
+                                                <select id="select-attribute" wire:model.live="selectedAttributeId"
+                                                    class="form-select bg-dark text-light border-secondary @error('selectedAttributeId') is-invalid @enderror">
+                                                    <option value="">-- Vui lòng chọn --</option>
+                                                    @foreach ($availableAttributes as $attr)
+                                                        <option value="{{ $attr->id }}">{{ $attr->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('selectedAttributeId')
+                                                    <div class="invalid-feedback position-absolute d-block mt-1"
+                                                        style="font-size: 0.875rem;">
+                                                        <i class="fas fa-exclamation-circle me-1"></i> {{ $message }}
+                                                    </div>
+                                                @enderror
+                                            </div>
+
+                                            {{-- Nút Thêm --}}
+                                            <div class="col-md-auto p-3">
+                                                <button type="button" wire:click="addExistingAttribute"
+                                                    class="btn btn-success w-100"
+                                                    @if (empty($selectedAttributeId) || empty($selectedAttributeValueIds)) disabled @endif>
+                                                    <i class="fas fa-plus-circle me-1"></i> Thêm vào món ăn
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {{-- Các giá trị của thuộc tính được chọn --}}
+                                        @if ($selectedAttributeId)
+                                            @php
+                                                $selectedAttr = $availableAttributes->find($selectedAttributeId);
+                                            @endphp
+
+                                            @if ($selectedAttr && $selectedAttr->values->count())
+                                                <div>
+                                                    <label
+                                                        class="form-label text-light-emphasis fw-semibold d-block mb-2">
+                                                        2️⃣ Chọn giá trị (có thể chọn nhiều)
+                                                    </label>
+                                                    <div class="d-flex flex-wrap gap-2">
+                                                        @foreach ($selectedAttr->values as $value)
+                                                            <input type="checkbox" class="btn-check"
+                                                                id="value-{{ $value->id }}"
+                                                                value="{{ $value->id }}"
+                                                                wire:model.live="selectedAttributeValueIds"
+                                                                autocomplete="off">
+                                                            <label class="btn btn-outline-light"
+                                                                for="value-{{ $value->id }}">
+                                                                {{ $value->value }}
+                                                            </label>
+                                                        @endforeach
+                                                    </div>
+                                                    {{-- Hiển thị lỗi nếu thiếu value (trùng với rules server) --}}
+                                                    @error('selectedAttributeValueIds')
+                                                        <div class="invalid-feedback d-block text-warning mt-2">
+                                                            <i class="fas fa-exclamation-circle me-1"></i>
+                                                            {{ $message }}
+                                                        </div>
+                                                    @enderror
+                                                </div>
+                                            @else
+                                                <div class="alert alert-warning border-0 bg-warning-subtle mt-3 py-2"
+                                                    role="alert">
+                                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                                    Thuộc tính <strong>'{{ $selectedAttr->name ?? '' }}'</strong> chưa
+                                                    có giá trị nào được định nghĩa.
+                                                </div>
+                                            @endif
+                                        @endif
+
+                                    </div>
+                                </div>
+                                {{-- Kết thúc: Phần chọn thuộc tính có sẵn --}}
+
+
                                 <div class="row g-3 align-items-end p-3">
                                     {{-- Input cho thuộc tính mới --}}
                                     <div class="col-md-5 mb-3 mb-md-0 position-relative">

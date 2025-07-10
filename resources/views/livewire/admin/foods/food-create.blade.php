@@ -1,4 +1,4 @@
-<div>
+<div class="scRender">
     {{-- Hiển thị thông báo lỗi chung từ session --}}
     @if (session()->has('error'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -182,6 +182,83 @@
                         <div class="tab-content tab-manager p-3 border border-secondary border-top-0 bg-dark">
                             @if ($variantTab === 'attributes')
                                 <h6 class="text-light mb-3">Thêm/Sửa thuộc tính cho món ăn:</h6>
+                                {{-- Bắt đầu: Phần chọn thuộc tính sẵn có đã được làm đẹp --}}
+                                <div class="card bg-dark-subtle mb-4 shadow-sm border-secondary">
+                                    <div class="card-body p-4">
+                                        <h5 class="card-title text-light mb-3">🗂️ Thêm thuộc tính có sẵn</h5>
+
+                                        {{-- Hàng chứa Dropdown chọn thuộc tính và Nút Thêm --}}
+                                        <div class="row g-3 align-items-end mb-3">
+                                            {{-- Dropdown chọn thuộc tính --}}
+                                            <div class="col-md">
+                                                <label for="select-attribute"
+                                                    class="form-label text-light-emphasis fw-semibold">1. Chọn loại
+                                                    thuộc tính</label>
+                                                {{-- Sử dụng wire:model.live để giao diện phản hồi ngay lập tức --}}
+                                                <select id="select-attribute" wire:model.live="selectedAttributeId"
+                                                    class="form-select bg-dark text-light border-secondary">
+                                                    <option value="">-- Vui lòng chọn --</option>
+                                                    @foreach ($availableAttributes as $attr)
+                                                        <option value="{{ $attr->id }}">{{ $attr->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+
+                                            {{-- Nút Thêm thuộc tính vào món ăn --}}
+                                            <div class="col-md-auto">
+                                                {{-- Nút sẽ bị vô hiệu hóa nếu chưa chọn đủ thông tin, cải thiện UX --}}
+                                                <button type="button" wire:click="addExistingAttribute"
+                                                    class="btn btn-success w-100"
+                                                    @if (empty($selectedAttributeId) || empty($selectedAttributeValueIds)) disabled @endif>
+                                                    <i class="fas fa-plus-circle me-1"></i> Thêm vào món ăn
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {{-- Vùng hiển thị các giá trị của thuộc tính đã chọn (hiển thị khi có selectedAttributeId) --}}
+                                        @if ($selectedAttributeId)
+                                            @php
+                                                // Tìm thuộc tính được chọn để lấy các giá trị của nó
+                                                $selectedAttr = $availableAttributes->find($selectedAttributeId);
+                                            @endphp
+
+                                            @if ($selectedAttr && $selectedAttr->values->count() > 0)
+                                                <div>
+                                                    <label
+                                                        class="form-label text-light-emphasis fw-semibold d-block mb-2">2.
+                                                        Chọn giá trị (có thể chọn nhiều)</label>
+
+                                                    {{-- Sử dụng Flexbox để các tag tự động xuống hàng một cách đẹp mắt --}}
+                                                    <div class="d-flex flex-wrap gap-2">
+                                                        @foreach ($selectedAttr->values as $value)
+                                                            {{-- Sử dụng "btn-check": một kỹ thuật hiện đại để tạo checkbox dạng button/tag --}}
+                                                            <input type="checkbox" class="btn-check"
+                                                                id="value-{{ $value->id }}"
+                                                                value="{{ $value->id }}"
+                                                                wire:model.live="selectedAttributeValueIds"
+                                                                autocomplete="off">
+                                                            <label class="btn btn-outline-light"
+                                                                for="value-{{ $value->id }}">
+                                                                {{ $value->value }}
+                                                            </label>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                            @else
+                                                {{-- Thông báo rõ ràng hơn khi thuộc tính không có giá trị --}}
+                                                <div class="alert alert-warning border-0 bg-warning-subtle mt-3 py-2"
+                                                    role="alert">
+                                                    <i class="fas fa-exclamation-triangle me-2"></i> Thuộc tính
+                                                    <strong>'{{ $selectedAttr->name ?? '' }}'</strong> chưa có giá trị
+                                                    nào được định nghĩa.
+                                                </div>
+                                            @endif
+                                        @endif
+                                    </div>
+                                </div>
+                                {{-- Kết thúc: Phần chọn thuộc tính sẵn có --}}
+
                                 <div class="row mb-3 align-items-end">
                                     <div class="col-md-5 mb-3 mb-md-0 position-relative">
                                         <label class="form-label text-light">Tên thuộc tính</label>

@@ -30,4 +30,13 @@ class Showtime extends Model
     {
         return $this->belongsTo(Movie::class);
     }
+
+    public function booking()
+    {
+        return $this->belongsTo(Booking::class);
+    }
+
+    public function isLockedForDeletion(){
+        return ($this->start_time->lt(now()->addHour()) || $this->booking()->exists()) && $this->status !== "completed";
+    }
 }
