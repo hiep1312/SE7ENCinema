@@ -10,7 +10,7 @@ class FoodVariant extends Model
     use SoftDeletes;
     protected $fillable = [
         'food_item_id',
-        'name',
+        'sku',
         'price',
         'image',
         'quantity_available',
@@ -25,6 +25,10 @@ class FoodVariant extends Model
     public function foodItem()
     {
         return $this->belongsTo(FoodItem::class);
+    }
+
+    public function attributeValues(){
+        return $this->belongsToMany(FoodAttributeValue::class, 'food_variant_attribute_values');
     }
 
     public function foodOrderItems(){

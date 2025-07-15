@@ -20,7 +20,7 @@ class FoodOrderItemSeeder extends Seeder
         $variants = FoodVariant::all();
 
         foreach (Arr::shuffle($bookings) as $booking) {
-            $ordered = $variants->random(rand(1, 3));
+            $ordered = $variants->random(rand(1, 4));
 
             foreach ($ordered as $variant) {
                 $qty = fake()->numberBetween(1, 3);

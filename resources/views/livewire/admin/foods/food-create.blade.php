@@ -27,7 +27,7 @@
                                 @if ($image)
                                     <div class="col-md-3 col-5 mb-3">
                                         <div class="mt-1 overflow-auto" style="max-height: 230px;">
-                                            <img src="{{ $image->temporaryUrl() }}" alt="Ảnh biến thể tải lên" class="img-thumbnail"
+                                            <img src="{{ $image->temporaryUrl() }}" alt="Ảnh món ăn tải lên" class="img-thumbnail"
                                                 style="width: 100%;">
                                         </div>
                                     </div>
@@ -62,7 +62,7 @@
                                     <div class="mb-3">
                                         <label for="description" class="form-label text-light">Mô tả</label>
                                         <textarea id="description" wire:model="description" class="form-control bg-dark text-light border-light @error('description') is-invalid @enderror" placeholder="VD: Bắp rang bơ vị ngọt, size lớn, thích hợp cho 2 người"></textarea>
-                                        @error('status')
+                                        @error('description')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -137,7 +137,7 @@
                                                         @endif
                                                         <div class="{{ $columnLayoutVariant }}">
                                                             <div class="mb-3">
-                                                                <label for="variants.{{ $index }}.name" class="form-label text-light">Tên biến thể: *</label>
+                                                                <label for="variants.{{ $index }}.name" class="form-label text-light">Tên biến thể *</label>
                                                                 <input type="text"
                                                                     id = "variants.{{ $index }}.name"
                                                                     wire:model="variants.{{ $index }}.name"
@@ -150,12 +150,12 @@
                                                         </div>
                                                         <div class="{{ $columnLayoutVariant }}">
                                                             <div class="mb-3">
-                                                                <label for="variants.{{ $index }}.price" class="form-label text-light">Giá: *</label>
+                                                                <label for="variants.{{ $index }}.price" class="form-label text-light">Giá *</label>
                                                                 <input type="text"
                                                                     id = "variants.{{ $index }}.price"
                                                                     wire:model="variants.{{ $index }}.price"
                                                                     class="form-control bg-dark text-light border-light @error("variants.$index.price") is-invalid @enderror"
-                                                                    placeholder="VD: 100000">
+                                                                    placeholder="VD: 100000đ" min="0">
                                                                 @error("variants.$index.price")
                                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                                 @enderror
@@ -163,7 +163,7 @@
                                                         </div>
                                                         <div class="{{ $columnLayoutVariant }}">
                                                             <div class="mb-3">
-                                                                <label for="variants.{{ $index }}.quantity" class="form-label text-light">Số lượng: *</label>
+                                                                <label for="variants.{{ $index }}.quantity" class="form-label text-light">Số lượng *</label>
                                                                 <input type="number"
                                                                     id = "variants.{{ $index }}.quantity"
                                                                     wire:model="variants.{{ $index }}.quantity"
@@ -177,7 +177,7 @@
                                                         </div>
                                                         <div class="{{ $columnLayoutVariant }}">
                                                             <div class="mb-3">
-                                                                <label for="variants.{{ $index }}.limit" class="form-label text-light">Giới hạn số lượng nhập: </label>
+                                                                <label for="variants.{{ $index }}.limit" class="form-label text-light">Giới hạn số lượng nhập </label>
                                                                 <input type="number"
                                                                     id = "variants.{{ $index }}.limit"
                                                                     wire:model="variants.{{ $index }}.limit"
@@ -191,25 +191,25 @@
                                                         <div class="{{ $columnLayoutVariant }}">
                                                             <div class="mb-3">
                                                                 <label for="variants.{{ $index }}.status" class="form-label text-light">Trạng thái *</label>
-                                                                <select id="variants.{{ $index }}.status" wire:model="variants.{{ $index }}.status" class="form-select bg-dark text-light border-light @error('variants.{{ $index }}.status') is-invalid @enderror">
+                                                                <select id="variants.{{ $index }}.status" wire:model="variants.{{ $index }}.status" class="form-select bg-dark text-light border-light @error("variants.$index.status") is-invalid @enderror">
                                                                     <option value="available">Còn hàng</option>
                                                                     <option value="out_of_stock">Hết hàng</option>
                                                                     <option value="hidden">Ẩn</option>
                                                                 </select>
-                                                                @error('variants.{{ $index }}.status')
+                                                                @error("variants.$index.status")
                                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                                 @enderror
                                                             </div>
                                                         </div>
                                                         <div class="{{ $columnLayoutVariant }}">
                                                             <div class="mb-3">
-                                                                <label for="variants.{{ $index }}.image" class="form-label text-light">Ảnh biến thể: </label>
+                                                                <label for="variants.{{ $index }}.image" class="form-label text-light">Ảnh biến thể </label>
                                                                 <input type="file"
                                                                     id = "variants.{{ $index }}.image"
                                                                     wire:model.live="variants.{{ $index }}.image"
-                                                                    class="form-control bg-dark text-light border-light @error('variants.{{ $index }}.image') is-invalid @enderror"
+                                                                    class="form-control bg-dark text-light border-light @error("variants.$index.image") is-invalid @enderror"
                                                                     accept="image/*">
-                                                                @error('variants.{{ $index }}.image')
+                                                                @error("variants.$index.image")
                                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                                 @enderror
                                                             </div>
