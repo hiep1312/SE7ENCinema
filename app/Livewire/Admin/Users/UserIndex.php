@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Users;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Title;
 use Livewire\WithPagination;
 
@@ -18,19 +19,26 @@ class UserIndex extends Component
     public $statusFilter = '';
 
     public function realtimeCheckOperation(){
-        User::query()
+        $users = User::with('ratings')
             ->where(function ($query) {
                 $query->where('status', 'inactive')
                     ->orWhere('status', 'banned');
             })
             ->where('updated_at', '<=', now()->subDays(90))
-            ->delete();
+            ->get();
+
+        $users->each(function(User $user) {
+            $user->ratings()->delete();
+            $user->delete();
+        });
     }
 
     public function forceDeleteUser(array $status, int $userId)
     {
         if(!$status['isConfirmed']) return;
         $user = User::onlyTrashed()->find($userId);
+        // Kiểm tra avatar, nếu có thì xóa
+        !Storage::disk('public')->exists($user->avatar) ?: Storage::disk('public')->delete($user->avatar);
 
         // Xóa cứng người dùng
         $user->forceDelete();
@@ -40,6 +48,7 @@ class UserIndex extends Component
     public function resetFilters()
     {
         $this->reset(['search', 'roleFilter', 'statusFilter']);
+        $this->resetPage();
     }
 
     #[Title('Danh sách người dùng - SE7ENCinema')]

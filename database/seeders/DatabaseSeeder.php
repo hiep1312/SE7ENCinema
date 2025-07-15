@@ -25,6 +25,8 @@ class DatabaseSeeder extends Seeder
             BookingSeatSeeder::class,
             TicketSeeder::class,
             FoodItemSeeder::class,
+            FoodAttributeSeeder::class,
+            FoodAttributeValueSeeder::class,
             FoodVariantSeeder::class,
             FoodOrderItemSeeder::class,
             InventoryTransactionSeeder::class,

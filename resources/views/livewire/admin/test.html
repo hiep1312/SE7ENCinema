@@ -1,0 +1,190 @@
+
+<div id="errorPanel" class="error-panel">
+    <button type="button" class="close-error">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="error-title">
+        <i class="fa-solid fa-triangle-exclamation error-icon"></i>
+        Có lỗi xảy ra
+    </div>
+    <div id="errorContent" class="error-content">
+        Đã xảy ra lỗi trong quá trình xử lý. Vui lòng kiểm tra lại thông tin và thử lại.
+    </div>
+</div>
+
+<!-- Warning Panel -->
+<div id="warningPanel" class="error-panel warning">
+    <button type="button" class="close-error">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="error-title">
+        <i class="fa-solid fa-triangle-exclamation error-icon"></i>
+        Cảnh báo
+    </div>
+    <div class="error-content">
+        Thao tác này có thể ảnh hưởng đến dữ liệu. Bạn có chắc chắn muốn tiếp tục?
+    </div>
+</div>
+
+<!-- Info Panel -->
+<div id="infoPanel" class="error-panel info">
+    <button type="button" class="close-error">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="error-title">
+        <i class="fa-solid fa-circle-info error-icon"></i>
+        Thông tin
+    </div>
+    <div class="error-content">
+        Thao tác đã được thực hiện thành công. Dữ liệu đã được cập nhật.
+    </div>
+</div>
+
+<style>
+    .video-container {
+            background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .video-container:hover {
+            transform: translateY(-5px);
+            box-shadow:
+                0 30px 60px rgba(0, 0, 0, 0.7),
+                0 0 0 1px rgba(255, 255, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .video-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg,
+                rgba(255, 0, 150, 0.1) 0%,
+                rgba(0, 204, 255, 0.1) 50%,
+                rgba(255, 0, 150, 0.1) 100%);
+            border-radius: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .video-container:hover::before {
+            opacity: 1;
+        }
+
+        .video-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .video-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #ff0000, #cc0000);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            box-shadow: 0 8px 16px rgba(255, 0, 0, 0.3);
+        }
+
+        .video-icon i {
+            color: white;
+            font-size: 24px;
+        }
+
+        .video-title {
+            color: #ffffff;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .video-wrapper {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow:
+                0 15px 30px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .video-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.05) 50%,
+                transparent 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .responsive-iframe {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        }
+
+        .responsive-iframe iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .video-container {
+                margin: 15px;
+                padding: 20px;
+            }
+
+            .video-title {
+                font-size: 1.2rem;
+            }
+        }
+
+        .glow-effect {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow:
+                    0 20px 40px rgba(0, 0, 0, 0.5),
+                    0 0 0 1px rgba(255, 255, 255, 0.1),
+                    0 0 20px rgba(255, 0, 150, 0.2);
+            }
+            to {
+                box-shadow:
+                    0 20px 40px rgba(0, 0, 0, 0.5),
+                    0 0 0 1px rgba(255, 255, 255, 0.1),
+                    0 0 30px rgba(0, 204, 255, 0.3);
+            }
+        }
+</style>
+
