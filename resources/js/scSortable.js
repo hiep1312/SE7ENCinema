@@ -30,7 +30,7 @@ const $sc_configSortable = {
         animation: 150,
         easing: null,
         preventOnFilter: true,
-        dataIdAttr: 'data-id',
+        dataIdAttr: 'sc-id',
         ghostClass: 'sortable-ghost',
         chosenClass: 'sortable-chosen',
         dragClass: 'sortable-drag',
@@ -188,8 +188,13 @@ document.addEventListener('livewire:init', () => {
             result !== null || ($sc_configSortable._validators.checkFunction(callback, $wire) && $wire[callback]($sc_configSortable._packageObjectEvent(evt)));
             clearTimeout(timeout);
             timeout = setTimeout(() => {
-                model && typeof $wire[model] !== 'function' && ($wire.$set(model, sortable.toArray(), live));
+                model &&
+                typeof $wire[model] !== 'function' &&
+                ((el.getAttribute('sc-group') && Array.isArray($sc_configSortable._manage[el.getAttribute('sc-group')])) ? $wire.$set(model, $sc_configSortable._manage[el.getAttribute('sc-group')].flatMap((sortable) => {
+                    return sortable.toArray();
+                }), live) : $wire.$set(model, sortable.toArray(), live));
             }, debounce ?? 0);
+            console.log($sc_configSortable._manage[el.getAttribute('sc-group')]);
         };
         const onMove = function(evt){
             let callback = $sc_configSortable._validators.onMove_directive(directive);
@@ -211,8 +216,10 @@ document.addEventListener('livewire:init', () => {
         optionsCustom['sort'] = sort;
 
         const options = Object.assign({}, $sc_configSortable._config, optionsCustom);
-
         const sortable = Sortable.create(el, options);
-        el.id && ($sc_configSortable._manage[el.id] = sortable);
+
+        el.getAttribute('sc-group') &&
+        ($sc_configSortable._manage[el.getAttribute('sc-group')] || ($sc_configSortable._manage[el.getAttribute('sc-group')] = sortable) && void 0) &&
+        ($sc_configSortable._manage[el.getAttribute('sc-group')] = Array.isArray($sc_configSortable._manage[el.getAttribute('sc-group')]) ? [...$sc_configSortable._manage[el.getAttribute('sc-group')], sortable] : [$sc_configSortable._manage[el.getAttribute('sc-group')], sortable]);
     });
 });

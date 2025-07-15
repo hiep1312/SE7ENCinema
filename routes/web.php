@@ -24,14 +24,11 @@ use App\Livewire\Admin\Users\UserCreate;
 use App\Livewire\Admin\Users\UserDetail;
 use App\Livewire\Admin\Users\UserEdit;
 use App\Livewire\Admin\Users\UserIndex;
-<<<<<<< HEAD
 use App\Livewire\Test;
-=======
 use App\Livewire\Admin\Ratings\RatingIndex;
 use App\Livewire\Admin\Showtimes\ShowtimeCreate;
 use App\Livewire\Admin\Showtimes\ShowtimeEdit;
 use App\Livewire\Admin\Showtimes\ShowtimeIndex;
->>>>>>> main
 
 Route::prefix('admin')->name('admin.')->group(function () {
     /* Banners */

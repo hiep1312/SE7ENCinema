@@ -358,3 +358,33 @@
     background: linear-gradient(135deg, #a0512db8, #cd813f);
     transform: scale(1.05);
 }
+.add-column-btn {
+    background-color: #505050; /* Màu nền xanh */
+    color: white; /* Màu chữ trắng */
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px; /* Cỡ padding */
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s, transform 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.add-column-btn .add-btn-icon {
+    font-size: 20px; /* Kích thước biểu tượng + */
+    margin-right: 8px; /* Khoảng cách giữa biểu tượng và chữ */
+}
+
+.add-column-btn:hover {
+    background-color: #505050; /* Màu nền khi hover */
+    transform: scale(1.05); /* Hiệu ứng phóng to khi hover */
+}
+
+.add-column-btn:focus {
+    outline: none; /* Bỏ viền khi nhấn */
+    box-shadow: 0 0 5px 2px rgba(0, 123, 255, 0.5); /* Hiệu ứng viền khi có focus */
+}
