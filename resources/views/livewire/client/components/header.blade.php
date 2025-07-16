@@ -4,32 +4,6 @@
     </div>
 </div>
 <!-- color picker start -->
-<div id="style-switcher">
-    <div>
-        <h3>Choose Color</h3>
-        <ul class="colors">
-            <li>
-                <p class='colorchange' id='color'></p>
-            </li>
-            <li>
-                <p class='colorchange' id='color2'></p>
-            </li>
-            <li>
-                <p class='colorchange' id='color3'></p>
-            </li>
-            <li>
-                <p class='colorchange' id='color4'></p>
-            </li>
-            <li>
-                <p class='colorchange' id='color5'></p>
-            </li>
-            <li>
-                <p class='colorchange' id='style'></p>
-            </li>
-        </ul>
-    </div>
-    <div class="bottom"> <a href="" class="settings"><i class="fa fa-gear"></i></a> </div>
-</div>
 <!-- color picker end -->
 <!-- prs navigation Start -->
 <div class="prs_navigation_main_wrapper">
@@ -322,15 +296,16 @@
                 <div class="prs_animate_btn1">
                     <ul>
                         @auth
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="button button--tamaya" data-text="Đăng xuất">Đăng xuất</button>
-                            </form>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="button button--tamaya" data-text="Đăng xuất">Đăng xuất</button>
+                        </form>
                         @else
-                            <li>
-                                <a href="{{ route('login') }}" class="button button--tamaya" data-text="Đăng nhập"><span>Đăng
-                                        nhập</span></a>
-                            </li>
+                        <li>
+                            <a href="{{ route('login') }}" class="button button--tamaya"
+                                data-text="Đăng nhập"><span>Đăng
+                                    nhập</span></a>
+                        </li>
                         @endauth
                     </ul>
                 </div>
@@ -360,8 +335,10 @@
                     <a href="#" class="manu-close"><i class="fa fa-times"></i></a>
                 </div>
                 <ul class="mobile-list-nav">
-                    <li><a href="{{ route('client.about')}}">OVERVIEW</a>
+                    @auth
+                    <li><a href="{{ route('userInfo',Auth::id())}}">THÔNG TIN TÀI KHOẢN</a>
                     </li>
+                    @endauth
                     <li><a href="{{ route('client.movie_single')}}">MOVIE</a>
                     </li>
                     <li><a href="{{ route('client.event_single')}}">EVENT</a>
@@ -417,20 +394,20 @@
                     <div class="prs_animate_btn1">
                         <ul>
                             @auth
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="button button--tamaya" data-text="Đăng xuất">Đăng
-                                        xuất</button>
-                                </form>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="button button--tamaya" data-text="Đăng xuất">Đăng
+                                    xuất</button>
+                            </form>
                             @else
-                                <li>
-                                    <a href="/login" class="button button--tamaya" data-text="Đăng nhập"><span>Đăng
-                                            nhập</span></a>
-                                </li>
-                                <li>
-                                    <a href="/register" class="button button--tamaya" data-text="Đăng ký"><span>Đăng
-                                            ký</span></a>
-                                </li>
+                            <li>
+                                <a href="/login" class="button button--tamaya" data-text="Đăng nhập"><span>Đăng
+                                        nhập</span></a>
+                            </li>
+                            <li>
+                                <a href="/register" class="button button--tamaya" data-text="Đăng ký"><span>Đăng
+                                        ký</span></a>
+                            </li>
                             @endauth
                         </ul>
                     </div>
