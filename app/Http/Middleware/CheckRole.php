@@ -17,8 +17,10 @@ class CheckRole
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
         if (!Auth::check()) return redirect()->route('login');
-
         $user = Auth::user();
+        $routerID = $request->route('user');
+        if ($routerID !== null && (int)$routerID === (int)$user->id) return $next($request);
+            abort(403, 'Bạn không có quyền truy cập.');
 
         if (in_array($user->role, $roles)) return $next($request);
         abort(403, 'Bạn không có quyền truy cập.');

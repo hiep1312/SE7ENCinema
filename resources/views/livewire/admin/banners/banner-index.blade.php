@@ -1,16 +1,15 @@
 <div>
     @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert" wire:ignore>
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+    <div class="alert alert-success alert-dismissible fade show" role="alert" wire:ignore>
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
     @endif
-
     @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert" wire:ignore>
-            {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" wire:ignore>
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
     @endif
 
     <div class="container-lg mb-4">
@@ -36,7 +35,6 @@
                             </span>
                         </div>
                     </div>
-
                     <div class="col-md-3 col-lg-2">
                         <select wire:model.live="statusFilter" class="form-select bg-dark text-light">
                             <option value="">Tất cả trạng thái</option>
@@ -83,123 +81,124 @@
                         </thead>
                         <tbody>
                             @forelse($banners as $banner)
-                                <tr wire:key="{{ $banner->id }}">
-                                    <td class="text-center fw-bold text-light">{{ $loop->iteration }}</td>
-                                    <td class="text-center">
-                                        <div class="mt-1 overflow-auto d-block text-center"
-                                            style="max-height: 70px; width: 100px;" data-bs-toggle="modal" data-bs-target="#bannerPreview" data-banner-id="{{ $banner->id }}">
-                                            <img src="{{ asset('storage/' . ($banner->image ?? '404.webp')) }}"
-                                                class="img-thumbnail" loading = "lazy"
-                                                alt="Ảnh banner{{ $banner->title }}"
-                                                style="width: 100px; height: 70px; object-fit: cover; border-radius: 0; cursor: pointer;">
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <strong class="text-light">{{ $banner->title }}</strong>
-                                    </td>
-                                    <td class="text-center">
-                                        <div class="mb-1">
-                                            <small style="color: #34c759;">
-                                                <i class="fas fa-play me-1"></i>
-                                                {{ $banner->start_date->format('d/m/Y H:i') }}
-                                            </small>
-                                        </div>
-                                        <div>
-                                            <small style="color: #ff4d4f;">
-                                                <i class="fas fa-stop me-1"></i>
-                                                {{ $banner->end_date?->format('d/m/Y H:i') ?? 'Vĩnh viễn' }}
-                                            </small>
-                                        </div>
-                                        @switch($displayStatuses[$loop->index]['displayStatus'])
-                                            @case('expired')
-                                                <div class="mt-1">
-                                                    <span class="badge" style="background-color: #ffd700; color: #212529;">
-                                                        <i class="fas fa-clock me-1"></i>Đã hết hạn
-                                                    </span>
-                                                </div>
-                                                @break
-                                            @case('upcoming')
-                                                <div class="mt-1">
-                                                    <span class="badge" style="background-color: #40c4ff; color: #ffffff;">
-                                                        <i class="fas fa-clock me-1"></i>Chưa bắt đầu
-                                                    </span>
-                                                </div>
-                                                @break
-                                            @case('active')
-                                                <div class="mt-1">
-                                                    <span class="badge" style="background-color: #28a745; color: #ffffff;">
-                                                        <i class="fas fa-play me-1"></i>Đang hiển thị
-                                                    </span>
-                                                </div>
-                                                @break
-                                        @endswitch
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="badge bg-secondary fs-6">
-                                            {{ $banner->priority }}
+                            <tr wire:key="{{ $banner->id }}">
+                                
+                                <td class="text-center fw-bold text-light">{{ $loop->iteration }}</td>
+                                <td class="text-center">
+                                    <div class="mt-1 overflow-auto d-block text-center"
+                                        style="max-height: 70px; width: 100px;" data-bs-toggle="modal" data-bs-target="#bannerPreview" data-banner-id="{{ $banner->id }}">
+                                        <img src="{{ asset('storage/' . ($banner->image ?? '404.webp')) }}"
+                                            class="img-thumbnail" loading="lazy"
+                                            alt="Ảnh banner{{ $banner->title }}"
+                                            style="width: 100px; height: 70px; object-fit: cover; border-radius: 0; cursor: pointer;">
+                                    </div>
+                                </td>
+                                <td>
+                                    <strong class="text-light">{{ $banner->title }}</strong>
+                                </td>
+                                <td class="text-center">
+                                    <div class="mb-1">
+                                        <small style="color: #34c759;">
+                                            <i class="fas fa-play me-1"></i>
+                                            {{ $banner->start_date->format('d/m/Y H:i') }}
+                                        </small>
+                                    </div>
+                                    <div>
+                                        <small style="color: #ff4d4f;">
+                                            <i class="fas fa-stop me-1"></i>
+                                            {{ $banner->end_date?->format('d/m/Y H:i') ?? 'Vĩnh viễn' }}
+                                        </small>
+                                    </div>
+                                    @switch($displayStatuses[$loop->index]['displayStatus'])
+                                    @case('expired')
+                                    <div class="mt-1">
+                                        <span class="badge" style="background-color: #ffd700; color: #212529;">
+                                            <i class="fas fa-clock me-1"></i>Đã hết hạn
                                         </span>
-                                    </td>
-                                    <td class="text-center">
-                                        @if($banner->status === 'active')
-                                            <span class="badge bg-success">Hoạt động</span>
-                                        @else
-                                            <span class="badge bg-danger">Ngừng hoạt động</span>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        @if($banner->link)
-                                            <a href="{{ $banner->link }}"
-                                               target="_blank"
-                                               class="btn btn-sm btn-outline-primary"
-                                               title="Mở đường dẫn liên kết">
-                                                <i class="fas fa-external-link-alt"></i>
-                                            </a>
-                                        @else
-                                            <span class="text-muted">Không có liên kết</span>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="text-light">
-                                            {{ $banner->created_at->format('d/m/Y H:i') }}
+                                    </div>
+                                    @break
+                                    @case('upcoming')
+                                    <div class="mt-1">
+                                        <span class="badge" style="background-color: #40c4ff; color: #ffffff;">
+                                            <i class="fas fa-clock me-1"></i>Chưa bắt đầu
                                         </span>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex gap-2 justify-content-center">
-                                            <!-- Toggle Status -->
-                                            @php $checkActive = ($banner->status === 'active' && $displayStatuses[$loop->index]['displayStatus'] !== 'expired') @endphp
-                                            <button type="button"
-                                                    wire:click="toggleStatus({{ $banner->id }})"
-                                                    class="btn btn-sm {{ $checkActive ? 'btn-info' : 'btn-success' }}"
-                                                    title="{{ $checkActive ? 'Tắt' : 'Bật' }}"
-                                                    @if($displayStatuses[$loop->index]['displayStatus'] === 'expired' || $banner->status === 'inactive') disabled @endif>
-                                                <i class="fas {{ $checkActive ? 'fa-pause' : 'fa-play' }}" style="margin-right: 0"></i>
-                                            </button>
+                                    </div>
+                                    @break
+                                    @case('active')
+                                    <div class="mt-1">
+                                        <span class="badge" style="background-color: #28a745; color: #ffffff;">
+                                            <i class="fas fa-play me-1"></i>Đang hiển thị
+                                        </span>
+                                    </div>
+                                    @break
+                                    @endswitch
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-secondary fs-6">
+                                        {{ $banner->priority }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    @if($banner->status === 'active')
+                                    <span class="badge bg-success">Hoạt động</span>
+                                    @else
+                                    <span class="badge bg-danger">Ngừng hoạt động</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    @if($banner->link)
+                                    <a href="{{ $banner->link }}"
+                                        target="_blank"
+                                        class="btn btn-sm btn-outline-primary"
+                                        title="Mở đường dẫn liên kết">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                    @else
+                                    <span class="text-muted">Không có liên kết</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    <span class="text-light">
+                                        {{ $banner->created_at->format('d/m/Y H:i') }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        <!-- Toggle Status -->
+                                        @php $checkActive = ($banner->status === 'active' && $displayStatuses[$loop->index]['displayStatus'] !== 'expired') @endphp
+                                        <button type="button"
+                                            wire:click="toggleStatus({{ $banner->id }})"
+                                            class="btn btn-sm {{ $checkActive ? 'btn-info' : 'btn-success' }}"
+                                            title="{{ $checkActive ? 'Tắt' : 'Bật' }}"
+                                            @if($displayStatuses[$loop->index]['displayStatus'] === 'expired' || $banner->status === 'inactive') disabled @endif>
+                                            <i class="fas {{ $checkActive ? 'fa-pause' : 'fa-play' }}" style="margin-right: 0"></i>
+                                        </button>
 
-                                            <a href="{{ route('admin.banners.edit', $banner->id) }}"
-                                                class="btn btn-sm btn-warning" title="Chỉnh sửa">
-                                                <i class="fas fa-edit" style="margin-right: 0"></i>
-                                            </a>
+                                        <a href="{{ route('admin.banners.edit', $banner->id) }}"
+                                            class="btn btn-sm btn-warning" title="Chỉnh sửa">
+                                            <i class="fas fa-edit" style="margin-right: 0"></i>
+                                        </a>
 
-                                            <button type="button" class="btn btn-sm btn-danger"
-                                                wire:sc-model="deleteBanner({{ $banner->id }})"
-                                                wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa banner '{{ $banner->title }}'? Hành động này không thể hoàn tác!"
-                                                title="Xóa">
-                                                <i class="fas fa-trash" style="margin-right: 0"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                        <button type="button" class="btn btn-sm btn-danger"
+                                            wire:sc-model="deleteBanner({{ $banner->id }})"
+                                            wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa banner '{{ $banner->title }}'? Hành động này không thể hoàn tác!"
+                                            title="Xóa">
+                                            <i class="fas fa-trash" style="margin-right: 0"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
                             @empty
-                                <tr>
-                                    <td colspan="9" class="text-center py-4">
-                                        <div class="text-muted">
-                                            <i class="fas fa-inbox fa-3x mb-3"></i>
-                                            <p>
-                                                Không có banner nào
-                                            </p>
-                                        </div>
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td colspan="9" class="text-center py-4">
+                                    <div class="text-muted">
+                                        <i class="fas fa-inbox fa-3x mb-3"></i>
+                                        <p>
+                                            Không có banner nào
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -222,12 +221,12 @@
                         <div id="slideshowBanner" class="carousel slide">
                             <div class="carousel-inner">
                                 @foreach($banners as $banner)
-                                    <div class="carousel-item" data-banner-id="{{ $banner->id }}">
-                                        <img src="{{ asset('storage/' . ($banner->image ?? '404.webp')) }}" class="d-block w-100" alt="Ảnh banner {{ $banner->title }}" style="object-fit: cover; aspect-ratio: 16 / 8;">
-                                        <div class="carousel-caption d-none d-md-block text-light">
-                                            <h5>{{ $banner->title }}</h5>
-                                        </div>
+                                <div class="carousel-item" data-banner-id="{{ $banner->id }}">
+                                    <img src="{{ asset('storage/' . ($banner->image ?? '404.webp')) }}" class="d-block w-100" alt="Ảnh banner {{ $banner->title }}" style="object-fit: cover; aspect-ratio: 16 / 8;">
+                                    <div class="carousel-caption d-none d-md-block text-light">
+                                        <h5>{{ $banner->title }}</h5>
                                     </div>
+                                </div>
                                 @endforeach
                             </div>
                             <button class="carousel-control-prev" type="button" data-bs-target="#slideshowBanner" data-bs-slide="prev">
@@ -248,7 +247,7 @@
 @script
 <script>
     const bannerPreview = document.querySelector('#bannerPreview');
-    bannerPreview.addEventListener('show.bs.modal', function (event) {
+    bannerPreview.addEventListener('show.bs.modal', function(event) {
         const idActive = event.relatedTarget.getAttribute('data-banner-id');
         const framePreview = event.target;
 
@@ -256,7 +255,7 @@
         itemActive.classList.add('active');
     });
 
-    bannerPreview.addEventListener('hidden.bs.modal', function (event) {
+    bannerPreview.addEventListener('hidden.bs.modal', function(event) {
         const framePreview = event.target;
 
         const itemActive = framePreview.querySelector('.active');
