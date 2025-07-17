@@ -28,7 +28,7 @@ use App\Livewire\Admin\Ratings\RatingIndex;
 use App\Livewire\Admin\Showtimes\ShowtimeCreate;
 use App\Livewire\Admin\Showtimes\ShowtimeEdit;
 use App\Livewire\Admin\Showtimes\ShowtimeIndex;
-
+use App\Livewire\Client\Promotions\PromotionIndex;
 Route::prefix('admin')->name('admin.')->group(function () {
     /* Banners */
     Route::prefix('/banners')->name('banners.')->group(function () {
@@ -120,7 +120,14 @@ Route::name('client.')->group(function () {
     Route::view('/booking_type', 'livewire.client.template.bookings.booking_type')->name('booking_type');
     Route::view('/seat_booking', 'livewire.client.template.bookings.seat_booking')->name('seat_booking');
     Route::view('/contact', 'livewire.client.template.contact')->name('contact');
-    Route::view('/confirmation_screen', 'livewire.client.template.confirmation_screen')->name('confirmation_screen');
+    Route::view('/confirmation_screen', 'livewire.client.template.confirmation_screen')->name
+    ('confirmation_screen');
+
+    /* Promotions */
+    Route::prefix('/promotions')->name('promotions.')->group(function () {
+        Route::get('/', PromotionIndex::class)->name('index');
+    });
+
 });
 
 Route::view('/', 'welcome')->name('welcome');

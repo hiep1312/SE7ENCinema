@@ -1,0 +1,3 @@
+// Những việc cần làm cho chức năng:
+1: Thêm thẻ a vào text CSKH ở mẹo
+2: Chỉnh lại paginate sao cho đẹp, Chỉnh lại màu cho voucher sao cho phù hợp với layout
