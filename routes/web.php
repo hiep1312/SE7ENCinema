@@ -25,7 +25,11 @@ use App\Livewire\Admin\Users\UserDetail;
 use App\Livewire\Admin\Users\UserEdit;
 use App\Livewire\Admin\Users\UserIndex;
 use App\Livewire\Admin\Ratings\RatingIndex;
+
 use App\Livewire\Client\MovieList;
+use App\Livewire\Admin\Showtimes\ShowtimeCreate;
+use App\Livewire\Admin\Showtimes\ShowtimeEdit;
+use App\Livewire\Admin\Showtimes\ShowtimeIndex;
 
 Route::prefix('admin')->name('admin.')->group(function () {
     /* Banners */
@@ -78,6 +82,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/create', MovieCreate::class)->name('create');
         Route::get('/edit/{movie}', MovieEdit::class)->name('edit');
         Route::get('/detail/{movie}', MovieDetail::class)->name('detail');
+    });
+
+    /* Showtimes */
+    Route::prefix('/showtimes')->name('showtimes.')->group(function () {
+        Route::get('/', ShowtimeIndex::class)->name('index');
+        Route::get('/create', ShowtimeCreate::class)->name('create');
+        Route::get('/edit/{showtime}', ShowtimeEdit::class)->name('edit');
     });
 
     /* Template */

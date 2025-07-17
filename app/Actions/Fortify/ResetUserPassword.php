@@ -18,9 +18,15 @@ class ResetUserPassword implements ResetsUserPasswords
      */
     public function reset(User $user, array $input): void
     {
-        Validator::make($input, [
+        Validator::validate($input, [
             'password' => $this->passwordRules(),
-        ])->validate();
+        ], [
+            'password.required' => 'Vui lòng nhập mật khẩu mới.',
+            'password.string' => 'Mật khẩu mới phải là chuỗi ký tự hợp lệ.',
+            'password.min' => 'Mật khẩu mới phải có ít nhất 8 ký tự.',
+            'password.max' => 'Mật khẩu mới không được vượt quá 255 ký tự.',
+            'password.confirmed' => 'Xác nhận mật khẩu mới không khớp.',
+        ]);
 
         $user->forceFill([
             'password' => Hash::make($input['password']),
