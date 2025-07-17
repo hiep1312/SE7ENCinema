@@ -21,13 +21,22 @@ class Showtime extends Model
         'price' => 'integer',
     ];
 
+    public function room()
+    {
+        return $this->belongsTo(Room::class);
+    }
+
     public function movie()
     {
         return $this->belongsTo(Movie::class);
     }
 
-    public function room()
+    public function booking()
     {
-        return $this->belongsTo(Room::class);
+        return $this->belongsTo(Booking::class);
+    }
+
+    public function isLockedForDeletion(){
+        return ($this->start_time->lt(now()->addHour()) || $this->booking()->exists()) && $this->status !== "completed";
     }
 }

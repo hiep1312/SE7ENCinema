@@ -25,8 +25,18 @@ class DatabaseSeeder extends Seeder
             BookingSeatSeeder::class,
             TicketSeeder::class,
             FoodItemSeeder::class,
+            FoodAttributeSeeder::class,
+            FoodAttributeValueSeeder::class,
             FoodVariantSeeder::class,
             FoodOrderItemSeeder::class,
+            InventoryTransactionSeeder::class,
+            PromotionSeeder::class,
+            PromotionUsageSeeder::class,
+            RatingSeeder::class,
+            CommentSeeder::class,
+            NotificationSeeder::class,
+            UserNotificationSeeder::class,
+            BannerSeeder::class,
         ]);
     }
 }

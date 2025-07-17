@@ -16,7 +16,7 @@ class MovieSeeder extends Seeder
     {
         foreach (range(1, 15) as $i) {
             $movie = Movie::create([
-                'title' => fake()->title(),
+                'title' => fake()->words(3, true),
                 'description' => fake()->paragraph(),
                 'duration' => fake()->numberBetween(90, 180),
                 'release_date' => fake()->dateTimeBetween('-1 year', 'now'),
