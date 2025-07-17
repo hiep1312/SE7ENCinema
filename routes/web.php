@@ -29,6 +29,7 @@ use App\Livewire\Admin\Showtimes\ShowtimeCreate;
 use App\Livewire\Admin\Showtimes\ShowtimeEdit;
 use App\Livewire\Admin\Showtimes\ShowtimeIndex;
 
+use App\Livewire\Client\ClientMovieDetail;
 Route::prefix('admin')->name('admin.')->group(function () {
     /* Banners */
     Route::prefix('/banners')->name('banners.')->group(function () {
@@ -121,6 +122,7 @@ Route::name('client.')->group(function () {
     Route::view('/seat_booking', 'livewire.client.template.bookings.seat_booking')->name('seat_booking');
     Route::view('/contact', 'livewire.client.template.contact')->name('contact');
     Route::view('/confirmation_screen', 'livewire.client.template.confirmation_screen')->name('confirmation_screen');
+    Route::get('/movies/{movie}', ClientMovieDetail::class)->name('movie_detail');
 });
 
 Route::view('/', 'welcome')->name('welcome');
