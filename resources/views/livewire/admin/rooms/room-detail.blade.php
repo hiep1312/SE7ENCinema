@@ -201,6 +201,7 @@
                     <div class="col-md-6">
                         <div class="card bg-dark border-light">
                             <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <h5><i class="fas fa-info me-2"></i>Thông tin cơ bản</h5>
                                 <h5><i class="fas fa-info me-2"></i>Thông tin chi tiết</h5>
                             </div>
                             <div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
@@ -439,57 +440,127 @@
                     <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                         <h5><i class="fas fa-chair me-2"></i>Sơ đồ ghế phòng {{ $room->name }}</h5>
                     </div>
-                    <div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
-                        @if($room->seats->count() > 0)
-                            <div class="seat-map text-center">
-                                <div class="screen mb-4">
-                                    <div class="bg-warning text-dark py-3 rounded">
-                                        <h5 class="mb-0">MÀN HÌNH</h5>
-                                    </div>
-                                </div>
-
-                                @php
-                                    $seatsByRow = $room->seats->groupBy('seat_row');
-                                @endphp
-
-                                <div class="seats-grid">
-                                    @foreach($seatsByRow as $rowLetter => $rowSeats)
-                                        <div class="seat-row mb-3 d-flex justify-content-center align-items-center">
-                                            <span class="row-label me-3 fw-bold fs-5 text-warning">{{ $rowLetter }}</span>
-                                            <div class="seats-container">
-                                                @foreach($rowSeats->sortBy('seat_number') as $seat)
-                                                    @php
-                                                        $seatClass = match($seat->seat_type) {
-                                                            'vip' => 'seat-vip',
-                                                            'couple' => 'seat-couple',
-                                                            default => 'seat-standard'
-                                                        };
-                                                    @endphp
-                                                    <div class="seat {{ $seatClass }}"
-                                                         title="{{ $seat->seat_row }}{{ $seat->seat_number }} - {{ ucfirst($seat->seat_type) }} - {{ number_format($seat->price) }}đ">
-                                                        {{ $seat->seat_number }}
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-
-                                <div class="legend mt-4">
-                                    <div class="d-flex justify-content-center gap-4">
-                                        <span class="text-light fw-bold"><div class="seat seat-standard d-inline-block me-2"></div>Thường ({{ number_format($room->seats->where('seat_type', 'standard')->first()->price ?? 0) }}đ)</span>
-                                        <span class="text-light fw-bold"><div class="seat seat-vip d-inline-block me-2"></div>VIP ({{ number_format($room->seats->where('seat_type', 'vip')->first()->price ?? 0) }}đ)</span>
-                                        <span class="text-light fw-bold"><div class="seat seat-couple d-inline-block me-2"></div>Couple ({{ number_format($room->seats->where('seat_type', 'couple')->first()->price ?? 0) }}đ)</span>
-                                    </div>
-                                </div>
-                            </div>
-                        @else
-                            <div class="text-center py-5">
-                                <i class="fas fa-chair fa-3x text-muted mb-3"></i>
-                                <p class="text-muted">Chưa có sơ đồ ghế nào được tạo</p>
-                            </div>
-                        @endif
+<div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
+    @if($room->seats->count() > 0)
+        <div class="st_seatlayout_main_wrapper w-100 mt-2 overflow-x-auto">
+            <div class="container">
+                <div class="st_seat_lay_heading float_left text-center">
+                    <h3 class="text-warning mb-4">{{ $room->name }}</h3>
+                </div>
+                <div class="st_seat_full_container" style="float: none">
+                    <div class="st_seat_lay_economy_wrapper float_left w-100">
+                        <div class="screen text-center mb-4">
+                            <img src="{{ asset('client/assets/images/content/screen.png') }}" alt="Màn hình" style="max-width: 100%;">
+                        </div>
                     </div>
+
+                    <div class="st_seat_lay_economy_wrapper st_seat_lay_economy_wrapperexicutive float_left" style="width: auto !important">
+                        @php
+                            $seatsByRow = $room->seats->groupBy('seat_row');
+                        @endphp
+
+                       @foreach($seatsByRow as $rowLetter => $rowSeats)
+    <ul id="row-{{ $rowLetter }}"
+        wire:sc-sortable.onmove="updateseatid"
+        class="seat-row-layout list-unstyled float_left d-flex flex-nowrap gap-2 justify-content-start align-items-center mb-2"
+        data-row="{{ $rowLetter }}"
+        wire:key="row-{{ $rowLetter }}">
+
+        @php
+            $seatGroup = [];
+            $count = 0;
+        @endphp
+
+        @foreach($rowSeats->sortBy('seat_number') as $seat)
+            @php
+                $seatGroup[] = $seat;
+                $count += ($seat->seat_type === 'couple') ? 1 : 1;
+            @endphp
+
+            @if($count >= 5)
+                @foreach($seatGroup as $gSeat)
+                    @php
+                        $seatClass = match($gSeat->seat_type) {
+                            'vip' => 'seat-vip',
+                            'couple' => 'seat-double',
+                            default => 'seat-standard'
+                        };
+                    @endphp
+                    <li data-seat="{{ $gSeat->seat_type }}" class="seat-item" sc-id="{{ $gSeat->seat_row . $gSeat->seat_number }}">
+                        <span class="seat-helper">Chỗ ngồi {{ $gSeat->seat_row . $gSeat->seat_number }}</span>
+                        <input type="checkbox"
+                               class="seat {{ $seatClass }}"
+                               id="{{ $gSeat->seat_row . $gSeat->seat_number }}"
+                               data-number="{{ $gSeat->seat_number }}">
+                        <label for="{{ $gSeat->seat_row . $gSeat->seat_number }}" class="visually-hidden">
+                            Chỗ ngồi {{ $gSeat->seat_row . $gSeat->seat_number }}
+                        </label>
+                    </li>
+                @endforeach
+
+                {{-- Chèn lối đi sau nhóm 5 chỗ vật lý --}}
+                <li data-seat="aisle" sc-id="aisle">
+                    <span class="seat-helper">Lối đi</span>
+                    <div class="aisle"></div>
+                </li>
+
+                @php
+                    $seatGroup = [];
+                    $count = 0;
+                @endphp
+            @endif
+        @endforeach
+
+        {{-- Render ghế còn lại nếu chưa đủ 5 chỗ cuối hàng --}}
+        @foreach($seatGroup as $gSeat)
+            @php
+                $seatClass = match($gSeat->seat_type) {
+                    'vip' => 'seat-vip',
+                    'couple' => 'seat-double',
+                    default => 'seat-standard'
+                };
+            @endphp
+            <li data-seat="{{ $gSeat->seat_type }}" class="seat-item" sc-id="{{ $gSeat->seat_row . $gSeat->seat_number }}">
+                <span class="seat-helper">Chỗ ngồi {{ $gSeat->seat_row . $gSeat->seat_number }}</span>
+                <input type="checkbox"
+                       class="seat {{ $seatClass }}"
+                       id="{{ $gSeat->seat_row . $gSeat->seat_number }}"
+                       data-number="{{ $gSeat->seat_number }}">
+                <label for="{{ $gSeat->seat_row . $gSeat->seat_number }}" class="visually-hidden">
+                    Chỗ ngồi {{ $gSeat->seat_row . $gSeat->seat_number }}
+                </label>
+            </li>
+        @endforeach
+    </ul>
+@endforeach
+
+                        <div class="row-aisle" style="height: 20px; width: 100%;"></div>
+                    </div>
+                </div>
+
+                <div class="legend mt-4 text-center">
+                    <div class="d-flex justify-content-center gap-4 flex-wrap">
+                        <span class="text-light fw-bold">
+                            <div class="seat seat-standard d-inline-block me-2"></div>Thường ({{ number_format($room->seats->where('seat_type', 'standard')->first()->price ?? 0) }}đ)
+                        </span>
+                        <span class="text-light fw-bold">
+                            <div class="seat seat-vip d-inline-block me-2"></div>VIP ({{ number_format($room->seats->where('seat_type', 'vip')->first()->price ?? 0) }}đ)
+                        </span>
+                        <span class="text-light fw-bold">
+                            <div class="seat seat-double d-inline-block me-2"></div>Couple ({{ number_format($room->seats->where('seat_type', 'couple')->first()->price ?? 0) }}đ)
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @else
+        <div class="text-center py-5">
+            <i class="fas fa-chair fa-3x text-muted mb-3"></i>
+            <p class="text-muted">Chưa có sơ đồ ghế nào được tạo</p>
+        </div>
+    @endif
+</div>
+
                 </div>
             <!-- Showtimes Tab -->
             @elseif($tabCurrent === 'showtimes')

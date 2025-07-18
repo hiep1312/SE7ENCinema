@@ -19,7 +19,7 @@ class RoomIndex extends Component
 
     public function deleteRoom(array $status, int $roomId)
     {
-        if(!$status['isConfirmed']) return;
+        if (!$status['isConfirmed']) return;
         $room = Room::find($roomId);
 
         // Kiểm tra xem có suất chiếu đang hoạt động không
@@ -43,7 +43,7 @@ class RoomIndex extends Component
 
     public function forceDeleteRoom(array $status, int $roomId)
     {
-        if(!$status['isConfirmed']) return;
+        if (!$status['isConfirmed']) return;
         $room = Room::onlyTrashed()->find($roomId);
 
         // Kiểm tra quyền xóa cứng
@@ -62,6 +62,9 @@ class RoomIndex extends Component
 
     public function resetFilters()
     {
+        $this->search = '';
+        $this->statusFilter = '';
+        $this->showtimeFilter = '';
         $this->reset(['search', 'statusFilter', 'showtimeFilter']);
         $this->resetPage();
     }
@@ -83,14 +86,14 @@ class RoomIndex extends Component
 
             if ($this->showtimeFilter) {
                 if ($this->showtimeFilter === 'has_showtimes') {
-                    $query->whereHas('showtimes', function($q) {
+                    $query->whereHas('showtimes', function ($q) {
                         $q->where('start_time', '>=', now())
-                          ->where('status', 'active');
+                            ->where('status', 'active');
                     });
                 } elseif ($this->showtimeFilter === 'no_showtimes') {
-                    $query->whereDoesntHave('showtimes', function($q) {
+                    $query->whereDoesntHave('showtimes', function ($q) {
                         $q->where('start_time', '>=', now())
-                          ->where('status', 'active');
+                            ->where('status', 'active');
                     });
                 }
             }
@@ -102,12 +105,12 @@ class RoomIndex extends Component
                 $query->where('name', 'like', '%' . $this->search . '%');
             })
             ->withCount('seats')
-            ->with(['showtimes' => function($query) {
+            ->with(['showtimes' => function ($query) {
                 $query->with('movie')
                     ->where('start_time', '>=', now())
                     ->where('status', 'active')
                     ->orderBy('start_time', 'asc')
-                    ->limit(1); // Chỉ lấy suất chiếu gần nhất
+                    ->limit(1);
             }])
             ->orderBy('id', 'desc')
             ->paginate(20);
