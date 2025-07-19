@@ -7,6 +7,10 @@ use App\Livewire\Admin\Foods\FoodIndex;
 use App\Livewire\Admin\Banners\BannerCreate;
 use App\Livewire\Admin\Banners\BannerEdit;
 use App\Livewire\Admin\Banners\BannerIndex;
+use App\Livewire\Admin\Promotions\PromotionCreate;
+use App\Livewire\Admin\Promotions\PromotionDetail;
+use App\Livewire\Admin\Promotions\PromotionEdit;
+use App\Livewire\Admin\Promotions\PromotionIndex;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\Rooms\RoomCreate;
 use App\Livewire\Admin\Rooms\RoomDetail;
@@ -88,6 +92,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/create', ShowtimeCreate::class)->name('create');
         Route::get('/edit/{showtime}', ShowtimeEdit::class)->name('edit');
     });
+
+    /* Promotions */
+    Route::prefix('/promotions')->name('promotions.')->group(function () {
+        Route::get('/', PromotionIndex::class)->name('index');
+        Route::get('/create', PromotionCreate::class)->name('create');
+        Route::get('/edit/{promotion}', PromotionEdit::class)->name('edit');
+        Route::get('/detail/{promotion}', PromotionDetail::class)->name('detail');
+    });
+
 
     /* Template */
     Route::view('/dashboard', 'livewire.admin.template.dashboard')->name('dashboard');
