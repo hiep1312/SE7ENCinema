@@ -122,7 +122,7 @@
             .password-toggle {
                 position: absolute;
                 right: 15px;
-                top: 50%;
+                top: 20%;
                 background: none;
                 border: none;
                 cursor: pointer;
@@ -659,6 +659,11 @@
                     color: #004085;
                 }
 
+                .status-failed {
+                    background: rgb(255 103 103);
+                    color: #1c0707;
+                }
+
                 .status-pending {
                     background: #ffc107;
                     color: #721c24;
@@ -1133,9 +1138,10 @@
                             <div class="history-filters">
                                 <select class="filter-select" wire:model.live='statusFilter'>
                                     <option value="">Tất cả trạng thái</option>
-                                    <option value="confirmed">Đã xác nhận</option>
+                                    <option value="failed">Đã thất bại</option>
                                     <option value="paid">Đã thanh toán</option>
                                     <option value="pending">Chờ thanh toán</option>
+                                    <option value="expired">Hết hạn</option>
                                 </select>
                                 <input type="date" class="filter-date" id="dateFilter" wire:model.live='dateFilter'>
                             </div>
@@ -1177,16 +1183,19 @@
 
                                     <div class="booking-summary">
                                         <div
-                                            class="status-badge @if($booking->status === 'paid') status-completed @elseif($booking->status === 'pending') status-pending @elseif($booking->status == 'confirmed') status-upcoming @endif">
+                                            class="status-badge @if($booking->status === 'paid') status-completed @elseif($booking->status === 'pending') status-pending @elseif($booking->status == 'expired') status-upcoming @elseif($booking->status == 'failed') status-failed @endif">
                                             @switch($booking->status)
                                             @case('paid')
                                             Đã thanh toán
                                             @break
-                                            @case('confirmed')
-                                            Đã xác nhận
+                                            @case('expired')
+                                            Đã hết hạn
                                             @break
                                             @case('pending')
                                             Chờ thanh toán
+                                            @break
+                                            @case('failed')
+                                            Đã thất bại
                                             @break
                                             @default
 
@@ -1211,8 +1220,9 @@
                                             @case('credit_card')
                                             <span>Thẻ tín dụng</span>
                                             @break
+                                            @break
                                             @default
-
+                                            <span>N/A</span>
                                             @endswitch
                                         </div>
                                         <div class="booking-actions">
