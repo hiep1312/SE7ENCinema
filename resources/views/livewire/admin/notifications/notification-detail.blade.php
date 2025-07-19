@@ -177,10 +177,10 @@
                                                                 <span class="badge bg-success"><i class="fas fa-play me-1"></i>Đang hoạt động</span>
                                                                 @break
                                                             @case('inactive')
-                                                                <span class="badge bg-warning text-dark"><i class="fa-solid fa-calendar-clock me-1"></i>Không hoạt động</span>
+                                                                <span class="badge bg-warning text-dark"><i class="fa-solid fa-user-slash me-1"></i>Không hoạt động</span>
                                                                 @break
                                                             @case('banned')
-                                                                <span class="badge bg-danger"><i class="fa-solid fa-calendar-xmark me-1"></i>Bị cấm</span>
+                                                                <span class="badge bg-danger"><i class="fa-solid fa-ban me-1"></i>Bị cấm</span>
                                                                 @break
                                                         @endswitch
                                                     </td>
