@@ -230,12 +230,12 @@
                                             </div>
 
                                             <div class="showtime-info text-start">
-                                                <i class="fas fa-clock"></i>
+                                                <i class="fa-solid fa-square-dollar"></i>
                                                 <span>Giá vé: <strong>{{ number_format((int)$showtimeBooking->movie->price + (int)$showtimeBooking->price, 0, '.', '.') }}</strong></span>
                                             </div>
 
                                             <div class="showtime-info text-start">
-                                                <i class="fas fa-clock"></i>
+                                                <i class="fas fa-circle-check"></i>
                                                 <span>Trạng thái:
                                                     <strong>
                                                         @switch($showtimeBooking->status)
