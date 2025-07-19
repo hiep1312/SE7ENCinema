@@ -22,7 +22,7 @@
                                 <small>Ghế</small>
                             </div>
                             <div class="align-self-center">
-                                <i class="fa-solid fa-ticket-simple fa-2x opacity-75"></i>
+                                <i class="fa-solid fa-loveseat fa-2x opacity-75"></i>
                             </div>
                         </div>
                     </div>
@@ -230,12 +230,12 @@
                                             </div>
 
                                             <div class="showtime-info text-start">
-                                                <i class="fas fa-clock"></i>
+                                                <i class="fa-solid fa-square-dollar"></i>
                                                 <span>Giá vé: <strong>{{ number_format((int)$showtimeBooking->movie->price + (int)$showtimeBooking->price, 0, '.', '.') }}</strong></span>
                                             </div>
 
                                             <div class="showtime-info text-start">
-                                                <i class="fas fa-clock"></i>
+                                                <i class="fas fa-circle-check"></i>
                                                 <span>Trạng thái:
                                                     <strong>
                                                         @switch($showtimeBooking->status)
@@ -373,7 +373,7 @@
                     <div class="col-12">
                         <div class="card bg-dark border-light">
                             <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <h5><i class="fa-solid fa-chair me-2"></i>Danh sách ghế đã đặt</h5>
+                                <h5><i class="fa-solid fa-chair-office me-2"></i>Danh sách ghế đã đặt</h5>
                             </div>
                             <div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
 
