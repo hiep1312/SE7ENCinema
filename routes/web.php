@@ -28,6 +28,7 @@ use App\Livewire\Admin\Ratings\RatingIndex;
 use App\Livewire\Admin\Showtimes\ShowtimeCreate;
 use App\Livewire\Admin\Showtimes\ShowtimeEdit;
 use App\Livewire\Admin\Showtimes\ShowtimeIndex;
+use App\Livewire\Client\User\UserConfirm;
 use App\Livewire\Client\User\UserInformation;
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -124,5 +125,6 @@ Route::name('client.')->group(function () {
     Route::view('/confirmation_screen', 'livewire.client.template.confirmation_screen')->name('confirmation_screen');
 });
 Route::get('/user-info/{user}', UserInformation::class)->name('userInfo')->middleware('role:user');
+Route::get('/user-confirm', UserConfirm::class)->name('userConfirm')->middleware('role:user,admin,staff');
 Route::view('/', 'welcome')->name('welcome');
 Route::view('/clienttest', 'clienttest')->name('clienttest');
