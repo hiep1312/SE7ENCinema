@@ -98,14 +98,14 @@
                                         <button type="button" class="nav-link @if($tabCurrent === 'notificationTo') active bg-light text-dark @else text-light @endif"
                                                 wire:click="$set('tabCurrent', 'notificationTo')"
                                                 style="border-top-right-radius: 0;">
-                                            <i class="fas fa-film me-1"></i>Thông báo đến
+                                            <i class="fa-solid fa-bullhorn me-1"></i>Thông báo đến
                                         </button>
                                     </li>
                                     <li class="nav-item">
                                         <button type="button" class="nav-link @if($tabCurrent === 'link') active bg-light text-dark @else text-light @endif"
                                                 wire:click="$set('tabCurrent', 'link')"
                                                 style="border-top-left-radius: 0;">
-                                            <i class="fas fa-video me-1 me-1"></i>Đường dẫn liên kết
+                                            <i class="fa-regular fa-globe me-1 me-1"></i>Đường dẫn liên kết
                                         </button>
                                     </li>
                                 </ul>
@@ -173,7 +173,7 @@
                                         <div class="video-container glow-effect mt-1">
                                             <div class="video-header">
                                                 <div class="video-icon">
-                                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                                    <i class="fa-solid fa-eye"></i>
                                                 </div>
                                                 <div>
                                                     <h3 class="video-title">Xem trước đường dẫn liên kết</h3>
