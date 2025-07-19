@@ -24,14 +24,18 @@
                     <div class="card-body bg-dark">
                         <form wire:submit.prevent="updateShowtime" novalidate>
                             <div class="row align-items-start mb-2">
-                                @if ($showtimeItem->movie->poster)
-                                    <div class="col-md-3 col-5 mb-3">
-                                        <div class="mt-1 overflow-auto" style="max-height: 300px;">
-                                            <img src="{{ $showtimeItem->movie->poster ?: asset('storage/404.webp') }}" alt="Ảnh phim" class="img-thumbnail"
-                                                style="width: 100%;">
+                                @if ($showtimeItem->movie->exists())
+                                    <div class="col-md-3 col-xxl-2 col-5 mb-3">
+                                        <div class="mt-1 movie-poster w-100" style="aspect-ratio: 4 / 5; height: auto; margin: 0;">
+                                            @if($poster = $showtimeItem->movie->poster)
+                                                <img src="{{ asset('storage/' . $poster) }}" alt="Ảnh phim"
+                                                    style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
+                                            @else
+                                                <i class="fas fa-film" style="font-size: 32px;"></i>
+                                            @endif
                                         </div>
                                     </div>
-                                    <div class="col-md-9 row">
+                                    <div class="col-md-9 col-xxl-10 row">
                                 @endif
                                 <div class="col-md-6">
                                     <div class="mb-2">
