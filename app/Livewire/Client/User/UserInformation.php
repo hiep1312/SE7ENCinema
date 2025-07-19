@@ -9,14 +9,19 @@ use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\Booking;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 
 class UserInformation extends Component
 {
     use WithFileUploads;
     public $user;
+    public $bookingInfo;
+    public $modal = false;
     public $name = '';
     public $tabCurrent = 'info';
-    // public $email = '';
+    public $email = '';
     public $phone = '';
     public $birthday = null;
     public $gender = '';
@@ -24,24 +29,14 @@ class UserInformation extends Component
     public $address = '';
     public $dateFilter = '';
     public $statusFilter = '';
-    public function mount(int $user)
-    {
-        $this->user = User::with('bookings.showtime.movie', 'bookings.seats')->findOrFail($user);
-        $this->fill($this->user->only([
-            'name',
-            // 'email',
-            'phone',
-            'birthday',
-            'gender',
-            'address',
-        ]));
-        $this->birthday = !$this->birthday ?: $this->birthday->format('Y-m-d');
-    }
+    public $currentPassword = '';
+    public $newPassword = '';
+    public $confirmPassword = '';
     protected $rules = [
         'phone' => 'nullable|numeric',
         'address' => 'nullable|string|max:500',
         'avatar' => 'nullable|image|max:20480',
-        'birthday' => 'nullable|date|before:-5 years',
+        'birthday' => 'nullable|before:-5 years',
         'gender' => 'in:man,woman,other',
         // 'email' => 'required|in:user,staff,admin',
         'name' => 'required|min:8|max:255|regex:/^[^\d]/',
@@ -52,7 +47,6 @@ class UserInformation extends Component
         'address.max' => 'Địa chỉ không được vượt quá 500 ký tự.',
         'avatar.image' => 'Ảnh đại diện phải là một tệp hình ảnh.',
         'avatar.max' => 'Ảnh đại diện không được vượt quá 20MB.',
-        'birthday.date' => 'Ngày sinh phải đúng định dạng ngày tháng.',
         'birthday.before' => 'Ngày sinh phải cách hiện tại ít nhất 5 năm.',
         'gender.in' => 'Giới tính không hợp lệ. Chọn "nam", "nữ" hoặc "khác".',
         'name.required' => 'Vui lòng không để trống tên.',
@@ -61,12 +55,39 @@ class UserInformation extends Component
         'name.regex' => 'Không được để số ở đầu.',
 
     ];
+    public function mount(int $user)
+    {
+        $this->user = User::with('bookings.showtime.movie', 'bookings.seats')->findOrFail($user);
+        if (session('isConfirmed')) {
+            $this->delete();
+        }
+        $this->fill($this->user->only([
+            'name',
+            'email',
+            'phone',
+            'birthday',
+            'gender',
+            'address',
+        ]));
+        $this->birthday = !$this->birthday ?: $this->birthday->format('Y-m-d');
+    }
+
+    public function delete()
+    {
+        if ($this->user) {
+            $this->user->delete();
+            Auth::logout();
+            return redirect('/login');
+        }
+    }
     public function update()
     {
         $this->validate();
         $avatarPath = $this->user->avatar;
         if ($this->avatar && $this->avatar instanceof UploadedFile):
-            !Storage::disk('public')->exists($avatarPath) ?: Storage::disk('public')->delete($avatarPath);
+            if ($avatarPath && Storage::disk('public')->exists($avatarPath)) {
+                Storage::disk('public')->delete($avatarPath);
+            }
             $avatarPath = $this->avatar->store('users', 'public');
         endif;
         $this->user->update([
@@ -79,6 +100,44 @@ class UserInformation extends Component
         ]);
 
         return redirect()->route('userInfo', [$this->user->id])->with('success', 'Cập nhật người dùng thành công!');
+    }
+    public function changePassword()
+    {
+        $this->validate(
+            [
+                'newPassword' => 'required|string|min:8|max:255',
+                'confirmPassword' => 'required|same:newPassword',
+            ],
+            [
+                'newPassword.required' => 'Vui lòng nhập mật khẩu.',
+                'newPassword.string' => 'Mật khẩu phải là chuỗi ký tự.',
+                'newPassword.min' => 'Mật khẩu phải có ít nhất 8 ký tự.',
+                'newPassword.max' => 'Mật khẩu không được vượt quá 255 ký tự.',
+                'confirmPassword.required' => 'Vui lòng xác nhận mật khẩu.',
+                'confirmPassword.same' => 'Mật khẩu xác nhận không khớp.',
+            ]
+        );
+        if (Hash::check($this->currentPassword, $this->user->password)) {
+            $this->user->update([
+                'password' => bcrypt($this->newPassword),
+            ]);
+        return redirect()->route('userInfo', [$this->user->id])->with('success', 'Đổi mật khẩu thành công!');
+        }else{
+            session()->flash('error', 'Mật khẩu hiện tại không đúng.');
+            return;
+        }
+    }
+    public function openModal()
+    {
+        $this->modal = true;
+    }
+    public function closeModal()
+    {
+        $this->modal = false;
+    }
+    public function detailBooking($id){
+        $this->tabCurrent = 'booking-info';
+        $this->bookingInfo = Booking::with(['showtime.movie.ratings','showtime.room', 'seats'])->findOrFail($id);
     }
     #[Layout('components.layouts.client')]
     public function render()

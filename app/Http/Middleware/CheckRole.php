@@ -19,9 +19,13 @@ class CheckRole
         if (!Auth::check()) return redirect()->route('login');
         $user = Auth::user();
         $routerID = $request->route('user');
-        if ($routerID !== null && (int)$routerID === (int)$user->id) return $next($request);
-            abort(403, 'Bạn không có quyền truy cập.');
-
+        if ($routerID !== null) {
+            if ((int)$routerID === (int)$user->id) {
+                return $next($request);
+            } else {
+                abort(403, 'Bạn không có quyền truy cập.');
+            }
+        }
         if (in_array($user->role, $roles)) return $next($request);
         abort(403, 'Bạn không có quyền truy cập.');
     }
