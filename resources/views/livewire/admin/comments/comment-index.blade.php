@@ -1,4 +1,4 @@
-<div>
+<div class="scRender">
     @if (session()->has('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert" wire:ignore>
             {{ session('success') }}

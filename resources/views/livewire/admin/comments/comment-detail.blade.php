@@ -1,4 +1,4 @@
-<div wire:poll.5s>
+<div class="scRender" wire:poll.5s>
     <div class="container-lg mb-4">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center my-3">
