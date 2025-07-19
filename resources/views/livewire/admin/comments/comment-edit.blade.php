@@ -34,11 +34,24 @@
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="movieId" class="form-label text-light">Phim <span class="text-danger">*</span></label>
+<<<<<<< HEAD
                                         <select id="movieId" class="form-select bg-dark text-light border-light" disabled readonly>
                                             <option value="{{ $selectedMovie->id ?? $comment->movie_id }}">
                                                 {{ $selectedMovie->title ?? $comment->movie->title }}
                                             </option>
                                         </select>
+=======
+                                        <select wire:model.live="movieId" id="movieId"
+                                                class="form-select bg-dark text-light border-light @error('movieId') is-invalid @enderror">
+                                            <option value="">Chọn phim...</option>
+                                            @foreach($movies as $movie)
+                                                <option value="{{ $movie->id }}">{{ $movie->title }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('movieId')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+>>>>>>> 9b9c9621e4cf39c24a4ef5ec9a7ec4f33cec65c1
                                         @if(isset($selectedMovie) && $selectedMovie && $selectedMovie->poster)
                                             <div class="mt-2">
                                                 <img src="{{ asset('storage/' . $selectedMovie->poster) }}" alt="{{ $selectedMovie->title }}" style="max-width: 80px; max-height: 120px; border-radius: 4px; border: 1px solid #444;">
@@ -69,6 +82,7 @@
                             </div>
 
                             <!-- Parent Comment Selection -->
+<<<<<<< HEAD
                             @if($comment->parent_comment_id)
                                 <div class="mb-3">
                                     <label class="form-label text-light">Bình luận cha</label>
@@ -79,6 +93,25 @@
                             @endif
 
                             {{-- <!-- Reply Comment Selection -->        Nếu là admin thì hiển thị
+=======
+                            <div class="mb-3">
+                                <label for="parentCommentId" class="form-label text-light">Bình luận cha (tùy chọn)</label>
+                                <select wire:model.live="parentCommentId" id="parentCommentId"
+                                        class="form-select bg-dark text-light border-light @error('parentCommentId') is-invalid @enderror">
+                                    <option value="">Không có bình luận cha</option>
+                                    @foreach($parentComments as $parentComment)
+                                        <option value="{{ $parentComment->id }}">
+                                            {{ $parentComment->user->name }} - {{ Str::limit($parentComment->content, 50) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('parentCommentId')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Reply Comment Selection -->
+>>>>>>> 9b9c9621e4cf39c24a4ef5ec9a7ec4f33cec65c1
                             @if($parentCommentId && $replyComments->count() > 0)
                                 <div class="mb-3">
                                     <label for="replyCommentId" class="form-label text-light">Trả lời bình luận (tùy chọn)</label>
@@ -95,7 +128,11 @@
                                         <div class="invalid-feedback">{{ $message ?? '' }}</div>
                                     @enderror
                                 </div>
+<<<<<<< HEAD
                             @endif --}}
+=======
+                            @endif
+>>>>>>> 9b9c9621e4cf39c24a4ef5ec9a7ec4f33cec65c1
 
                             <!-- Content -->
                             <div class="mb-3">
@@ -109,6 +146,7 @@
                                 <small class="text-muted">Tối đa 1000 ký tự</small>
                             </div>
 
+<<<<<<< HEAD
                              <!-- Action Buttons -->
                              <div class="d-flex justify-content-between py-3 border-top border-light">
                                 <button type="submit" class="btn btn-warning">
@@ -197,6 +235,27 @@
                                                     </div>
                                                 </div>
                                             </div>
+=======
+                            <!-- Bình luận con (child comments) -->
+                            @if(!$comment->parent_comment_id)
+                                <div class="mb-3">
+                                    <label for="childCommentCount" class="form-label text-light">Số lượng bình luận con muốn thêm</label>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <input type="number"
+                                                   wire:model.live="childCommentCount"
+                                                   wire:change="generateChildComments"
+                                                   class="form-control bg-dark text-light border-light"
+                                                   min="0"
+                                                   max="10"
+                                                   placeholder="0">
+                                        </div>
+                                        <div class="col-md-9 d-flex align-items-center">
+                                            <small class="text-muted">
+                                                Nhập số từ 0-10. Sẽ tạo các form bình luận con tương ứng.
+                                                <span class="text-info">Đang tạo bình luận con cho bình luận chính này.</span>
+                                            </small>
+>>>>>>> 9b9c9621e4cf39c24a4ef5ec9a7ec4f33cec65c1
                                         </div>
                                     </div>
                                 </div>
@@ -256,10 +315,101 @@
                                     </div>
                                 @endif
                             @endif
+<<<<<<< HEAD
+=======
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex justify-content-between pt-3 border-top border-light">
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="fas fa-save me-1"></i>Cập nhật bình luận
+                                </button>
+                                <a href="{{ route('admin.comments.index') }}" class="btn btn-outline-danger">
+                                    <i class="fas fa-times me-1"></i>Hủy
+                                </a>
+                            </div>
+>>>>>>> 9b9c9621e4cf39c24a4ef5ec9a7ec4f33cec65c1
                         </form>
                     </div>
                 </div>
             </div>
         </div>
+<<<<<<< HEAD
+=======
+
+        <!-- Current Comment Info -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card bg-dark border-light">
+                    <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <h5 class="my-1">Thông tin bình luận hiện tại</h5>
+                    </div>
+                    <div class="card-body bg-dark">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <table class="table table-borderless text-light">
+                                    <tr>
+                                        <td><strong class="text-warning">Người tạo:</strong></td>
+                                        <td>{{ $comment->user->name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong class="text-warning">Phim:</strong></td>
+                                        <td>{{ $comment->movie->title }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong class="text-warning">Ngày tạo:</strong></td>
+                                        <td>{{ $comment->created_at->format('d/m/Y H:i') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong class="text-warning">Cập nhật cuối:</strong></td>
+                                        <td>{{ $comment->updated_at->format('d/m/Y H:i') }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                @if($comment->parent_comment_id)
+                                    <div class="mb-3">
+                                        <h6 class="text-warning">Bình luận cha:</h6>
+                                        <div class="p-3 bg-secondary bg-opacity-25 rounded border">
+                                            {{ Str::limit($comment->parent->content, 200) }}
+                                            <div class="text-muted small mt-1">
+                                                - {{ $comment->parent->user->name }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                @if($comment->reply_comment_id)
+                                    <div class="mb-3">
+                                        <h6 class="text-warning">Trả lời cho:</h6>
+                                        <div class="p-3 bg-secondary bg-opacity-25 rounded border">
+                                            {{ Str::limit($comment->reply->content, 200) }}
+                                            <div class="text-muted small mt-1">
+                                                - {{ $comment->reply->user->name }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                @if(!$comment->parent_comment_id)
+                                    @php
+                                        $existingChildren = \App\Models\Comment::where('parent_comment_id', $comment->id)->count();
+                                    @endphp
+                                    <div class="mb-3">
+                                        <h6 class="text-info">Thống kê:</h6>
+                                        <div class="p-3 bg-info bg-opacity-10 rounded border border-info border-opacity-25">
+                                            <div class="text-info">
+                                                <i class="fas fa-comments me-1"></i>
+                                                Đã có {{ $existingChildren }} bình luận con
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+>>>>>>> 9b9c9621e4cf39c24a4ef5ec9a7ec4f33cec65c1
     </div>
 </div>

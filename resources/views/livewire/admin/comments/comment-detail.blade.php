@@ -166,6 +166,7 @@
                                 </table>
                             </div>
                         </div>
+<<<<<<< HEAD
                         {{-- Thông tin bình luận cha nếu là bình luận con --}}
                         @if($comment->parent_comment_id && $comment->parent)
                             <div class="card bg-dark border-light mb-3">
@@ -189,6 +190,8 @@
                                 </div>
                             </div>
                         @endif
+=======
+>>>>>>> 9b9c9621e4cf39c24a4ef5ec9a7ec4f33cec65c1
                     </div>
                 </div>
             </div>
