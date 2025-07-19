@@ -656,4 +656,104 @@ document.addEventListener("livewire:init", () => {
 
         return frameSeats.cloneNode(true);
     };
+
+     window.generateClientDOMSeats = function ({ rows, seatsPerRow, vipRows, coupleRows, selectedSeats = [] }, pathScreen, modelBinding = 'selectedSeats')
+     {
+
+        rows = parseInt(rows);
+        seatsPerRow = parseInt(seatsPerRow);
+        const vipArr = vipRows ? vipRows.split(",").map(r => r.trim().toUpperCase()) : [];
+        const coupleArr = coupleRows ? coupleRows.split(",").map(r => r.trim().toUpperCase()) : [];
+
+        const frameSeats = document.createElement("div");
+        frameSeats.setAttribute("wire:ignore", "");
+        frameSeats.classList = "st_seatlayout_main_wrapper w-100 mt-2";
+        frameSeats.innerHTML = `
+            <div class="container">
+                <div class="st_seat_lay_heading float_left">
+                    <h3>SE7ENCINEMA SCREEN</h3>
+                </div>
+                <div class="st_seat_full_container" style="float: none">
+                    <div class="st_seat_lay_economy_wrapper float_left" style="width: 100% !important">
+                        <div class="screen">
+                            <img src="${pathScreen || (location.origin + "/client/assets/images/content/screen.png")}" alt="Screen">
+                        </div>
+                    </div>
+                    <div class="st_seat_lay_economy_wrapper st_seat_lay_economy_wrapperexicutive float_left" style="width: auto !important" id="seats-layout"></div>
+                </div>
+            </div>
+        `;
+
+        const seatsLayout = frameSeats.querySelector("#seats-layout");
+
+        const caculateColumnAsile = calculateSeatDistribution(seatsPerRow);
+        const caculateRowAsile = calculateSeatDistribution(rows);
+
+        for (let i = 1; i <= rows; i++) {
+            const rowChar = window.getRowSeat(i);
+            if (rowChar === null) break;
+
+            const isVip = vipArr.includes(rowChar);
+            const isCouple = coupleArr.includes(rowChar);
+
+            const frameRow = document.createElement("ul");
+            frameRow.id = `row-${rowChar}`;
+            frameRow.className = "seat-row-layout list-unstyled float_left d-flex flex-nowrap gap-2 justify-content-start align-items-center";
+            frameRow.setAttribute("data-row", rowChar);
+            frameRow.style.position = "relative";
+
+            for (let j = 1; j <= seatsPerRow; j++) {
+                const seatCeil = document.createElement("li");
+                const seatType = isCouple ? "double" : isVip ? "vip" : "standard";
+                const seatClass = `seat seat-${seatType}`;
+                const seatId = `${rowChar}${j}`;
+                const seatLabel = `Chỗ ngồi ${seatId}`;
+                const isChecked = selectedSeats.includes(seatId) ? 'checked' : '';
+
+                seatCeil.innerHTML = `
+                    <span class="seat-helper">${seatLabel}</span>
+                    <input
+                        type="checkbox"
+                        class="${seatClass}"
+                        id="${seatId}"
+                        value="${seatId}"
+                        wire:model="${modelBinding}"
+                        data-number="${j}"
+                        ${isChecked}
+                    >
+                    <label for="${seatId}" class="visually-hidden">${seatLabel}</label>
+                `;
+                seatCeil.dataset.seat = seatType;
+                seatCeil.className = "seat-item";
+                frameRow.appendChild(seatCeil);
+
+                if (caculateColumnAsile.includes(j + 1) && j < seatsPerRow) {
+                    const aisleCeil = document.createElement("li");
+                    aisleCeil.innerHTML = `
+                        <span class="seat-helper">Lối đi</span>
+                        <div class="aisle"></div>
+                    `;
+                    aisleCeil.dataset.seat = "aisle";
+                    aisleCeil.className = "aisle-item";
+                    frameRow.appendChild(aisleCeil);
+                }
+
+                if (isCouple && j < seatsPerRow) {
+                    j++;
+                }
+            }
+
+            seatsLayout.appendChild(frameRow);
+
+            if (caculateRowAsile.includes(i + 1) && i < rows) {
+                const aisleRow = document.createElement("div");
+                aisleRow.className = "row-aisle";
+                aisleRow.style.height = "20px";
+                aisleRow.style.width = "100%";
+                seatsLayout.appendChild(aisleRow);
+            }
+        }
+        console.log('Seats generated successfully');
+        return frameSeats;
+    };
 });

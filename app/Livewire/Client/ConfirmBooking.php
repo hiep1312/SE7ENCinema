@@ -15,9 +15,9 @@ class ConfirmBooking extends Component
     public function mount($booking_id)
     {
         $this->booking_id = $booking_id;
-        $this->booking = Booking::with(['bookingSeats.seat', 'foodOrderItems.foodVariant', 'showtime.movie'])->findOrFail($booking_id);
+        $this->booking = Booking::with(['bookingSeats.seat', 'showtime.movie'])->findOrFail($booking_id);
 
-        $expireTime = Carbon::parse($this->booking->start_transaction)->addSeconds(10);
+        $expireTime = Carbon::parse($this->booking->start_transaction)->addSeconds(1000);
 
         if (now()->greaterThan($expireTime) && $this->booking->status !== 'paid') {
             session()->flash('error', 'Bạn đã quá thời gian thanh toán. Vui lòng đặt vé lại.');

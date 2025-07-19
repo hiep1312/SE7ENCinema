@@ -49,7 +49,7 @@ class Booking extends Model
     }
     public function foodOrderItems()
     {
-        return $this->hasMany(\App\Models\FoodOrderItem::class);
+        return $this->hasOne(\App\Models\FoodOrderItem::class);
     }
 
     public function promotionUsages()

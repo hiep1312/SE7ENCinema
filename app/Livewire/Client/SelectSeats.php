@@ -5,16 +5,22 @@ namespace App\Livewire\Client;
 use Livewire\Component;
 use App\Models\Showtime;
 use App\Models\Seat;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use App\Models\Booking;
 use App\Models\BookingSeat;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-use Illuminate\View\View;
+
 class SelectSeats extends Component
 {
     public $showtime_id;
     public $showtime;
     public $seats;
+    public $rows = 15;
+    public $seatsPerRow = 20;
+    public $vipRows = 'A';
+    public $coupleRows = 'B';
     public $selectedSeats = [];
 
     public function mount($showtime_id)
@@ -22,6 +28,7 @@ class SelectSeats extends Component
         $this->showtime_id = $showtime_id;
         $this->showtime = Showtime::findOrFail($showtime_id);
         $this->loadSeats();
+        $this->generateSeatsLayout();
     }
 
     public function loadSeats()
@@ -55,7 +62,42 @@ class SelectSeats extends Component
             }
             $this->selectedSeats[] = $seatId;
         }
+
+        $this->generateSeatsLayout();
     }
+
+    public function generateSeatCodes($seatIds)
+    {
+        return collect($seatIds)
+            ->map(function ($id) {
+                $seat = $this->seats->firstWhere('id', $id);
+                return $seat ? ($seat->seat_row . $seat->seat_number) : null;
+            })
+            ->filter()
+            ->values()
+            ->toArray();
+    }
+
+    public function generateSeatsLayout()
+    {
+        $this->dispatch(
+            'seatuserdetail',
+            $this->rows,
+            $this->seatsPerRow,
+            $this->vipRows,
+            $this->coupleRows,
+            $this->generateSeatCodes($this->selectedSeats)
+        );
+    }
+
+    public function toggleSeatByCode($seatCode)
+    {
+        $seat = $this->seats->firstWhere(fn($s) => $s->seat_row . $s->seat_number == $seatCode);
+        if ($seat) {
+            $this->toggleSeat($seat->id);
+        }
+    }
+
 
     public function goToSelectFood()
     {
@@ -87,7 +129,19 @@ class SelectSeats extends Component
                 'start_transaction' => now(),
             ]);
 
-            foreach ($this->selectedSeats as $seatId) {
+            $seatIds = collect($this->selectedSeats)
+                ->map(function ($code) {
+                    $row = substr($code, 0, 1);
+                    $number = substr($code, 1);
+                    $seat = $this->seats->first(fn($s) => $s->seat_row === $row && $s->seat_number == $number);
+                    return $seat?->id;
+                })
+                ->filter()
+                ->unique()
+                ->values()
+                ->toArray();
+
+            foreach ($seatIds as $seatId) {
                 BookingSeat::create([
                     'booking_id' => $booking->id,
                     'seat_id' => $seatId,
@@ -103,8 +157,10 @@ class SelectSeats extends Component
         }
     }
 
+    #[Title('Chọn ghế - SE7ENCinema')]
+    #[Layout('components.layouts.client')]
     public function render()
     {
-        return view('livewire.client.select-seats')->layout('client');;
+        return view('livewire.client.select-seats');
     }
 }

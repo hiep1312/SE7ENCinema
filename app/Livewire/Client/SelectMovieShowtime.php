@@ -4,6 +4,8 @@ namespace App\Livewire\Client;
 use Livewire\Component;
 use App\Models\Movie;
 use App\Models\Showtime;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Illuminate\View\View;
 class SelectMovieShowtime extends Component
 {
@@ -20,7 +22,7 @@ class SelectMovieShowtime extends Component
     public function updatedSelectedMovieId($movieId)
     {
         $this->showtimes = Showtime::where('movie_id', $movieId)
-            ->where('status', 'active')
+            ->where('status', 'completed')
             ->orderBy('start_time')
             ->get();
         $this->selectedShowtimeId = null;
@@ -35,8 +37,13 @@ class SelectMovieShowtime extends Component
         return redirect()->route('booking.select_seats', ['showtime_id' => $this->selectedShowtimeId]);
     }
 
+    #[Title('Danh sách phim - SE7ENCinema')]
+    #[Layout('components.layouts.admin')]
     public function render()
     {
-        return view('livewire.client.select-movie-showtime')->layout('client');;
+        return view('livewire.client.select-movie-showtime', [
+            'movies' => $this->movies,
+            'showtimes' => $this->showtimes,
+        ]);
     }
 }

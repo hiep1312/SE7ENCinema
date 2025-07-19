@@ -14,21 +14,21 @@ use Illuminate\View\View;
 class BookingTicket extends Component
 {
     public $showtime_id;
-    public $selectedSeats = []; // Mảng id ghế user chọn
-
+    public $selectedSeats = [];
     public $showtime;
     public $seats;
+    public $seat_row ;
+    public $seat_number;
+    public $seat_type;
 
     public function mount($showtime_id)
     {
         $this->showtime_id = $showtime_id ?? 0;
-        $this->loadShowtime();
-        $this->loadSeats();
     }
 
     public function loadShowtime()
     {
-        $this->showtime = Showtime::find($this->showtime_id);
+        $this->showtime = Booking::find($this->showtime_id);
 
         if (!$this->showtime) {
             session()->flash('error', 'Suất chiếu không tồn tại.');
@@ -42,13 +42,11 @@ class BookingTicket extends Component
             return;
         }
 
-        // Lấy tất cả ghế của phòng
         $this->seats = Seat::where('room_id', $this->showtime->room_id)->get();
 
-        // Lấy ghế đã được đặt (pending hoặc paid) cho suất chiếu này
         $bookedSeatIds = BookingSeat::whereHas('booking', function ($q) {
             $q->where('showtime_id', $this->showtime_id)
-                ->whereIn('status', ['pending', 'paid']);
+                ->whereIn('status', ['pending', 'confirmed', 'paid']);
         })->pluck('seat_id')->toArray();
 
         foreach ($this->seats as $seat) {

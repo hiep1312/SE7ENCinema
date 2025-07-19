@@ -13,11 +13,6 @@
     </ul>
 
     <h3>Đồ ăn đã chọn</h3>
-    <ul>
-        @foreach ($booking->foodOrderItems as $food)
-            <li>{{ $food->foodVariant->name }} x {{ $food->quantity }} - Giá: {{ number_format($food->price) }} VNĐ</li>
-        @endforeach
-    </ul>
 
     <h3>Tổng tiền: {{ number_format($booking->total_price) }} VNĐ</h3>
 
