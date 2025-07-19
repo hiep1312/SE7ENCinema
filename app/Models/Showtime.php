@@ -33,7 +33,7 @@ class Showtime extends Model
 
     public function booking()
     {
-        return $this->belongsTo(Booking::class);
+        return $this->hasOne(Booking::class);
     }
 
     public function isLockedForDeletion(){
