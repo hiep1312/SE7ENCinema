@@ -328,13 +328,13 @@
                                                             @break
                                                         @case('staff')
                                                             <span class="badge-clean-base badge-clean-rose">
-                                                                <i class="fa-solid fa-loveseat me-1"></i>
+                                                                <i class="fa-solid fa-user-tie me-1"></i>
                                                                 Nhân viên
                                                             </span>
                                                             @break
                                                         @case('user')
                                                             <span class="badge-clean-base badge-clean-purple">
-                                                                <i class="fa-solid fa-chair-office me-1"></i>
+                                                                <i class="fa-solid fa-user me-1"></i>
                                                                 Người dùng
                                                             </span>
                                                             @break
