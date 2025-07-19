@@ -44,7 +44,7 @@
                                 <small>Trung bình</small>
                             </div>
                             <div class="align-self-center">
-                                <i class="fas fa-clock fa-2x opacity-75"></i>
+                                <i class="fa-solid fa-circle-check fa-2x opacity-75"></i>
                             </div>
                         </div>
                     </div>
@@ -65,7 +65,7 @@
                 <button class="nav-link @if($tabCurrent === 'userNotifications') active bg-light text-dark @else text-light @endif"
                         wire:click="$set('tabCurrent', 'userNotifications')"
                         style="border-top-left-radius: 0;">
-                    <i class="fas fa-calendar me-1"></i>Người nhận
+                    <i class="fa-solid fa-user-group me-1"></i>Người nhận
                 </button>
             </li>
         </ul>
@@ -141,7 +141,7 @@
                         <div class="card bg-dark border-light">
                             <div class="card-header bg-gradient text-light"
                                 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <h5><i class="fas fa-receipt me-2"></i>Danh sách chi tiết người nhận</h5>
+                                <h5><i class="fa-solid fa-list me-2"></i>Danh sách chi tiết người nhận</h5>
                             </div>
                             <div class="card-body bg-dark"
                                 style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">

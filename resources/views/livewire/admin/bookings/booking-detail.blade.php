@@ -22,7 +22,7 @@
                                 <small>Ghế</small>
                             </div>
                             <div class="align-self-center">
-                                <i class="fas fa-star fa-2x opacity-75"></i>
+                                <i class="fa-solid fa-ticket-simple fa-2x opacity-75"></i>
                             </div>
                         </div>
                     </div>
@@ -38,7 +38,7 @@
                                 <small>Món ăn</small>
                             </div>
                             <div class="align-self-center">
-                                <i class="fas fa-clock fa-2x opacity-75"></i>
+                                <i class="fa-solid fa-utensils fa-2x opacity-75"></i>
                             </div>
                         </div>
                     </div>
@@ -54,7 +54,7 @@
                                 <small>VNĐ</small>
                             </div>
                             <div class="align-self-center">
-                                <i class="fas fa-shopping-cart fa-2x opacity-75"></i>
+                                <i class="fa-solid fa-money-bill-wave fa-2x opacity-75"></i>
                             </div>
                         </div>
                     </div>
@@ -70,7 +70,7 @@
                                 <small>Mã giảm giá</small>
                             </div>
                             <div class="align-self-center">
-                                <i class="fas fa-dollar-sign fa-2x opacity-75"></i>
+                                <i class="fa-solid fa-percent fa-2x opacity-75"></i>
                             </div>
                         </div>
                     </div>
@@ -91,28 +91,28 @@
                 <button class="nav-link @if($tabCurrent === 'seats') active bg-light text-dark @else text-light @endif"
                         wire:click="$set('tabCurrent', 'seats')"
                         style="border-top-left-radius: 0; border-top-right-radius: 0;">
-                    <i class="fas fa-calendar me-1"></i>Ghế đặt
+                    <i class="fa-solid fa-chair me-1"></i>Ghế đặt
                 </button>
             </li>
             <li class="nav-item">
                 <button class="nav-link @if($tabCurrent === 'tickets') active bg-light text-dark @else text-light @endif"
                         wire:click="$set('tabCurrent', 'tickets')"
                         style="border-top-left-radius: 0; border-top-right-radius: 0;">
-                    <i class="fas fa-comments me-1"></i>Thông tin vé
+                    <i class="fa-solid fa-ticket me-1"></i>Thông tin vé
                 </button>
             </li>
             <li class="nav-item">
                 <button class="nav-link @if($tabCurrent === 'foodsOrder') active bg-light text-dark @else text-light @endif"
                         wire:click="$set('tabCurrent', 'foodsOrder')"
                         style="border-top-left-radius: 0; border-top-right-radius: 0;">
-                    <i class="fas fa-shopping-cart me-1"></i>Món ăn
+                    <i class="fa-solid fa-burger me-1"></i>Món ăn
                 </button>
             </li>
             <li class="nav-item">
                 <button class="nav-link @if($tabCurrent === 'promotions') active bg-light text-dark @else text-light @endif"
                         wire:click="$set('tabCurrent', 'promotions')"
                         style="border-top-left-radius: 0;">
-                    <i class="fas fa-shopping-cart me-1"></i>Mã giảm giá
+                    <i class="fa-solid fa-tags me-1"></i>Mã giảm giá
                 </button>
             </li>
         </ul>
@@ -193,7 +193,7 @@
                         <div class="card bg-dark border-light">
                             <div class="card-header bg-gradient text-light"
                                 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <h5><i class="fas fas fa-play me-2"></i>Suất chiếu</h5>
+                                <h5><i class="fa-solid fa-clapperboard me-2"></i>Suất chiếu</h5>
                             </div>
                             <div class="card-body bg-dark"
                                 style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
@@ -262,7 +262,7 @@
                         <div class="card bg-dark border-light">
                             <div class="card-header bg-gradient text-light"
                                 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <h5><i class="fas fa-image me-2"></i>Người đặt</h5>
+                                <h5><i class="fas fa-user me-2"></i>Người đặt</h5>
                             </div>
                             <div class="card-body bg-dark"
                                 style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
@@ -373,7 +373,7 @@
                     <div class="col-12">
                         <div class="card bg-dark border-light">
                             <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <h5><i class="fas fa-history me-2"></i>Danh sách ghế đã đặt</h5>
+                                <h5><i class="fa-solid fa-chair me-2"></i>Danh sách ghế đã đặt</h5>
                             </div>
                             <div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
 
@@ -386,7 +386,7 @@
                     <div class="col-12">
                         <div class="card bg-dark border-light">
                             <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <h5><i class="fa-solid far fa-star me-2"></i>Chi tiết vé phim</h5>
+                                <h5><i class="fa-solid fa-film me-2"></i>Chi tiết vé phim</h5>
                             </div>
                             <div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
                                 <table class="table table-md table-bordered table-striped table-hover text-light text-start mb-0" id="user-info-table">
@@ -467,7 +467,7 @@
                     <div class="col-12">
                         <div class="card bg-dark border-light">
                             <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <h5><i class="fa-solid far fa-star me-2"></i>Danh sách món ăn đặt kèm</h5>
+                                <h5><i class="fa-solid fa-burger-soda me-2"></i>Danh sách món ăn đặt kèm</h5>
                             </div>
                             <div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
                                 @php $foodOrderItems = $booking->foodOrderItems @endphp
@@ -549,7 +549,7 @@
                     <div class="col-12">
                         <div class="card bg-dark border-light">
                             <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <h5><i class="fa-solid far fa-star me-2"></i>Danh sách mã giảm giá đã áp dụng</h5>
+                                <h5><i class="fa-solid fa-tag me-2"></i>Danh sách mã giảm giá đã áp dụng</h5>
                             </div>
                             <div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
                                 @php $promotionUsages = $booking->promotionUsages @endphp
