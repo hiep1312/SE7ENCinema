@@ -11,6 +11,6 @@
 <body class="scRender">
     {{ $slot }}
 
-    @vite('resources/js/app.js')
+    @vite(['resources/js/app.js', 'resources/js/scannerQR.js'])
 </body>
 </html>
