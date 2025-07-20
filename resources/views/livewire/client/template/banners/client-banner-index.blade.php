@@ -1,3 +1,4 @@
+<div class="scRender">
 <style>
     a {
         padding-top: 50px
@@ -13,6 +14,19 @@
         height: 100% !important;
         object-fit: cover !important;
         aspect-ratio: 16/9 !important;
+    }
+        #return-to-top i {
+        color: #fff !important;
+        margin: 0 !important;
+        position: relative !important;
+        top: -39px !important;
+        font-size: 30px !important;
+
+        -webkit-transition: all 0.3s ease !important;
+        -moz-transition: all 0.3s ease !important;
+        -ms-transition: all 0.3s ease !important;
+        -o-transition: all 0.3s ease !important;
+        transition: all 0.3s ease !important;
     }
     </style>
     <div class="prs_main_slider_wrapper">
@@ -62,3 +76,4 @@
             </div>
         </div>
     </div>
+</div>
