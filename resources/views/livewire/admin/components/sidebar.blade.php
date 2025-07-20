@@ -56,17 +56,149 @@
       </div>
     </li>
     <li class="nav-item nav-category">
-      <span class="nav-link">Navigation</span>
+      <span class="nav-link">Điều hướng</span>
     </li>
     <li class="nav-item menu-items">
       <a class="nav-link" href="{{ route('admin.dashboard') }}">
         <span class="menu-icon">
           <i class="mdi mdi-speedometer"></i>
         </span>
-        <span class="menu-title">Dashboard</span>
+        <span class="menu-title">Bảng điều khiển</span>
       </a>
     </li>
     <li class="nav-item menu-items">
+      <a class="nav-link" data-toggle="collapse" href="#manage-banner">
+        <span class="menu-icon">
+          <i class="mdi mdi-laptop"></i>
+        </span>
+        <span class="menu-title">Quản lý banner</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="manage-banner">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.banners.create') }}">Tạo banner mới</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.banners.index') }}">Danh sách banner</a></li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item menu-items">
+      <a class="nav-link" data-toggle="collapse" href="#manage-booking">
+        <span class="menu-icon">
+          <i class="mdi mdi-laptop"></i>
+        </span>
+        <span class="menu-title">Quản lý đơn hàng</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="manage-booking">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.bookings.index') }}">Danh sách đơn hàng</a></li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item menu-items">
+      <a class="nav-link" data-toggle="collapse" href="#manage-genres">
+        <span class="menu-icon">
+          <i class="mdi mdi-laptop"></i>
+        </span>
+        <span class="menu-title">Quản lý thể loại</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="manage-genres">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.genres.create') }}">Tạo thể loại mới</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.genres.index') }}">Danh sách thể loại</a></li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item menu-items">
+      <a class="nav-link" data-toggle="collapse" href="#manage-movies">
+        <span class="menu-icon">
+          <i class="mdi mdi-laptop"></i>
+        </span>
+        <span class="menu-title">Quản lý phim</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="manage-movies">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.movies.create') }}">Thêm phim mới</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.movies.index') }}">Danh sách phim</a></li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item menu-items">
+      <a class="nav-link" data-toggle="collapse" href="#manage-notifications">
+        <span class="menu-icon">
+          <i class="mdi mdi-laptop"></i>
+        </span>
+        <span class="menu-title">Quản lý thông báo</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="manage-notifications">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.notifications.create') }}">Tạo thông báo mới</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.notifications.index') }}">Danh sách thông báo</a></li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item menu-items">
+      <a class="nav-link" data-toggle="collapse" href="#manage-ratings">
+        <span class="menu-icon">
+          <i class="mdi mdi-laptop"></i>
+        </span>
+        <span class="menu-title">Quản lý đánh giá</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="manage-ratings">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.ratings.index') }}">Danh sách đánh giá</a></li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item menu-items">
+      <a class="nav-link" data-toggle="collapse" href="#manage-rooms">
+        <span class="menu-icon">
+          <i class="mdi mdi-laptop"></i>
+        </span>
+        <span class="menu-title">Quản lý phòng chiếu</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="manage-rooms">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.rooms.create') }}">Tạo phòng chiếu mới</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.rooms.index') }}">Danh sách phòng chiếu</a></li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item menu-items">
+      <a class="nav-link" data-toggle="collapse" href="#manage-showtimes">
+        <span class="menu-icon">
+          <i class="mdi mdi-laptop"></i>
+        </span>
+        <span class="menu-title">Quản lý suất chiếu</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="manage-showtimes">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.showtimes.create') }}">Tạo suất chiếu mới</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.showtimes.index') }}">Danh sách suất chiếu</a></li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item menu-items">
+      <a class="nav-link" data-toggle="collapse" href="#manage-tickets">
+        <span class="menu-icon">
+          <i class="mdi mdi-laptop"></i>
+        </span>
+        <span class="menu-title">Quản lý vé</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="manage-tickets">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.tickets.index') }}">Danh sách vé</a></li>
+        </ul>
+      </div>
+    </li>
+    {{-- <li class="nav-item menu-items">
       <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
         <span class="menu-icon">
           <i class="mdi mdi-laptop"></i>
@@ -131,6 +263,6 @@
           <li class="nav-item"> <a class="nav-link" href="{{ route('admin.register') }}"> Register </a></li>
         </ul>
       </div>
-    </li>
+    </li> --}}
   </ul>
 </nav>
