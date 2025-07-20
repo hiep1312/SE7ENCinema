@@ -13,6 +13,10 @@ class FoodOrderItem extends Model
         'price',
     ];
 
+    protected $casts = [
+        'price' => 'integer',
+    ];
+
     public function booking()
     {
         return $this->belongsTo(Booking::class);

@@ -39,6 +39,16 @@ class Booking extends Model
         return $this->belongsToMany(Seat::class, 'booking_seats');
     }
 
+    public function bookingSeats()
+    {
+        return $this->hasMany(BookingSeat::class);
+    }
+
+    public function foodOrderItems()
+    {
+        return $this->hasOne(FoodOrderItem::class);
+    }
+
     public function promotionUsages()
     {
         return $this->hasMany(PromotionUsage::class);
