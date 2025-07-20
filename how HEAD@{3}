@@ -1,0 +1,35 @@
+[33ma5d9cd6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/quan-ly-bong-nuoc[m[33m)[m HEAD@{0}: commit: add 5-7
+[33m3bfe779[m HEAD@{1}: checkout: moving from feature/quan-ly-bong-nuoc to feature/quan-ly-bong-nuoc
+[33m3bfe779[m HEAD@{2}: pull origin main: Fast-forward
+[33mb6991fd[m HEAD@{3}: checkout: moving from feature/quan-ly-bong-nuoc to feature/quan-ly-bong-nuoc
+[33mb6991fd[m HEAD@{4}: checkout: moving from feature/quan-ly-bong-nuoc to feature/quan-ly-bong-nuoc
+[33mb6991fd[m HEAD@{5}: merge origin/main: Fast-forward
+[33md738fad[m[33m ([m[1;32mduclucifer[m[33m)[m HEAD@{6}: checkout: moving from duclucifer to feature/quan-ly-bong-nuoc
+[33md738fad[m[33m ([m[1;32mduclucifer[m[33m)[m HEAD@{7}: checkout: moving from feature/quan-ly-bong-nuoc to duclucifer
+[33md738fad[m[33m ([m[1;32mduclucifer[m[33m)[m HEAD@{8}: merge origin/main: Fast-forward
+[33ma508c23[m HEAD@{9}: commit: update-foodVariant
+[33m9183964[m HEAD@{10}: commit: add-quan-ly-bong-nuoc
+[33m2f5b3e1[m HEAD@{11}: commit (merge): update-fix-quan-ly-bien-the-bong-nuoc
+[33mcae540a[m HEAD@{12}: checkout: moving from feature/quan-ly-bong-nuoc to feature/quan-ly-bong-nuoc
+[33mcae540a[m HEAD@{13}: commit: quan-ly-bien-the-bong-nuoc
+[33m1858eac[m HEAD@{14}: checkout: moving from feature/quan-ly-bong-nuoc to feature/quan-ly-bong-nuoc
+[33m1858eac[m HEAD@{15}: pull: Fast-forward
+[33m18ed19f[m HEAD@{16}: checkout: moving from main to feature/quan-ly-bong-nuoc
+[33mc581378[m[33m ([m[1;32mmain[m[33m)[m HEAD@{17}: checkout: moving from feature/quan-ly-bong-nuoc to main
+[33m18ed19f[m HEAD@{18}: checkout: moving from feature/quan-ly-bong-nuoc to feature/quan-ly-bong-nuoc
+[33m18ed19f[m HEAD@{19}: commit: update 5/6/2025
+[33mad92caa[m HEAD@{20}: reset: moving to origin/feature/quan-ly-bong-nuoc
+[33md7ffd12[m HEAD@{21}: commit: update
+[33m1c4f264[m HEAD@{22}: commit (merge): update-quan-ly-bong-nuoc
+[33m2e9c81b[m HEAD@{23}: checkout: moving from main to feature/quan-ly-bong-nuoc
+[33mc581378[m[33m ([m[1;32mmain[m[33m)[m HEAD@{24}: reset: moving to HEAD
+[33mc581378[m[33m ([m[1;32mmain[m[33m)[m HEAD@{25}: pull origin feature/quan-ly-bong-nuoc: updating HEAD
+[33mc581378[m[33m ([m[1;32mmain[m[33m)[m HEAD@{26}: pull origin main: Fast-forward
+[33m1279351[m HEAD@{27}: checkout: moving from feature/quan-ly-bong-nuoc to main
+[33m2e9c81b[m HEAD@{28}: commit: a
+[33me193b54[m HEAD@{29}: commit: quan ly bong nuoc
+[33m1279351[m HEAD@{30}: checkout: moving from main to feature/quan-ly-bong-nuoc
+[33m1279351[m HEAD@{31}: pull: Fast-forward
+[33m3b4f1b4[m HEAD@{32}: reset: moving to HEAD
+[33m3b4f1b4[m HEAD@{33}: pull: Fast-forward
+[33m91c0aea[m HEAD@{34}: clone: from https://github.com/hiep1312/SE7ENCinema.git

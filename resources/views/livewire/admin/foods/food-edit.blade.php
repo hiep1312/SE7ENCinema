@@ -1,10 +1,19 @@
-<div>
+{{-- resources/views/livewire/admin/foods/edit-food.blade.php --}}
+<div class="scRender">
+    {{-- Session Messages --}}
     @if (session()->has('error'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
+    @if (session()->has('success_general'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success_general') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
 
     <div class="container-lg mb-4">
         <div class="d-flex justify-content-between align-items-center my-3">
@@ -14,52 +23,56 @@
             </a>
         </div>
 
-        <!-- Form thông tin món ăn -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card bg-dark">
-                    <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                        <h5 class="my-1">Thông tin món ăn</h5>
-                    </div>
-                    <div class="card-body bg-dark">
-                        <form wire:submit.prevent="updateFood" enctype="multipart/form-data">
-                            <div class="row align-items-start">
-                                <div class="col-md-3 mb-3">
-                                        <div class="mt-1 overflow-auto position-relative" style="max-height: 230px;">
-                                            <img src="{{ asset('storage/' . ($foodItem->image ?? '404.webp')) }}" alt="Ảnh món ăn hiện tại" class="img-thumbnail"
-                                            style="width: 100%;">
-                                            <span class="position-absolute opacity-75 top-0 start-0 mt-2 ms-2 badge rounded bg-danger">
-                                                Ảnh hiện tại
-                                            </span>
-                                        </div>
+        {{-- Form --}}
+        <form wire:submit.prevent="save" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card bg-dark text-light">
+                        <div class="card-header bg-gradient"
+                            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <h5 class="my-1">Thông tin chung</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                {{-- Cột ảnh --}}
+                                <div class="col-md-4 mb-4">
+                                    <label class="form-label">Ảnh đại diện món ăn</label>
+                                    <div class="position-relative overflow-hidden rounded border mb-3"
+                                        style="height: 250px;">
+                                        <img src="{{ asset('storage/' . ($foodItem->image ?? 'images/404.webp')) }}"
+                                            alt="Ảnh món ăn hiện tại" class="img-fluid w-100 h-100"
+                                            style="object-fit: cover;">
+                                        <span class="position-absolute top-0 start-0 m-2 badge bg-danger">Ảnh hiện
+                                            tại</span>
+                                    </div>
+
                                     @if ($image && $image instanceof Illuminate\Http\UploadedFile)
-                                        <div class="mt-2 overflow-auto position-relative" style="max-height: 230px;">
-                                            <img src="{{ $image->temporaryUrl() }}" alt="Ảnh món ăn tải lên" class="img-thumbnail"
-                                                style="width: 100%;">
-                                            <span class="position-absolute opacity-75 top-0 start-0 mt-2 ms-2 badge rounded bg-success">
-                                                Ảnh mới
-                                            </span>
+                                        <div class="position-relative overflow-hidden rounded border mt-3"
+                                            style="height: 250px;">
+                                            <img src="{{ $image->temporaryUrl() }}" alt="Ảnh món ăn mới"
+                                                class="img-fluid w-100 h-100" style="object-fit: cover;">
+                                            <span class="position-absolute top-0 start-0 m-2 badge bg-success">Ảnh
+                                                mới</span>
                                         </div>
                                     @endif
                                 </div>
-                                <div class="col-md-9 row align-items-start">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="name" class="form-label text-light">Tên món ăn *</label>
-                                            <input type="text"
-                                                id = "name"
-                                                wire:model="name"
-                                                class="form-control bg-dark text-light border-light @error('name') is-invalid @enderror"
-                                                placeholder="VD: Bắp rang bơ">
+
+                                {{-- Cột form thông tin --}}
+                                <div class="col-md-8">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Tên món ăn *</label>
+                                            <input type="text" wire:model="name"
+                                                class="form-control bg-dark text-light border-secondary @error('name') is-invalid @enderror">
                                             @error('name')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="status" class="form-label text-light">Trạng thái *</label>
-                                            <select id="status" wire:model="status" class="form-select bg-dark text-light border-light @error('status') is-invalid @enderror">
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Trạng thái *</label>
+                                            <select wire:model="status"
+                                                class="form-select bg-dark text-light border-secondary @error('status') is-invalid @enderror">
                                                 <option value="activate">Đang bán</option>
                                                 <option value="discontinued">Ngừng bán</option>
                                             </select>
@@ -67,179 +80,354 @@
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="mb-3">
-                                            <label for="description" class="form-label text-light">Mô tả</label>
-                                            <textarea id="description" wire:model="description" class="form-control bg-dark text-light border-light @error('description') is-invalid @enderror" placeholder="VD: Bắp rang bơ vị ngọt, size lớn, thích hợp cho 2 người"></textarea>
+
+                                        <div class="col-12">
+                                            <label class="form-label">Mô tả</label>
+                                            <textarea wire:model="description"
+                                                class="form-control bg-dark text-light border-secondary @error('description') is-invalid @enderror" rows="4"></textarea>
                                             @error('description')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="image" class="form-label text-light">Ảnh món ăn</label>
-                                            <input type="file"
-                                                id = "image"
-                                                wire:model.live="image"
-                                                class="form-control bg-dark text-light border-light @error('image') is-invalid @enderror"
+
+                                        <div class="col-12">
+                                            <label class="form-label">Tải ảnh mới (thay thế ảnh đại diện)</label>
+                                            <input type="file" wire:model.live="image"
+                                                class="form-control bg-dark text-light border-secondary @error('image') is-invalid @enderror"
                                                 accept="image/*">
                                             @error('image')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-4">
-                                            <label for="quantityVariants" class="form-label text-light">Số lượng biến thể</label>
-                                            <input type="number"
-                                                id = "quantityVariants"
-                                                wire:model.live.debounce.200ms="quantityVariants"
-                                                class="form-control bg-dark text-light border-light @error('quantityVariants') is-invalid @enderror"
-                                                placeholder="VD: 1, 2, ..." min="0">
-                                            @error('quantityVariants')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Thuộc tính và Biến thể --}}
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card bg-dark text-light">
+                        <div class="card-header bg-gradient"
+                            style="background: linear-gradient(135deg, #5b2ab5 0%, #3d1c78 100%);">
+                            <h5 class="my-1">Thuộc tính và Biến thể</h5>
+                        </div>
+                        <div class="card-body">
+                            {{-- Phần quản lý thuộc tính --}}
+                            <div class="mb-4 p-3 border rounded" style="border-color: #4a5568 !important;">
+                                <h6 class="text-primary fw-bold">
+                                    {{ $editingAttributeIndex !== null ? 'Chỉnh sửa thuộc tính' : 'Thêm thuộc tính mới' }}
+                                </h6>
+                                {{-- Bắt đầu: Phần chọn thuộc tính có sẵn (áp dụng chuẩn FoodEdit) --}}
+                                <div class="card bg-dark-subtle mb-4 shadow-sm border-secondary">
+                                    <div class="card-body p-4">
+                                        <h5 class="card-title text-light mb-3">🗂️ Thêm thuộc tính có sẵn</h5>
+
+                                        {{-- Hàng chứa Dropdown chọn thuộc tính và Nút Thêm --}}
+                                        <div class="row g-3 align-items-end mb-3">
+                                            {{-- Dropdown chọn thuộc tính --}}
+                                            <div class="col-md position-relative p-3">
+                                                <label for="select-attribute"
+                                                    class="form-label text-light-emphasis fw-semibold">
+                                                    1️⃣ Chọn loại thuộc tính
+                                                </label>
+                                                <select id="select-attribute" wire:model.live="selectedAttributeId"
+                                                    class="form-select bg-dark text-light border-secondary @error('selectedAttributeId') is-invalid @enderror">
+                                                    <option value="">-- Vui lòng chọn --</option>
+                                                    @foreach ($availableAttributes as $attr)
+                                                        <option value="{{ $attr->id }}">{{ $attr->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('selectedAttributeId')
+                                                    <div class="invalid-feedback position-absolute d-block mt-1"
+                                                        style="font-size: 0.875rem;">
+                                                        <i class="fas fa-exclamation-circle me-1"></i> {{ $message }}
+                                                    </div>
+                                                @enderror
+                                            </div>
+
+                                            {{-- Nút Thêm --}}
+                                            <div class="col-md-auto p-3">
+                                                <button type="button" wire:click="addExistingAttribute"
+                                                    class="btn btn-success w-100"
+                                                    @if (empty($selectedAttributeId) || empty($selectedAttributeValueIds)) disabled @endif>
+                                                    <i class="fas fa-plus-circle me-1"></i> Thêm vào món ăn
+                                                </button>
+                                            </div>
                                         </div>
+
+                                        {{-- Các giá trị của thuộc tính được chọn --}}
+                                        @if ($selectedAttributeId)
+                                            @php
+                                                $selectedAttr = $availableAttributes->find($selectedAttributeId);
+                                            @endphp
+
+                                            @if ($selectedAttr && $selectedAttr->values->count())
+                                                <div>
+                                                    <label
+                                                        class="form-label text-light-emphasis fw-semibold d-block mb-2">
+                                                        2️⃣ Chọn giá trị (có thể chọn nhiều)
+                                                    </label>
+                                                    <div class="d-flex flex-wrap gap-2">
+                                                        @foreach ($selectedAttr->values as $value)
+                                                            <input type="checkbox" class="btn-check"
+                                                                id="value-{{ $value->id }}"
+                                                                value="{{ $value->id }}"
+                                                                wire:model.live="selectedAttributeValueIds"
+                                                                autocomplete="off">
+                                                            <label class="btn btn-outline-light"
+                                                                for="value-{{ $value->id }}">
+                                                                {{ $value->value }}
+                                                            </label>
+                                                        @endforeach
+                                                    </div>
+                                                    {{-- Hiển thị lỗi nếu thiếu value (trùng với rules server) --}}
+                                                    @error('selectedAttributeValueIds')
+                                                        <div class="invalid-feedback d-block text-warning mt-2">
+                                                            <i class="fas fa-exclamation-circle me-1"></i>
+                                                            {{ $message }}
+                                                        </div>
+                                                    @enderror
+                                                </div>
+                                            @else
+                                                <div class="alert alert-warning border-0 bg-warning-subtle mt-3 py-2"
+                                                    role="alert">
+                                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                                    Thuộc tính <strong>'{{ $selectedAttr->name ?? '' }}'</strong> chưa
+                                                    có giá trị nào được định nghĩa.
+                                                </div>
+                                            @endif
+                                        @endif
+
+                                    </div>
+                                </div>
+                                {{-- Kết thúc: Phần chọn thuộc tính có sẵn --}}
+
+
+                                <div class="row g-3 align-items-end p-3">
+                                    {{-- Input cho thuộc tính mới --}}
+                                    <div class="col-md-5 mb-3 mb-md-0 position-relative">
+                                        <label class="form-label">Tên thuộc tính (ví dụ: Kích thước)</label>
+                                        <input type="text"
+                                            class="form-control bg-dark text-light border-secondary @error('newAttributeName') is-invalid @enderror"
+                                            wire:model.live="newAttributeName" placeholder="Nhập tên thuộc tính">
+                                        @error('newAttributeName')
+                                            <div class="invalid-feedback"
+                                                style="position: absolute; top: 100%; left: 0; margin-left: 10px;">
+                                                {{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-5 mb-3 mb-md-0 position-relative">
+                                        <label class="form-label">Giá trị (phân cách bởi dấu phẩy)</label>
+                                        <input type="text"
+                                            class="form-control bg-dark text-light border-secondary @error('newAttributeValues') is-invalid @enderror"
+                                            wire:model.live="newAttributeValues" placeholder="ví dụ: Nhỏ, Vừa, Lớn">
+                                        @error('newAttributeValues')
+                                            <div class="invalid-feedback"
+                                                style="position: absolute; top: 100%; left: 0; margin-left: 10px;">
+                                                {{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-success w-100"
+                                            wire:click="addOrUpdateAttribute">
+                                            @if ($editingAttributeIndex !== null)
+                                                <i class="fas fa-save"></i> Cập nhật
+                                            @else
+                                                <i class="fas fa-plus"></i> Thêm
+                                            @endif
+                                        </button>
+                                        @if ($editingAttributeIndex !== null)
+                                            <button type="button" class="btn btn-secondary w-100 mt-2"
+                                                wire:click="cancelEditAttribute">
+                                                <i class="fas fa-times"></i> Hủy
+                                            </button>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
 
-                            @if($quantityVariants > 0)
-                                <hr class="border-light">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h5 class="text-light">Biến thể món ăn</h5>
-                                    <button type="button" wire:click="getVariantsCurrent({{ $foodItem }})" class="btn btn-outline-warning">
-                                        <i class="fas fa-refresh me-1"></i>Reset
-                                    </button>
-                                </div>
-                                <div class="row g-3 p-3">
-                                    @foreach ($this->listVariants as $index => $variant)
-                                        <div class="col-12 mb-4">
-                                            <div class="card position-relative overflow-hidden" style="background-color: #1a1a1a; border: 1px solid #333;">
-                                                <!-- Accent line -->
-                                                <div class="position-absolute top-0 start-0 h-100" style="width: 4px; background: linear-gradient(to bottom, #6b7280, #374151);"></div>
+                            {{-- Thông báo thành công/lỗi cho thuộc tính --}}
+                            @if (session()->has('attribute_error'))
+                                <div class="alert alert-danger">{{ session('attribute_error') }}</div>
+                            @endif
+                            @if (session()->has('attribute_success'))
+                                <div class="alert alert-success">{{ session('attribute_success') }}</div>
+                            @endif
 
+                            {{-- Danh sách các thuộc tính đã thêm --}}
+                            <h6 class="text-light mt-4">Danh sách thuộc tính</h6>
+                            @if (empty($variantAttributes))
+                                <p class="text-muted text-center">Chưa có thuộc tính nào.</p>
+                            @else
+                                <div class="list-group">
+                                    @foreach ($variantAttributes as $index => $attribute)
+                                        <div
+                                            class="list-group-item bg-secondary text-white border-primary mb-2 rounded d-flex justify-content-between align-items-center flex-wrap">
+                                            <div>
+                                                <strong class="text-warning">{{ $attribute['name'] }}:</strong>
+                                                <span>{{ implode(', ', $attribute['values']) }}</span>
+                                            </div>
+                                            <div class="btn-group mt-2 mt-md-0">
                                                 <button type="button"
-                                                        class="btn btn-sm position-absolute delete-btn"
-                                                        wire:click="removeVariant({{ $index }})"
-                                                        style="top: 1rem; right: 1rem; color: #6b7280; background: transparent; border: none; border-radius: 50%; padding: 0.5rem; transition: all 0.2s ease;">
-                                                        <i class="fa-solid fa-x" style="margin-right: 0"></i></button>
+                                                    wire:click="editAttribute({{ $index }})"
+                                                    class="btn btn-sm btn-info" title="Sửa"><i
+                                                        class="fas fa-pencil-alt"></i></button>
+                                                <button type="button"
+                                                    wire:click="removeAttribute({{ $index }})"
+                                                    class="btn btn-sm btn-danger" title="Xóa"
+                                                    wire:confirm="Bạn có chắc muốn xóa thuộc tính này?"><i
+                                                        class="fas fa-trash-alt"></i></button>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
 
-                                                <div class="card-body p-4">
-                                                    <div class="mb-4">
-                                                        <h3 class="text-white fw-semibold d-flex align-items-center gap-2" style="font-size: 1.125rem;">
-                                                            <span class="d-flex align-items-center justify-content-center text-white fw-bold rounded-circle"
-                                                                style="width: 2rem; height: 2rem; background: linear-gradient(to right, #6b7280, #374151); font-size: 0.875rem;">
-                                                                {{ $index + 1 }}
-                                                            </span>
-                                                            Biến thể {{ $index + 1 }}
-                                                        </h3>
-                                                    </div>
+                            {{-- Nút tạo biến thể --}}
+                            @if (!empty($variantAttributes))
+                                <div class="text-center my-4">
+                                    <button type="button" class="btn btn-primary btn-lg"
+                                        wire:click="generateVariants">
+                                        <span wire:loading.remove wire:target="generateVariants">
+                                            <i class="fas fa-cogs me-2"></i>Tạo/Cập nhật các biến thể
+                                        </span>
+                                        <span wire:loading wire:target="generateVariants">
+                                            <span class="spinner-border spinner-border-sm" role="status"
+                                                aria-hidden="true"></span>
+                                            Đang xử lý...
+                                        </span>
+                                    </button>
+                                    <p class="text-muted mt-2">Bấm vào đây để tạo các phiên bản món ăn từ các thuộc
+                                        tính trên.</p>
+                                </div>
+                            @endif
 
-                                                    <div class="row g-3 align-items-start">
-                                                        @php $columnLayoutVariant = 'col-sm-6 col-md-4' @endphp
-                                                        @if(isset($variant['id']) || $variant['image']) @php $columnLayoutVariant = 'col-md-6' @endphp <div class="col-md-3"> @endif
-                                                        @isset($variant['id'])
-                                                            <div class="mt-1 overflow-auto position-relative" style="max-height: 230px;">
-                                                                <img src="{{ asset('storage/' . ($foodItem->variants->firstWhere('id', $variant['id'])->image ?? '404.webp')) }}" alt="Ảnh biến thể hiện tại" class="img-thumbnail"
-                                                                    style="width: 100%">
-                                                                <span class="position-absolute opacity-75 top-0 start-0 mt-2 ms-2 badge rounded bg-danger">
-                                                                    Ảnh hiện tại
-                                                                </span>
+                            {{-- Danh sách các biến thể để chỉnh sửa --}}
+                            @if (!empty($variants))
+                                <hr class="border-light my-4">
+                                <h5 class="text-light mb-3">Chỉnh sửa các Biến thể</h5>
+                                <div class="row g-4">
+                                    @foreach ($variants as $vIndex => $variant)
+                                        <div class="col-12">
+                                            <div class="card position-relative overflow-hidden"
+                                                style="background-color: #2d3748; border: 1px solid #4a5568;">
+                                                <div class="position-absolute top-0 start-0 h-100"
+                                                    style="width: 5px; background: linear-gradient(to bottom, #6b7280, #374151);">
+                                                </div>
+                                                <button type="button"
+                                                    class="btn-close btn-close-white position-absolute"
+                                                    wire:click="removeVariant({{ $vIndex }})"
+                                                    style="top: .5rem; right: .5rem;"
+                                                    title="Xóa biến thể này"></button>
+
+                                                <div class="card-body">
+                                                    <div class="row g-3">
+                                                        <div class="col-lg-3 col-md-4">
+                                                            {{-- *** CHANGED: Hiển thị thuộc tính dạng read-only *** --}}
+                                                            <h6 class="text-white">Biến thể #{{ $vIndex + 1 }}</h6>
+                                                            <div>
+                                                                @foreach ($variant['attribute_values'] as $attr)
+                                                                    <span
+                                                                        class="badge bg-info me-1 mb-1">{{ $attr['attribute'] }}:
+                                                                        {{ $attr['value'] }}</span>
+                                                                @endforeach
                                                             </div>
-                                                        @endisset
-                                                        @if($variant['image'] && $variant['image'] instanceof Illuminate\Http\UploadedFile)
-                                                            <div class="@if(isset($variant['id'])) mt-2 @else mt-1 @endif overflow-auto position-relative" style="max-height: 230px;">
-                                                                <img src="{{ $variant['image']->temporaryUrl() }}" alt="Ảnh biến thể tải lên" class="img-thumbnail"
-                                                                    style="width: 100%">
-                                                                <span class="position-absolute opacity-75 top-0 start-0 mt-2 ms-2 badge rounded bg-success">
-                                                                    Ảnh mới
-                                                                </span>
-                                                            </div>
-                                                        @endif
-                                                        @if(isset($variant['id']) || $variant['image']) </div><div class="col-sm-9 row g-2"> @endif
-                                                        <div class="{{ $columnLayoutVariant }}">
-                                                            <div class="mb-3">
-                                                                <label for="variants.{{ $index }}.name" class="form-label text-light">Tên biến thể *</label>
-                                                                <input type="text"
-                                                                    id = "variants.{{ $index }}.name"
-                                                                    wire:model="variants.{{ $index }}.name"
-                                                                    class="form-control bg-dark text-light border-light @error("variants.$index.name") is-invalid @enderror"
-                                                                    placeholder="VD: Màu đỏ, Size M...">
-                                                                @error("variants.$index.name")
-                                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                                @enderror
-                                                            </div>
-                                                        </div>
-                                                        <div class="{{ $columnLayoutVariant }}">
-                                                            <div class="mb-3">
-                                                                <label for="variants.{{ $index }}.price" class="form-label text-light">Giá *</label>
-                                                                <input type="text"
-                                                                    id = "variants.{{ $index }}.price"
-                                                                    wire:model="variants.{{ $index }}.price"
-                                                                    class="form-control bg-dark text-light border-light @error("variants.$index.price") is-invalid @enderror"
-                                                                    placeholder="VD: 100000đ" min="0">
-                                                                @error("variants.$index.price")
-                                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                                @enderror
-                                                            </div>
-                                                        </div>
-                                                        <div class="{{ $columnLayoutVariant }}">
-                                                            <div class="mb-3">
-                                                                <label for="variants.{{ $index }}.quantity" class="form-label text-light">Số lượng *</label>
-                                                                <input type="number"
-                                                                    id = "variants.{{ $index }}.quantity"
-                                                                    wire:model="variants.{{ $index }}.quantity"
-                                                                    class="form-control bg-dark text-light border-light @error("variants.$index.quantity") is-invalid @enderror"
-                                                                    placeholder="VD: 100" min="0"
-                                                                    name="temp">
-                                                                @error("variants.$index.quantity")
-                                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                                @enderror
+
+                                                            {{-- Hiển thị ảnh biến thể --}}
+                                                            <div class="mt-3">
+                                                                @if (!empty($variant['existing_image']))
+                                                                    <div class="mb-2 position-relative">
+                                                                        <img src="{{ asset('storage/' . $variant['existing_image']) }}"
+                                                                            alt="Ảnh hiện tại"
+                                                                            class="img-thumbnail bg-dark border-secondary"
+                                                                            style="width: 100%; height: 120px; object-fit: cover;">
+                                                                        <span
+                                                                            class="position-absolute top-0 start-0 m-1 badge bg-danger">Hiện
+                                                                            tại</span>
+                                                                    </div>
+                                                                @endif
+                                                                @if (isset($variant['image']) && $variant['image'] instanceof Illuminate\Http\UploadedFile)
+                                                                    <div class="position-relative">
+                                                                        <img src="{{ $variant['image']->temporaryUrl() }}"
+                                                                            alt="Ảnh mới"
+                                                                            class="img-thumbnail bg-dark border-secondary"
+                                                                            style="width: 100%; height: 120px; object-fit: cover;">
+                                                                        <span
+                                                                            class="position-absolute top-0 start-0 m-1 badge bg-success">Ảnh
+                                                                            mới</span>
+                                                                    </div>
+                                                                @endif
                                                             </div>
                                                         </div>
-                                                        <div class="{{ $columnLayoutVariant }}">
-                                                            <div class="mb-3">
-                                                                <label for="variants.{{ $index }}.limit" class="form-label text-light">Giới hạn số lượng nhập </label>
-                                                                <input type="number"
-                                                                    id = "variants.{{ $index }}.limit"
-                                                                    wire:model="variants.{{ $index }}.limit"
-                                                                    class="form-control bg-dark text-light border-light @error("variants.$index.limit") is-invalid @enderror"
-                                                                    placeholder="VD: 300" min="0">
-                                                                @error("variants.$index.limit")
-                                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                                @enderror
+
+                                                        <div class="col-lg-9 col-md-8">
+                                                            <div class="row g-3">
+                                                                <div class="col-lg-4 col-sm-6">
+                                                                    <label class="form-label">Giá *</label>
+                                                                    <input type="number"
+                                                                        wire:model="variants.{{ $vIndex }}.price"
+                                                                        class="form-control bg-dark text-light border-secondary @error("variants.$vIndex.price") is-invalid @enderror"
+                                                                        min="0">
+                                                                    @error("variants.$vIndex.price")
+                                                                        <div class="invalid-feedback">{{ $message }}
+                                                                        </div>
+                                                                    @enderror
+                                                                </div>
+                                                                <div class="col-lg-4 col-sm-6">
+                                                                    <label class="form-label">Số lượng *</label>
+                                                                    <input type="number"
+                                                                        wire:model="variants.{{ $vIndex }}.quantity_available"
+                                                                        class="form-control bg-dark text-light border-secondary @error("variants.$vIndex.quantity_available") is-invalid @enderror"
+                                                                        min="0">
+                                                                    @error("variants.$vIndex.quantity_available")
+                                                                        <div class="invalid-feedback">{{ $message }}
+                                                                        </div>
+                                                                    @enderror
+                                                                </div>
+                                                                <div class="col-lg-4 col-sm-6">
+                                                                    <label class="form-label">Giới hạn</label>
+                                                                    <input type="number"
+                                                                        wire:model="variants.{{ $vIndex }}.limit"
+                                                                        class="form-control bg-dark text-light border-secondary @error("variants.$vIndex.limit") is-invalid @enderror"
+                                                                        min="0">
+                                                                    @error("variants.$vIndex.limit")
+                                                                        <div class="invalid-feedback">{{ $message }}
+                                                                        </div>
+                                                                    @enderror
+                                                                </div>
+                                                                <div class="col-lg-8 col-sm-6">
+                                                                    <label class="form-label">Ảnh biến thể (tùy
+                                                                        chọn)</label>
+                                                                    <input type="file"
+                                                                        wire:model.live="variants.{{ $vIndex }}.image"
+                                                                        class="form-control bg-dark text-light border-secondary @error('variants.' . $vIndex . '.image') is-invalid @enderror"
+                                                                        accept="image/*">
+                                                                    @error('variants.' . $vIndex . '.image')
+                                                                        <div class="invalid-feedback">{{ $message }}
+                                                                        </div>
+                                                                    @enderror
+                                                                </div>
+                                                                <div class="col-lg-4 col-sm-12">
+                                                                    <label class="form-label">Trạng thái *</label>
+                                                                    <select
+                                                                        wire:model="variants.{{ $vIndex }}.status"
+                                                                        class="form-select bg-dark text-light border-secondary @error("variants.$vIndex.status") is-invalid @enderror">
+                                                                        <option value="available">Còn hàng</option>
+                                                                        <option value="out_of_stock">Hết hàng</option>
+                                                                        <option value="hidden">Ẩn</option>
+                                                                    </select>
+                                                                    @error("variants.$vIndex.status")
+                                                                        <div class="invalid-feedback">{{ $message }}
+                                                                        </div>
+                                                                    @enderror
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div class="{{ $columnLayoutVariant }}">
-                                                            <div class="mb-3">
-                                                                <label for="variants.{{ $index }}.status" class="form-label text-light">Trạng thái *</label>
-                                                                <select id="variants.{{ $index }}.status" wire:model="variants.{{ $index }}.status" class="form-select bg-dark text-light border-light @error("variants.$index.status") is-invalid @enderror">
-                                                                    <option value="available">Còn hàng</option>
-                                                                    <option value="out_of_stock">Hết hàng</option>
-                                                                    <option value="hidden">Ẩn</option>
-                                                                </select>
-                                                                @error("variants.$index.status")
-                                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                                @enderror
-                                                            </div>
-                                                        </div>
-                                                        <div class="{{ $columnLayoutVariant }}">
-                                                            <div class="mb-3">
-                                                                <label for="variants.{{ $index }}.image" class="form-label text-light">Ảnh biến thể </label>
-                                                                <input type="file"
-                                                                    id = "variants.{{ $index }}.image"
-                                                                    wire:model.live="variants.{{ $index }}.image"
-                                                                    class="form-control bg-dark text-light border-light @error("variants.$index.image") is-invalid @enderror"
-                                                                    accept="image/*">
-                                                                @error("variants.$index.image")
-                                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                                @enderror
-                                                            </div>
-                                                        </div>
-                                                        @if(isset($variant['id']) || $variant['image']) </div> @endif
                                                     </div>
                                                 </div>
                                             </div>
@@ -247,19 +435,24 @@
                                     @endforeach
                                 </div>
                             @endif
-
-                            <div class="d-flex justify-content-between">
-                                <button type="submit" class="btn btn-success">
-                                    <i class="fas fa-save"></i> Cập nhật thông tin
-                                </button>
-                                <a href="{{ route('admin.foods.index') }}" class="btn btn-outline-danger">
-                                    Hủy bỏ
-                                </a>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            {{-- Nút submit chính --}}
+            <div class="mt-4 d-flex justify-content-end">
+                <a href="{{ route('admin.foods.index') }}" class="btn btn-outline-secondary me-3">Hủy bỏ</a>
+                <button type="submit" class="btn btn-lg btn-success">
+                    <span wire:loading.remove wire:target="save">
+                        <i class="fas fa-save me-2"></i>Lưu tất cả thay đổi
+                    </span>
+                    <span wire:loading wire:target="save">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Đang lưu...
+                    </span>
+                </button>
+            </div>
+        </form>
     </div>
 </div>

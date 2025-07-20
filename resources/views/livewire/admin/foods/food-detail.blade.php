@@ -1,5 +1,5 @@
-<div>
-    <div class="container-lg mb-4" wire:poll="realTimeFoodUpdate">
+<div class="scRender">
+    <div class="container-lg mb-4">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2 class="text-light">Chi tiết món ăn: {{ $foodItem->name }}</h2>
@@ -21,8 +21,20 @@
                         <div class="d-flex justify-content-between">
                             <div>
                                 <h6 class="card-title">Tổng số biến thể</h6>
-                                <h3 class="mb-0">{{ number_format($foodItem->variants->count(), 0, '.', '.') }}</h3>
-                                <small>biến thể</small>
+                                <h3 class="mb-0">
+                                    @if ($isOriginal)
+                                        0
+                                    @else
+                                        {{ number_format($foodItem->variants->count(), 0, '.', '.') }}
+                                    @endif
+                                </h3>
+                                <small>
+                                    @if ($isOriginal)
+                                        Sản phẩm gốc
+                                    @else
+                                        Biến thể
+                                    @endif
+                                </small>
                             </div>
                             <div class="align-self-center">
                                 <i class="fas fa-layer-group fa-2x opacity-75"></i>
@@ -56,7 +68,8 @@
                             <div>
                                 <h6 class="card-title">Giá trung bình</h6>
                                 <h3 class="mb-0">
-                                    {{ number_format($foodItem->variants?->avg('price') ?? 0, 0, '.', '.') }}đ</h3>
+                                    {{ number_format($foodItem->variants?->avg('price') ?? 0, 0, '.', '.') }}đ
+                                </h3>
                                 <small>VNĐ</small>
                             </div>
                             <div class="align-self-center">
@@ -143,14 +156,39 @@
                                                 @case('discontinued')
                                                     <span class="badge bg-danger">Ngừng bán</span>
                                                 @break
+
+                                                @default
+                                                    <span class="badge bg-secondary">Không xác định</span>
                                             @endswitch
                                         </td>
                                     </tr>
+
+                                    @if ($isOriginal)
+                                        <tr>
+                                            <td><strong class="text-warning">Giá:</strong></td>
+                                            <td>{{ number_format($price ?? 0, 0, ',', '.') }}đ</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong class="text-warning">Số lượng:</strong></td>
+                                            <td>{{ number_format($quantity_available ?? 0, 0, ',', '.') }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong class="text-warning">Giới hạn nhập:</strong></td>
+                                            <td>
+                                                @if ($limit)
+                                                    {{ number_format($limit, 0, ',', '.') }}
+                                                @else
+                                                    <span class="text-muted">Không giới hạn</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endif
                                     <tr>
                                         <td><strong class="text-warning">Ngày tạo:</strong></td>
                                         <td>{{ $foodItem->created_at->format('d/m/Y H:i') }}</td>
                                     </tr>
                                 </table>
+
                             </div>
                         </div>
                     </div>
@@ -181,84 +219,116 @@
                             <div class="card-body bg-dark"
                                 style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
                                 <div class="table-responsive">
-                                    <table class="table table-dark table-striped table-hover text-light border">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-center text-light">Tên biến thể</th>
-                                                <th class="text-center text-light">Ảnh</th>
-                                                <th class="text-center text-light">Giá</th>
-                                                <th class="text-center text-light">Số lượng</th>
-                                                <th class="text-center text-light">Giới hạn nhập</th>
-                                                <th class="text-center text-light">Trạng thái</th>
-                                                <th class="text-center text-light">Hành động</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse ($foodItem->variants as $variant)
-                                                <tr wire:key="{{ $variant->id }}">
-                                                    <td class="text-center"><strong
-                                                            class="text-light">{{ $variant->name }}</strong></td>
-                                                    <td class="d-flex justify-content-center">
-                                                        <div class="mt-1 overflow-auto d-block"
-                                                            style="max-height: 70px; width: 100px;">
-                                                            <img src="{{ asset('storage/' . ($variant->image ?? '404.webp')) }}"
-                                                                alt="Ảnh biến thể" class="rounded"
-                                                                style="width: 100%; height: auto;">
-                                                        </div>
-                                                    </td>
-                                                    <td class="text-center">
-                                                        {{ number_format($variant->price, 0, ',', '.') }}đ</td>
-                                                    <td class="text-center">
-                                                        {{ number_format($variant->quantity_available, 0, ',', '.') }}
-                                                    </td>
-                                                    <td class="text-center">
-                                                        @if ($variant->limit)
-                                                            <span
-                                                                class="text-light">{{ number_format($variant->limit, 0, ',', '.') }}</span>
-                                                        @else
-                                                            <span class="text-muted">Không có giới hạn</span>
-                                                        @endif
-                                                    </td>
-                                                    <td class="text-center">
-                                                        @switch($variant->status)
-                                                            @case('available')
-                                                                <span class="badge bg-success">Còn hàng</span>
-                                                            @break
-
-                                                            @case('hidden')
-                                                                <span class="badge bg-warning text-dark">Ẩn</span>
-                                                            @break
-
-                                                            @case('out_of_stock')
-                                                                <span class="badge bg-danger">Hết hàng</span>
-                                                            @break
-                                                        @endswitch
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex gap-2 justify-content-center">
-                                                            <a href="{{ route('admin.food_variants.detail', $variant->id) }}"
-                                                                class="btn btn-sm btn-info" title="Xem chi tiết">
-                                                                <i class="fas fa-eye" style="margin-right: 0"></i>
-                                                            </a>
-                                                            <a href="{{ route('admin.food_variants.edit', $variant->id) }}"
-                                                                class="btn btn-sm btn-warning" title="Chỉnh sửa">
-                                                                <i class="fas fa-edit" style="margin-right: 0"></i>
-                                                            </a>
-                                                        </div>
-                                                    </td>
+                                    @if ($foodItem->variants->count() === 0)
+                                        <div class="text-center text-muted py-4">
+                                            <i class="fas fa-box-open fa-3x mb-3"></i>
+                                            <p><strong>Sản phẩm gốc</strong> - Không có biến thể</p>
+                                        </div>
+                                    @else
+                                        <table class="table table-dark table-striped table-hover text-light border">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center text-light">Thuộc tính biến thể</th>
+                                                    <th class="text-center text-light">Ảnh</th>
+                                                    <th class="text-center text-light">Giá</th>
+                                                    <th class="text-center text-light">Số lượng</th>
+                                                    <th class="text-center text-light">Giới hạn nhập</th>
+                                                    <th class="text-center text-light">Trạng thái</th>
+                                                    <th class="text-center text-light">Hành động</th>
                                                 </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="7" class="text-center py-4">
-                                                            <div class="text-muted">
-                                                                <i class="fas fa-inbox fa-3x mb-3"></i>
-                                                                <p>Không có biến thể nào</p>
+                                            </thead>
+                                            <tbody>
+                                                @forelse ($foodItem->variants->filter(fn($v) => $v->attributeValues->count() > 0) as $variant)
+                                                    <tr wire:key="{{ $variant->id }}">
+                                                        <td class="text-center">
+                                                            @forelse ($variant->attributeValues as $value)
+                                                                <div class="mb-2">
+                                                                    <strong>{{ $value->attribute->name }}:</strong>
+                                                                    <span
+                                                                        class="badge bg-secondary ms-1">{{ $value->value }}</span>
+                                                                </div>
+                                                            @empty
+                                                                <span class="text-muted">Đây là sản phẩm gốc không có
+                                                                    biến
+                                                                    thể</span>
+                                                            @endforelse
+                                                        </td>
+
+                                                        {{-- Cột ảnh --}}
+                                                        <td class="d-flex justify-content-center">
+                                                            <div class="mt-1 overflow-auto d-block"
+                                                                style="max-height: 70px; width: 100px;">
+                                                                <img src="{{ asset('storage/' . ($variant->image ?? '404.webp')) }}"
+                                                                    alt="Ảnh biến thể" class="rounded"
+                                                                    style="width: 100%; height: auto;">
+                                                            </div>
+                                                        </td>
+
+                                                        {{-- Giá --}}
+                                                        <td class="text-center">
+                                                            {{ number_format($variant->price, 0, ',', '.') }}đ
+                                                        </td>
+
+                                                        {{-- Số lượng --}}
+                                                        <td class="text-center">
+                                                            {{ number_format($variant->quantity_available, 0, ',', '.') }}
+                                                        </td>
+
+                                                        {{-- Giới hạn nhập --}}
+                                                        <td class="text-center">
+                                                            @if ($variant->limit)
+                                                                <span
+                                                                    class="text-light">{{ number_format($variant->limit, 0, ',', '.') }}</span>
+                                                            @else
+                                                                <span class="text-muted">Không có giới hạn</span>
+                                                            @endif
+                                                        </td>
+
+                                                        {{-- Trạng thái --}}
+                                                        <td class="text-center">
+                                                            @switch($variant->status)
+                                                                @case('available')
+                                                                    <span class="badge bg-success">Còn hàng</span>
+                                                                @break
+
+                                                                @case('hidden')
+                                                                    <span class="badge bg-warning text-dark">Ẩn</span>
+                                                                @break
+
+                                                                @case('out_of_stock')
+                                                                    <span class="badge bg-danger">Hết hàng</span>
+                                                                @break
+                                                            @endswitch
+                                                        </td>
+
+                                                        {{-- Hành động --}}
+                                                        <td>
+                                                            <div class="d-flex gap-2 justify-content-center">
+                                                                <a href="{{ route('admin.food_variants.detail', $variant->id) }}"
+                                                                    class="btn btn-sm btn-info" title="Xem chi tiết">
+                                                                    <i class="fas fa-eye" style="margin-right: 0"></i>
+                                                                </a>
+                                                                <a href="{{ route('admin.food_variants.edit', $variant->id) }}"
+                                                                    class="btn btn-sm btn-warning" title="Chỉnh sửa">
+                                                                    <i class="fas fa-edit"
+                                                                        style="margin-right: 0"></i>
+                                                                </a>
                                                             </div>
                                                         </td>
                                                     </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
+                                                    @empty
+                                                        <tr>
+                                                            <td colspan="8" class="text-center py-4">
+                                                                <div class="text-muted">
+                                                                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                                                                    <p>Không có biến thể nào</p>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    @endforelse
+                                                </tbody>
+                                            </table>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -295,7 +365,7 @@
                                                         <td class="text-center">
                                                             {{ $foodOrder->booking?->booking_code ?? 'N/A' }}</td>
                                                         <td class="text-center"><strong
-                                                                class="text-light">{{ $foodOrder->variant->name }}</strong>
+                                                                class="text-light">{{ $foodItem->name }}</strong>
                                                         </td>
                                                         <td class="text-center">
                                                             {{ number_format($foodOrder->quantity, 0, ',', '.') }}</td>

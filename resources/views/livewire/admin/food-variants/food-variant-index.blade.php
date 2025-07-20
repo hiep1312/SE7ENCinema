@@ -1,4 +1,4 @@
-<div>
+<div class="scRender">
     @if (session()->has('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert" wire:ignore>
             {{ session('success') }}
@@ -97,14 +97,23 @@
                                                 style="width: 100%; height: auto;">
                                         </div>
                                     </td>
-                                    <td class="text-light">
-                                        <strong>{{ $variant->name }}</strong>
-                                        @if ($variant->trashed())
-                                            <span class="badge bg-danger ms-1">Đã xóa</span>
+                                    <td class="text-center text-light">
+                                        <strong>{{ $variant->foodItem->name ?? '' }}</strong>
+                                        @if ($variant->attributeValues->count())
+                                            –
+                                            @foreach ($variant->attributeValues as $attr)
+                                                {{ $attr->attribute->name }} {{ $attr->value }}@if (!$loop->last)
+                                                    ,
+                                                @endif
+                                            @endforeach
+                                        @else
+                                            <span class="text-muted">(Chưa có thuộc tính)</span>
                                         @endif
                                     </td>
-                                    <td class="text-center text-warning">{{ number_format($variant->price, 0, ',', '.') }}đ</td>
-                                    <td class="text-center text-light">{{ number_format($variant->quantity_available, 0, ',', '.') }}</td>
+                                    <td class="text-center text-warning">
+                                        {{ number_format($variant->price, 0, ',', '.') }}đ</td>
+                                    <td class="text-center text-light">
+                                        {{ number_format($variant->quantity_available, 0, ',', '.') }}</td>
                                     <td class="text-center text-center">
                                         @if (!$showDeleted && !$variant->trashed())
                                             @switch($variant->status)
