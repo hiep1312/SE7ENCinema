@@ -56,6 +56,8 @@ use App\Livewire\Admin\Comments\CommentEdit;
 use App\Livewire\Admin\Comments\CommentIndex;
 use App\Livewire\Payment\VnpayPayment;
 use App\Livewire\Booking\BookingFood;
+use App\Livewire\Client\User\UserConfirm;
+use App\Livewire\Client\User\UserInformation;
 
 Route::get('/booking', SelectMovieShowtime::class)->name('booking.select_showtime');
 Route::get('/booking/seats/{showtime_id}', SelectSeats::class)->name('booking.select_seats');
@@ -214,5 +216,7 @@ Route::name('client.')->group(function () {
     Route::view('/confirmation_screen', 'livewire.client.template.confirmation_screen')->name('confirmation_screen');
 });
 
+Route::get('/user-info/{user}', UserInformation::class)->name('userInfo')->middleware('role:user');
+Route::get('/user-confirm', UserConfirm::class)->name('userConfirm')->middleware('role:user,admin,staff');
 Route::view('/', 'welcome')->name('welcome');
 Route::view('/clienttest', 'clienttest')->name('clienttest');

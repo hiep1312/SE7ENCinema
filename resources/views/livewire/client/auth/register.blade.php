@@ -60,7 +60,7 @@
                                     <div class="col-md-6 mb-3">
                                         <label for="fullname" class="form-label custom-form-label">
                                             <i class="fas fa-user me-1"></i>
-                                            Họ và tên *
+                                            Họ và tên * 
                                         </label>
                                         <div class="input-group custom-input-group">
                                             <span class="input-group-text">

@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
         @hasSection('title')
-            @yield('title', 'SE7ENCinema')
+        @yield('title', 'SE7ENCinema')
         @else
-            {{ $title ?? 'SE7ENCinema' }}
+        {{ $title ?? 'SE7ENCinema' }}
         @endif
     </title>
     <link rel="icon" type="image/x-icon" href="{{ asset('storage/favicon.ico') }}">
@@ -38,9 +38,9 @@
     <div>
         @include('livewire.client.components.header')
         @hasSection('content')
-            @yield('content')
+        @yield('content')
         @else
-            {{ $slot }}
+        {{ $slot }}
         @endif
         @include('livewire.client.components.footer')
     </div>
