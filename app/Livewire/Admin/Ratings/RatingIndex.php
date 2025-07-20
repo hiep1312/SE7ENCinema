@@ -13,7 +13,7 @@ class RatingIndex extends Component
 {
     use WithPagination;
 
-    public $counts = [];
+    public $countsStar = [];
     public $search = '';
     public $starFilter = '';
     public $movieFilter = '';
@@ -31,9 +31,22 @@ class RatingIndex extends Component
         $rating = Rating::findOrFail($id);
 
         if ($rating->delete()) {
-            session()->flash('success', 'Xóa đánh giá thành công!');
+            session()->flash('success', 'Xóa bài đánh giá thành công!');
         } else {
-            session()->flash('error', 'Xóa đánh giá không thành công!');
+            session()->flash('error', 'Xóa bài đánh giá không thành công!');
+        }
+    }
+
+    public function restoreRating(array $status, int $id)
+    {
+        if (!$status['isConfirmed']) return;
+
+        $rating = Rating::onlyTrashed()->findOrFail($id);
+
+        if ($rating->restore()) {
+            session()->flash('success', 'Khôi phục bài đánh giá thành công!');
+        } else {
+            session()->flash('error', 'Khôi phục bài đánh giá không thành công!');
         }
     }
 
@@ -55,13 +68,13 @@ class RatingIndex extends Component
 
         // Đếm số đánh giá theo người dùng và theo phim
         foreach (range(1, 5) as $score) {
-            $this->counts[$score] = Rating::with('user')
+            $this->countsStar[$score] = Rating::with('user')
                 ->where('score', $score)
                 ->when($this->movieFilter, $subQueryMovieFilter)
                 ->when($this->search, $subQuerySearch)->count();
         }
 
-        $query = Rating::with('movie', 'user')
+        $query = Rating::withTrashed()->with('movie', 'user')
             ->when($this->search, $subQuerySearch)
             ->where('score', 'like', '%' . $this->starFilter . '%');
         $movies = Movie::select('title', 'id')

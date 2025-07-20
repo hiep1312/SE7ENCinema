@@ -1,13 +1,13 @@
 <div class="scRender">
     @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert" wire:ignore>
+        <div class="alert alert-success alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
             {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
     @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert" wire:ignore>
+        <div class="alert alert-danger alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
             {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -50,15 +50,15 @@
                     </div>
 
                     <!-- Lọc theo giá tiền -->
-                    <div class="col-md-5 col-lg-4 mb-2 mb-md-0 d-flex align-items-center gap-2">
-                        <span id="lowerValue" x-text="$wire.priceFilter[0].toLocaleString('vi-VN')"></span>
+                    <div class="col-md-8 col-xl-5 mb-2 mb-md-0 d-flex align-items-center gap-2">
+                        <span id="lowerValue" x-text="$wire.priceFilter[0].toLocaleString('vi-VN') + 'đ'"></span>
                         <div class="dual-range">
                             <div class="range-track"></div>
                             <div class="range-fill" id="rangeFill" wire:ignore.self></div>
                             <input type="range" class="range-input lower" id="lowerRange" min="{{ $rangePrice[0] }}" max="{{ $rangePrice[1] }}" value="{{ $priceFilter[0] }}" wire:input="$js.updateSlider">
                             <input type="range" class="range-input upper" id="upperRange" min="{{ $rangePrice[0] }}" max="{{ $rangePrice[1] }}" value="{{ $priceFilter[1] }}" wire:input="$js.updateSlider">
                         </div>
-                        <span id="upperValue" x-text="$wire.priceFilter[1].toLocaleString('vi-VN')"></span>
+                        <span id="upperValue" x-text="$wire.priceFilter[1].toLocaleString('vi-VN') + 'đ'"></span>
                     </div>
 
                     <!-- Reset filters -->
@@ -91,17 +91,21 @@
                                 <tr>
                                     <td class="text-center fw-bold">{{ $loop->iteration }}</td>
                                     <td>
-                                        <div class="overflow-auto d-block text-center position-relative"
-                                            style="max-height: 90px; width: 100px;">
-                                            <img src="{{ asset('storage/' . ($showtime->movie->poster ?? '404.webp')) }}"
-                                                alt="Ảnh phim {{ $showtime->movie->poster }}" class="rounded"
-                                                style="width: 100%; height: auto;">
+                                        <div class="d-flex justify-content-center">
+                                            <div class="movie-poster" style="width: 80px; height: 100px; margin: 0;">
+                                                @if($showtime->movie->poster)
+                                                    <img src="{{ asset('storage/' . $showtime->movie->poster) }}"
+                                                        alt="Ảnh phim {{ $showtime->movie->title }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
+                                                @else
+                                                    <i class="fas fa-film" style="font-size: 22px;"></i>
+                                                @endif
+                                            </div>
                                         </div>
                                     </td>
                                     <td>
                                         <strong class="text-light text-wrap">{{ $showtime->movie->title }}</strong>
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         <strong class="text-light text-wrap">{{ $showtime->room->name }}</strong>
                                     </td>
                                     <td class="text-center">
