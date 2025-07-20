@@ -1,4 +1,4 @@
-<div class="scRender dark-cinema-schedule-wrapper container">
+<div class="scRender dark-cinema-schedule-wrapper container" wire:poll="loadMoviesForDate">
     <!-- Header -->
     <div class="dark-schedule-header text-center mb-4">
         <h1 class="dark-schedule-main-title">
@@ -54,58 +54,53 @@
                         </div>
                         <h3 class="dark-movie-title" style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem;">{{ $movie->title }}</h3>
                         <div class="dark-movie-details">
-
                             <div class="dark-movie-detail-item mb-3">
                                 <span class="detail-label">Khởi chiếu:</span>
                                 <span class="detail-value">{{ $movie->release_date->format('d/m/Y') }}</span>
                             </div>
-
-                            @if($movie->age_restriction)
-                                <div class="dark-movie-detail-item dark-age-restriction-info">
-                                    <span class="detail-label">{{ $movie->age_restriction }}:</span>
-                                    <span class="detail-value">
-                                        @switch($movie->age_restriction)
-                                            @case('P')
-                                                Phim được phổ biến đến người xem ở mọi độ tuổi
-                                                @break
-                                            @case('K')
-                                                Phim được phổ biến đến người xem dưới 13 tuổi và có người bảo hộ đi kèm
-                                                @break
-                                            @case('T13')
-                                                Phim được phổ biến đến người xem từ đủ 13 tuổi trở lên (13+)
-                                                @break
-                                            @case('T16')
-                                                Phim được phổ biến đến người xem từ đủ 16 tuổi trở lên (16+)
-                                                @break
-                                            @case('T18')
-                                                Phim được phổ biến đến người xem từ đủ 18 tuổi trở lên (18+)
-                                                @break
-                                            @case('C')
-                                                Phim cấm chiếu
-                                                @break
-                                        @endswitch
-                                    </span>
-                                </div>
-                            @endif
+                            <div class="dark-movie-detail-item mb-3">
+                                <span class="detail-label">Đạo diễn:</span>
+                                <span class="detail-value">{{ $movie->directors }}</span>
+                            </div>
+                            <div class="dark-movie-detail-item mb-3">
+                                <span class="detail-label">Diễn viên:</span>
+                                <span class="detail-value">{{ $movie->actors }}</span>
+                            </div>
                         </div>
                     </div>
                     <div class="dark-showtimes-section">
                         <h4 class="dark-showtimes-title" style="margin-bottom: 0.5rem;">Lịch chiếu</h4>
                         <div class="dark-showtimes-grid">
-                            @foreach($movie->showtimes as $showtime)
+                            @forelse($movie->showtimes as $showtime)
+                                @php
+                                    $isPassed = $showtime->start_time->lte(now());
+                                    $hasNoSeats = !isset($showtime->available_seats) || $showtime->available_seats <= 0;
+                                    $isDisabled = $isPassed || $hasNoSeats;
+                                @endphp
                                 <div class="dark-showtime-item">
                                     <button
-                                        {{-- wire:click="bookShowtime({{ $showtime->id }})" --}}
-                                        class="dark-showtime-btn"
-                                        @if($showtime->start_time->lt(now())) disabled @endif
+                                        wire:click="bookShowtime({{ $showtime->id }})"
+                                        class="dark-showtime-btn {{ $isDisabled ? 'disabled' : '' }}"
+                                        @if($isDisabled) disabled @endif
+                                        title="@if($isPassed) Suất chiếu đã qua @elseif($hasNoSeats) Hết vé @else Còn {{ $showtime->available_seats }} ghế @endif"
                                     >
                                         {{ $showtime->start_time->format('H:i') }}
                                     </button>
                                     <div class="dark-seats-info">
-                                        {{ $showtime->available_seats ?? 0 }} ghế trống
+                                        @if($isPassed)
+                                            <span class="text-muted">Đã chiếu</span>
+                                        @elseif($hasNoSeats)
+                                            <span class="text-danger">Hết vé</span>
+                                        @else
+                                            {{ $showtime->available_seats }} ghế trống
+                                        @endif
                                     </div>
                                 </div>
-                            @endforeach
+                            @empty
+                                <div class="text-muted">
+                                    <em>Không có suất chiếu hợp lệ</em>
+                                </div>
+                            @endforelse
                         </div>
                     </div>
                 </div>

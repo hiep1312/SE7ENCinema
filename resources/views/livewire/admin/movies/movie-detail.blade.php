@@ -214,7 +214,7 @@
                                                 <a href="{{ $movie->trailer_url }}"
                                                 target="_blank"
                                                 class="btn btn-sm btn-outline-primary"
-                                                title="Mở đường dẫn liên kết">
+                                                title="Mở trailer liên kết">
                                                     <i class="fas fa-external-link-alt"></i>
                                                 </a>
                                             @else
@@ -262,9 +262,13 @@
                             </div>
                             <div class="card-body bg-dark"
                                 style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
-                                <div class="overflow-auto position-relative" style="max-height: 400px;">
-                                    <img src="{{ asset('storage/' . ($movie->poster ?? '404.webp')) }}"
-                                        alt="Ảnh poster hiện tại" class="img-thumbnail" style="width: 100%;">
+                                <div class="movie-poster w-100" style="aspect-ratio: 4 / 5; width: auto; height: auto; margin: 0;">
+                                    @if($movie->poster)
+                                        <img src="{{ asset('storage/' . $movie->poster) }}"
+                                            alt="Ảnh poster phim {{ $movie->title }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
+                                    @else
+                                        <i class="fas fa-film" style="font-size: 22px;"></i>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -521,7 +525,7 @@
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <a href="{{ /* route('admin.bookings.detail', $booking->id) */ '#' }}"
+                                                            <a href="{{ route('admin.bookings.detail', $booking->id) }}"
                                                                 class="btn btn-sm btn-info" title="Xem chi tiết">
                                                                 <i class="fas fa-eye" style="margin-right: 0"></i>
                                                             </a>
