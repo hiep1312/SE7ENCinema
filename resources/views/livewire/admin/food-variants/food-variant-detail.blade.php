@@ -1,10 +1,10 @@
-<div>
+<div class="scRender">
     <div class="container-lg mb-4" wire:poll="realTimeVariantUpdate">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2 class="text-light">Chi tiết Biến thể: {{ $variantItem->name }}</h2>
             <div>
-                <a href="{{ route('admin.food_variants.edit',$variantItem->id) }}" class="btn btn-warning me-2">
+                <a href="{{ route('admin.food_variants.edit', $variantItem->id) }}" class="btn btn-warning me-2">
                     <i class="fas fa-edit me-1"></i>Chỉnh sửa
                 </a>
                 <a href="{{ route('admin.food_variants.index') }}" class="btn btn-outline-secondary">
@@ -91,17 +91,35 @@
                                 <table class="table table-borderless text-light">
                                     <tr>
                                         <td><strong class="text-warning">Tên món ăn liên kết:</strong></td>
-                                        <td><strong class="badge bg-gradient text-light" style="background: linear-gradient(to right, #642b73, #c642ab) !important; font-size: 0.875rem !important;">
-                                            {{ $variantItem->FoodItem->name ?? 'N/A' }}
-                                        </strong><br>
+                                        <td><strong class="badge bg-gradient text-light"
+                                                style="background: linear-gradient(to right, #642b73, #c642ab) !important; font-size: 0.875rem !important;">
+                                                {{ $variantItem->FoodItem->name ?? 'N/A' }}
+                                            </strong><br>
                                     </tr>
                                     <tr>
-                                        <td><strong class="text-warning">Tên biến thể:</strong></td>
-                                        <td>{{ $variantItem->name }}</td>
+                                        <td><strong class="text-warning">Thuộc tính biến thể:</strong></td>
+                                        <td>
+                                            @if ($variantItem->attributeValues->count())
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    @foreach ($variantItem->attributeValues as $value)
+                                                        <span class="badge rounded-pill text-dark"
+                                                            style="background: linear-gradient(to right, #00c3ff, #ffff1c); font-weight: 500;">
+                                                            <strong>{{ $value->attribute->name }}:</strong>
+                                                            {{ $value->value }}
+                                                        </span>
+                                                    @endforeach
+                                                </div>
+                                            @else
+                                                <span class="text-muted">Chưa có thuộc tính</span>
+                                            @endif
+                                        </td>
                                     </tr>
+
                                     <tr>
                                         <td><strong class="text-warning">Giá</strong></td>
-                                        <td><span class="text-warning">{{ number_format($variantItem->price, 0, ',', '.') }}đ</span></td>
+                                        <td><span
+                                                class="text-warning">{{ number_format($variantItem->price, 0, ',', '.') }}đ</span>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td><strong class="text-warning">Số lượng còn lại</strong></td>
@@ -110,7 +128,7 @@
                                     <tr>
                                         <td><strong class="text-warning">Giới hạn số lượng nhập</strong></td>
                                         <td>
-                                            @if($variantItem->limit > 0)
+                                            @if ($variantItem->limit > 0)
                                                 <span>{{ number_format($variantItem->limit, 0, ',', '.') }}</span>
                                             @else
                                                 <span class="text-muted">Không có giới hạn</span>
@@ -185,8 +203,23 @@
                                         <tbody>
                                             @forelse ($relatedVariants as $variant)
                                                 <tr wire:key="{{ $variant->id }}">
-                                                    <td class="text-center"><strong
-                                                            class="text-light">{{ $variant->name }}</strong></td>
+                                                    <td class="text-center">
+                                                        <strong class="text-light">
+                                                            {{ $variant->foodItem->name ?? '' }}
+                                                        </strong>
+                                                        @if ($variant->attributeValues->count())
+                                                            –
+                                                            @foreach ($variant->attributeValues as $attr)
+                                                                {{ $attr->attribute->name }} {{ $attr->value }}
+                                                                @if (!$loop->last)
+                                                                    ,
+                                                                @endif
+                                                            @endforeach
+                                                        @else
+                                                            <span class="text-muted">(Chưa có thuộc tính)</span>
+                                                        @endif
+                                                    </td>
+
                                                     <td class="d-flex justify-content-center">
                                                         <div class="mt-1 overflow-auto d-block"
                                                             style="max-height: 70px; width: 100px;">
@@ -283,9 +316,12 @@
                                                     <tr wire:key="{{ $foodOrder->id }}">
                                                         <td class="text-center">
                                                             {{ $foodOrder->booking?->booking_code ?? 'N/A' }}</td>
-                                                        <td class="text-center"><strong class="badge bg-gradient text-light" style="background: linear-gradient(to right, #642b73, #c6426e) !important;">
-                                                            {{ $foodOrder->variant->FoodItem->name }} / {{ $foodOrder->variant->name }}
-                                                        </strong>
+                                                        <td class="text-center"><strong
+                                                                class="badge bg-gradient text-light"
+                                                                style="background: linear-gradient(to right, #642b73, #c6426e) !important;">
+                                                                {{ $foodOrder->variant->FoodItem->name }} /
+                                                                {{ $foodOrder->variant->name }}
+                                                            </strong>
                                                         </td>
                                                         <td class="text-center">
                                                             {{ number_format($foodOrder->quantity, 0, ',', '.') }}</td>

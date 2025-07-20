@@ -32,6 +32,7 @@ use App\Livewire\Admin\FoodVariants\FoodVariantIndex;
 use App\Livewire\Admin\FoodVariants\FoodVariantDetail;
 use App\Livewire\Admin\FoodVariants\FoodVariantCreate;
 use App\Livewire\Admin\FoodVariants\FoodVariantEdit;
+use App\Livewire\Admin\FoodAttributes\AttributeIndex;
 use App\Livewire\Admin\Movies\MovieCreate;
 use App\Livewire\Admin\Movies\MovieDetail;
 use App\Livewire\Admin\Movies\MovieEdit;
@@ -45,6 +46,10 @@ use App\Livewire\Admin\Ratings\RatingIndex;
 use App\Livewire\Admin\Showtimes\ShowtimeCreate;
 use App\Livewire\Admin\Showtimes\ShowtimeEdit;
 use App\Livewire\Admin\Showtimes\ShowtimeIndex;
+
+
+use App\Livewire\Payment\VnpayPayment;
+use App\Livewire\Booking\BookingFood;
 
 Route::prefix('admin')->name('admin.')->group(function () {
     /* Banners */
@@ -76,6 +81,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/create', FoodVariantCreate::class)->name('create');
         Route::get('/edit/{variant}', FoodVariantEdit::class)->name('edit');
         Route::get('/detail/{variant}', FoodVariantDetail::class)->name('detail');
+    });
+
+    Route::prefix('/food-attributes')->name('food_attributes.')->group(function () {
+        Route::get('/', AttributeIndex::class)->name('index');
     });
 
     /* Users */
@@ -121,6 +130,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::view('/login', 'livewire.admin.template.samples.login')->name('login');
     Route::view('/register', 'livewire.admin.template.samples.register')->name('register');
 });
+
+    Route::get('/thanh-toan', VnpayPayment::class);
+    Route::get('/vnpay-return', [VnpayPayment::class, 'vnpayReturn'])->name('vnpay.return');
+
+
+    Route::get('/booking-food', BookingFood::class);
 
 Route::name('client.')->group(function () {
     Route::view('/home', 'livewire.client.template.index')->name('index');
