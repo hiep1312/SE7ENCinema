@@ -15,7 +15,7 @@ class NotificationSeeder extends Seeder
     {
         foreach (range(1, 20) as $i) {
             Notification::create([
-                'thumbnail' => fake()->imageUrl(100, 100, 'notifications'),
+                'thumbnail' => /* fake()->imageUrl(100, 100, 'notifications') */'404.webp',
                 'title' => fake()->sentence(),
                 'content' => fake()->paragraph(),
                 'link' => fake()->url(),

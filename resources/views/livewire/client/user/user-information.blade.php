@@ -250,6 +250,62 @@
 
             .info {
 
+                .food-item {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    padding: 0.5rem 0;
+                    border-bottom: 1px solid #e9ecef;
+                }
+
+                .food-item:last-child {
+                    border-bottom: none;
+                }
+
+                .food-info {
+                    flex: 1;
+                }
+
+                .food-name-row {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    margin-bottom: 0.25rem;
+                }
+
+                .food-name {
+                    color: #1f2937;
+                    font-weight: 500;
+                }
+
+                .quantity-badge {
+                    background-color: #f3f4f6;
+                    color: #6b7280;
+                    padding: 0.125rem 0.375rem;
+                    border-radius: 4px;
+                    font-size: 0.75rem;
+                    border: 1px solid #d1d5db;
+                }
+
+                .variants {
+                    color: #6b7280;
+                    font-size: 0.75rem;
+                    margin-bottom: 0.25rem;
+                    line-height: 1.4;
+                }
+
+                .price-detail {
+                    color: #6b7280;
+                    font-size: 0.875rem;
+                }
+
+                .food-total {
+                    font-weight: 500;
+                    margin-left: 610px;
+                    color: #1f2937;
+                    text-align: right;
+                }
+
                 .pagination1 {
                     display: flex;
                     justify-content: center;
@@ -1042,6 +1098,7 @@
         </style>
 
         <!-- Main Content -->
+        @use('chillerlan\QRCode\QRCode')
         <div class="fix"></div>
         @if (session()->has('success'))
         <div class="alertSuccess">
@@ -1378,7 +1435,7 @@
                                     </h3>
                                     <div class="detail-grid">
                                         <div class="detail-item">
-                                            <span class="detail-label">Mã đặt vé:</span>
+                                            <span class="detail-label">Mã vé:</span>
                                             <span class="detail-value highlight"
                                                 id="bookingCode">{{$bookingInfo->booking_code}}</span>
                                         </div>
@@ -1389,7 +1446,7 @@
                                         </div>
                                         <div class="detail-item">
                                             <span class="detail-label">Rạp chiếu:</span>
-                                            <span class="detail-value" id="cinema">Se7en Cinema Landmark 81</span>
+                                            <span class="detail-value" id="cinema">SE7ENCinema Landmark 81</span>
                                         </div>
                                         <div class="detail-item">
                                             <span class="detail-label">Phòng chiếu:</span>
@@ -1404,14 +1461,14 @@
                                         <div class="detail-item">
                                             <span class="detail-label">Giờ chiếu:</span>
                                             <span class="detail-value"
-                                                id="showTime">{{$bookingInfo->showtime->start_time->format('H:i')}}</span>
+                                                id="showTime">{{$bookingInfo->showtime->start_time->format('H:i')}} -
+                                                {{$bookingInfo->showtime->end_time->format('H:i')}}</span>
                                         </div>
                                         <div class="detail-item">
                                             <span class="detail-label">Ghế ngồi:</span>
                                             <span class="detail-value highlight">
                                                 @forelse ($bookingInfo->seats as $seat)
-                                                {{$seat->seat_row}}{{sprintf('%02d',
-                                                $seat->seat_number);}}@if(!$loop->last),@endif
+                                                {{$seat->seat_row}}{{$seat->seat_number}}@if(!$loop->last),@endif
                                                 @empty
                                                 N\A
                                                 @endforelse
@@ -1435,21 +1492,46 @@
                                     <div class="detail-item" style="grid-column:span 2;">
                                         <span class="detail-label">Thức ăn kèm:
                                             <div style="text-wrap: balance;">
+                                                @if ($bookingInfo->foodOrderItems->isNotEmpty())
                                                 @forelse ($bookingInfo->foodOrderItems as $foodOrder)
-                                                {{$foodOrder->variant->foodItem->name}} ({{$foodOrder->quantity}}x)
-                                                @if(!$loop->last),@endif
+                                                <div class="food-item">
+                                                    <div class="food-info">
+                                                        <div class="food-name-row">
+                                                            <span
+                                                                class="food-name">{{$foodOrder->variant->foodItem->name}}</span>
+                                                            <span
+                                                                class="quantity-badge">({{$foodOrder->quantity}}x)</span>
+                                                        </div>
+                                                        <div class="variants">
+                                                            @foreach($foodOrder->variant->attributeValues as $attributeValue)
+                                                                {{ $attributeValue->attribute->name }} :{{ $attributeValue->value }}@if(!$loop->last),@endif
+                                                            @endforeach
+
+                                                        </div>
+                                                        <div class="price-detail">{{ number_format($foodOrder->price, 0,
+                                                            ',', '.') }} × {{$foodOrder->quantity}}
+                                                        </div>
+                                                    </div>
+                                                    <span class="detail-value">
+                                                        <div class="food-total">
+                                                            {{
+                                                            number_format(
+                                                            $foodOrder->quantity*$foodOrder->price,0, '.', '.')
+                                                            }}
+                                                        </div>
+                                                    </span>
+                                                </div>
                                                 @empty
                                                 @endforelse
+                                                @endif
                                             </div>
                                         </span>
                                         <span class="detail-value">
-                                            @if ( $bookingInfo->foodOrderItems->count() !== 0)
-                                            {{ number_format($bookingInfo->foodOrderItems->sum(fn($foodOrder) =>
-                                            $foodOrder->price * $foodOrder->quantity), 0, '.', '.') }}
-                                            @else
+                                            @if (!$bookingInfo->foodOrderItems->isNotEmpty())
                                             Không
                                             @endif
                                         </span>
+
                                     </div>
                                     <div class="detail-item">
                                         <span class="detail-label">Giá vé
@@ -1517,7 +1599,8 @@
                                     📱 Mã QR
                                 </h3>
                                 <div class="qr-code">
-                                    📱
+                                    <img src="{{ (new QRCode)->render($bookingInfo->booking_code) }}" alt="QR code"
+                                        style="width: 100%; height: 100%; border-radius: 0;">
                                 </div>
                                 <div class="qr-instructions">
                                     <strong>Hướng dẫn sử dụng:</strong><br>
