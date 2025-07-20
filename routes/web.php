@@ -38,7 +38,6 @@ use App\Livewire\Admin\Users\UserCreate;
 use App\Livewire\Admin\Users\UserDetail;
 use App\Livewire\Admin\Users\UserEdit;
 use App\Livewire\Admin\Users\UserIndex;
-use App\Livewire\Test;
 use App\Livewire\Admin\Ratings\RatingIndex;
 use App\Livewire\Admin\Scanner\Index as ScannerIndex;
 use App\Livewire\Admin\Showtimes\ShowtimeCreate;
@@ -218,6 +217,8 @@ Route::name('client.')->group(function () {
     Route::get('/movies/{movie}', ClientMovieDetail::class)->name('movie_detail');
 });
 
+Route::view('/privacy-policy', 'livewire.client.template.abouts.privacy-policy')->name('privacy-policy');
+Route::view('/terms-of-service', 'livewire.client.template.abouts.terms-of-service')->name('terms-of-service');
 Route::get('/user-info/{user}', UserInformation::class)->name('userInfo')->middleware('role:user');
 Route::get('/user-confirm', UserConfirm::class)->name('userConfirm')->middleware('role:user,admin,staff');
 Route::view('/', 'welcome')->name('welcome');
