@@ -1,0 +1,539 @@
+/* Notification Bell Icon - Cinema Theme */
+.notification-bell {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff4757 0%, #c44569 100%);
+    border: none;
+    color: white;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+}
+
+.notification-bell:hover {
+    background: linear-gradient(135deg, #ff3742 0%, #b33a56 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
+    color: white;
+}
+
+.notification-bell .notification-count {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background: linear-gradient(135deg, #ffa502 0%, #ff6348 100%);
+    color: white;
+    border-radius: 50%;
+    min-width: 22px;
+    height: 22px;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid white;
+    animation: pulse 2s infinite;
+    box-shadow: 0 2px 8px rgba(255, 99, 72, 0.4);
+}
+
+/* Offcanvas Panel - Cinema Theme */
+.notification-offcanvas.offcanvas {
+    width: 420px !important;
+    height: calc(100vh - 20px);
+    margin-top: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+    background: linear-gradient(180deg, #2c2c54 0%, #1a1a2e 100%);
+    border: 1px solid rgba(255, 71, 87, 0.2);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+@media (max-width: 500px) {
+    .notification-offcanvas.offcanvas {
+        width: calc(100vw - 20px) !important;
+        margin-right: 10px;
+        margin-left: 10px;
+    }
+}
+
+/* Header - Cinema Theme */
+.notification-offcanvas .offcanvas-header {
+    background: linear-gradient(135deg, #ff4757 0%, #c44569 100%);
+    color: white;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+.notification-offcanvas .offcanvas-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    pointer-events: none;
+}
+
+.notification-offcanvas .offcanvas-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 1;
+}
+
+.notification-header-actions {
+    display: flex;
+    gap: 12px;
+    position: relative;
+    z-index: 1;
+    align-items: center;
+    text-align: center;
+    margin-left: 10px;
+}
+
+.notification-header-actions button {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 16px;
+    /* padding: 8px; */
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.notification-header-actions button:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.notification-header-actions button i{
+    font-size: 20px;
+    align-items: center;
+    text-align: center;
+    color: white;
+}
+
+.notification-header-actions .btn-close {
+    background: rgba(255, 255, 255, 0.15);
+    opacity: 1;
+    filter: none;
+}
+
+/* Notification Tabs - Cinema Theme */
+.notification-tabs {
+    padding: 12px 12px;
+    background: linear-gradient(180deg, #40407a 0%, #2c2c54 100%);
+    border-bottom: 1px solid rgba(255, 71, 87, 0.2);
+}
+
+.notification-tabs .nav-pills {
+    gap: 12px;
+    margin-bottom: 0;
+}
+
+.notification-tabs .nav-pills .nav-link {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    /* padding: -20px 0px !important */
+    backdrop-filter: blur(10px);
+    padding: 0px
+}
+
+.notification-tabs .nav-pills .nav-link:hover {
+    background: rgba(255, 71, 87, 0.2);
+    color: white;
+    border-color: rgba(255, 71, 87, 0.4);
+    transform: translateY(-1px);
+}
+
+.notification-tabs .nav-pills .nav-link.active {
+    background: linear-gradient(135deg, #ff4757 0%, #c44569 100%);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+}
+
+.notification-tabs .badge {
+    background: linear-gradient(135deg, #ffa502 0%, #ff6348 100%);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 8px;
+    margin-left: 8px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(255, 99, 72, 0.3);
+}
+
+/* Notification Content - Cinema Theme */
+.notification-content {
+    height: calc(100vh - 280px);
+    overflow-y: auto;
+    background: linear-gradient(180deg, #2c2c54 0%, #1a1a2e 100%);
+    padding: 0;
+}
+
+.notification-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.notification-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.notification-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #ff4757 0%, #c44569 100%);
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.notification-content::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #ff3742 0%, #b33a56 100%);
+}
+
+/* Notification Items - Cinema Theme */
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: transparent;
+    position: relative;
+    gap: 16px;
+}
+
+.notification-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    background: linear-gradient(180deg, #ff4757 0%, #c44569 100%);
+    transition: width 0.3s ease;
+}
+
+.notification-item:hover {
+    background: rgba(255, 71, 87, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.notification-item:hover::before {
+    width: 4px;
+}
+
+.notification-item.unread {
+    background: linear-gradient(90deg, rgba(255, 71, 87, 0.15) 0%, rgba(44, 44, 84, 0.8) 100%);
+    border-left: 4px solid #ff4757;
+    padding-left: 20px;
+}
+
+.notification-item.unread::before {
+    width: 4px;
+}
+
+.notification-item.read {
+    opacity: 0.7;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+/* Notification Avatar - Cinema Theme */
+.notification-avatar {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.notification-avatar img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 71, 87, 0.3);
+    transition: all 0.3s ease;
+}
+
+.notification-item:hover .notification-avatar img {
+    border-color: #ff4757;
+    box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
+}
+
+.system-avatar {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff4757 0%, #c44569 100%);
+    color: white;
+    border: 2px solid rgba(255, 71, 87, 0.3);
+    box-shadow: 0 4px 12px rgba(255, 71, 87, 0.2);
+}
+
+.notification-badge {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 3px solid #1a1a2e;
+    background: linear-gradient(135deg, #ffa502 0%, #ff6348 100%);
+    box-shadow: 0 2px 8px rgba(255, 99, 72, 0.4);
+    animation: pulse 2s infinite;
+}
+
+/* Notification Body - Cinema Theme */
+.notification-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-content-text {
+    font-size: 15px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 8px;
+    word-break: break-word;
+}
+
+.notification-content-text strong {
+    font-weight: 700;
+    color: #ece0e1;
+    display: block;
+    margin-bottom: 4px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.notification-time {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.notification-time i {
+    font-size: 12px;
+    color: #ff4757;
+}
+
+/* Empty State - Cinema Theme */
+.notification-empty {
+    text-align: center;
+    padding: 80px 24px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.notification-empty i {
+    font-size: 72px;
+    margin-bottom: 24px;
+    opacity: 0.4;
+    color: #ff4757;
+}
+
+.notification-empty h6 {
+    margin-bottom: 16px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.notification-empty p {
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Footer - Cinema Theme */
+.notification-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(180deg, #40407a 0%, #2c2c54 100%);
+    backdrop-filter: blur(10px);
+}
+
+.notification-footer .btn {
+    font-size: 15px;
+    font-weight: 600;
+    color: #ff4757;
+    text-decoration: none;
+    border-radius: 0;
+    transition: all 0.3s ease;
+    padding: 20px;
+    width: 100%;
+    text-align: center;
+    background: transparent;
+    border: none;
+}
+
+.notification-footer .btn:hover {
+    background: rgba(255, 71, 87, 0.1);
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Animations */
+@keyframes slideInNotification {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.notification-item.new {
+    animation: slideInNotification 0.6s ease;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .notification-offcanvas.offcanvas {
+        width: calc(100vw - 20px) !important;
+        margin: 10px;
+        border-radius: 16px;
+    }
+
+    .notification-tabs {
+        padding: 16px 20px 12px;
+    }
+
+    .notification-item {
+        padding: 14px 20px;
+        gap: 12px;
+    }
+
+    .notification-avatar img,
+    .system-avatar {
+        width: 42px;
+        height: 42px;
+    }
+
+    .system-avatar {
+        font-size: 18px;
+    }
+
+    .notification-content-text {
+        font-size: 14px;
+    }
+
+    .notification-content {
+        height: calc(100vh - 260px);
+    }
+}
+
+@media (max-width: 480px) {
+    .notification-offcanvas .offcanvas-header {
+        padding: 16px 20px;
+    }
+
+    .notification-offcanvas .offcanvas-title {
+        font-size: 18px;
+    }
+
+    .notification-item {
+        padding: 12px 16px;
+    }
+
+    .notification-avatar img,
+    .system-avatar {
+        width: 38px;
+        height: 38px;
+    }
+
+    .notification-content-text {
+        font-size: 13px;
+    }
+}
+
+/* Dark Mode Enhancements */
+@media (prefers-color-scheme: dark) {
+    .notification-offcanvas.offcanvas {
+        background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+        border-color: rgba(255, 71, 87, 0.3);
+    }
+}
+
+/* Loading State */
+.notification-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.notification-loading i {
+    font-size: 24px;
+    color: #ff4757;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Hover Effects for Better UX */
+.notification-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.notification-item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.notification-item:hover::after {
+    left: 100%;
+}
