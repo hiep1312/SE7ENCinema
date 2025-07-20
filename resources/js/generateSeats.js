@@ -733,7 +733,6 @@ window.generateClientDOMSeats = function ({ seats, selectedSeats = [] }, pathScr
 
             const seatCeil = document.createElement("li");
             seatCeil.innerHTML = `
-                <span class="seat-helper">${seatLabel}</span>
                 <input
                     type="checkbox"
                     class="${seatClass}"
@@ -743,7 +742,6 @@ window.generateClientDOMSeats = function ({ seats, selectedSeats = [] }, pathScr
                     data-number="${j}"
                     ${isChecked}
                 >
-                <label for="${seatId}" class="visually-hidden">${seatLabel}</label>
             `;
             seatCeil.dataset.seat = seatType;
             seatCeil.className = "seat-item";
@@ -774,6 +772,121 @@ window.generateClientDOMSeats = function ({ seats, selectedSeats = [] }, pathScr
         }
     }
 
+function getPos(s) {
+    const row = s.match(/[A-Z]/i)[0];
+    const rowCode = row.charCodeAt(0);
+    const col = parseInt(s.replace(/[A-Z]/i, ''));
+    return [row, rowCode, col];
+}
+
+function isStraightDiagonal(a, b, c) {
+    const [_, r1, c1] = getPos(a);
+    const [__, r2, c2] = getPos(b);
+    const [___, r3, c3] = getPos(c);
+
+    const rowDiff1 = r2 - r1;
+    const rowDiff2 = r3 - r2;
+    const colDiff1 = c2 - c1;
+    const colDiff2 = c3 - c2;
+
+    return (
+        Math.abs(rowDiff1) === 1 &&
+        rowDiff1 === rowDiff2 &&
+        Math.abs(colDiff1) === 1 &&
+        colDiff1 === colDiff2
+    );
+}
+function isSplitVerticalPattern(a, b, c) {
+    const [ra, caCode, ca] = getPos(a);
+    const [rb, cbCode, cb] = getPos(b);
+    const [rc, ccCode, cc] = getPos(c);
+
+    const isColAligned = (ca === cc) && (cb !== ca);
+    const isRowBetween = (cbCode > Math.min(caCode, ccCode) && cbCode < Math.max(caCode, ccCode));
+
+    return isColAligned && isRowBetween;
+}
+
+
+function isDiagonalTriangle(a, b, c, selectedSet) {
+    const [rowA, r1, c1] = getPos(a);
+    const [rowB, r2, c2] = getPos(b);
+    const [rowC, r3, c3] = getPos(c);
+
+    const allRows = [r1, r2, r3];
+    const allCols = [c1, c2, c3];
+
+    const rowCount = {};
+    allRows.forEach(r => rowCount[r] = (rowCount[r] || 0) + 1);
+
+
+    const repeatedRow = Object.entries(rowCount).find(([_, count]) => count === 2);
+    if (!repeatedRow) return false;
+
+    const baseRowCode = parseInt(repeatedRow[0]);
+    const baseRowSeats = allCols.filter((_, i) => allRows[i] === baseRowCode).sort((a, b) => a - b);
+
+
+    if (baseRowSeats.length === 2) {
+        const middle = (baseRowSeats[0] + baseRowSeats[1]) / 2;
+        if (Number.isInteger(middle)) {
+            const baseRow = String.fromCharCode(baseRowCode);
+            const middleSeatCode = `${baseRow}${middle}`;
+            if (!selectedSet.has(middleSeatCode)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+function is3InDiagonal(seats) {
+    if (seats.length < 3) return false;
+    const selectedSet = new Set(seats);
+    for (let i = 0; i < seats.length; i++) {
+        for (let j = i + 1; j < seats.length; j++) {
+            for (let k = j + 1; k < seats.length; k++) {
+                const a = seats[i], b = seats[j], c = seats[k];
+                if (
+                    isStraightDiagonal(a, b, c) ||
+                    isDiagonalTriangle(a, b, c, selectedSet) ||
+                    isSplitVerticalPattern(a, b, c)
+                ) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+
+frameSeats.querySelectorAll('input.seat').forEach(input => {
+    input.addEventListener('change', (e) => {
+        const current = e.target;
+        if (!current.checked) return;
+
+        const selectedInputs = Array.from(frameSeats.querySelectorAll('input.seat:checked'));
+        const selectedSeatCodes = selectedInputs.map(i => i.value);
+
+        if (is3InDiagonal(selectedSeatCodes)) {
+            current.checked = false;
+            Swal.fire({
+                toast: true,
+                icon: 'warning',
+                title: 'Không được chọn ghế theo đường chéo!',
+                timer: 2500,
+                showConfirmButton: false,
+                position: 'top-end'
+            });
+        }
+    });
+});
+
+
     return frameSeats;
+
 };
+
 });
