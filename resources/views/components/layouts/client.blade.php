@@ -31,7 +31,6 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('client/assets/css/style.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('client/assets/css/responsive.css') }}" />
 
-    <link rel="stylesheet" type="text/css" href="{{ asset('client/assets/css/movies.css') }}" />
 
 
     @vite('resources/css/app.css')

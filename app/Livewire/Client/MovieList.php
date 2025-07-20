@@ -6,72 +6,73 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Movie;
 use App\Models\Genre;
+use Illuminate\Support\Carbon;
+use Livewire\Attributes\Url;
 
 class MovieList extends Component
 {
     use WithPagination;
 
-    public $tabCurrent = 'coming_soon'; // Đổi từ $activeTab thành $tabCurrent
+    public $tabCurrent = 'showing';
     public $genreFilter = '';
     public $search = '';
-    public $perPage = 9;
+    public $perPage = 9; 
 
-    public function setTab($tab)
-    {
-        $this->tabCurrent = $tab; // Đổi từ $activeTab thành $tabCurrent
-        // $this->resetPage();
+    public function updateStatusMovies(){
+        Movie::all()->each(function($movie){
+            $releaseDate = Carbon::parse($movie->release_date);
+            $endDate = !$movie->end_date ?: Carbon::parse($movie->end_date);
+            if(is_object($endDate) && $endDate->isPast()) $movie->status = 'ended';
+            else if($releaseDate->isFuture()) $movie->status = 'coming_soon';
+            else $movie->status = 'showing';
+            $movie->save();
+        });
     }
 
-    public function setGenreFilter($genre)
-    {
-        $this->genreFilter = $genre;
-        $this->resetPage();
-    }
+    public function render(){
+        $this->updateStatusMovies();
 
-    public function updatedSearch()
-    {
-        $this->resetPage();
-    }
-
-    public function render()
-    {
-        $query = Movie::query();
-
-        // Filter by tab
-        if ($this->tabCurrent === 'coming_soon') { // Đổi từ $activeTab thành $tabCurrent
-            $query->where('release_date', '>', now());
-        } elseif ($this->tabCurrent === 'showing') { // Đổi từ $activeTab thành $tabCurrent
-            $query->where('release_date', '<=', now())
-                  ->where(function ($q) {
-                      $q->where('end_date', '>=', now())
-                        ->orWhereNull('end_date');
-                  });
-        } else { // ended
-            $query->whereNotNull('end_date')
-                  ->where('end_date', '<', now());
-        }
-
-        // Filter by genre
-        if ($this->genreFilter) {
-            $query->whereHas('genres', function ($q) {
-                $q->where('name', $this->genreFilter);
-            });
-        }
-
-        // Search by title or description
-        if (!empty($this->search)) {
-            $query->where(function ($q) {
+        $query = Movie::query()->where('status', $this->tabCurrent)
+            ->when($this->genreFilter, function ($query) {
+                $query->whereHas('genres', function ($q) {
+                    $q->where('id', $this->genreFilter);
+                });
+            })
+            ->when($this->search, fn($query) => $query->where(function ($q) {
                 $q->where('title', 'like', '%' . $this->search . '%')
-                  ->orWhere('description', 'like', '%' . $this->search . '%');
-            });
-        }
+                ->orWhere('description', 'like', '%' . $this->search . '%');
+            }));
 
-        $movies = $query->orderBy('release_date', 'desc')->paginate($this->perPage);
-        $genres = Genre::pluck('name')->sort()->all();
 
-        return view('livewire.client.auth.movie-list', [
-            'movies' => $movies,
-            'genres' => $genres,
-        ]);
+        $genres = Genre::with('movies')->whereHas('movies', function ($q) use ($query) {
+            $q->whereIn('movies.id', $query->get('id'));
+        })->get();
+
+        $topMoviesQuery = Movie::with('showtimes')
+            ->withCount([
+                'showtimes as paid_booking_count' => function ($query) {
+                    $query->whereHas('booking', function ($q) {
+                        $q->where('status', 'paid');
+                    });
+                }
+            ])
+            ->whereHas('showtimes', function ($query) {
+                $query->whereHas('booking', function ($q) {
+                    $q->where('status', 'paid');
+                });
+            })->where('status', 'showing')
+            ->when($this->genreFilter, function ($query) {
+                $query->whereHas('genres', function ($q) {
+                    $q->where('id', $this->genreFilter);
+                });
+            })->orderBy('paid_booking_count', 'desc');
+
+
+
+        $topEventMovie = Movie::withAvg('ratings', 'score')->orderByDesc('ratings_avg_score')->first() ?? $topMoviesQuery->first();
+        $movies = $query->orderBy('created_at', 'desc')->paginate(30);
+        $topMovies = $topMoviesQuery->paginate(30);
+
+        return view('livewire.client.movie-list', compact('movies', 'genres', 'topMovies', 'topEventMovie'));
     }
 }
