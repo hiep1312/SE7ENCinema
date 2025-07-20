@@ -6,18 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class BookingSeat extends Model
 {
-    protected $fillable = [
-        'seat_id',
-        'booking_id',
-    ];
-
     public $timestamps = false;
 
-    public function booking() {
+    protected $fillable = ['booking_id', 'seat_id'];
+
+    public function booking()
+    {
         return $this->belongsTo(Booking::class);
     }
 
-    public function seat() {
+    public function seat()
+    {
         return $this->belongsTo(Seat::class);
     }
 

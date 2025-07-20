@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\VnpayController;
+use App\Livewire\Client\SelectMovieShowtime;
+use App\Livewire\Client\SelectSeats;
+use App\Livewire\Client\SelectFood;
+use App\Livewire\Client\ConfirmBooking;
 use App\Livewire\Admin\Foods\FoodCreate;
 use App\Livewire\Admin\Foods\FoodDetail;
 use App\Livewire\Admin\Foods\FoodEdit;
@@ -33,6 +38,7 @@ use App\Livewire\Admin\Users\UserCreate;
 use App\Livewire\Admin\Users\UserDetail;
 use App\Livewire\Admin\Users\UserEdit;
 use App\Livewire\Admin\Users\UserIndex;
+use App\Livewire\Test;
 use App\Livewire\Admin\Ratings\RatingIndex;
 use App\Livewire\Admin\Scanner\Index as ScannerIndex;
 use App\Livewire\Admin\Showtimes\ShowtimeCreate;
@@ -48,6 +54,16 @@ use App\Livewire\Admin\Comments\CommentCreate;
 use App\Livewire\Admin\Comments\CommentDetail;
 use App\Livewire\Admin\Comments\CommentEdit;
 use App\Livewire\Admin\Comments\CommentIndex;
+use App\Livewire\Payment\VnpayPayment;
+use App\Livewire\Booking\BookingFood;
+
+Route::get('/booking', SelectMovieShowtime::class)->name('booking.select_showtime');
+Route::get('/booking/seats/{showtime_id}', SelectSeats::class)->name('booking.select_seats');
+Route::get('/booking/food/{booking_id}', SelectFood::class)->name('booking.select_food');
+Route::get('/booking/confirm/{booking_id}', ConfirmBooking::class)->name('booking.confirm');
+Route::get('/thanh-toan/{booking_id}', VnpayPayment::class)->name('thanh-toan');
+Route::get('/vnpay-return', [VnpayController::class, 'vnpayReturn'])->name('vnpay.return');
+Route::get('/booking-food', BookingFood::class);
 
 Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->group(function () {
     /* Banners */

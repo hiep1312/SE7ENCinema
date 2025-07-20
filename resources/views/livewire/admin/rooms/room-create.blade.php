@@ -1,9 +1,13 @@
-<div>
+@assets
+<link rel="stylesheet" href="{{ asset('client/assets/css/style.css') }}">
+@endassets
+
+<div class="scRender">
     @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
     @endif
 
     <div class="container-lg mb-4">
@@ -18,8 +22,9 @@
         <div class="row">
             <div class="col-12">
                 <div class="card bg-dark">
-                    <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                        <h5 class="my-1">Thông tin phòng chiếu</h5>
+                    <div class="card-header bg-gradient text-light"
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <h5 class="my-1" style="color: inherit !important">Thông tin phòng chiếu</h5>
                     </div>
                     <div class="card-body bg-dark">
                         <form wire:submit.prevent="createRoom">
@@ -27,25 +32,25 @@
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="name" class="form-label text-light">Tên phòng chiếu *</label>
-                                        <input type="text"
-                                               wire:model="name"
-                                               class="form-control bg-dark text-light border-light @error('name') is-invalid @enderror"
-                                               placeholder="VD: Phòng A1">
+                                        <input type="text" wire:model="name"
+                                            class="form-control bg-dark text-light border-light @error('name') is-invalid @enderror"
+                                            placeholder="VD: Phòng A1">
                                         @error('name')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="status" class="form-label text-light">Trạng thái *</label>
-                                        <select wire:model="status" class="form-select bg-dark text-light border-light @error('status') is-invalid @enderror">
+                                        <select wire:model="status"
+                                            class="form-select bg-dark text-light border-light @error('status') is-invalid @enderror">
                                             <option value="active">Hoạt động</option>
                                             <option value="maintenance">Bảo trì</option>
                                             <option value="inactive">Ngừng hoạt động</option>
                                         </select>
                                         @error('status')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -61,39 +66,36 @@
                                     <li>Số hàng ghế: 5 - 26 hàng</li>
                                     <li>Ghế mỗi hàng: 10 - 30 ghế</li>
                                     <li>Tổng sức chứa: 50 - 780 ghế</li>
+                                    <li>Giá ghế tối thiểu từ 20.000 VNĐ</li>
                                 </ul>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-4 col-sm-6">
                                     <div class="mb-3">
-                                        <label for="rows" class="form-label text-light">Số hàng ghế *</label>
-                                        <input type="number"
-                                               wire:model="rows"
-                                               class="form-control bg-dark text-light border-light @error('rows') is-invalid @enderror">
+                                        <label for="rows" class="form-label text-light">Số ghế mỗi cột *</label>
+                                        <input type="number" wire:model="rows"
+                                            class="form-control bg-dark text-light border-light @error('rows') is-invalid @enderror">
                                         @error('rows')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-6">
                                     <div class="mb-3">
-                                        <label for="seatsPerRow" class="form-label text-light">Ghế mỗi hàng *</label>
-                                        <input type="number"
-                                               wire:model="seatsPerRow"
-                                               class="form-control bg-dark text-light border-light @error('seatsPerRow') is-invalid @enderror">
+                                        <label for="seatsPerRow" class="form-label text-light">Số ghế mỗi hàng *</label>
+                                        <input type="number" wire:model="seatsPerRow"
+                                            class="form-control bg-dark text-light border-light @error('seatsPerRow') is-invalid @enderror">
                                         @error('seatsPerRow')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="capacity" class="form-label text-light">Tổng sức chứa</label>
-                                        <input type="number"
-                                               x-model="$wire.rows * $wire.seatsPerRow"
-                                               class="form-control bg-dark text-light border-light"
-                                               readonly>
+                                        <input type="number" :value="$wire.rows * $wire.seatsPerRow"
+                                            class="form-control bg-dark text-light border-light" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -102,26 +104,83 @@
                                 <div class="col-sm-6">
                                     <div class="mb-3">
                                         <label for="vipRows" class="form-label text-light">Hàng VIP</label>
-                                        <input type="text"
-                                               wire:model="vipRows"
-                                               class="form-control bg-dark text-light border-light"
-                                               placeholder="VD: A,B,C">
+                                        <input type="text" wire:model="vipRows"
+                                            class="form-control bg-dark text-light border-light"
+                                            placeholder="VD: A,B,C">
                                         <small class="text-muted">Nhập các hàng VIP, cách nhau bằng dấu phẩy</small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label text-light">Giá ghế VIP</label>
+                                        <input type="number" wire:model="priceVip"
+                                            class="form-control bg-dark text-light border-light @error('priceVip') is-invalid @enderror">
+                                             @error('priceVip')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="mb-3">
                                         <label for="coupleRows" class="form-label text-light">Hàng Couple</label>
-                                        <input type="text"
-                                               wire:model="coupleRows"
-                                               class="form-control bg-dark text-light border-light"
-                                               placeholder="VD: J,K">
+                                        <input type="text" wire:model="coupleRows"
+                                            class="form-control bg-dark text-light border-light" placeholder="VD: J,K">
                                         <small class="text-muted">Nhập các hàng Couple, cách nhau bằng dấu phẩy</small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label text-light">Giá ghế đôi</label>
+                                        <input type="number" wire:model="priceCouple"
+                                            class="form-control bg-dark text-light border-light @error('priceCouple') is-invalid @enderror">
+                                            @error('priceCouple')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <label class="form-label text-light">Giá ghế thường</label>
+                                        <input type="number" wire:model="priceStandard"
+                                            class="form-control bg-dark text-light border-light @error('priceStandard') is-invalid @enderror">
+                                            @error('priceStandard')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                     </div>
                                 </div>
                             </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <button type="button" class="btn btn-success" wire:click="handleGenerateSeats()">
+                                    <i class="fas fa-save"></i> Tạo sơ đồ phòng chiếu
+                                </button>
+                            </div>
 
-                            <div class="d-flex justify-content-between">
+                            {{-- @php var_dump($temp) @endphp --}}
+                            <div wire:ignore id="generate-seats"></div>
+                            @script
+                            <script>
+                                $wire.on('generateSeats', function([rows, seatsPerRow, vipRows, coupleRows]) {
+                                        document.querySelector('#generate-seats').innerHTML = '';
+                                        document.querySelector('#generate-seats').append(window.generateDOMSeats({
+                                            rows: rows,
+                                            seatsPerRow: seatsPerRow,
+                                            vipRows: vipRows,
+                                            coupleRows: coupleRows
+                                        }));
+
+                                        console.log(document.querySelector('#generate-seats'))
+                                    })
+                                    window.updateseatid = function(evt, originalEvent) {
+                                        const updatedpointseat = (element, index) => {
+                                            const Pointseat = `${rowCurrent}${index + 1}`;
+                                            element.id = element.nextElementSibling.for = Pointseat;
+                                            element.setAttribute('sc-id', Pointseat);
+                                            element.dataset.number = index + 1;
+                                        }
+                                        const rowCurrent = evt.to.dataset.row;
+                                        evt.to.querySelectorAll('input[type=checkbox]').forEach(updatedpointseat);
+                                        evt.from.querySelectorAll('input[type=checkbox]').forEach(updatedpointseat);
+                                    }
+                            </script>
+                            @endscript
+
+                            <div class="d-flex justify-content-between mt-4">
                                 <button type="submit" class="btn btn-success">
                                     <i class="fas fa-save"></i> Tạo phòng chiếu
                                 </button>
