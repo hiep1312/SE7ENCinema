@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 <div class="scRender">
+=======
+<div>
+>>>>>>> 62f5ddcfd5cc4d8a4c0a7f1375ccd4877a48dfcf
     @if (session()->has('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
@@ -35,12 +39,15 @@
                                     <div class="mb-3">
                                         <label for="movieId" class="form-label text-light">Phim <span class="text-danger">*</span></label>
 <<<<<<< HEAD
+<<<<<<< HEAD
                                         <select id="movieId" class="form-select bg-dark text-light border-light" disabled readonly>
                                             <option value="{{ $selectedMovie->id ?? $comment->movie_id }}">
                                                 {{ $selectedMovie->title ?? $comment->movie->title }}
                                             </option>
                                         </select>
 =======
+=======
+>>>>>>> 62f5ddcfd5cc4d8a4c0a7f1375ccd4877a48dfcf
                                         <select wire:model.live="movieId" id="movieId"
                                                 class="form-select bg-dark text-light border-light @error('movieId') is-invalid @enderror">
                                             <option value="">Chọn phim...</option>
@@ -51,7 +58,10 @@
                                         @error('movieId')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
+<<<<<<< HEAD
 >>>>>>> 9b9c9621e4cf39c24a4ef5ec9a7ec4f33cec65c1
+=======
+>>>>>>> 62f5ddcfd5cc4d8a4c0a7f1375ccd4877a48dfcf
                                         @if(isset($selectedMovie) && $selectedMovie && $selectedMovie->poster)
                                             <div class="mt-2">
                                                 <img src="{{ asset('storage/' . $selectedMovie->poster) }}" alt="{{ $selectedMovie->title }}" style="max-width: 80px; max-height: 120px; border-radius: 4px; border: 1px solid #444;">
@@ -83,6 +93,7 @@
 
                             <!-- Parent Comment Selection -->
 <<<<<<< HEAD
+<<<<<<< HEAD
                             @if($comment->parent_comment_id)
                                 <div class="mb-3">
                                     <label class="form-label text-light">Bình luận cha</label>
@@ -94,6 +105,8 @@
 
                             {{-- <!-- Reply Comment Selection -->        Nếu là admin thì hiển thị
 =======
+=======
+>>>>>>> 62f5ddcfd5cc4d8a4c0a7f1375ccd4877a48dfcf
                             <div class="mb-3">
                                 <label for="parentCommentId" class="form-label text-light">Bình luận cha (tùy chọn)</label>
                                 <select wire:model.live="parentCommentId" id="parentCommentId"
@@ -111,7 +124,10 @@
                             </div>
 
                             <!-- Reply Comment Selection -->
+<<<<<<< HEAD
 >>>>>>> 9b9c9621e4cf39c24a4ef5ec9a7ec4f33cec65c1
+=======
+>>>>>>> 62f5ddcfd5cc4d8a4c0a7f1375ccd4877a48dfcf
                             @if($parentCommentId && $replyComments->count() > 0)
                                 <div class="mb-3">
                                     <label for="replyCommentId" class="form-label text-light">Trả lời bình luận (tùy chọn)</label>
@@ -129,10 +145,14 @@
                                     @enderror
                                 </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
                             @endif --}}
 =======
                             @endif
 >>>>>>> 9b9c9621e4cf39c24a4ef5ec9a7ec4f33cec65c1
+=======
+                            @endif
+>>>>>>> 62f5ddcfd5cc4d8a4c0a7f1375ccd4877a48dfcf
 
                             <!-- Content -->
                             <div class="mb-3">
@@ -146,6 +166,7 @@
                                 <small class="text-muted">Tối đa 1000 ký tự</small>
                             </div>
 
+<<<<<<< HEAD
 <<<<<<< HEAD
                              <!-- Action Buttons -->
                              <div class="d-flex justify-content-between py-3 border-top border-light">
@@ -236,6 +257,8 @@
                                                 </div>
                                             </div>
 =======
+=======
+>>>>>>> 62f5ddcfd5cc4d8a4c0a7f1375ccd4877a48dfcf
                             <!-- Bình luận con (child comments) -->
                             @if(!$comment->parent_comment_id)
                                 <div class="mb-3">
@@ -255,7 +278,10 @@
                                                 Nhập số từ 0-10. Sẽ tạo các form bình luận con tương ứng.
                                                 <span class="text-info">Đang tạo bình luận con cho bình luận chính này.</span>
                                             </small>
+<<<<<<< HEAD
 >>>>>>> 9b9c9621e4cf39c24a4ef5ec9a7ec4f33cec65c1
+=======
+>>>>>>> 62f5ddcfd5cc4d8a4c0a7f1375ccd4877a48dfcf
                                         </div>
                                     </div>
                                 </div>
@@ -316,7 +342,10 @@
                                 @endif
                             @endif
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 62f5ddcfd5cc4d8a4c0a7f1375ccd4877a48dfcf
 
                             <!-- Action Buttons -->
                             <div class="d-flex justify-content-between pt-3 border-top border-light">
@@ -327,14 +356,20 @@
                                     <i class="fas fa-times me-1"></i>Hủy
                                 </a>
                             </div>
+<<<<<<< HEAD
 >>>>>>> 9b9c9621e4cf39c24a4ef5ec9a7ec4f33cec65c1
+=======
+>>>>>>> 62f5ddcfd5cc4d8a4c0a7f1375ccd4877a48dfcf
                         </form>
                     </div>
                 </div>
             </div>
         </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 62f5ddcfd5cc4d8a4c0a7f1375ccd4877a48dfcf
 
         <!-- Current Comment Info -->
         <div class="row mt-4">
@@ -410,6 +445,9 @@
                 </div>
             </div>
         </div>
+<<<<<<< HEAD
 >>>>>>> 9b9c9621e4cf39c24a4ef5ec9a7ec4f33cec65c1
+=======
+>>>>>>> 62f5ddcfd5cc4d8a4c0a7f1375ccd4877a48dfcf
     </div>
 </div>

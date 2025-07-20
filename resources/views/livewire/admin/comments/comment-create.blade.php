@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 <div class="scRender">
+=======
+<div>
+>>>>>>> 62f5ddcfd5cc4d8a4c0a7f1375ccd4877a48dfcf
     @if (session()->has('error'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             {{ session('error') }}
@@ -100,7 +104,10 @@
                             </div>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 62f5ddcfd5cc4d8a4c0a7f1375ccd4877a48dfcf
                             <!-- Input số lượng bình luận con -->
                             <div class="mb-3">
                                 <label for="childCommentCount" class="form-label text-light">Số lượng bình luận con muốn thêm</label>
@@ -126,7 +133,10 @@
                                     </div>
                                 </div>
                             </div>
+<<<<<<< HEAD
 >>>>>>> 9b9c9621e4cf39c24a4ef5ec9a7ec4f33cec65c1
+=======
+>>>>>>> 62f5ddcfd5cc4d8a4c0a7f1375ccd4877a48dfcf
 
                             <div class="d-flex justify-content-between">
                                 <button type="submit" class="btn btn-success">
@@ -140,6 +150,7 @@
                                 </a>
                             </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
 
                             <!-- Input số lượng bình luận con -->
                             <div class="mt-3">
@@ -151,6 +162,8 @@
 
 =======
 >>>>>>> 9b9c9621e4cf39c24a4ef5ec9a7ec4f33cec65c1
+=======
+>>>>>>> 62f5ddcfd5cc4d8a4c0a7f1375ccd4877a48dfcf
                         </form>
                     </div>
                 </div>

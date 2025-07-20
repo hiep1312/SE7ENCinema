@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 <div class="scRender" wire:poll.5s>
+=======
+<div wire:poll.5s>
+>>>>>>> 62f5ddcfd5cc4d8a4c0a7f1375ccd4877a48dfcf
     <div class="container-lg mb-4">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center my-3">
@@ -167,6 +171,7 @@
                             </div>
                         </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
                         {{-- Thông tin bình luận cha nếu là bình luận con --}}
                         @if($comment->parent_comment_id && $comment->parent)
                             <div class="card bg-dark border-light mb-3">
@@ -192,6 +197,8 @@
                         @endif
 =======
 >>>>>>> 9b9c9621e4cf39c24a4ef5ec9a7ec4f33cec65c1
+=======
+>>>>>>> 62f5ddcfd5cc4d8a4c0a7f1375ccd4877a48dfcf
                     </div>
                 </div>
             </div>
