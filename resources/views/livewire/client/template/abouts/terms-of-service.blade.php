@@ -522,8 +522,8 @@
                                                 <div class="contact-icon">🏢</div>
                                                 <div class="contact-details">
                                                     <h4>Văn phòng</h4>
-                                                    <p>Lầu 2, Số 7/28, đường Thành Thái</p>
-                                                    <p>Phường 14, Quận 10, TP.HCM</p>
+                                                    <p>29-13 Ng. 4 Đ. Vân Canh, </p>
+                                                    <p>Vân Canh, Từ Liêm, Hà Nội</p>
                                                 </div>
                                             </div>
                                             <div class="contact-method">
@@ -541,10 +541,10 @@
                                         <h4>Thông tin công ty:</h4>
                                         <div class="company-details">
                                             <p><strong>CÔNG TY TNHH SE7ENCINEMA</strong></p>
-                                            <p>MST: 0303675393</p>
-                                            <p>Giấy phép kinh doanh số: 0303675393</p>
-                                            <p>Ngày cấp: 15/08/2023</p>
-                                            <p>Nơi cấp: Sở Kế hoạch và Đầu tư TP.HCM</p>
+                                            <p>MST: 0305675165</p>
+                                            <p>Giấy phép kinh doanh số: 0305675165</p>
+                                            <p>Ngày cấp: 15/04/2025</p>
+                                            <p>Nơi cấp: Sở Kế hoạch và Đầu tư Hà Nội</p>
                                         </div>
                                     </div>
                                 </div>

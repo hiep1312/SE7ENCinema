@@ -63,7 +63,7 @@
             <div class="company-info-box">
                 <h4>Thông tin công ty:</h4>
                 <p><strong>Tên công ty:</strong> CÔNG TY TNHH SE7ENCINEMA</p>
-                <p><strong>Địa chỉ:</strong> Lầu 2, số 7/28, đường Thành Thái, Phường 14, Quận 10, TP.HCM</p>
+                <p><strong>Địa chỉ:</strong> 29-13 Ng. 4 Đ. Vân Canh, Vân Canh, Từ Liêm, Hà Nội</p>
                 <p><strong>Điện thoại:</strong> 028.3636.5757</p>
                 <p><strong>Email:</strong> info@se7encinema.com.vn</p>
                 <p><strong>Website:</strong> www.se7encinema.com.vn</p>
@@ -349,7 +349,7 @@
 
                 <div class="company-info-box">
                     <h4>CÔNG TY TNHH SE7ENCINEMA</h4>
-                    <p><strong>Địa chỉ:</strong> Lầu 2, số 7/28, đường Thành Thái, Phường 14, Quận 10, TP.HCM</p>
+                    <p><strong>Địa chỉ:</strong> 29-13 Ng. 4 Đ. Vân Canh, Vân Canh, Từ Liêm, Hà Nội</p>
                     <p><strong>Điện thoại:</strong> 028.3636.5757</p>
                     <p><strong>Hotline:</strong> 1900 6017</p>
                     <p><strong>Email:</strong> privacy@se7encinema.com.vn</p>
