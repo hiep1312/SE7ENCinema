@@ -7,6 +7,7 @@ use Livewire\WithPagination;
 use App\Models\Movie;
 use App\Models\Genre;
 use Illuminate\Support\Carbon;
+ use Illuminate\Support\Str;
 use Livewire\Attributes\Url;
 
 class MovieList extends Component
@@ -70,8 +71,8 @@ class MovieList extends Component
 
 
         $topEventMovie = Movie::withAvg('ratings', 'score')->orderByDesc('ratings_avg_score')->first() ?? $topMoviesQuery->first();
-        $movies = $query->orderBy('created_at', 'desc')->paginate(30);
-        $topMovies = $topMoviesQuery->paginate(30);
+        $movies = $query->orderBy('created_at', 'desc')->paginate(10);
+        $topMovies = $topMoviesQuery->paginate(10);
 
         return view('livewire.client.movie-list', compact('movies', 'genres', 'topMovies', 'topEventMovie'));
     }

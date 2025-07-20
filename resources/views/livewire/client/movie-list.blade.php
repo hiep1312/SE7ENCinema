@@ -111,11 +111,11 @@
                                 <span class="ml-2">
                                     @for ($i = 1; $i <= 5; $i++)
                                         @if (($topEventMovie->rating ?? 0) >= $i)
-                                            <i class="fa fa-star text-yellow-400"></i>
+                                           <i class="fa-solid fa-star-sharp"></i>
                                         @elseif (($topEventMovie->rating ?? 0) >= $i - 0.5)
-                                            <i class="fa fa-star-half-alt text-yellow-400"></i>
+                                           <i class="fa-solid fa-star-half-stroke"></i>
                                         @else
-                                            <i class="fa fa-star-o text-gray-400"></i>
+                                           <i class="fa-regular fa-star-sharp"></i>
                                         @endif
                                     @endfor
                                     ({{ number_format($topEventMovie->rating ?? 0, 1) }}/5)
@@ -166,11 +166,9 @@
 															</div>
 														</div>
                                                         <div class="prs_upcom_movie_content_box">
-                                                            <div class="prs_upcom_movie_content_box_inner">
+                                                            <div class="prs_upcom_movie_content_box_inner" style="max-width: 100% !important;">
                                                                 <h2><a href="#">{{ $movie->title }}</a></h2>
-                                                                <p>Thể loại:
-                                                                    {{ $movie->genres()->pluck('name')->implode(', ') }}
-                                                                </p>
+                                                               <p>Thể loại: {{ Str::limit($movie->genres->pluck('name')->implode(', '), 20) }}</p>
                                                                 <p-*+>Thời lượng: {{ $movie->duration }} phút</p-*+>
                                                                 <p>Giá vé:
                                                                     {{ number_format($movie->price, 0, ',', '.') }} VND
@@ -178,11 +176,11 @@
                                                                 <p>
                                                                     @for ($i = 1; $i <= 5; $i++)
                                                                         @if ($movie->rating >= $i)
-                                                                            <i class="fa fa-star"></i>
+                                                                           <i class="fa-solid fa-star-sharp"></i>
                                                                         @elseif ($movie->rating >= $i - 0.5)
-                                                                            <i class="fa fa-star-half-alt"></i>
+                                                                           <i class="fa-solid fa-star-half-stroke"></i>
                                                                         @else
-                                                                            <i class="fa fa-star-o"></i>
+                                                                           <i class="fa-regular fa-star-sharp"></i>
                                                                         @endif
                                                                     @endfor
                                                                     ({{ number_format($movie->rating, 1) }}/5)
@@ -250,10 +248,10 @@
             <h2>TOP MOVIES IN THEATRES</h2>
         </div>
         <div class="wrap-album-slider" wire:ignore.self>
-            <ul class="album-slider raw" wire:ignore.self style="width: 915%; position: relative; left: -952.453px;">
+            <ul class="album-slider raw" wire:ignore.self>
                 @forelse ($topMovies as $movie)
-                    <li class="album-slider__item" wire:key="movie-{{ $movie->id }}" wire:ignore.self
-                        style="float: left; list-style: none; position: relative; width: 257px; margin-right: 17px;">
+                    <li class="album-slider__item" wire:key="movie-{{ $movie->id }}" wire:ignore.self 
+                       >
                         <figure class="album">
                             <div class="prs_upcom_movie_box_wrapper">
                               <div class="prs_upcom_movie_img_box">
@@ -283,21 +281,21 @@
                                         <h2><a
                                                 href="{{ route('client.movie_booking', $movie->id) }}">{{ $movie->title }}</a>
                                         </h2>
-                                        <p>Thể loại: {{ $movie->genres()->pluck('name')->implode(', ') }}</p>
+                                       <p>Thể loại: {{ Str::limit($movie->genres->pluck('name')->implode(', '), 10) }}</p>
                                         <p>Thời lượng: {{ $movie->duration }} phút</p>
                                         <p>Giá vé: {{ number_format($movie->price, 0, ',', '.') }} VND</p>
-                                        <p>
-                                            @for ($i = 1; $i <= 5; $i++)
-                                                @if (($movie->rating ?? 0) >= $i)
-                                                    <i class="fa fa-star text-yellow-400"></i>
-                                                @elseif (($movie->rating ?? 0) >= $i - 0.5)
-                                                    <i class="fa fa-star-half-alt text-yellow-400"></i>
-                                                @else
-                                                    <i class="fa fa-star-o text-gray-400"></i>
-                                                @endif
-                                            @endfor
-                                            ({{ number_format($movie->rating ?? 0, 1) }}/5)
-                                        </p>
+                                         <p>
+                                             @for ($i = 1; $i <= 5; $i++)
+                                                 @if ($movie->rating >= $i)
+                                                    <i class="fa-solid fa-star-sharp"></i>
+                                                 @elseif ($movie->rating >= $i - 0.5)
+                                                    <i class="fa-solid fa-star-half-stroke"></i>
+                                                 @else
+                                                    <i class="fa-regular fa-star-sharp"></i>
+                                                 @endif
+                                             @endfor
+                                             ({{ number_format($movie->rating, 1) }}/5)
+                                         </p>
                                     </div>
                                 </div>
                             </div>
