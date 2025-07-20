@@ -58,6 +58,7 @@ use App\Livewire\Booking\BookingFood;
 use App\Livewire\Client\User\UserConfirm;
 use App\Livewire\Client\User\UserInformation;
 use App\Livewire\Client\ClientMovieDetail;
+use App\Livewire\Client\Promotions\PromotionIndex;
 
 Route::get('/booking', SelectMovieShowtime::class)->name('booking.select_showtime');
 Route::get('/booking/seats/{showtime_id}', SelectSeats::class)->name('booking.select_seats');
@@ -215,6 +216,12 @@ Route::name('client.')->group(function () {
     Route::view('/contact', 'livewire.client.template.contact')->name('contact');
     Route::view('/confirmation_screen', 'livewire.client.template.confirmation_screen')->name('confirmation_screen');
     Route::get('/movies/{movie}', ClientMovieDetail::class)->name('movie_detail');
+    Route::view('/confirmation_screen', 'livewire.client.template.confirmation_screen')->name('confirmation_screen');
+
+    /* Promotions */
+    Route::prefix('/promotions')->name('promotions.')->group(function () {
+        Route::get('/', PromotionIndex::class)->name('index');
+    });
 });
 
 Route::view('/privacy-policy', 'livewire.client.template.abouts.privacy-policy')->name('privacy-policy');

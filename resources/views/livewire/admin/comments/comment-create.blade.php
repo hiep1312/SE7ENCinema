@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 <div class="scRender">
-=======
-<div>
->>>>>>> 62f5ddcfd5cc4d8a4c0a7f1375ccd4877a48dfcf
     @if (session()->has('error'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             {{ session('error') }}
