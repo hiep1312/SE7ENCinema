@@ -152,7 +152,7 @@ class SelectSeats extends Component
 
 
             DB::commit();
-
+            
             return redirect()->route('booking.select_food', [
                 'booking_id' => $booking->id,
                 'total_price_seats' => $totalPrice,

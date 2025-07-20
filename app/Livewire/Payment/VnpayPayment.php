@@ -23,15 +23,14 @@ class VnpayPayment extends Component
 
     public function mount($booking_id)
     {
+        $this->booking_id = $booking_id;
+
         $this->cart = session()->get('cart', []);
         $this->food_total = session()->get('cart_food_total', 0);
         $this->seat_total = session()->get('cart_seat_total', 0);
         $this->total_amount = $this->food_total + $this->seat_total;
-        $this->booking_id = $booking_id;
 
-        $booking_id = session()->get('booking_id');
-
-        $this->seats = BookingSeat::where('booking_id', $booking_id)
+        $this->seats = BookingSeat::where('booking_id', $this->booking_id)
             ->with('seat')
             ->get()
             ->map(function ($bookingSeat) {
@@ -39,6 +38,7 @@ class VnpayPayment extends Component
             })
             ->toArray();
     }
+
 
 
 
