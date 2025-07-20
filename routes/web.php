@@ -18,13 +18,10 @@ use App\Livewire\Admin\FoodVariants\FoodVariantIndex;
 use App\Livewire\Admin\FoodVariants\FoodVariantDetail;
 use App\Livewire\Admin\FoodVariants\FoodVariantCreate;
 use App\Livewire\Admin\FoodVariants\FoodVariantEdit;
-<<<<<<< HEAD
 use App\Livewire\Admin\Genres\GenreCreate;
 use App\Livewire\Admin\Genres\GenreEdit;
 use App\Livewire\Admin\Genres\GenreIndex;
-=======
 use App\Livewire\Admin\FoodAttributes\AttributeIndex;
->>>>>>> 9319690046fd011d5fc5a9338ba5676e6acfbf79
 use App\Livewire\Admin\Movies\MovieCreate;
 use App\Livewire\Admin\Movies\MovieDetail;
 use App\Livewire\Admin\Movies\MovieEdit;
@@ -76,6 +73,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->
         Route::get('/detail/{variant}', FoodVariantDetail::class)->name('detail');
     });
 
+    /* Foods Attributes */
     Route::prefix('/food-attributes')->name('food_attributes.')->group(function () {
         Route::get('/', AttributeIndex::class)->name('index');
     });
