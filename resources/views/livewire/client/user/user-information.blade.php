@@ -1134,7 +1134,7 @@
                     @if ($tabCurrent === 'booking')
                     <div wire:poll.2s class="tab-content">
                         <div class="history-header">
-                            <h2 class="history-title">Lịch sử mua vé</h2>
+                            <h2 class="history-title">Lịch sử đơn hàng</h2>
                             <div class="history-filters">
                                 <select class="filter-select" wire:model.live='statusFilter'>
                                     <option value="">Tất cả trạng thái</option>
@@ -1249,7 +1249,7 @@
                     <div class="booking-info">
                         <div class="ticket-detail-container">
                             <div class="ticket-header">
-                                <h1 class="ticket-title">Chi Tiết Vé Điện Tử</h1>
+                                <h1 class="ticket-title">Chi Tiết Đơn Hàng</h1>
                                 <p class="ticket-subtitle">Thông tin đầy đủ về vé đã đặt</p>
                             </div>
 
