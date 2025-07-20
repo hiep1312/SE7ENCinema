@@ -43,6 +43,7 @@ use App\Livewire\Admin\Scanner\Index as ScannerIndex;
 use App\Livewire\Admin\Showtimes\ShowtimeCreate;
 use App\Livewire\Admin\Showtimes\ShowtimeEdit;
 use App\Livewire\Admin\Showtimes\ShowtimeIndex;
+use App\Livewire\Client\Lichchieu\LichchieuIndex;
 use App\Livewire\Admin\Tickets\TicketIndex;
 use App\Livewire\Client\Ticket\Index as TicketIndexClient;
 use App\Livewire\Admin\Promotions\PromotionCreate;
@@ -58,7 +59,7 @@ use App\Livewire\Booking\BookingFood;
 use App\Livewire\Client\User\UserConfirm;
 use App\Livewire\Client\User\UserInformation;
 use App\Livewire\Client\ClientMovieDetail;
-use App\Livewire\Client\Promotions\PromotionIndex;
+use App\Livewire\Client\Promotions\PromotionIndex as PromotionIndexClient;
 
 Route::get('/booking', SelectMovieShowtime::class)->name('booking.select_showtime');
 Route::get('/booking/seats/{showtime_id}', SelectSeats::class)->name('booking.select_seats');
@@ -220,7 +221,11 @@ Route::name('client.')->group(function () {
 
     /* Promotions */
     Route::prefix('/promotions')->name('promotions.')->group(function () {
-        Route::get('/', PromotionIndex::class)->name('index');
+        Route::get('/', PromotionIndexClient::class)->name('index');
+    });
+
+    Route::prefix('/showtimes')->name('showtimes.')->group(function () {
+        Route::get('/', LichchieuIndex::class)->name('index');
     });
 });
 

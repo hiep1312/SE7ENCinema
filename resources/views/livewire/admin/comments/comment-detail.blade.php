@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 <div class="scRender" wire:poll.5s>
-=======
-<div wire:poll.5s>
->>>>>>> 62f5ddcfd5cc4d8a4c0a7f1375ccd4877a48dfcf
     <div class="container-lg mb-4">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center my-3">
