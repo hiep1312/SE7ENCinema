@@ -24,6 +24,21 @@
                         <h2>Trang Danh Sách Phim</h2>
                     </div>
                 </div>
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					<div class="prs_mc_slider_wrapper">
+						<div class="owl-carousel owl-theme">
+							<div class="item">
+								<img src="{{ asset('client/assets/images/content/movie_category/slider_img1.jpg')}}" alt="about_img">
+							</div>
+							<div class="item">
+								<img src="{{ asset('client/assets/images/content/movie_category/slider_img2.jpg')}}" alt="about_img">
+							</div>
+							<div class="item">
+								<img src="{{ asset('client/assets/images/content/movie_category/slider_img3.jpg')}}" alt="about_img">
+							</div>
+						</div>
+					</div>
+				</div>
                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="prs_upcome_tabs_wrapper" style="text-align: center; margin-bottom: 20px;">
                         <ul class="nav nav-tabs" role="tablist"
@@ -116,9 +131,8 @@
                                 <div class="prs_mcc_right_side_heading_wrapper">
                                     <h2>Our Top Movies</h2>
                                     <ul class="nav nav-pills">
-                                        <li class="active"><a data-toggle="pill" href="#coming_soon"><i
-                                                    class="fa fa-th-large"></i></a></li>
-                                        <li><a data-toggle="pill" href="#list"><i class="fa fa-list"></i></a></li>
+                                        <li class="active"><a data-toggle="pill" href="#coming_soon"><i class="fa fa-th-large"></i></a></li>
+										<li><a data-toggle="pill" href="#list"><i class="fa fa-list"></i></a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -130,32 +144,34 @@
                                                 <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 prs_upcom_slide_first">
                                                     <div class="prs_upcom_movie_box_wrapper prs_mcc_movie_box_wrapper">
                                                         <div class="prs_upcom_movie_img_box">
-                                                            <img src="{{ asset('storage/' . $movie->poster) }}" alt="{{ $movie->title }}">
-                                                           @php
-                                                        $age = strtoupper($movie->age_restriction);
-                                                        $color = match ($age) {'P' => '#28a745', 'K' => '#20c997', 'T13' => '#17a2b8', 'T16' => '#ffc107', 'T18' => '#fd7e14', 'C' => '#6c757d',default => '#343a40', // Xám đậm – Không xác định
-                                                        };
-                                                        @endphp
-                                                            <span style="position: absolute; top: 8px; left: 8px; display: inline-block; background-color: {{ $color }}; color: #fff; font-size: 12px; font-weight: bold; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; z-index: 10;">
-                                                                {{ $age }}
-                                                            </span>
-                                                        
-                                                            <div class="prs_upcom_movie_img_overlay"></div>
-                                                            <div class="prs_upcom_movie_img_btn_wrapper">
-                                                                <ul>
-                                                                    <li><a href="{{ $movie->trailer_url ?? '#' }}">View
-                                                                            Trailer</a></li>
-                                                                    <li><a href="#">View Details</a></li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
+															<img src="{{ asset('storage/' . $movie->poster) }}" alt="{{ $movie->title }}" style="aspect-ratio: 4 / 5; object-fit: cover;">
+															@php
+															$age = strtoupper($movie->age_restriction);
+															$color = match ($age) {'P' => '#28a745', 'K' => '#20c997', 'T13' => '#17a2b8', 'T16' => '#ffc107', 'T18' =>
+															'#fd7e14', 'C' => '#6c757d',default => '#343a40', // Xám đậm – Không xác định
+															};
+															@endphp
+															<span
+																style="position: absolute; top: 8px; left: 8px; display: inline-block; background-color: {{ $color }}; color: #fff; font-size: 12px; font-weight: bold; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; z-index: 10;">
+																{{ $age }}
+															</span>
+														
+															<div class="prs_upcom_movie_img_overlay"></div>
+															<div class="prs_upcom_movie_img_btn_wrapper">
+																<ul>
+																	<li><a href="{{ $movie->trailer_url ?? '#' }}">View
+																			Trailer</a></li>
+																	<li><a href="#">View Details</a></li>
+																</ul>
+															</div>
+														</div>
                                                         <div class="prs_upcom_movie_content_box">
                                                             <div class="prs_upcom_movie_content_box_inner">
                                                                 <h2><a href="#">{{ $movie->title }}</a></h2>
                                                                 <p>Thể loại:
                                                                     {{ $movie->genres()->pluck('name')->implode(', ') }}
                                                                 </p>
-                                                                <p>Thời lượng: {{ $movie->duration }} phút</p>
+                                                                <p-*+>Thời lượng: {{ $movie->duration }} phút</p-*+>
                                                                 <p>Giá vé:
                                                                     {{ number_format($movie->price, 0, ',', '.') }} VND
                                                                 </p>
@@ -228,276 +244,75 @@
         </div>
     </div>
 
-    <div class="prs_theater_main_slider_wrapper">
-		<div class="prs_theater_img_overlay"></div>
-		<div class="prs_theater_sec_heading_wrapper">
-			<h2>TOP MOVIES IN THEATRES</h2>
-		</div>
-		<div class="wrap-album-slider">
-			<ul class="album-slider">
-				<li class="album-slider__item">
-					<figure class="album">
-						<div class="prs_upcom_movie_box_wrapper">
-							<div class="prs_upcom_movie_img_box">
-								<img src="{{ asset('client/assets/images/content/up1.jpg')}}" alt="movie_img" />
+   <div class="prs_theater_main_slider_wrapper">
+        <div class="prs_theater_img_overlay"></div>
+        <div class="prs_theater_sec_heading_wrapper">
+            <h2>TOP MOVIES IN THEATRES</h2>
+        </div>
+        <div class="wrap-album-slider" wire:ignore.self>
+            <ul class="album-slider raw" wire:ignore.self style="width: 915%; position: relative; left: -952.453px;">
+                @forelse ($topMovies as $movie)
+                    <li class="album-slider__item" wire:key="movie-{{ $movie->id }}" wire:ignore.self
+                        style="float: left; list-style: none; position: relative; width: 257px; margin-right: 17px;">
+                        <figure class="album">
+                            <div class="prs_upcom_movie_box_wrapper">
+                              <div class="prs_upcom_movie_img_box">
+								<img src="{{ asset('storage/' . $movie->poster) }}" alt="{{ $movie->title }}">
+								@php
+								$age = strtoupper($movie->age_restriction);
+								$color = match ($age) {'P' => '#28a745', 'K' => '#20c997', 'T13' => '#17a2b8', 'T16' => '#ffc107', 'T18' =>
+								'#fd7e14', 'C' => '#6c757d',default => '#343a40', // Xám đậm – Không xác định
+								};
+								@endphp
+								<span
+									style="position: absolute; top: 8px; left: 8px; display: inline-block; background-color: {{ $color }}; color: #fff; font-size: 12px; font-weight: bold; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; z-index: 10;">
+									{{ $age }}
+								</span>
+							
 								<div class="prs_upcom_movie_img_overlay"></div>
 								<div class="prs_upcom_movie_img_btn_wrapper">
 									<ul>
-										<li><a href="#">View Trailer</a>
-										</li>
-										<li><a href="#">View Details</a>
-										</li>
+										<li><a href="{{ $movie->trailer_url ?? '#' }}">View
+												Trailer</a></li>
+										<li><a href="#">View Details</a></li>
 									</ul>
 								</div>
 							</div>
-							<div class="prs_upcom_movie_content_box">
-								<div class="prs_upcom_movie_content_box_inner">
-									<h2><a href="#">Busting Car</a></h2>
-									<p>Drama , Acation</p> <i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star-o"></i>
-									<i class="fa fa-star-o"></i>
-								</div>
-								<div class="prs_upcom_movie_content_box_inner_icon">
-									<ul>
-										<li><a href="movie_booking.html"><i class="flaticon-cart-of-ecommerce"></i></a>
-										</li>
-									</ul>
-								</div>
-							</div>
-						</div>
-						<!-- End album body -->
-					</figure>
-					<!-- End album -->
-				</li>
-				<!-- End album slider item -->
-				<li class="album-slider__item">
-					<figure class="album">
-						<div class="prs_upcom_movie_box_wrapper">
-							<div class="prs_upcom_movie_img_box">
-								<img src="{{ asset('client/assets/images/content/up2.jpg')}}" alt="movie_img" />
-								<div class="prs_upcom_movie_img_overlay"></div>
-								<div class="prs_upcom_movie_img_btn_wrapper">
-									<ul>
-										<li><a href="#">View Trailer</a>
-										</li>
-										<li><a href="#">View Details</a>
-										</li>
-									</ul>
-								</div>
-							</div>
-							<div class="prs_upcom_movie_content_box">
-								<div class="prs_upcom_movie_content_box_inner">
-									<h2><a href="#">Busting Car</a></h2>
-									<p>Drama , Acation</p> <i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star-o"></i>
-									<i class="fa fa-star-o"></i>
-								</div>
-								<div class="prs_upcom_movie_content_box_inner_icon">
-									<ul>
-										<li><a href="movie_booking.html"><i class="flaticon-cart-of-ecommerce"></i></a>
-										</li>
-									</ul>
-								</div>
-							</div>
-						</div>
-						<!-- End album body -->
-					</figure>
-					<!-- End album -->
-				</li>
-				<!-- End album slider item -->
-				<li class="album-slider__item">
-					<figure class="album">
-						<div class="prs_upcom_movie_box_wrapper">
-							<div class="prs_upcom_movie_img_box">
-								<img src="{{ asset('client/assets/images/content/up3.jpg')}}" alt="movie_img" />
-								<div class="prs_upcom_movie_img_overlay"></div>
-								<div class="prs_upcom_movie_img_btn_wrapper">
-									<ul>
-										<li><a href="#">View Trailer</a>
-										</li>
-										<li><a href="#">View Details</a>
-										</li>
-									</ul>
-								</div>
-							</div>
-							<div class="prs_upcom_movie_content_box">
-								<div class="prs_upcom_movie_content_box_inner">
-									<h2><a href="#">Busting Car</a></h2>
-									<p>Drama , Acation</p> <i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star-o"></i>
-									<i class="fa fa-star-o"></i>
-								</div>
-								<div class="prs_upcom_movie_content_box_inner_icon">
-									<ul>
-										<li><a href="movie_booking.html"><i class="flaticon-cart-of-ecommerce"></i></a>
-										</li>
-									</ul>
-								</div>
-							</div>
-						</div>
-						<!-- End album body -->
-					</figure>
-					<!-- End album -->
-				</li>
-				<!-- End album slider item -->
-				<li class="album-slider__item">
-					<figure class="album">
-						<div class="prs_upcom_movie_box_wrapper">
-							<div class="prs_upcom_movie_img_box">
-								<img src="{{ asset('client/assets/images/content/up4.jpg')}}" alt="movie_img" />
-								<div class="prs_upcom_movie_img_overlay"></div>
-								<div class="prs_upcom_movie_img_btn_wrapper">
-									<ul>
-										<li><a href="#">View Trailer</a>
-										</li>
-										<li><a href="#">View Details</a>
-										</li>
-									</ul>
-								</div>
-							</div>
-							<div class="prs_upcom_movie_content_box">
-								<div class="prs_upcom_movie_content_box_inner">
-									<h2><a href="#">Busting Car</a></h2>
-									<p>Drama , Acation</p> <i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star-o"></i>
-									<i class="fa fa-star-o"></i>
-								</div>
-								<div class="prs_upcom_movie_content_box_inner_icon">
-									<ul>
-										<li><a href="movie_booking.html"><i class="flaticon-cart-of-ecommerce"></i></a>
-										</li>
-									</ul>
-								</div>
-							</div>
-						</div>
-						<!-- End album body -->
-					</figure>
-					<!-- End album -->
-				</li>
-				<!-- End album slider item -->
-				<li class="album-slider__item">
-					<figure class="album">
-						<div class="prs_upcom_movie_box_wrapper">
-							<div class="prs_upcom_movie_img_box">
-								<img src="{{ asset('client/assets/images/content/up5.jpg')}}" alt="movie_img" />
-								<div class="prs_upcom_movie_img_overlay"></div>
-								<div class="prs_upcom_movie_img_btn_wrapper">
-									<ul>
-										<li><a href="#">View Trailer</a>
-										</li>
-										<li><a href="#">View Details</a>
-										</li>
-									</ul>
-								</div>
-							</div>
-							<div class="prs_upcom_movie_content_box">
-								<div class="prs_upcom_movie_content_box_inner">
-									<h2><a href="#">Busting Car</a></h2>
-									<p>Drama , Acation</p> <i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star-o"></i>
-									<i class="fa fa-star-o"></i>
-								</div>
-								<div class="prs_upcom_movie_content_box_inner_icon">
-									<ul>
-										<li><a href="movie_booking.html"><i class="flaticon-cart-of-ecommerce"></i></a>
-										</li>
-									</ul>
-								</div>
-							</div>
-						</div>
-						<!-- End album body -->
-					</figure>
-					<!-- End album -->
-				</li>
-				<!-- End album slider item -->
-				<li class="album-slider__item">
-					<figure class="album">
-						<div class="prs_upcom_movie_box_wrapper">
-							<div class="prs_upcom_movie_img_box">
-								<img src="{{ asset('client/assets/images/content/up6.jpg')}}" alt="movie_img" />
-								<div class="prs_upcom_movie_img_overlay"></div>
-								<div class="prs_upcom_movie_img_btn_wrapper">
-									<ul>
-										<li><a href="#">View Trailer</a>
-										</li>
-										<li><a href="#">View Details</a>
-										</li>
-									</ul>
-								</div>
-							</div>
-							<div class="prs_upcom_movie_content_box">
-								<div class="prs_upcom_movie_content_box_inner">
-									<h2><a href="#">Busting Car</a></h2>
-									<p>Drama , Acation</p> <i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star-o"></i>
-									<i class="fa fa-star-o"></i>
-								</div>
-								<div class="prs_upcom_movie_content_box_inner_icon">
-									<ul>
-										<li><a href="movie_booking.html"><i class="flaticon-cart-of-ecommerce"></i></a>
-										</li>
-									</ul>
-								</div>
-							</div>
-						</div>
-						<!-- End album body -->
-					</figure>
-					<!-- End album -->
-				</li>
-				<!-- End album slider item -->
-				<li class="album-slider__item">
-					<figure class="album">
-						<div class="prs_upcom_movie_box_wrapper">
-							<div class="prs_upcom_movie_img_box">
-								<img src="{{ asset('client/assets/images/content/up7.jpg')}}" alt="movie_img" />
-								<div class="prs_upcom_movie_img_overlay"></div>
-								<div class="prs_upcom_movie_img_btn_wrapper">
-									<ul>
-										<li><a href="#">View Trailer</a>
-										</li>
-										<li><a href="#">View Details</a>
-										</li>
-									</ul>
-								</div>
-							</div>
-							<div class="prs_upcom_movie_content_box">
-								<div class="prs_upcom_movie_content_box_inner">
-									<h2><a href="#">Busting Car</a></h2>
-									<p>Drama , Acation</p> <i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star-o"></i>
-									<i class="fa fa-star-o"></i>
-								</div>
-								<div class="prs_upcom_movie_content_box_inner_icon">
-									<ul>
-										<li><a href="movie_booking.html"><i class="flaticon-cart-of-ecommerce"></i></a>
-										</li>
-									</ul>
-								</div>
-							</div>
-						</div>
-						<!-- End album body -->
-					</figure>
-					<!-- End album -->
-				</li>
-				<!-- End album slider item -->
-			</ul>
-			<!-- End slider -->
-		</div>
-	</div>
+                                <div class="prs_upcom_movie_content_box">
+                                    <div class="prs_upcom_movie_content_box_inner">
+                                        <h2><a
+                                                href="{{ route('client.movie_booking', $movie->id) }}">{{ $movie->title }}</a>
+                                        </h2>
+                                        <p>Thể loại: {{ $movie->genres()->pluck('name')->implode(', ') }}</p>
+                                        <p>Thời lượng: {{ $movie->duration }} phút</p>
+                                        <p>Giá vé: {{ number_format($movie->price, 0, ',', '.') }} VND</p>
+                                        <p>
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                @if (($movie->rating ?? 0) >= $i)
+                                                    <i class="fa fa-star text-yellow-400"></i>
+                                                @elseif (($movie->rating ?? 0) >= $i - 0.5)
+                                                    <i class="fa fa-star-half-alt text-yellow-400"></i>
+                                                @else
+                                                    <i class="fa fa-star-o text-gray-400"></i>
+                                                @endif
+                                            @endfor
+                                            ({{ number_format($movie->rating ?? 0, 1) }}/5)
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </figure>
+                    </li>
+                @empty
+                    <li class="album-slider__item">
+                        <div class="text-center text-gray-500 py-8">
+                            No movies currently in theatres.
+                        </div>
+                    </li>
+                @endforelse
+            </ul>
+        </div>
+    </div>
 
     <div class="prs_newsletter_wrapper">
         <div class="container">
