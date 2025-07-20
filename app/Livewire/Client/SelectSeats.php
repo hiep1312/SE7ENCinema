@@ -16,17 +16,15 @@ class SelectSeats extends Component
 {
     public $showtime_id;
     public $showtime;
+    public $room;
     public $seats;
-    public $rows = 15;
-    public $seatsPerRow = 20;
-    public $vipRows = 'A';
-    public $coupleRows = 'B';
     public $selectedSeats = [];
 
     public function mount($showtime_id)
     {
         $this->showtime_id = $showtime_id;
-        $this->showtime = Showtime::findOrFail($showtime_id);
+        $this->showtime = Showtime::with('room')->findOrFail($showtime_id);
+        $this->room = $this->showtime->room;
         $this->loadSeats();
         $this->generateSeatsLayout();
     }
@@ -45,12 +43,18 @@ class SelectSeats extends Component
         }
     }
 
-    public function toggleSeat($seatId)
+    public function toggleSeat($seatCode)
     {
-        if (in_array($seatId, $this->selectedSeats)) {
-            $this->selectedSeats = array_values(array_diff($this->selectedSeats, [$seatId]));
+        if (in_array($seatCode, $this->selectedSeats)) {
+            $this->selectedSeats = array_values(array_diff($this->selectedSeats, [$seatCode]));
         } else {
-            $alreadyBooked = BookingSeat::where('seat_id', $seatId)
+            $row = substr($seatCode, 0, 1);
+            $number = substr($seatCode, 1);
+            $seat = $this->seats->first(fn($s) => $s->seat_row === $row && $s->seat_number == $number);
+
+            if (!$seat) return;
+
+            $alreadyBooked = BookingSeat::where('seat_id', $seat->id)
                 ->whereHas('booking', function ($q) {
                     $q->where('showtime_id', $this->showtime_id)
                         ->whereIn('status', ['pending', 'paid']);
@@ -60,7 +64,8 @@ class SelectSeats extends Component
                 session()->flash('error', 'Ghế đã được đặt.');
                 return;
             }
-            $this->selectedSeats[] = $seatId;
+
+            $this->selectedSeats[] = $seatCode;
         }
 
         $this->generateSeatsLayout();
@@ -82,22 +87,10 @@ class SelectSeats extends Component
     {
         $this->dispatch(
             'seatuserdetail',
-            $this->rows,
-            $this->seatsPerRow,
-            $this->vipRows,
-            $this->coupleRows,
-            $this->generateSeatCodes($this->selectedSeats)
+            $this->seats,
+            $this->selectedSeats
         );
     }
-
-    public function toggleSeatByCode($seatCode)
-    {
-        $seat = $this->seats->firstWhere(fn($s) => $s->seat_row . $s->seat_number == $seatCode);
-        if ($seat) {
-            $this->toggleSeat($seat->id);
-        }
-    }
-
 
     public function goToSelectFood()
     {
@@ -161,6 +154,8 @@ class SelectSeats extends Component
     #[Layout('components.layouts.client')]
     public function render()
     {
-        return view('livewire.client.select-seats');
+        return view('livewire.client.select-seats' , [
+            'room' => $this->room
+        ]);
     }
 }
