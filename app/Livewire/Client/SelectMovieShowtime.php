@@ -38,7 +38,7 @@ class SelectMovieShowtime extends Component
     }
 
     #[Title('Danh sách phim - SE7ENCinema')]
-    #[Layout('components.layouts.admin')]
+    #[Layout('components.layouts.client')]
     public function render()
     {
         return view('livewire.client.select-movie-showtime', [

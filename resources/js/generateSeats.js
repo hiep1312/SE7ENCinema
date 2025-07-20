@@ -630,7 +630,6 @@ document.addEventListener("livewire:init", () => {
                 }
             }
 
-            // Add column button at the end of each row
             const addColumnBtn = document.createElement("li");
             addColumnBtn.innerHTML = `
                 <button class="add-column-btn" title="Thêm cột">+</button>
@@ -657,103 +656,237 @@ document.addEventListener("livewire:init", () => {
         return frameSeats.cloneNode(true);
     };
 
-     window.generateClientDOMSeats = function ({ rows, seatsPerRow, vipRows, coupleRows, selectedSeats = [] }, pathScreen, modelBinding = 'selectedSeats')
-     {
+window.generateClientDOMSeats = function ({ seats, selectedSeats = [] }, pathScreen, modelBinding = 'selectedSeats') {
+    if (!seats || seats.length === 0) return;
 
-        rows = parseInt(rows);
-        seatsPerRow = parseInt(seatsPerRow);
-        const vipArr = vipRows ? vipRows.split(",").map(r => r.trim().toUpperCase()) : [];
-        const coupleArr = coupleRows ? coupleRows.split(",").map(r => r.trim().toUpperCase()) : [];
+    const rowSet = new Set();
+    const rowInfo = {};
 
-        const frameSeats = document.createElement("div");
-        frameSeats.setAttribute("wire:ignore", "");
-        frameSeats.classList = "st_seatlayout_main_wrapper w-100 mt-2";
-        frameSeats.innerHTML = `
-            <div class="container">
-                <div class="st_seat_lay_heading float_left">
-                    <h3>SE7ENCINEMA SCREEN</h3>
-                </div>
-                <div class="st_seat_full_container" style="float: none">
-                    <div class="st_seat_lay_economy_wrapper float_left" style="width: 100% !important">
-                        <div class="screen">
-                            <img src="${pathScreen || (location.origin + "/client/assets/images/content/screen.png")}" alt="Screen">
-                        </div>
-                    </div>
-                    <div class="st_seat_lay_economy_wrapper st_seat_lay_economy_wrapperexicutive float_left" style="width: auto !important" id="seats-layout"></div>
-                </div>
+    for (const seat of seats) {
+        const row = seat.seat_row.toUpperCase();
+        rowSet.add(row);
+
+        if (!rowInfo[row]) {
+            rowInfo[row] = {
+                maxNumber: 0,
+                type: seat.seat_type
+            };
+        }
+
+        if (seat.seat_number > rowInfo[row].maxNumber) {
+            rowInfo[row].maxNumber = seat.seat_number;
+        }
+    }
+
+    const sortedRows = Array.from(rowSet).sort();
+    const rows = sortedRows.length;
+    const seatsPerRow = Math.max(...Object.values(rowInfo).map(r => r.maxNumber));
+    const vipRows = sortedRows.filter(r => rowInfo[r].type === 'vip').join(',');
+    const coupleRows = sortedRows.filter(r => rowInfo[r].type === 'couple').join(',');
+
+    const vipArr = vipRows.split(',').map(r => r.trim().toUpperCase());
+    const coupleArr = coupleRows.split(',').map(r => r.trim().toUpperCase());
+
+    const frameSeats = document.createElement("div");
+    frameSeats.setAttribute("wire:ignore", "");
+    frameSeats.classList = "st_seatlayout_main_wrapper w-100 mt-2";
+    frameSeats.innerHTML = `
+        <div class="container">
+            <div class="st_seat_lay_heading float_left">
+                <h3>SE7ENCINEMA SCREEN</h3>
             </div>
-        `;
+            <div class="st_seat_full_container" style="float: none">
+                <div class="st_seat_lay_economy_wrapper float_left" style="width: 100% !important">
+                    <div class="screen">
+                        <img src="${pathScreen || (location.origin + "/client/assets/images/content/screen.png")}" alt="Screen">
+                    </div>
+                </div>
+                <div class="st_seat_lay_economy_wrapper st_seat_lay_economy_wrapperexicutive float_left" style="width: auto !important" id="seats-layout"></div>
+            </div>
+        </div>
+    `;
 
-        const seatsLayout = frameSeats.querySelector("#seats-layout");
+    const seatsLayout = frameSeats.querySelector("#seats-layout");
+    const caculateColumnAsile = calculateSeatDistribution(seatsPerRow);
+    const caculateRowAsile = calculateSeatDistribution(rows);
 
-        const caculateColumnAsile = calculateSeatDistribution(seatsPerRow);
-        const caculateRowAsile = calculateSeatDistribution(rows);
+    for (let i = 0; i < sortedRows.length; i++) {
+        const rowChar = sortedRows[i];
+        const isVip = vipArr.includes(rowChar);
+        const isCouple = coupleArr.includes(rowChar);
 
-        for (let i = 1; i <= rows; i++) {
-            const rowChar = window.getRowSeat(i);
-            if (rowChar === null) break;
+        const frameRow = document.createElement("ul");
+        frameRow.id = `row-${rowChar}`;
+        frameRow.className = "seat-row-layout list-unstyled float_left d-flex flex-nowrap gap-2 justify-content-start align-items-center";
+        frameRow.setAttribute("data-row", rowChar);
+        frameRow.style.position = "relative";
 
-            const isVip = vipArr.includes(rowChar);
-            const isCouple = coupleArr.includes(rowChar);
+        for (let j = 1; j <= seatsPerRow; j++) {
+            const seatId = `${rowChar}${j}`;
+            const seat = seats.find(s => s.seat_row.toUpperCase() === rowChar && s.seat_number === j);
+            if (!seat) continue;
 
-            const frameRow = document.createElement("ul");
-            frameRow.id = `row-${rowChar}`;
-            frameRow.className = "seat-row-layout list-unstyled float_left d-flex flex-nowrap gap-2 justify-content-start align-items-center";
-            frameRow.setAttribute("data-row", rowChar);
-            frameRow.style.position = "relative";
+            const seatType = isCouple ? "double" : isVip ? "vip" : "standard";
+            const seatClass = `seat seat-${seatType}`;
+            const seatLabel = `Chỗ ngồi ${seatId}`;
+            const isChecked = selectedSeats.includes(seatId) ? 'checked' : '';
 
-            for (let j = 1; j <= seatsPerRow; j++) {
-                const seatCeil = document.createElement("li");
-                const seatType = isCouple ? "double" : isVip ? "vip" : "standard";
-                const seatClass = `seat seat-${seatType}`;
-                const seatId = `${rowChar}${j}`;
-                const seatLabel = `Chỗ ngồi ${seatId}`;
-                const isChecked = selectedSeats.includes(seatId) ? 'checked' : '';
+            const seatCeil = document.createElement("li");
+            seatCeil.innerHTML = `
+                <input
+                    type="checkbox"
+                    class="${seatClass}"
+                    id="${seatId}"
+                    value="${seatId}"
+                    wire:model="${modelBinding}"
+                    data-number="${j}"
+                    ${isChecked}
+                >
+            `;
+            seatCeil.dataset.seat = seatType;
+            seatCeil.className = "seat-item";
+            frameRow.appendChild(seatCeil);
 
-                seatCeil.innerHTML = `
-                    <span class="seat-helper">${seatLabel}</span>
-                    <input
-                        type="checkbox"
-                        class="${seatClass}"
-                        id="${seatId}"
-                        value="${seatId}"
-                        wire:model="${modelBinding}"
-                        data-number="${j}"
-                        ${isChecked}
-                    >
-                    <label for="${seatId}" class="visually-hidden">${seatLabel}</label>
+            if (caculateColumnAsile.includes(j + 1) && j < seatsPerRow) {
+                const aisleCeil = document.createElement("li");
+                aisleCeil.innerHTML = `
+                    <span class="seat-helper">Lối đi</span>
+                    <div class="aisle"></div>
                 `;
-                seatCeil.dataset.seat = seatType;
-                seatCeil.className = "seat-item";
-                frameRow.appendChild(seatCeil);
-
-                if (caculateColumnAsile.includes(j + 1) && j < seatsPerRow) {
-                    const aisleCeil = document.createElement("li");
-                    aisleCeil.innerHTML = `
-                        <span class="seat-helper">Lối đi</span>
-                        <div class="aisle"></div>
-                    `;
-                    aisleCeil.dataset.seat = "aisle";
-                    aisleCeil.className = "aisle-item";
-                    frameRow.appendChild(aisleCeil);
-                }
-
-                if (isCouple && j < seatsPerRow) {
-                    j++;
-                }
+                aisleCeil.dataset.seat = "aisle";
+                aisleCeil.className = "aisle-item";
+                frameRow.appendChild(aisleCeil);
             }
 
-            seatsLayout.appendChild(frameRow);
+            if (isCouple) j++;
+        }
 
-            if (caculateRowAsile.includes(i + 1) && i < rows) {
-                const aisleRow = document.createElement("div");
-                aisleRow.className = "row-aisle";
-                aisleRow.style.height = "20px";
-                aisleRow.style.width = "100%";
-                seatsLayout.appendChild(aisleRow);
+        seatsLayout.appendChild(frameRow);
+
+        if (caculateRowAsile.includes(i + 2) && i < rows) {
+            const aisleRow = document.createElement("div");
+            aisleRow.className = "row-aisle";
+            aisleRow.style.height = "20px";
+            aisleRow.style.width = "100%";
+            seatsLayout.appendChild(aisleRow);
+        }
+    }
+
+function getPos(s) {
+    const row = s.match(/[A-Z]/i)[0];
+    const rowCode = row.charCodeAt(0);
+    const col = parseInt(s.replace(/[A-Z]/i, ''));
+    return [row, rowCode, col];
+}
+
+function isStraightDiagonal(a, b, c) {
+    const [_, r1, c1] = getPos(a);
+    const [__, r2, c2] = getPos(b);
+    const [___, r3, c3] = getPos(c);
+
+    const rowDiff1 = r2 - r1;
+    const rowDiff2 = r3 - r2;
+    const colDiff1 = c2 - c1;
+    const colDiff2 = c3 - c2;
+
+    return (
+        Math.abs(rowDiff1) === 1 &&
+        rowDiff1 === rowDiff2 &&
+        Math.abs(colDiff1) === 1 &&
+        colDiff1 === colDiff2
+    );
+}
+function isSplitVerticalPattern(a, b, c) {
+    const [ra, caCode, ca] = getPos(a);
+    const [rb, cbCode, cb] = getPos(b);
+    const [rc, ccCode, cc] = getPos(c);
+
+    const isColAligned = (ca === cc) && (cb !== ca);
+    const isRowBetween = (cbCode > Math.min(caCode, ccCode) && cbCode < Math.max(caCode, ccCode));
+
+    return isColAligned && isRowBetween;
+}
+
+
+function isDiagonalTriangle(a, b, c, selectedSet) {
+    const [rowA, r1, c1] = getPos(a);
+    const [rowB, r2, c2] = getPos(b);
+    const [rowC, r3, c3] = getPos(c);
+
+    const allRows = [r1, r2, r3];
+    const allCols = [c1, c2, c3];
+
+    const rowCount = {};
+    allRows.forEach(r => rowCount[r] = (rowCount[r] || 0) + 1);
+
+
+    const repeatedRow = Object.entries(rowCount).find(([_, count]) => count === 2);
+    if (!repeatedRow) return false;
+
+    const baseRowCode = parseInt(repeatedRow[0]);
+    const baseRowSeats = allCols.filter((_, i) => allRows[i] === baseRowCode).sort((a, b) => a - b);
+
+
+    if (baseRowSeats.length === 2) {
+        const middle = (baseRowSeats[0] + baseRowSeats[1]) / 2;
+        if (Number.isInteger(middle)) {
+            const baseRow = String.fromCharCode(baseRowCode);
+            const middleSeatCode = `${baseRow}${middle}`;
+            if (!selectedSet.has(middleSeatCode)) {
+                return true;
             }
         }
-        console.log('Seats generated successfully');
-        return frameSeats;
-    };
+    }
+
+    return false;
+}
+
+function is3InDiagonal(seats) {
+    if (seats.length < 3) return false;
+    const selectedSet = new Set(seats);
+    for (let i = 0; i < seats.length; i++) {
+        for (let j = i + 1; j < seats.length; j++) {
+            for (let k = j + 1; k < seats.length; k++) {
+                const a = seats[i], b = seats[j], c = seats[k];
+                if (
+                    isStraightDiagonal(a, b, c) ||
+                    isDiagonalTriangle(a, b, c, selectedSet) ||
+                    isSplitVerticalPattern(a, b, c)
+                ) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+
+frameSeats.querySelectorAll('input.seat').forEach(input => {
+    input.addEventListener('change', (e) => {
+        const current = e.target;
+        if (!current.checked) return;
+
+        const selectedInputs = Array.from(frameSeats.querySelectorAll('input.seat:checked'));
+        const selectedSeatCodes = selectedInputs.map(i => i.value);
+
+        if (is3InDiagonal(selectedSeatCodes)) {
+            current.checked = false;
+            Swal.fire({
+                toast: true,
+                icon: 'warning',
+                title: 'Không được chọn ghế theo đường chéo!',
+                timer: 2500,
+                showConfirmButton: false,
+                position: 'top-end'
+            });
+        }
+    });
+});
+
+
+    return frameSeats;
+
+};
+
 });

@@ -3,73 +3,139 @@
 namespace App\Livewire\Client;
 
 use Livewire\Component;
-use App\Models\Booking;
+use App\Models\FoodItem;
 use App\Models\FoodVariant;
 use App\Models\FoodOrderItem;
-use Illuminate\Support\Facades\DB;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+
+
+#[Title('Chọn món ăn - SE7ENCinema')]
+#[Layout('components.layouts.client')]
 class SelectFood extends Component
 {
-    public $booking_id;
-    public $booking;
-    public $foodVariants;
-    public $selectedFood = []; // ['food_variant_id' => quantity]
+    public $selectedFoodId = null;
+    public $selectedAttributes = [];
+    public $selectedVariant = null;
 
-    public function mount($booking_id)
+    public $cart = [];
+
+    #[\Livewire\Attributes\Computed]
+    public function foodItems()
     {
-        $this->booking_id = $booking_id;
-        $this->booking = Booking::findOrFail($booking_id);
-        $this->foodVariants = FoodVariant::where('status', 'available')->get();
+        return FoodItem::with('variants.attributeValues.attribute')
+            ->where('status', 'activate')
+            ->get();
     }
 
-    public function updatedSelectedFood($value, $key)
+    public function selectFood($foodId)
     {
-        // Bạn có thể validate số lượng ở đây
+        $this->selectedFoodId = $foodId;
+        $this->selectedAttributes = [];
+        $this->selectedVariant = null;
     }
 
-    public function goToConfirmBooking()
+    public function selectAttribute($attributeName, $value)
     {
-        DB::beginTransaction();
-        try {
-            // Xóa các food_order_items cũ (nếu có)
-            FoodOrderItem::where('booking_id', $this->booking_id)->delete();
+        $this->selectedAttributes[$attributeName] = $value;
 
-            $totalFoodPrice = 0;
+        $food = FoodItem::with('variants.attributeValues.attribute')
+            ->find($this->selectedFoodId);
 
-            foreach ($this->selectedFood as $variantId => $quantity) {
-                if ($quantity > 0) {
-                    $variant = $this->foodVariants->where('id', $variantId)->first();
-                    if ($variant) {
-                        FoodOrderItem::create([
-                            'booking_id' => $this->booking_id,
-                            'food_variant_id' => $variantId,
-                            'quantity' => $quantity,
-                            'price' => $variant->price * $quantity,
-                        ]);
-                        $totalFoodPrice += $variant->price * $quantity;
-                    }
+        $matchingVariant = $food->variants->first(function ($variant) {
+            $variantAttributes = $variant->attributeValues->mapWithKeys(fn($val) => [
+                $val->attribute->name => $val->value
+            ]);
+
+            foreach ($this->selectedAttributes as $name => $value) {
+                if (!isset($variantAttributes[$name]) || $variantAttributes[$name] !== $value) {
+                    return false;
                 }
             }
+            return true;
+        });
 
-            // Cập nhật tổng tiền trong booking (ghế + đồ ăn)
-            $bookingSeatsPrice = $this->booking->bookingSeats->sum(function ($item) {
-                return $item->seat->price;
-            });
+        $this->selectedVariant = $matchingVariant;
+    }
 
-            $this->booking->total_price = $bookingSeatsPrice + $totalFoodPrice;
-            $this->booking->save();
+    public function addToCart()
+    {
+        $food = FoodItem::with('variants.attributeValues.attribute')
+            ->find($this->selectedFoodId);
 
-            DB::commit();
+        // Đếm tổng số nhóm thuộc tính có thật
+        $attributes = $food->variants
+            ->flatMap(fn($v) => $v->attributeValues)
+            ->pluck('attribute.name')
+            ->unique();
 
-            return redirect()->route('booking.confirm', ['booking_id' => $this->booking_id]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            session()->flash('error', 'Lỗi khi lưu đồ ăn.');
+        if (count($this->selectedAttributes) < $attributes->count()) {
+            $this->addError('variant', 'Vui lòng chọn đủ các thuộc tính!');
+            return;
         }
+
+        if (!$this->selectedVariant) {
+            $this->addError('variant', 'Tổ hợp thuộc tính không tồn tại!');
+            return;
+        }
+
+        $sku = $this->selectedVariant->sku;
+
+        if (isset($this->cart[$sku])) {
+            $this->cart[$sku]['quantity']++;
+        } else {
+            $this->cart[$sku] = [
+                'variant_id' => $this->selectedVariant->id,
+                'name' => $this->selectedVariant->foodItem->name,
+                'attributes' => $this->selectedAttributes,
+                'price' => $this->selectedVariant->price,
+                'quantity' => 1,
+            ];
+        }
+
+        // Reset sau khi thêm
+        $this->selectedAttributes = [];
+        $this->selectedVariant = null;
+        $this->selectedFoodId = null;
+    }
+
+
+    public function increment($sku)
+    {
+        $this->cart[$sku]['quantity']++;
+    }
+
+    public function decrement($sku)
+    {
+        if ($this->cart[$sku]['quantity'] > 1) {
+            $this->cart[$sku]['quantity']--;
+        } else {
+            unset($this->cart[$sku]);
+        }
+    }
+
+    public function remove($sku)
+    {
+        unset($this->cart[$sku]);
+    }
+
+    public function getTotalProperty()
+    {
+        return collect($this->cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+    }
+
+    public function goToCheckout()
+    {
+        session()->put('cart', $this->cart);
+        session()->put('cart_total', $this->total);
+
+        return redirect()->route('thanh-toan');
     }
 
     public function render()
     {
-        return view('livewire.client.select-food')->layout('client');;
+        return view('livewire.client.select-food');
     }
 }
