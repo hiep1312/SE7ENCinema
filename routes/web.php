@@ -28,6 +28,7 @@ use App\Livewire\Admin\Ratings\RatingIndex;
 use App\Livewire\Admin\Showtimes\ShowtimeCreate;
 use App\Livewire\Admin\Showtimes\ShowtimeEdit;
 use App\Livewire\Admin\Showtimes\ShowtimeIndex;
+use App\Livewire\Client\Lichchieu\LichchieuIndex;
 
 Route::prefix('admin')->name('admin.')->group(function () {
     /* Banners */
@@ -121,6 +122,11 @@ Route::name('client.')->group(function () {
     Route::view('/seat_booking', 'livewire.client.template.bookings.seat_booking')->name('seat_booking');
     Route::view('/contact', 'livewire.client.template.contact')->name('contact');
     Route::view('/confirmation_screen', 'livewire.client.template.confirmation_screen')->name('confirmation_screen');
+
+    /* Lichchieu */
+     Route::prefix('/showtimes')->name('showtimes.')->group(function () {
+        Route::get('/', LichchieuIndex::class)->name('index');
+    });
 });
 
 Route::view('/', 'welcome')->name('welcome');
