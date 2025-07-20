@@ -30,6 +30,10 @@ use App\Livewire\Admin\Showtimes\ShowtimeCreate;
 use App\Livewire\Admin\Showtimes\ShowtimeEdit;
 use App\Livewire\Admin\Showtimes\ShowtimeIndex;
 
+
+use App\Livewire\Payment\VnpayPayment;
+use App\Livewire\Booking\BookingFood;
+
 Route::prefix('admin')->name('admin.')->group(function () {
     /* Banners */
     Route::prefix('/banners')->name('banners.')->group(function () {
@@ -109,6 +113,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::view('/login', 'livewire.admin.template.samples.login')->name('login');
     Route::view('/register', 'livewire.admin.template.samples.register')->name('register');
 });
+
+    Route::get('/thanh-toan', VnpayPayment::class);
+    Route::get('/vnpay-return', [VnpayPayment::class, 'vnpayReturn'])->name('vnpay.return');
+
+
+    Route::get('/booking-food', BookingFood::class);
 
 Route::name('client.')->group(function () {
     Route::view('/home', 'livewire.client.template.index')->name('index');

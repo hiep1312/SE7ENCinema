@@ -108,7 +108,7 @@ class FoodEdit extends Component
         $attr = $this->availableAttributes->find($this->selectedAttributeId);
         if (!$attr) return;
 
-        // 👉 KIỂM TRA TRÙNG: ID hoặc TÊN
+        //KIỂM TRA TRÙNG: ID hoặc TÊN
         $isDuplicate = collect($this->variantAttributes)->contains(function ($item) use ($attr) {
             return $item['id'] === $attr->id || strcasecmp($item['name'], $attr->name) === 0;
         });
@@ -138,9 +138,6 @@ class FoodEdit extends Component
     }
 
 
-
-
-    // Tối ưu: Tách logic khởi tạo ra khỏi mount() để dễ đọc
     private function initializeAttributesAndVariants(): void
     {
         $activeAttributeValues = $this->foodItem->variants->flatMap(fn($variant) => $variant->attributeValues)->unique('id');
@@ -175,7 +172,7 @@ class FoodEdit extends Component
             'newAttributeValues' => 'required|string'
         ]);
 
-        // Tối ưu: Dùng collection để xử lý chuỗi giá trị
+        //Dùng collection để xử lý chuỗi giá trị
         $values = collect(explode(',', $this->newAttributeValues))
             ->map(fn($value) => trim($value))
             ->filter()
@@ -351,7 +348,7 @@ class FoodEdit extends Component
         }
     }
 
-    // Tối ưu: Tách logic lưu thông tin chính
+    //Tách logic lưu thông tin chính
     private function saveFoodItemDetails(): void
     {
         $this->foodItem->update([
@@ -369,7 +366,7 @@ class FoodEdit extends Component
         }
     }
 
-    // Tối ưu: Tách logic đồng bộ thuộc tính và giá trị
+    //Tách logic đồng bộ thuộc tính và giá trị
     private function syncAttributesAndValues(): Collection
     {
         $activeAttrIds = [];
@@ -406,8 +403,6 @@ class FoodEdit extends Component
             ->keyBy(fn($v) => Str::slug($v->attribute->name) . ':' . Str::slug($v->value));
     }
 
-    // Tối ưu: Tách logic đồng bộ biến thể
-    // Trong private function syncVariants(Collection $attrValueMap): void
     private function syncVariants(Collection $attrValueMap): void
     {
         $activeVariantIds = [];
@@ -423,9 +418,9 @@ class FoodEdit extends Component
 
                 // Kiểm tra trong database: cả các bản ghi đang hoạt động và đã soft-delete
                 $existingVariant = $this->foodItem->variants()
-                    ->withTrashed() // Bao gồm cả các bản ghi đã soft-delete
+                    ->withTrashed()
                     ->where('sku', $sku)
-                    ->when(isset($vData['id']), fn($q) => $q->where('id', '!=', $vData['id'])) // Bỏ qua chính nó khi cập nhật
+                    ->when(isset($vData['id']), fn($q) => $q->where('id', '!=', $vData['id']))
                     ->first();
 
                 if (!$existingVariant) {
@@ -441,10 +436,10 @@ class FoodEdit extends Component
                 'quantity_available' => $vData['quantity_available'],
                 'limit' => $vData['limit'] ?: null,
                 'status' => $vData['status'],
-                'sku' => $sku, // SKU đã được đảm bảo duy nhất
+                'sku' => $sku,
             ];
 
-            // Xử lý ảnh (giữ nguyên logic hiện tại)
+            // Xử lý ảnh
             if (isset($vData['image']) && $vData['image'] instanceof UploadedFile) {
                 if (!empty($vData['existing_image'])) Storage::disk('public')->delete($vData['existing_image']);
                 $variantData['image'] = $vData['image']->store('food-variants', 'public');
@@ -453,7 +448,7 @@ class FoodEdit extends Component
             // Tìm hoặc tạo biến thể: ưu tiên tìm theo ID để cập nhật nếu đã có.
             // Nếu không có ID hoặc ID không khớp, sẽ tạo mới với SKU đã được kiểm tra.
             $variant = $this->foodItem->variants()->updateOrCreate(
-                ['id' => $vData['id']], // Nếu vData['id'] tồn tại, sẽ tìm và cập nhật
+                ['id' => $vData['id']],
                 $variantData
             );
 
