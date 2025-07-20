@@ -1,6 +1,6 @@
-<div>
+<div class="scRender">
     @if (session()->has('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert" wire:ignore>
+    <div class="alert alert-success alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
         {{ session('success') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
@@ -45,14 +45,16 @@
 
                     <!-- Lọc theo độ ưu tiên -->
                     <div class="col-md-5 col-lg-4 mb-2 mb-md-0 d-flex align-items-center gap-2">
-                        <span id="lowerValue" x-text="$wire.priorityFilter[0]"></span>
+                        <span id="lowerValue" x-text="$wire.priorityFilter[0]" style="width: 56px;"></span>
                         <div class="dual-range">
                             <div class="range-track"></div>
                             <div class="range-fill" id="rangeFill" wire:ignore.self></div>
-                            <input type="range" class="range-input lower" id="lowerRange" min="0" max="100" value="{{ $priorityFilter[0] }}" wire:input="$js.updateSlider">
-                            <input type="range" class="range-input upper" id="upperRange" min="0" max="100" value="{{ $priorityFilter[1] }}" wire:input="$js.updateSlider">
+                            <input type="range" class="range-input lower" id="lowerRange" min="0" max="100"
+                                value="{{ $priorityFilter[0] }}" wire:input="$js.updateSlider">
+                            <input type="range" class="range-input upper" id="upperRange" min="0" max="100"
+                                value="{{ $priorityFilter[1] }}" wire:input="$js.updateSlider">
                         </div>
-                        <span id="upperValue" x-text="$wire.priorityFilter[1]"></span>
+                        <span id="upperValue" x-text="$wire.priorityFilter[1]" style="width: 56px;"></span>
                     </div>
 
                     <!-- Reset filters -->
@@ -82,14 +84,13 @@
                         <tbody>
                             @forelse($banners as $banner)
                             <tr wire:key="{{ $banner->id }}">
-                                
                                 <td class="text-center fw-bold text-light">{{ $loop->iteration }}</td>
                                 <td class="text-center">
                                     <div class="mt-1 overflow-auto d-block text-center"
-                                        style="max-height: 70px; width: 100px;" data-bs-toggle="modal" data-bs-target="#bannerPreview" data-banner-id="{{ $banner->id }}">
+                                        style="max-height: 70px; width: 100px;" data-bs-toggle="modal"
+                                        data-bs-target="#bannerPreview" data-banner-id="{{ $banner->id }}">
                                         <img src="{{ asset('storage/' . ($banner->image ?? '404.webp')) }}"
-                                            class="img-thumbnail" loading="lazy"
-                                            alt="Ảnh banner{{ $banner->title }}"
+                                            class="img-thumbnail" loading="lazy" alt="Ảnh banner{{ $banner->title }}"
                                             style="width: 100px; height: 70px; object-fit: cover; border-radius: 0; cursor: pointer;">
                                     </div>
                                 </td>
@@ -147,9 +148,7 @@
                                 </td>
                                 <td class="text-center">
                                     @if($banner->link)
-                                    <a href="{{ $banner->link }}"
-                                        target="_blank"
-                                        class="btn btn-sm btn-outline-primary"
+                                    <a href="{{ $banner->link }}" target="_blank" class="btn btn-sm btn-outline-primary"
                                         title="Mở đường dẫn liên kết">
                                         <i class="fas fa-external-link-alt"></i>
                                     </a>
@@ -165,13 +164,15 @@
                                 <td>
                                     <div class="d-flex gap-2 justify-content-center">
                                         <!-- Toggle Status -->
-                                        @php $checkActive = ($banner->status === 'active' && $displayStatuses[$loop->index]['displayStatus'] !== 'expired') @endphp
-                                        <button type="button"
-                                            wire:click="toggleStatus({{ $banner->id }})"
+                                        @php $checkActive = ($banner->status === 'active' &&
+                                        $displayStatuses[$loop->index]['displayStatus'] !== 'expired') @endphp
+                                        <button type="button" wire:click="toggleStatus({{ $banner->id }})"
                                             class="btn btn-sm {{ $checkActive ? 'btn-info' : 'btn-success' }}"
                                             title="{{ $checkActive ? 'Tắt' : 'Bật' }}"
-                                            @if($displayStatuses[$loop->index]['displayStatus'] === 'expired' || $banner->status === 'inactive') disabled @endif>
-                                            <i class="fas {{ $checkActive ? 'fa-pause' : 'fa-play' }}" style="margin-right: 0"></i>
+                                            @if($displayStatuses[$loop->index]['displayStatus'] === 'expired' ||
+                                            $banner->status === 'inactive') disabled @endif>
+                                            <i class="fas {{ $checkActive ? 'fa-pause' : 'fa-play' }}"
+                                                style="margin-right: 0"></i>
                                         </button>
 
                                         <a href="{{ route('admin.banners.edit', $banner->id) }}"
@@ -208,7 +209,7 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="bannerPreview" wire:ignore>
+        <div class="modal fade" id="bannerPreview" wire:ignore.self>
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -222,18 +223,22 @@
                             <div class="carousel-inner">
                                 @foreach($banners as $banner)
                                 <div class="carousel-item" data-banner-id="{{ $banner->id }}">
-                                    <img src="{{ asset('storage/' . ($banner->image ?? '404.webp')) }}" class="d-block w-100" alt="Ảnh banner {{ $banner->title }}" style="object-fit: cover; aspect-ratio: 16 / 8;">
+                                    <img src="{{ asset('storage/' . ($banner->image ?? '404.webp')) }}"
+                                        class="d-block w-100" alt="Ảnh banner {{ $banner->title }}"
+                                        style="object-fit: cover; aspect-ratio: 16 / 8;">
                                     <div class="carousel-caption d-none d-md-block text-light">
                                         <h5>{{ $banner->title }}</h5>
                                     </div>
                                 </div>
                                 @endforeach
                             </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#slideshowBanner" data-bs-slide="prev">
+                            <button class="carousel-control-prev" type="button" data-bs-target="#slideshowBanner"
+                                data-bs-slide="prev">
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Trước đó</span>
                             </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#slideshowBanner" data-bs-slide="next">
+                            <button class="carousel-control-next" type="button" data-bs-target="#slideshowBanner"
+                                data-bs-slide="next">
                                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Tiếp theo</span>
                             </button>

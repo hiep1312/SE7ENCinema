@@ -11,7 +11,7 @@ use Livewire\WithFileUploads;
 use App\Models\Booking;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
+use App\Models\BookingSeat;
 use Livewire\WithPagination;
 
 class UserInformation extends Component
@@ -140,7 +140,7 @@ class UserInformation extends Component
     public function detailBooking($id)
     {
         $this->tabCurrent = 'booking-info';
-        $this->bookingInfo = Booking::with('showtime.movie.ratings', 'showtime.movie.genres', 'showtime.room', 'user', 'seats', 'promotionUsages', 'foodOrderItems.variant.foodItem', 'foodOrderItems.variant.attributeValues.attribute')->findOrFail($id);
+        $this->bookingInfo = Booking::with('showtime.movie.ratings', 'showtime.movie.genres', 'showtime.room', 'user', 'seats', 'promotionUsages', 'foodOrderItems.variant.foodItem', 'foodOrderItems.variant.attributeValues.attribute',)->findOrFail($id);
     }
     #[Layout('components.layouts.client')]
     public function render()

@@ -24,7 +24,7 @@ class MovieSeeder extends Seeder
                 'director' => fake()->name(),
                 'actors' => implode(', ', fake()->words(5)),
                 'age_restriction' => fake()->randomElement(['P', 'K', 'T13', 'T16', 'T18', 'C']),
-                'poster' => fake()->imageUrl(300, 450, 'movie'),
+                'poster' => /* fake()->imageUrl(300, 450, 'movie') */ '404.webp',
                 'trailer_url' => fake()->url(),
                 'format' => fake()->randomElement(['2D', '3D', '4DX', 'IMAX']),
                 'price' => fake()->numberBetween(50000, 150000),
