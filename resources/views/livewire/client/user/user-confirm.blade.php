@@ -1,8 +1,6 @@
 <div>
 
     <style>
-
-
         .main-container {
             flex: 1;
             display: flex;
@@ -76,19 +74,6 @@
             box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.3);
         }
 
-        .forgot-password {
-            color: #0969da;
-            text-decoration: none;
-            font-size: 0.75rem;
-            float: right;
-            margin-top: 0.25rem;
-        }
-
-        .forgot-password:hover {
-            text-decoration: underline;
-            color: #0969da;
-        }
-
         .confirm-btn {
             background-color: #FF4444;
             border: 1px solid rgba(31, 136, 61, 0.15);
@@ -105,10 +90,12 @@
             background-color: #bf3636;
             color: white;
         }
+
         .confirm-btn:focus {
-            outline: none !important; 
+            outline: none !important;
             color: white;
         }
+
         .invalid-feedback {
             color: #d73a49;
             font-size: 0.875rem;
@@ -120,13 +107,14 @@
     <div class="main-container">
         <div class="confirm-card">
             <h1 class="confirm-title">Xác nhận quyền truy cập</h1>
-            
+
             <div class="user-info">
                 <div class="user-avatar">
                     @if ($user->avatar)
-                        <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" class="rounded-circle" style="width: 40px; height: 40px;border-radius: 50%;">
+                    <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" class="rounded-circle"
+                        style="width: 40px; height: 40px;border-radius: 50%;">
                     @else
-                        <i class="fas fa-user"></i>
+                    <i class="fas fa-user"></i>
                     @endif
                 </div>
                 <span class="user-text">Đăng nhập dưới tên {{$user->name}}</span>
@@ -136,12 +124,11 @@
                 <div class="mb-3">
                     <label for="password" class="form-label">Mật khẩu</label>
                     <input type="password" class="form-control" id="password" wire:model.live="password" required>
-                    <a href="#" class="forgot-password">Forgot password?</a>
                 </div>
                 @if (session()->has('error'))
-                    <div class="invalid-feedback">
-                        {{ session('error') }}
-                    </div>
+                <div class="invalid-feedback">
+                    {{ session('error') }}
+                </div>
                 @endif
 
                 <button type="submit" class="btn confirm-btn">Xác nhận</button>
