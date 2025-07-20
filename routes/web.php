@@ -37,6 +37,8 @@ use App\Livewire\Admin\Showtimes\ShowtimeCreate;
 use App\Livewire\Admin\Showtimes\ShowtimeEdit;
 use App\Livewire\Admin\Showtimes\ShowtimeIndex;
 use App\Livewire\Admin\Tickets\TicketIndex;
+use App\Livewire\Client\Notifications\Allnotifications;
+use App\Livewire\Client\Notifications\NotificationIndex as NotificationIndexClient;
 use App\Livewire\Client\Ticket\Index as TicketIndexClient;
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -160,6 +162,12 @@ Route::name('client.')->group(function () {
     Route::view('/seat_booking', 'livewire.client.template.bookings.seat_booking')->name('seat_booking');
     Route::view('/contact', 'livewire.client.template.contact')->name('contact');
     Route::view('/confirmation_screen', 'livewire.client.template.confirmation_screen')->name('confirmation_screen');
+
+
+    Route::prefix('/notifications')->name('notifications.')->group(function () {
+        Route::get('/', NotificationIndexClient::class)->name('index');
+        Route::get('allnotification', Allnotifications::class)->name('allnotification');
+     });
 });
 
 Route::view('/', 'welcome')->name('welcome');
