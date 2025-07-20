@@ -11,13 +11,13 @@
     <div class="terms-page">
         <div class="container">
             <!-- Header Section -->
-            <div class="privacy-breadcrumb">
+            <div class="terms-breadcrumb">
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="prs_title_heading_wrapper" style="padding-top:15px;">
                                 <ul>
-                                    <li><a href="{{ route('client.index') }}" style="color: black;"><i class="fas fa-home"></i></a></li>
+                                    <li><a href="{{ route('client.index') }}" style="color: black;padding-top:0px; !important;"><i class="fas fa-home"></i></a></li>
                                     <li>&nbsp;&nbsp; >&nbsp;&nbsp; Điều khoản sử dụng</li>
                                 </ul>
                             </div>

@@ -2,13 +2,16 @@
 .terms-page {
     background-color: #ffffff;
     min-height: 100vh;
-    font-family: "Roboto", Arial, sans-serif;
+    padding-bottom: 60px; /* Thêm padding bottom */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
 
   /* Header Section */
   .terms-header {
-    background: #ffffff;
-    padding: 20px 0;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 60px 0 40px;
+    margin-bottom: 40px;
   }
 
   /* Breadcrumb mới */
@@ -26,7 +29,14 @@
   display: flex;
   align-items: center;
 }
-
+.prs_title_heading_wrapper h2 {
+    color: #fff;
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
 .prs_title_heading_wrapper ul {
   list-style: none;
   padding: 0;
@@ -58,36 +68,6 @@
   font-size: 18px;
 }
 
-  .terms-breadcrumb .breadcrumb {
-    background: transparent;
-    padding: 0;
-    margin: 0;
-    font-size: 14px;
-  }
-
-  .terms-breadcrumb .breadcrumb-item {
-    color: #666;
-  }
-
-  .terms-breadcrumb .breadcrumb-item a {
-    color: #666;
-    text-decoration: none;
-  }
-
-  .terms-breadcrumb .breadcrumb-item a:hover {
-    color: #e50914;
-    text-decoration: underline;
-  }
-
-  .terms-breadcrumb .breadcrumb-item.active {
-    color: #333;
-  }
-
-  .terms-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
-    content: ">";
-    color: #999;
-    padding: 0 8px;
-  }
 
   .terms-title {
     font-size: 28px;
@@ -654,12 +634,6 @@
     }
   }
 
-.privacy-breadcrumb {
-  background: #f8f9fa;
-  padding: 20px 0;
-  border-bottom: 1px solid #e9ecef;
-  margin-bottom: 30px;
-}
 
 .prs_title_heading_wrapper {
   position: relative;
