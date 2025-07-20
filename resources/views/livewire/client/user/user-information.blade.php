@@ -250,6 +250,70 @@
 
             .info {
 
+                .pagination1 {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 8px;
+                    margin: 2rem 0;
+                    flex-wrap: wrap;
+                }
+
+                .pagination1 .page-item1 {
+                    list-style: none;
+                }
+
+                .pagination1 .page-link1 {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    min-width: 40px;
+                    height: 40px;
+                    padding: 8px 12px;
+                    text-decoration: none;
+                    color: #6b7280;
+                    background-color: #ffffff;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    font-weight: 500;
+                    transition: all 0.2s ease-in-out;
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                .pagination1 .page-link1:hover {
+                    color: #3b82f6;
+                    background-color: #f8fafc;
+                    border-color: #3b82f6;
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+                }
+
+                .pagination1 .page-item1.active .page-link1 {
+                    color: #ffffff;
+                    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+                    border-color: #3b82f6;
+                    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+                }
+
+                .pagination1 .page-item1.disabled .page-link1 {
+                    color: #d1d5db;
+                    background-color: #f9fafb;
+                    border-color: #e5e7eb;
+                    cursor: not-allowed;
+                    transform: none;
+                }
+
+                .pagination1 .page-item1.disabled .page-link1:hover {
+                    color: #d1d5db;
+                    background-color: #f9fafb;
+                    border-color: #e5e7eb;
+                    transform: none;
+                    box-shadow: none;
+                }
+
+
                 background-color: #EFF1F5 !important;
 
                 .alertSuccess {
@@ -824,7 +888,6 @@
 
                     .meta-item {
                         display: flex;
-                        align-items: center;
                         gap: 8px;
                     }
 
@@ -870,7 +933,7 @@
                         background: white;
                         padding: 30px;
                         border-radius: 10px;
-                        border: 2px dashed #007bff;
+                        border: 2px solid #007bff;
                         margin: 30px 0;
                     }
 
@@ -1136,6 +1199,8 @@
                         <div class="history-header">
                             <h2 class="history-title">Lịch sử đơn hàng</h2>
                             <div class="history-filters">
+                                <input type="text" class="filter-date" wire:model.live='nameFilter'
+                                    placeholder="Tìm kiếm theo tên phim...">
                                 <select class="filter-select" wire:model.live='statusFilter'>
                                     <option value="">Tất cả trạng thái</option>
                                     <option value="failed">Đã thất bại</option>
@@ -1172,10 +1237,13 @@
                                             </div>
                                             <div class="info-row">
                                                 <span class="info-icon"><i class="fa-light fa-seat-airline"></i></span>
-                                                <span>Ghế: Chưa được note lại
-                                                    {{-- @foreach ($booking->seats as $seat)
-                                                    {{$seat}}
-                                                    @endforeach --}}
+                                                <span>Ghế:
+                                                    @forelse ($booking->seats as $seat)
+                                                    {{$seat->seat_row}}{{sprintf('%02d',
+                                                    $seat->seat_number);}}@if(!$loop->last),@endif
+                                                    @empty
+                                                    Không có ghế
+                                                    @endforelse
                                                 </span>
                                             </div>
                                         </div>
@@ -1201,7 +1269,8 @@
 
                                             @endswitch
                                         </div>
-                                        <div class="booking-price">{{number_format($booking->total_price,0,',','.')}}
+                                        <div class="booking-price">
+                                            {{number_format($booking->total_price,0,',','.')}}
                                             VNĐ
                                         </div>
                                         <div class="booking-code">Mã: {{$booking->booking_code}}</div>
@@ -1242,6 +1311,9 @@
                                 <p>Không có lịch sử mua vé</p>
                             </div>
                             @endforelse
+                            <div>
+                                {{ $bookings->links('pagination.user-info') }}
+                            </div>
                         </div>
                     </div>
                     @endif
@@ -1267,8 +1339,13 @@
                                             <div class="movie-meta">
                                                 <div class="meta-item">
                                                     <span>🎭</span>
-                                                    {{-- <span>Thể loại: {{$bookingInfo->showtime->movie->title}}</span>
-                                                    --}}
+                                                    <span>Thể loại:
+                                                        @forelse ($bookingInfo->showtime->movie->genres as $item)
+                                                        {{$item->name}} @if (!$loop->last),@endif
+                                                        @empty
+                                                        Không có
+                                                        @endforelse
+                                                    </span>
                                                 </div>
                                                 <div class="meta-item">
                                                     <span>⏱️</span>
@@ -1281,7 +1358,7 @@
                                                         {{$bookingInfo->showtime->movie->age_restriction}}</span>
                                                 </div>
                                                 <div class="meta-item">
-                                                    <span>🔞</span>
+                                                    <span>🔍</span>
                                                     <span>Định dạng: {{$bookingInfo->showtime->movie->format}}</span>
                                                 </div>
                                                 <div class="meta-item">
@@ -1331,11 +1408,19 @@
                                         </div>
                                         <div class="detail-item">
                                             <span class="detail-label">Ghế ngồi:</span>
-                                            <span class="detail-value highlight" id="seats">A12, A13</span>
+                                            <span class="detail-value highlight">
+                                                @forelse ($bookingInfo->seats as $seat)
+                                                {{$seat->seat_row}}{{sprintf('%02d',
+                                                $seat->seat_number);}}@if(!$loop->last),@endif
+                                                @empty
+                                                N\A
+                                                @endforelse
+                                            </span>
                                         </div>
                                         <div class="detail-item">
                                             <span class="detail-label">Số lượng vé:</span>
-                                            <span class="detail-value" id="ticketCount">2 vé</span>
+                                            <span class="detail-value" id="ticketCount">{{
+                                                number_format($bookingInfo->seats->count(), 0, '.', '.') }} vé</span>
                                         </div>
                                     </div>
                                 </div>
@@ -1347,29 +1432,81 @@
                                     💳 Thông Tin Thanh Toán
                                 </h3>
                                 <div class="detail-grid">
-                                    <div class="detail-item">
-                                        <span class="detail-label">Giá vé (2x):</span>
-                                        <span class="detail-value">200.000 ₫</span>
+                                    <div class="detail-item" style="grid-column:span 2;">
+                                        <span class="detail-label">Thức ăn kèm:
+                                            <div style="text-wrap: balance;">
+                                                @forelse ($bookingInfo->foodOrderItems as $foodOrder)
+                                                {{$foodOrder->variant->foodItem->name}} ({{$foodOrder->quantity}}x)
+                                                @if(!$loop->last),@endif
+                                                @empty
+                                                @endforelse
+                                            </div>
+                                        </span>
+                                        <span class="detail-value">
+                                            @if ( $bookingInfo->foodOrderItems->count() !== 0)
+                                            {{ number_format($bookingInfo->foodOrderItems->sum(fn($foodOrder) =>
+                                            $foodOrder->price * $foodOrder->quantity), 0, '.', '.') }}
+                                            @else
+                                            Không
+                                            @endif
+                                        </span>
                                     </div>
                                     <div class="detail-item">
-                                        <span class="detail-label">Phí dịch vụ:</span>
-                                        <span class="detail-value">20.000 ₫</span>
+                                        <span class="detail-label">Giá vé
+                                            ({{number_format($bookingInfo->seats->count(),0, '.', '.') }}x):</span>
+                                        <span class="detail-value">
+                                            {{number_format($bookingInfo->showtime->movie->price *
+                                            $bookingInfo->seats->count(), 0, '.','.')}}
+                                        </span>
                                     </div>
-                                    <div class="detail-item">
-                                        <span class="detail-label">Combo bắp nước:</span>
-                                        <span class="detail-value">20.000 ₫</span>
-                                    </div>
+
                                     <div class="detail-item">
                                         <span class="detail-label">Tổng tiền:</span>
-                                        <span class="detail-value price" id="totalAmount">240.000 ₫</span>
+                                        <span class="detail-value price"
+                                            id="totalAmount">{{number_format($bookingInfo->total_price, 0, '.',
+                                            '.')}}</span>
                                     </div>
                                     <div class="detail-item">
                                         <span class="detail-label">Phương thức:</span>
-                                        <span class="detail-value" id="paymentMethod">Thẻ tín dụng</span>
+                                        <span class="detail-value" id="paymentMethod">
+                                            @switch($bookingInfo->payment_method)
+                                            @case('bank_transfer')
+                                            <span>Chuyển khoản ngân hàng</span>
+                                            @break
+                                            @case('e_wallet')
+                                            <span>Ví điện tử</span>
+                                            @break
+                                            @case('credit_card')
+                                            <span>Thẻ tín dụng</span>
+                                            @break
+                                            @case('cash')
+                                            <span>Tiền mặt</span>
+                                            @break
+                                            @default
+                                            <span>N/A</span>
+                                            @endswitch
+                                        </span>
                                     </div>
                                     <div class="detail-item">
                                         <span class="detail-label">Trạng thái:</span>
-                                        <span class="detail-value highlight">Đã thanh toán</span>
+                                        <span class="detail-value highlight">
+                                            @switch($bookingInfo->status)
+                                            @case('paid')
+                                            Đã thanh toán
+                                            @break
+                                            @case('expired')
+                                            Đã hết hạn
+                                            @break
+                                            @case('pending')
+                                            Chờ thanh toán
+                                            @break
+                                            @case('failed')
+                                            Đã thất bại
+                                            @break
+                                            @default
+                                            N/A
+                                            @endswitch
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -1377,7 +1514,7 @@
                             <!-- QR Code Section -->
                             <div class="qr-section">
                                 <h3 class="section-title">
-                                    📱 Mã QR Vé Điện Tử
+                                    📱 Mã QR
                                 </h3>
                                 <div class="qr-code">
                                     📱
@@ -1405,7 +1542,7 @@
                             <!-- Action Buttons -->
                             <div class="action-buttons" id="actionButtons">
                                 <button class="action-btn btn-rate">
-                                    ⭐ Đánh Giá Phim
+                                    <i class="fa-light fa-star"></i> Đánh Giá Phim
                                 </button>
                             </div>
                         </div>
