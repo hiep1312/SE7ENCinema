@@ -44,6 +44,10 @@ use App\Livewire\Admin\Promotions\PromotionCreate;
 use App\Livewire\Admin\Promotions\PromotionDetail;
 use App\Livewire\Admin\Promotions\PromotionEdit;
 use App\Livewire\Admin\Promotions\PromotionIndex;
+use App\Livewire\Admin\Comments\CommentCreate;
+use App\Livewire\Admin\Comments\CommentDetail;
+use App\Livewire\Admin\Comments\CommentEdit;
+use App\Livewire\Admin\Comments\CommentIndex;
 
 Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->group(function () {
     /* Banners */
@@ -146,6 +150,14 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->
         Route::get('/create', PromotionCreate::class)->name('create');
         Route::get('/edit/{promotion}', PromotionEdit::class)->name('edit');
         Route::get('/detail/{promotion}', PromotionDetail::class)->name('detail');
+    });
+
+    /* Comments */
+    Route::prefix('/comments')->name('comments.')->group(function () {
+        Route::get('/', CommentIndex::class)->name('index');
+        Route::get('/create', CommentCreate::class)->name('create');
+        Route::get('/edit/{comment}', CommentEdit::class)->name('edit');
+        Route::get('/detail/{comment}', CommentDetail::class)->name('detail');
     });
 
     /* Template */
