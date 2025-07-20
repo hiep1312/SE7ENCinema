@@ -29,27 +29,7 @@
         </div>
     </div>
 </div>
-
-@if (session('error'))
-    <div
-        x-data
-        wire:init="$emit('_scAlert', [{ title: '{{ e(session('error')) }}', icon: 'error', toast: true, timer: 3000 }, ''])">
-    </div>
-@endif
-
-
-
     <div id="user-seat-wrapper"></div>
-
-
-   @foreach ($selectedSeats as $seatCode)
-    @php
-        $s = $seats->first(fn($item) => $item->seat_row . $item->seat_number === $seatCode);
-    @endphp
-    @if ($s)
-        <span style="margin-right:5px;">{{ $s->seat_row }}{{ $s->seat_number }}</span>
-    @endif
-@endforeach
 
     @script
 <script>

@@ -127,6 +127,6 @@ class BookingTicket extends Component
 
     public function render()
     {
-        return view('livewire.client.booking-ticket')->layout('client');
+        return view('livewire.client.booking-ticket');
     }
 }

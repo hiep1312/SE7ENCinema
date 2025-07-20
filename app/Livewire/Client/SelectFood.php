@@ -19,6 +19,13 @@ class SelectFood extends Component
     public $selectedFoodId = null;
     public $selectedAttributes = [];
     public $selectedVariant = null;
+    public $total_price_seats;
+
+    protected $queryString = [
+        'total_price_seats'
+    ];
+
+    public $booking_id;
 
     public $cart = [];
 
@@ -29,6 +36,19 @@ class SelectFood extends Component
             ->where('status', 'activate')
             ->get();
     }
+
+    public function mount($booking_id)
+    {
+        $this->booking_id = $booking_id;
+
+        // fallback nếu queryString không bind kịp
+        if (!$this->total_price_seats) {
+            $this->total_price_seats = request()->query('total_price_seats');
+        }
+    }
+
+
+
 
     public function selectFood($foodId)
     {
@@ -129,10 +149,12 @@ class SelectFood extends Component
     public function goToCheckout()
     {
         session()->put('cart', $this->cart);
-        session()->put('cart_total', $this->total);
+        session()->put('cart_food_total', $this->total); // chỉ tiền food
+        session()->put('cart_seat_total', $this->total_price_seats);
 
-        return redirect()->route('thanh-toan');
+        return redirect()->route('thanh-toan', ['booking_id' => $this->booking_id]); // route trang thanh toán VNPay
     }
+
 
     public function render()
     {

@@ -1,10 +1,24 @@
+
 <div class="scRender container py-4">
     <div class="row row-cols-1 row-cols-md-3 g-4">
         @foreach ($this->foodItems() as $food)
             <div class="col">
-                <div class="card h-100 shadow-sm">
+                <div class="card h-100 shadow-sm border-light">
+
+                    @if ($food->image)
+                        <img src="{{ asset('storage/' . $food->image) }}"
+                             class="card-img-top"
+                             alt="{{ $food->name }}"
+                             style="object-fit: cover; height: 200px;">
+                    @else
+                        <img src="https://via.placeholder.com/300x200?text=No+Image"
+                             class="card-img-top"
+                             alt="No image"
+                             style="object-fit: cover; height: 200px;">
+                    @endif
+
                     <div class="card-body">
-                        <h5 class="card-title">{{ $food->name }}</h5>
+                        <h5 class="card-title text-primary">{{ $food->name }}</h5>
                         <p class="card-text">{{ $food->description }}</p>
 
                         <button class="btn btn-primary btn-sm" wire:click="selectFood({{ $food->id }})">
@@ -58,7 +72,7 @@
     @if (count($cart) > 0)
         <div class="mt-4 p-3 border rounded shadow-sm bg-light">
             <h5>🛒 Giỏ hàng</h5>
-            <table class="table table-sm align-middle">
+            <table class="table table-striped table-sm align-middle">
                 <thead>
                     <tr>
                         <th>Món</th>
@@ -79,28 +93,21 @@
                             </td>
                             <td>
                                 <div class="btn-group btn-group-sm">
-                                    <button wire:click="decrement('{{ $sku }}')"
-                                        class="btn btn-outline-secondary">-</button>
+                                    <button wire:click="decrement('{{ $sku }}')" class="btn btn-outline-secondary">-</button>
                                     <button class="btn btn-light">{{ $item['quantity'] }}</button>
-                                    <button wire:click="increment('{{ $sku }}')"
-                                        class="btn btn-outline-secondary">+</button>
+                                    <button wire:click="increment('{{ $sku }}')" class="btn btn-outline-secondary">+</button>
                                 </div>
                             </td>
                             <td>{{ number_format($item['price'] * $item['quantity']) }}₫</td>
-                            <td><button wire:click="remove('{{ $sku }}')"
-                                    class="btn btn-danger btn-sm">X</button></td>
+                            <td><button wire:click="remove('{{ $sku }}')" class="btn btn-danger btn-sm">X</button></td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
             <div class="fw-bold">Tổng: {{ number_format($this->total) }}₫</div>
-        </div>
-
-        @if (count($cart) > 0)
             <button wire:click="goToCheckout" class="btn btn-primary mt-2">
                 Đi đến thanh toán
             </button>
-        @endif
-
+        </div>
     @endif
 </div>

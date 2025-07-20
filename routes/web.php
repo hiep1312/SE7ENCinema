@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\VnpayController;
 use App\Http\Livewire\Admin\BookingManager;
 use App\Http\Livewire\Client\BookingTicket;
 use Illuminate\Support\Facades\Route;
@@ -54,8 +55,8 @@ use App\Livewire\Admin\Showtimes\ShowtimeIndex;
 use App\Livewire\Payment\VnpayPayment;
 use App\Livewire\Booking\BookingFood;
 
-Route::get('/thanh-toan', VnpayPayment::class)->name('thanh-toan');
-Route::get('/vnpay-return', [VnpayPayment::class, 'vnpayReturn'])->name('vnpay.return');
+Route::get('/thanh-toan/{booking_id}', VnpayPayment::class)->name('thanh-toan');
+Route::get('/vnpay-return', [VnpayController::class, 'vnpayReturn'])->name('vnpay.return');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     /* Banners */

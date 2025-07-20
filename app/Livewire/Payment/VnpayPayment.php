@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Payment;
 
+use App\Models\Booking;
+use App\Models\BookingSeat;
 use Livewire\Component;
 
 class VnpayPayment extends Component
@@ -11,6 +13,35 @@ class VnpayPayment extends Component
         return view('livewire.payment.vnpay-payment');
     }
 
+
+    public $cart = [];
+    public $seats = [];
+    public $food_total = 0;
+    public $seat_total = 0;
+    public $total_amount = 0;
+    public $booking_id;
+
+    public function mount($booking_id)
+    {
+        $this->cart = session()->get('cart', []);
+        $this->food_total = session()->get('cart_food_total', 0);
+        $this->seat_total = session()->get('cart_seat_total', 0);
+        $this->total_amount = $this->food_total + $this->seat_total;
+        $this->booking_id = $booking_id;
+
+        $booking_id = session()->get('booking_id');
+
+        $this->seats = BookingSeat::where('booking_id', $booking_id)
+            ->with('seat')
+            ->get()
+            ->map(function ($bookingSeat) {
+                return $bookingSeat->seat->seat_row . $bookingSeat->seat->seat_number;
+            })
+            ->toArray();
+    }
+
+
+
     public function redirectToVnpay()
     {
         $vnp_TmnCode = 'P8QX0KGT'; // Mã website VNPay
@@ -18,10 +49,10 @@ class VnpayPayment extends Component
         $vnp_Url = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
         $vnp_Returnurl = route('vnpay.return');
 
-        $vnp_TxnRef = time(); // Mã giao dịch
+        $vnp_TxnRef = $this->booking_id; // Mã giao dịch
         $vnp_OrderInfo = 'Thanh toan demo';
         $vnp_OrderType = 'billpayment';
-        $vnp_Amount = 400000 * 100; // VNPay yêu cầu x100
+        $vnp_Amount = intval($this->total_amount) * 100; // VNPay yêu cầu x100
         $vnp_Locale = 'vn';
         $vnp_BankCode = '';
 
@@ -64,33 +95,5 @@ class VnpayPayment extends Component
         return redirect()->away($vnp_Url);
     }
 
-    public function vnpayReturn()
-    {
-        $inputData = request()->all();
-        $vnp_HashSecret = 'ITBJ2BGWRYTN5J2Z2QMXMXVAEEK5WBVA'; // Secret key
-        $vnp_SecureHash = $inputData['vnp_SecureHash'];
-        unset($inputData['vnp_SecureHash']);
-        unset($inputData['vnp_SecureHashType']);
-        ksort($inputData);
-        $hashData = "";
-        $i = 0;
-        foreach ($inputData as $key => $value) {
-            if ($i == 1) {
-                $hashData .= '&' . urlencode($key) . "=" . urlencode($value);
-            } else {
-                $hashData .= urlencode($key) . "=" . urlencode($value);
-                $i = 1;
-            }
-        }
-        $secureHash = hash_hmac('sha512', $hashData, $vnp_HashSecret);
-        if ($secureHash == $vnp_SecureHash) {
-            if ($inputData['vnp_ResponseCode'] == '00') {
-                echo "Thanh toán thành công!";
-            } else {
-                echo "Thanh toán thất bại!";
-            }
-        } else {
-            echo "Chữ ký không hợp lệ!";
-        }
-    }
+
 }
