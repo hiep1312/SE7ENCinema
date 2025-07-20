@@ -40,6 +40,10 @@ use App\Livewire\Admin\Showtimes\ShowtimeEdit;
 use App\Livewire\Admin\Showtimes\ShowtimeIndex;
 use App\Livewire\Admin\Tickets\TicketIndex;
 use App\Livewire\Client\Ticket\Index as TicketIndexClient;
+use App\Livewire\Admin\Promotions\PromotionCreate;
+use App\Livewire\Admin\Promotions\PromotionDetail;
+use App\Livewire\Admin\Promotions\PromotionEdit;
+use App\Livewire\Admin\Promotions\PromotionIndex;
 
 Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->group(function () {
     /* Banners */
@@ -135,6 +139,14 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->
     Route::get('/scanner/{type}', ScannerIndex::class)
         ->whereIn('type', ['bookings', 'tickets'])
         ->name('scanner');
+
+    /* Promotions */
+    Route::prefix('/promotions')->name('promotions.')->group(function () {
+        Route::get('/', PromotionIndex::class)->name('index');
+        Route::get('/create', PromotionCreate::class)->name('create');
+        Route::get('/edit/{promotion}', PromotionEdit::class)->name('edit');
+        Route::get('/detail/{promotion}', PromotionDetail::class)->name('detail');
+    });
 
     /* Template */
     Route::view('/dashboard', 'livewire.admin.template.dashboard')->name('dashboard');
