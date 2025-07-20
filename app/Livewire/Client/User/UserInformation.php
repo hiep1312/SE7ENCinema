@@ -12,10 +12,11 @@ use App\Models\Booking;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Livewire\WithPagination;
 
 class UserInformation extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, WithPagination;
     public $user;
     public $bookingInfo;
     public $modal = false;
@@ -29,6 +30,7 @@ class UserInformation extends Component
     public $address = '';
     public $dateFilter = '';
     public $statusFilter = '';
+    public $nameFilter = '';
     public $currentPassword = '';
     public $newPassword = '';
     public $confirmPassword = '';
@@ -121,8 +123,8 @@ class UserInformation extends Component
             $this->user->update([
                 'password' => bcrypt($this->newPassword),
             ]);
-        return redirect()->route('userInfo', [$this->user->id])->with('success', 'Đổi mật khẩu thành công!');
-        }else{
+            return redirect()->route('userInfo', [$this->user->id])->with('success', 'Đổi mật khẩu thành công!');
+        } else {
             session()->flash('error', 'Mật khẩu hiện tại không đúng.');
             return;
         }
@@ -135,9 +137,10 @@ class UserInformation extends Component
     {
         $this->modal = false;
     }
-    public function detailBooking($id){
+    public function detailBooking($id)
+    {
         $this->tabCurrent = 'booking-info';
-        $this->bookingInfo = Booking::with(['showtime.movie.ratings','showtime.room', 'seats'])->findOrFail($id);
+        $this->bookingInfo = Booking::with('showtime.movie.ratings', 'showtime.movie.genres', 'showtime.room', 'user', 'seats', 'promotionUsages', 'foodOrderItems.variant.foodItem', 'foodOrderItems.variant.attributeValues.attribute')->findOrFail($id);
     }
     #[Layout('components.layouts.client')]
     public function render()
@@ -148,9 +151,15 @@ class UserInformation extends Component
                 $query->where('status', $this->statusFilter);
             })
             ->when($this->dateFilter, function ($query) {
-                $query->whereDate('created_at', $this->dateFilter);
+                $query->whereDate('created_at', '>=', $this->dateFilter);
             })
-            ->get();
+            ->when($this->nameFilter, function ($query) {
+                $query->whereHas('showtime.movie', function ($q) {
+                    $q->where('title', 'like', '%' . $this->nameFilter . '%');
+                });
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
         return view('livewire.client.user.user-information', [
             'bookings' => $filteredBookings,
         ]);
