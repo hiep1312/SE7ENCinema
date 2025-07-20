@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Movies;
 use App\Models\Movie;
 use App\Models\Showtime;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -57,6 +58,7 @@ class MovieIndex extends Component
         // Xóa tất cả thể loại trước
         $movie->genres()->detach();
 
+        if(isset($movie->poster) && Storage::disk('public')->exists($movie->poster)) Storage::disk('public')->delete($movie->poster);
         // Xóa cứng phim
         $movie->forceDelete();
         session()->flash('success', 'Xóa vĩnh viễn phim thành công!');
@@ -68,7 +70,7 @@ class MovieIndex extends Component
         $this->resetPage();
     }
 
-    public function updateStatusMovies(){
+    public function updateStatusMoviesAndShowtimes(){
         Movie::all()->each(function($movie){
             $releaseDate = Carbon::parse($movie->release_date);
             $endDate = !$movie->end_date ?: Carbon::parse($movie->end_date);
@@ -77,13 +79,21 @@ class MovieIndex extends Component
             else $movie->status = 'showing';
             $movie->save();
         });
+
+        Showtime::all()->each(function ($showtime) {
+            $startTime = $showtime->start_time;
+            $endTime = $showtime->end_time;
+            if($endTime->isPast()) $showtime->status = 'completed';
+            elseif(($startTime->isFuture() || $endTime->isFuture()) && $showtime->status === 'completed') $showtime->status = 'active';
+            $showtime->save();
+        });
     }
 
     #[Title('Danh sách phim - SE7ENCinema')]
     #[Layout('components.layouts.admin')]
     public function render()
     {
-        $this->updateStatusMovies();
+        $this->updateStatusMoviesAndShowtimes();
 
         $query = Movie::query();
 

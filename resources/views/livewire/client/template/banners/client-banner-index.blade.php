@@ -1,34 +1,7 @@
+@assets
+    @vite('resources/css/app.css')
+@endassets
 <div class="scRender">
-<style>
-    a {
-        padding-top: 50px
-    }
-    .rev_slider .rev-slidebg a {
-        display: block !important;
-        width: 100% !important;
-        aspect-ratio: 16/9 !important;
-    }
-    .rev_slider .rev-slidebg a img,
-    .rev_slider .rev-slidebg img {
-        width: 100% !important;
-        height: 100% !important;
-        object-fit: cover !important;
-        aspect-ratio: 16/9 !important;
-    }
-        #return-to-top i {
-        color: #fff !important;
-        margin: 0 !important;
-        position: relative !important;
-        top: -39px !important;
-        font-size: 30px !important;
-
-        -webkit-transition: all 0.3s ease !important;
-        -moz-transition: all 0.3s ease !important;
-        -ms-transition: all 0.3s ease !important;
-        -o-transition: all 0.3s ease !important;
-        transition: all 0.3s ease !important;
-    }
-    </style>
     <div class="prs_main_slider_wrapper">
         <div id="rev_slider_41_1_wrapper" class="rev_slider_wrapper fullwidthbanner-container"
             data-alias="food-carousel26" data-source="gallery"
