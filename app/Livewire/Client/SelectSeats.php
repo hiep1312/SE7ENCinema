@@ -12,6 +12,10 @@ use App\Models\BookingSeat;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
+
+#[Title('Chọn ghế - SE7ENCinema')]
+#[Layout('components.layouts.client')]
+
 class SelectSeats extends Component
 {
     public $showtime_id;
@@ -141,9 +145,18 @@ class SelectSeats extends Component
                 ]);
             }
 
+            $totalPrice = BookingSeat::where('booking_id', $booking->id)
+                ->with('seat')
+                ->get()
+                ->sum(fn($item) => $item->seat->price ?? 0);
+
+
             DB::commit();
 
-            return redirect()->route('booking.select_food', ['booking_id' => $booking->id]);
+            return redirect()->route('booking.select_food', [
+                'booking_id' => $booking->id,
+                'total_price_seats' => $totalPrice,
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('error', 'Lỗi khi tạo booking: ' . $e->getMessage());
@@ -154,7 +167,7 @@ class SelectSeats extends Component
     #[Layout('components.layouts.client')]
     public function render()
     {
-        return view('livewire.client.select-seats' , [
+        return view('livewire.client.select-seats', [
             'room' => $this->room
         ]);
     }

@@ -1,7 +1,10 @@
 <?php
+
+use App\Http\Controllers\VnpayController;
 use App\Http\Livewire\Admin\BookingManager;
 use App\Http\Livewire\Client\BookingTicket;
 use Illuminate\Support\Facades\Route;
+
 Route::get('/test', function () {
     return view('test');
 });
@@ -17,6 +20,7 @@ Route::get('/booking', SelectMovieShowtime::class)->name('booking.select_showtim
 Route::get('/booking/seats/{showtime_id}', SelectSeats::class)->name('booking.select_seats');
 Route::get('/booking/food/{booking_id}', SelectFood::class)->name('booking.select_food');
 Route::get('/booking/confirm/{booking_id}', ConfirmBooking::class)->name('booking.confirm');
+
 use App\Livewire\Admin\Foods\FoodCreate;
 use App\Livewire\Admin\Foods\FoodDetail;
 use App\Livewire\Admin\Foods\FoodEdit;
@@ -32,6 +36,7 @@ use App\Livewire\Admin\FoodVariants\FoodVariantIndex;
 use App\Livewire\Admin\FoodVariants\FoodVariantDetail;
 use App\Livewire\Admin\FoodVariants\FoodVariantCreate;
 use App\Livewire\Admin\FoodVariants\FoodVariantEdit;
+use App\Livewire\Admin\FoodAttributes\AttributeIndex;
 use App\Livewire\Admin\Movies\MovieCreate;
 use App\Livewire\Admin\Movies\MovieDetail;
 use App\Livewire\Admin\Movies\MovieEdit;
@@ -45,6 +50,13 @@ use App\Livewire\Admin\Ratings\RatingIndex;
 use App\Livewire\Admin\Showtimes\ShowtimeCreate;
 use App\Livewire\Admin\Showtimes\ShowtimeEdit;
 use App\Livewire\Admin\Showtimes\ShowtimeIndex;
+
+
+use App\Livewire\Payment\VnpayPayment;
+use App\Livewire\Booking\BookingFood;
+
+Route::get('/thanh-toan/{booking_id}', VnpayPayment::class)->name('thanh-toan');
+Route::get('/vnpay-return', [VnpayController::class, 'vnpayReturn'])->name('vnpay.return');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     /* Banners */
@@ -76,6 +88,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/create', FoodVariantCreate::class)->name('create');
         Route::get('/edit/{variant}', FoodVariantEdit::class)->name('edit');
         Route::get('/detail/{variant}', FoodVariantDetail::class)->name('detail');
+    });
+
+    Route::prefix('/food-attributes')->name('food_attributes.')->group(function () {
+        Route::get('/', AttributeIndex::class)->name('index');
     });
 
     /* Users */
@@ -121,6 +137,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::view('/login', 'livewire.admin.template.samples.login')->name('login');
     Route::view('/register', 'livewire.admin.template.samples.register')->name('register');
 });
+
+
+
+
+Route::get('/booking-food', BookingFood::class);
 
 Route::name('client.')->group(function () {
     Route::view('/home', 'livewire.client.template.index')->name('index');

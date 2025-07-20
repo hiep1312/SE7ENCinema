@@ -29,11 +29,7 @@
         </div>
     </div>
 </div>
-
-
     <div id="user-seat-wrapper"></div>
-
-
     @script
 <script>
    $wire.on('seatuserdetail', function ([seats, selectedSeats = []]) {

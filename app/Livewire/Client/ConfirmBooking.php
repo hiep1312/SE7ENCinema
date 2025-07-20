@@ -53,7 +53,6 @@ class ConfirmBooking extends Component
 
     public function render()
     {
-        return view('livewire.client.confirm-booking')
-            ->layout('client');
+        return view('livewire.client.confirm-booking');
     }
 }

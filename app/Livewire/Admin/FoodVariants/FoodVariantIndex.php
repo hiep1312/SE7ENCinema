@@ -4,10 +4,13 @@ namespace App\Livewire\Admin\FoodVariants;
 
 use Livewire\Component;
 use App\Models\FoodVariant;
+use App\Models\FoodAttributeValue;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\WithPagination;
+
 
 class FoodVariantIndex extends Component
 {
@@ -52,31 +55,86 @@ class FoodVariantIndex extends Component
     {
         if (!$status['isConfirmed']) return;
 
-        $variant = FoodVariant::onlyTrashed()->find($variantId);
+        $variant = FoodVariant::onlyTrashed()
+            ->with(['attributeValues.attribute', 'foodItem.variants', 'foodItem.attributes'])
+            ->find($variantId);
 
-        // Kiểm tra image, nếu có thì xóa
-        !Storage::disk('public')->exists($variant->image) ?: Storage::disk('public')->delete($variant->image);
+        if (!$variant) {
+            session()->flash('error', 'Không tìm thấy biến thể.');
+            return;
+        }
 
+        $foodItem = $variant->foodItem;
+
+        // Nếu chỉ còn 1 biến thể thì KHÔNG CHO XOÁ
+        $remainingVariants = $foodItem->variants()->count();
+        if ($remainingVariants <= 1) {
+            session()->flash('error', 'Không thể xoá biến thể cuối cùng. Vui lòng xoá sản phẩm nếu muốn xoá hết.');
+            return;
+        }
+
+        // Xoá file ảnh nếu có
+        if ($variant->image && Storage::disk('public')->exists($variant->image)) {
+            Storage::disk('public')->delete($variant->image);
+        }
+
+        // Lưu các attributeValueId liên quan
+        $attributeValueIds = $variant->attributeValues->pluck('id')->toArray();
+
+        // Xoá bản ghi pivot trước
+        DB::table('food_variant_attribute_values')
+            ->where('food_variant_id', $variant->id)
+            ->delete();
+
+        // Xoá cứng biến thể
         $variant->forceDelete();
-        session()->flash('success', 'Xóa vĩnh viễn biến thể thành công!');
+
+        // Xoá các giá trị attributeValue nếu không còn được dùng
+        foreach ($attributeValueIds as $attrValueId) {
+            $isUsed = DB::table('food_variant_attribute_values')
+                ->where('food_attribute_value_id', $attrValueId)
+                ->exists();
+
+            if (!$isUsed) {
+                $attrValue = FoodAttributeValue::find($attrValueId);
+                if ($attrValue) {
+                    $attrValue->delete();
+                }
+            }
+        }
+
+        session()->flash('success', 'Xoá vĩnh viễn biến thể & dữ liệu liên quan thành công!');
     }
+
+
+
 
     #[Title('Danh sách biến thể - SE7ENCinema')]
     #[Layout('components.layouts.admin')]
     public function render()
     {
         $query = FoodVariant::query()
-            ->with('foodItem')
+            ->with(['foodItem', 'attributeValues.attribute'])
             ->when($this->showDeleted, fn($query) => $query->onlyTrashed())
             ->when($this->search, function ($query) {
                 $query->withTrashed();
                 $query->where(function ($subQuery) {
-                    $subQuery->where('name', 'like', '%' . $this->search . '%')
+                    $subQuery->where('sku', 'like', '%' . $this->search . '%')
                         ->orWhereHas('foodItem', function ($query) {
                             $query->where('name', 'like', '%' . $this->search . '%');
+                        })
+                        ->orWhereHas('attributeValues', function ($query) {
+                            $query->where('value', 'like', '%' . $this->search . '%');
+                        })
+                        ->orWhereHas('attributeValues', function ($query) {
+                            $query->where('value', 'like', '%' . $this->search . '%')
+                                ->orWhereHas('attribute', function ($q) {
+                                    $q->where('name', 'like', '%' . $this->search . '%');
+                                });
                         });
                 });
             });
+
 
         !$this->statusFilter ?: $query->where('status', $this->statusFilter);
 
