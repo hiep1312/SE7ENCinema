@@ -45,6 +45,8 @@ use App\Livewire\Admin\Showtimes\ShowtimeEdit;
 use App\Livewire\Admin\Showtimes\ShowtimeIndex;
 use App\Livewire\Client\Lichchieu\LichchieuIndex;
 use App\Livewire\Admin\Tickets\TicketIndex;
+use App\Livewire\Client\Notifications\Allnotifications;
+use App\Livewire\Client\Notifications\NotificationIndex as NotificationIndexClient;
 use App\Livewire\Client\Ticket\Index as TicketIndexClient;
 use App\Livewire\Admin\Promotions\PromotionCreate;
 use App\Livewire\Admin\Promotions\PromotionDetail;
@@ -226,6 +228,11 @@ Route::name('client.')->group(function () {
 
     Route::prefix('/showtimes')->name('showtimes.')->group(function () {
         Route::get('/', LichchieuIndex::class)->name('index');
+    });
+
+    Route::prefix('/notifications')->name('notifications.')->group(function () {
+        Route::get('/', NotificationIndexClient::class)->name('index');
+        Route::get('allnotification', Allnotifications::class)->name('allnotification');
     });
 });
 

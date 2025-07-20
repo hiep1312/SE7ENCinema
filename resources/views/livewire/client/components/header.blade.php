@@ -322,6 +322,10 @@
                     <input type="text" placeholder="Search Movie , Video , Music">
                     <button type="submit"><i class="flaticon-tool"></i>
                     </button>
+                    {{-- Notification Bell --}}
+                   <div style="display: inline-block; position: relative; margin-left: 18px; vertical-align: middle;" >
+                       @livewire('client.notifications.notification-index')
+                   </div>
                 </div>
             </div>
         </div>
@@ -409,6 +413,12 @@
                                         ký</span></a>
                             </li>
                             @endauth
+                            <li>
+                                 {{-- Notification Bell --}}
+                                <div style="display: inline-block; position: relative; margin-left: 18px; vertical-align: middle; background: rgb(255, 109, 109); border-radius: 50%;">
+                                    @livewire('client.notifications.notification-index')
+                                </div>
+                            </li>
                         </ul>
                     </div>
                 </div>
