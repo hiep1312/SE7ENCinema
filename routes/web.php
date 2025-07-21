@@ -80,17 +80,9 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->
         Route::get('/detail/{user}', UserDetail::class)->name('detail');
     });
 
-<<<<<<< HEAD
-    /* Showtimes */
-    Route::prefix('/showtimes')->name('showtimes.')->group(function () {
-        Route::get('/', ShowtimeIndex::class)->name('index');
-        Route::get('/create', ShowtimeCreate::class)->name('create');
-        Route::get('/edit/{showtime}', ShowtimeEdit::class)->name('edit');
-=======
     /* Rating */
     Route::prefix('/ratings')->name('ratings.')->group(function () {
         Route::get('/', RatingIndex::class)->name('index');
->>>>>>> main
     });
 
     /* Movies */
