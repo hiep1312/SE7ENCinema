@@ -89,7 +89,7 @@
                                             </div>
                                             <div class="flex-grow-1">
                                                 <a class="user-name-link-dark d-block mb-1" href="{{ route('admin.users.detail', $rating->user->id) }}">
-                                                    {{ $rating->user->name }}
+                                                    {{ $rating->user->name, 20 }}
                                                 </a>
                                                 <small class="text-muted">
                                                     <i class="fas fa-star me-1 icon-blue"></i>Người đánh giá
@@ -105,7 +105,7 @@
                                             <span class="badge bg-danger">Bài đánh giá đã bị xóa</span>
                                         @else
                                             @if ($rating->review)
-                                                <span>{{ Str::limit($rating->review, 200, '...') }}</span>
+                                                <span>{{ Str::limit($rating->review, 220, '...') }}</span>
                                             @else
                                                 <span class="text-muted">Không có đánh giá</span>
                                             @endif

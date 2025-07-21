@@ -98,7 +98,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <strong class="text-light">{{ $banner->title }}</strong>
+                                        <strong class="text-light text-wrap lh-base">{{ $banner->title }}</strong>
                                     </td>
                                     <td class="text-center">
                                         <div class="mb-1">
