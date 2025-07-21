@@ -4,7 +4,6 @@ namespace App\Livewire\Admin\Rooms;
 
 use App\Models\Room;
 use App\Models\Seat;
-use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;

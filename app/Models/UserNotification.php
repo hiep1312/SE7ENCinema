@@ -10,6 +10,10 @@ class UserNotification extends Model
         'user_id', 'notification_id', 'is_read',
     ];
 
+    protected $casts = [
+        'is_read' => 'boolean',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

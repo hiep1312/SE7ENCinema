@@ -51,4 +51,12 @@ class Movie extends Model
     {
         return $this->hasMany(Rating::class);
     }
+
+    public function hasActiveShowtimes()
+    {
+        return $this->showtimes()
+            ->where('start_time', '>=', now())
+            ->where('status', 'active')
+            ->exists();
+    }
 }

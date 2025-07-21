@@ -1,13 +1,13 @@
 <div>
     @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show" role="alert" wire:ignore>
             {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
     @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" wire:ignore>
             {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -32,7 +32,7 @@
             </div>
         </div>
 
-        <div class="card bg-dark">
+        <div class="card bg-dark" wire:poll.6s>
             <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <div class="row g-3">
                     <!-- Tìm kiếm -->
@@ -194,7 +194,7 @@
                                     </td>
                                     <td>
                                         @if ($showDeleted)
-                                            <div class="d-flex gap-3 justify-content-center">
+                                            <div class="d-flex gap-2 justify-content-center">
                                                 <button type="button"
                                                     wire:click.once="restoreFood({{ $food->id }})"
                                                     class="btn btn-sm btn-success" title="Khôi phục">
@@ -208,7 +208,7 @@
                                                 </button>
                                             </div>
                                         @else
-                                            <div class="d-flex gap-3 justify-content-center">
+                                            <div class="d-flex gap-2 justify-content-center">
                                                 <a href="{{ route('admin.foods.detail', $food->id) }}"
                                                     class="btn btn-sm btn-info" title="Xem chi tiết">
                                                     <i class="fas fa-eye" style="margin-right: 0"></i>

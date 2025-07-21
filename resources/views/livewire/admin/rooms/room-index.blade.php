@@ -1,13 +1,13 @@
-<div>
+<div class="scRender">
     @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show" role="alert" wire:ignore>
             {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
     @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" wire:ignore>
             {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -32,7 +32,7 @@
             </div>
         </div>
 
-        <div class="card bg-dark">
+        <div class="card bg-dark" wire:poll.6s>
             <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <div class="row g-3">
                     <!-- Tìm kiếm -->
@@ -84,11 +84,11 @@
                         <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                             <tr>
                                 <th class="text-center text-light">STT</th>
-                                <th class="text-light">Tên phòng</th>
+                                <th class="text-center text-light">Tên phòng</th>
                                 <th class="text-center text-light">Sức chứa/Ghế hiện tại</th>
                                 <th class="text-center text-light">Trạng thái</th>
                                 <th class="text-center text-light">Bảo trì lần cuối</th>
-                                <th class="text-center  text-light">
+                                <th class="text-center text-light">
                                     <i class="fas fa-calendar-alt me-1"></i>
                                     Suất chiếu tiếp theo
                                 </th>
@@ -214,7 +214,7 @@
                                     <td>
                                         @if($showDeleted)
                                             <!-- Actions for deleted rooms -->
-                                            <div class="d-flex gap-3 justify-content-center">
+                                            <div class="d-flex gap-2 justify-content-center">
                                                 <button type="button"
                                                         wire:click.once="restoreRoom({{ $room->id }})"
                                                         class="btn btn-sm btn-success"
@@ -231,7 +231,7 @@
                                             </div>
                                         @else
                                             <!-- Actions for active rooms -->
-                                            <div class="d-flex gap-3 justify-content-center">
+                                            <div class="d-flex gap-2 justify-content-center">
                                                 <a href="{{ route('admin.rooms.detail', $room->id) }}"
                                                    class="btn btn-sm btn-info"
                                                    title="Xem chi tiết">

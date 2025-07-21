@@ -17,7 +17,7 @@ class FoodItemSeeder extends Seeder
             FoodItem::create([
                 'name' => fake()->words(2, true),
                 'description' => fake()->sentence(),
-                'image' => fake()->imageUrl(300, 450, 'food'),
+                'image' => /* fake()->imageUrl(300, 450, 'food') */ '404.webp',
                 'status' => fake()->randomElement(['activate', 'discontinued']),
             ]);
         }

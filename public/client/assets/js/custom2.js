@@ -3,7 +3,7 @@
 
     var tpj = jQuery;
     var revapi24;
-    // Preloader 
+    // Preloader
     jQuery(window).on('load', function() {
         jQuery("#status").fadeOut();
         jQuery("#preloader").delay(350).fadeOut("slow");
@@ -32,8 +32,8 @@
             classout: 'dl-animate-out-5'
         }
     });
-	
-	
+
+
 	// Menu js for Position fixed
         $(window).scroll(function() {
             var window_top = $(window).scrollTop() + 1;
@@ -44,8 +44,8 @@
             }
         });
 
-	
-	 // ===== Scroll to Top ==== 
+
+	 // ===== Scroll to Top ====
         $(window).scroll(function() {
             if ($(this).scrollTop() >= 100) {
                 $('#return-to-top').fadeIn(200);
@@ -58,17 +58,17 @@
                 scrollTop: 0
             }, 500);
         });
-	
-	
+
+
 	/*--------------------------
 nice Select active
----------------------------- */ 
+---------------------------- */
 	$('select').niceSelect();
-       
-	   
-	   
+
+
+
 	  // slick slider Js
-	  
+
 	  $('.prs_top_main_slider_wrapper').slick({
   autoplay: true,
   autoplaySpeed: 2000,
@@ -99,7 +99,7 @@ nice Select active
 
 
  // slick slider Js
-	  
+
 	  $('.prs_top_main_upcom_slider_wrapper').slick({
   autoplay: true,
   autoplaySpeed: 500,
@@ -174,8 +174,8 @@ nice Select active
 			}
 		}
 	});
-	
-	
+
+
 	 $(document).ready(function() {
             $('.prs_feature_slider_wrapper .owl-carousel').owlCarousel({
                 loop: true,
@@ -206,8 +206,8 @@ nice Select active
                 }
             })
         })
-		
-		
+
+
 		 $(document).ready(function() {
             $('.prs_es_speak_slider_wrapper .owl-carousel').owlCarousel({
                 loop: true,
@@ -238,7 +238,7 @@ nice Select active
                 }
             })
         })
-		
+
 		 $(document).ready(function() {
             $('.prs_vp_center_slider .owl-carousel').owlCarousel({
                 loop: true,
@@ -269,9 +269,9 @@ nice Select active
                 }
             })
         })
-	
-	
-	
+
+
+
 	$(document).ready(function() {
             $('.prs_ms_trailer_slider_left_wrapper .owl-carousel').owlCarousel({
                 loop: true,
@@ -302,9 +302,9 @@ nice Select active
                 }
             })
         })
-		
-		
-		
+
+
+
 		$(document).ready(function() {
             $('.prs_ms_scene_slider_wrapper .owl-carousel').owlCarousel({
                 loop: true,
@@ -335,7 +335,7 @@ nice Select active
                 }
             })
         })
-	
+
 	 $(document).ready(function() {
             $('.prs_pn_slider_wraper .owl-carousel').owlCarousel({
                 loop: true,
@@ -366,9 +366,9 @@ nice Select active
                 }
             })
         })
-		
-		
-		
+
+
+
 		 $(document).ready(function() {
             $('.prs_about_pre_right_slider_sec_wrapper .owl-carousel').owlCarousel({
                 loop: true,
@@ -399,8 +399,8 @@ nice Select active
                 }
             })
         })
-		
-		
+
+
 		$(document).ready(function() {
             $('.prs_mc_slider_wrapper .owl-carousel').owlCarousel({
                 loop: true,
@@ -431,7 +431,7 @@ nice Select active
                 }
             })
         })
-		
+
 		$(document).ready(function() {
             $('.prs_navi_slider_wraper .owl-carousel').owlCarousel({
                 loop: true,
@@ -453,8 +453,8 @@ nice Select active
                 }
             })
         })
-		
-		
+
+
 		$(document).ready(function() {
             $('.prs_ms_rm_slider_wrapper .owl-carousel').owlCarousel({
                 loop: true,
@@ -476,8 +476,8 @@ nice Select active
                 }
             })
         })
-		
-		
+
+
 		$(document).ready(function() {
             $('.hs_blog_box1_img_wrapper .owl-carousel').owlCarousel({
                 loop: true,
@@ -504,7 +504,7 @@ nice Select active
                 }
             })
         })
-	
+
 	$(".album-slider").bxSlider({
 		minSlides: 1,
 		maxSlides: 10,
@@ -513,11 +513,11 @@ nice Select active
 		ticker: true,
 		tickerHover: true,
 		speed: 20000,
-		useCSS: false, 
+		useCSS: false,
 		infiniteLoop: false
-		
+
 		});
-		
+
 		$(".movie-cast-slider").bxSlider({
 		minSlides: 1,
 		maxSlides: 10,
@@ -526,13 +526,13 @@ nice Select active
 		ticker: true,
 		tickerHover: true,
 		speed: 20000,
-		useCSS: false, 
+		useCSS: false,
 		infiniteLoop: false
-		
+
 		});
-		
-		
-		
+
+
+
 		$(".prs_vp_left_slider").bxSlider({
 		minSlides: 1,
 		autoDirection: 'next',
@@ -543,11 +543,11 @@ nice Select active
 		ticker: true,
 		tickerHover: true,
 		speed: 15000,
-		useCSS: false, 
+		useCSS: false,
 		infiniteLoop: false
-		
+
 		});
-		
+
 		$(".prs_vp_right_slider").bxSlider({
 		minSlides: 1,
 		mode: 'horizontal',
@@ -558,9 +558,9 @@ nice Select active
 		ticker: true,
 		tickerHover: true,
 		speed: 15000,
-		useCSS: false, 
+		useCSS: false,
 		infiniteLoop: false
-		
+
 		});
 
 		/* 09. VENOBOX JS */
@@ -573,10 +573,10 @@ nice Select active
             });
 
 
-	
+
 				// Magnific popup-video
 
-	$('.test-popup-link').magnificPopup({ 
+	$('.test-popup-link').magnificPopup({
     type: 'iframe',
     iframe: {
         markup: '<div class="mfp-iframe-scaler">'+
@@ -586,7 +586,7 @@ nice Select active
             '</div>',
         patterns: {
             youtube: {
-                index: 'youtube.com/', 
+                index: 'youtube.com/',
                 id: 'v=',
                 src: 'https://www.youtube.com/embed/ryzOXAO0Ss0'
             }
@@ -595,8 +595,8 @@ nice Select active
     // other options
 });
 
-	
-	
+
+
 	 $('.second-nav-toggler').on('click', function(e) {
         e.preventDefault();
         var mask = '<div class="mask-overlay">';
@@ -608,20 +608,20 @@ nice Select active
             $('.mask-overlay').remove();
         });
     });
-	
-	
+
+
 			//show hide login form js
 	$('#search_button').on("click", function(e) {
 		$('#search_open').slideToggle();
-		e.stopPropagation(); 
+		e.stopPropagation();
 	});
 
 	$(document).on("click", function(e){
-		if(!(e.target.closest('#search_open'))){	
-			$("#search_open").slideUp();   		
+		if(!(e.target.closest('#search_open'))){
+			$("#search_open").slideUp();
 		}
    });
-	
+
 		//-------------------------------------------------------
     // counter-section
     //-------------------------------------------------------
@@ -640,8 +640,8 @@ nice Select active
             $(this).off('inview');
         }
     });
-	
-		
+
+
 			// -------------------------------------------------------------
 // Shuffle
 // -------------------------------------------------------------
@@ -650,7 +650,7 @@ $(window).load(function() {
     /** this is come when complete page is fully loaded, including all frames, objects and images **/
 
     if ($('#gridWrapper').length > 0) {
-     
+
         /* initialize shuffle plugin */
         var $grid = $('#gridWrapper');
 
@@ -674,25 +674,25 @@ $(window).load(function() {
         });
     }
 });
-	
-	
+
+
 			/*********color change script start*******/
 		$('.colorchange').on('click', function(){
-		
+
 		var color_name=$(this).attr('id');
 		var new_style='css/color/'+color_name+'.css';
 		$('#theme-color').attr('href',new_style);
-	
-		   
+
+
 		});
-	//rotate setting gear 
+	//rotate setting gear
 	$(function() {
 
 		var $rota = $('#style-switcher .bottom a.settings img'),
 			degree = 0,
 			timer;
-	
-		function rotate() {    
+
+		function rotate() {
 			$rota.css({ transform: 'rotate(' + degree + 'deg)'});
 			// timeout increase degrees:
 			timer = setTimeout(function() {
@@ -700,9 +700,9 @@ $(window).load(function() {
 				rotate(); // loop it
 			},0);
 		}
-	
+
 		rotate();    // run it!
-	
+
 	});
 
 
@@ -712,17 +712,17 @@ $(window).load(function() {
 			if (div.css("left") === "-161px") {
 				$("#style-switcher").animate({
 					left: "0px"
-				}); 
+				});
 			} else {
 				$("#style-switcher").animate({
 					left: "-161px"
 				});
 			}
 		});
-		
-		
+
+
 /******color change script end******/
-	
+
     });
 
 })(jQuery);

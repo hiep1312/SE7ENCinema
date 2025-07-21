@@ -72,7 +72,7 @@
                         <div class="d-flex justify-content-between">
                             <div>
                                 <h6 class="card-title">Số lượng đơn hàng</h6>
-                                <h3 class="mb-0">{{ number_format($totalOrderItems, 0, '.', '.') }}</h3>
+                                <h3 class="mb-0">{{ number_format($totalOrderItemsIn30Days, 0, '.', '.') }}</h3>
                                 <small>đơn hàng</small>
                             </div>
                             <div class="align-self-center">
@@ -236,11 +236,11 @@
                                                     </td>
                                                     <td>
                                                         <div class="d-flex gap-2 justify-content-center">
-                                                            <a href="{{ /* route('admin.foodVariants.detail', $variant->id) */ '#' }}"
+                                                            <a href="{{ route('admin.food_variants.detail', $variant->id) }}"
                                                                 class="btn btn-sm btn-info" title="Xem chi tiết">
                                                                 <i class="fas fa-eye" style="margin-right: 0"></i>
                                                             </a>
-                                                            <a href="{{ /* route('admin.foodVariants.edit', $variant->id) */ '#' }}"
+                                                            <a href="{{ route('admin.food_variants.edit', $variant->id) }}"
                                                                 class="btn btn-sm btn-warning" title="Chỉnh sửa">
                                                                 <i class="fas fa-edit" style="margin-right: 0"></i>
                                                             </a>
@@ -319,7 +319,7 @@
                                                             {{ $foodOrder->created_at->format('d/m/Y H:i') }}đ</td>
                                                         <td>
                                                             <div class="d-flex justify-content-center">
-                                                                <a href="{{ /* route('admin.bookings.detail', $variant->id) */ '#' }}"
+                                                                <a href="{{ /* route('admin.bookings.detail', $foodOrder->booking->id) */ '#' }}"
                                                                     class="btn btn-sm btn-info" title="Xem chi tiết">
                                                                     <i class="fas fa-eye" style="margin-right: 0"></i>
                                                                 </a>
