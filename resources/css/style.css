@@ -1,7 +1,10 @@
 /* Override Library */
-body .swal2-modal .swal2-icon,
-body .swal2-modal .swal2-success-ring {
-    margin-top: 42px !important;
+div:where(.swal2-icon){
+    margin: 2.5em auto .6em !important;
+}
+
+.swal2-modal .swal2-title{
+    line-height: normal;
 }
 
 .page-link{
