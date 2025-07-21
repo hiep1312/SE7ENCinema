@@ -107,7 +107,7 @@
                                     <td>
                                         <strong class="text-light">{{ $booking->booking_code }}</strong>
                                     </td>
-                                    <td class="bg-opacity-10 border-start border-3">
+                                    <td class="bg-opacity-10 border-start border-3 align-top">
                                         <div>
                                             <div class="mb-1">
                                                 <i class="fa-solid fa-person-booth text-primary me-1"></i>
@@ -155,8 +155,7 @@
                                                     @break
                                             @endswitch
 
-                                            <!-- Thời gian còn lại -->
-                                            <div class="mt-1">
+                                            <div>
                                                 <small class="text-info">
                                                     <i class="fas fa-hourglass-half me-1"></i>
                                                     {{ $booking->showtime->start_time->diffForHumans() }}
@@ -176,7 +175,7 @@
                                             <div class="flex-grow-1 text-center">
                                                 <h6 class="card-title mb-2">
                                                     <a class="user-name-link-dark" href="{{ route('admin.users.detail', $booking->user_id) }}">
-                                                        {{ $booking->user->name ?? 'Không tìm thấy người dùng' }}
+                                                        {{ Str::limit($booking->user->name, 20, '...') ?? 'Không tìm thấy người dùng' }}
                                                     </a>
                                                 </h6>
                                                 <div class="badge-clean d-block">

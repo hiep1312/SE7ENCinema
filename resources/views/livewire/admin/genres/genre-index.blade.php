@@ -74,16 +74,16 @@
                             @forelse($genres as $genre)
                                 <tr>
                                     <td class="text-center fw-bold">{{ $loop->iteration }}</td>
-                                    <td class="text-center">
-                                        <strong class="text-light">{{ $genre->name }}</strong>
+                                    <td class="text-center" style="max-width: 170px;">
+                                        <strong class="text-light text-wrap lh-base">{{ $genre->name }}</strong>
                                     </td>
-                                    <td class="text-center">
+                                    <td class="text-center" style="max-width: 300px;">
                                         <p class="text-wrap text-muted lh-base" style="margin-bottom: 0;">{{ $genre->description ?? 'Không có mô tả' }}</p>
                                     </td>
                                     <td class="text-center">
                                         @if($genre->movies->isNotEmpty())
                                             @php $showAll = (isset($showAllMovies[$genre->id]) && $showAllMovies[$genre->id]); @endphp
-                                            <div class="text-wrap" style="max-width: 250px;">
+                                            <div class="text-wrap" style="max-width: 270px; margin: 0 auto;">
                                                 @foreach ($showAll ? $genre->movies : $genre->movies->take(3) as $movie)
                                                     <span class="cast-member">{{ $movie->title }}</span>
                                                 @endforeach
