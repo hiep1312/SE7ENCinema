@@ -1,6 +1,3 @@
-@assets
-    @vite('resources/css/app.css')
-@endassets
 <div class="scRender">
     <div class="prs_main_slider_wrapper">
         <div id="rev_slider_41_1_wrapper" class="rev_slider_wrapper fullwidthbanner-container"
@@ -20,7 +17,7 @@
 
                         <!-- MAIN IMAGE -->
                         @if($banner->link)
-                        <a href="{{ $banner->link }}" style="display: block; width: 100%; aspect-ratio: 16/9;">
+                        <a href="{{ $banner->link }}" style="display: block; width: 100%; aspect-ratio: 16/9;padding-top: 50px;">
                             <img src="{{ asset('storage/' . $banner->image) }}" alt="{{ $banner->title }}" data-bgposition="center center" data-bgfit="cover"
                                 data-bgrepeat="no-repeat" class="rev-slidebg" data-no-retina style="width: 100%; height: 100%; object-fit: cover; aspect-ratio: 16/9;">
                         </a>

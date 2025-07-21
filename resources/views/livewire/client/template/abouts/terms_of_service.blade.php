@@ -1,24 +1,24 @@
-@extends('clienttest')
+@extends('components.layouts.client')
 
 @section('title', 'Điều khoản sử dụng - SE7ENCinema')
 
-@section('content')
-@assets
-    @vite('resources/css/app.css')
-@endassets
+@push('styles')
+    @vite('resources/css/termsOfService.css')
+@endpush
 
-<div class="scRender">
-    <div class="terms-page">
+@section('content')
+<div class="scRender scTermsOfService">
+    <div class="terms">
         <div class="container">
-            <!-- Header Section -->
-            <div class="terms-breadcrumb">
+            <!-- Breadcrumb Section -->
+            <div class="terms__breadcrumb">
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <div class="prs_title_heading_wrapper" style="padding-top:15px;">
+                            <div class="terms__title-heading" style="padding-top:20px;">
                                 <ul>
-                                    <li><a href="{{ route('client.index') }}" style="color: black;padding-top:0px; !important;"><i class="fas fa-home"></i></a></li>
-                                    <li>&nbsp;&nbsp; >&nbsp;&nbsp; Điều khoản sử dụng</li>
+                                    <li><a href="{{ route('client.index') }}"><i class="fas fa-home"></i></a></li>
+                                    <li>Điều khoản sử dụng</li>
                                 </ul>
                             </div>
                         </div>
@@ -27,40 +27,40 @@
             </div>
 
             <!-- Content Section -->
-            <div class="terms-content">
+            <div class="terms__content">
                 <div class="row">
                     <div class="col-lg-3 col-md-4">
                         <!-- Table of Contents -->
-                        <div class="terms-toc">
-                            <h4 class="toc-title">Mục lục</h4>
-                            <ul class="toc-list">
-                                <li><a href="#section-general" class="toc-link">1. Quy định chung</a></li>
-                                <li><a href="#section-tickets" class="toc-link">2. Quy định về vé</a></li>
-                                <li><a href="#section-cinema" class="toc-link">3. Quy định tại rạp</a></li>
-                                <li><a href="#section-food" class="toc-link">4. Thực phẩm & đồ uống</a></li>
-                                <li><a href="#section-age-rating" class="toc-link">5. Phân loại phim theo độ tuổi</a></li>
-                                <li><a href="#section-membership" class="toc-link">6. Khuyến mãi</a></li>
-                                <li><a href="#section-online" class="toc-link">7. Dịch vụ trực tuyến</a></li>
-                                <li><a href="#section-payment" class="toc-link">8. Thanh toán</a></li>
-                                <li><a href="#section-refund" class="toc-link">9. Hoàn tiền</a></li>
-                                <li><a href="#section-liability" class="toc-link">10. Trách nhiệm</a></li>
-                                <li><a href="#section-contact" class="toc-link">11. Liên hệ</a></li>
+                        <div class="terms__toc">
+                            <h4 class="terms__toc-title">Mục lục</h4>
+                            <ul class="terms__toc-list">
+                                <li><a href="#section-general" class="terms__toc-link">1. Quy định chung</a></li>
+                                <li><a href="#section-tickets" class="terms__toc-link">2. Quy định về vé</a></li>
+                                <li><a href="#section-cinema" class="terms__toc-link">3. Quy định tại rạp</a></li>
+                                <li><a href="#section-food" class="terms__toc-link">4. Thực phẩm & đồ uống</a></li>
+                                <li><a href="#section-age-rating" class="terms__toc-link">5. Phân loại phim theo độ tuổi</a></li>
+                                <li><a href="#section-promotion" class="terms__toc-link">6. Khuyến mãi</a></li>
+                                <li><a href="#section-online" class="terms__toc-link">7. Dịch vụ trực tuyến</a></li>
+                                <li><a href="#section-payment" class="terms__toc-link">8. Thanh toán</a></li>
+                                <li><a href="#section-refund" class="terms__toc-link">9. Hoàn tiền</a></li>
+                                <li><a href="#section-liability" class="terms__toc-link">10. Trách nhiệm</a></li>
+                                <li><a href="#section-contact" class="terms__toc-link">11. Liên hệ</a></li>
                             </ul>
                         </div>
                     </div>
 
                     <div class="col-lg-9 col-md-8">
-                        <div class="terms-main-content">
-                            <h1 class="privacy-title">Điều khoản sử dụng</h1>
+                        <div class="terms__main-content">
+                            <h1 class="terms__title">Điều khoản sử dụng</h1>
                             <!-- Section 1: Quy định chung -->
-                            <section id="section-general" class="terms-section">
-                                <h2 class="section-title">1. QUY ĐỊNH CHUNG</h2>
-                                <div class="section-content">
-                                    <div class="welcome-box">
+                            <section id="section-general" class="terms__section">
+                                <h2 class="terms__section-title">1. QUY ĐỊNH CHUNG</h2>
+                                <div class="terms__section-content">
+                                    <div class="terms__welcome-box">
                                         <p>Chào mừng bạn đến với <strong>SE7ENCinema</strong>! Khi sử dụng dịch vụ của chúng tôi, bạn đồng ý tuân thủ các điều khoản và quy định sau đây.</p>
                                     </div>
 
-                                    <div class="rule-item">
+                                    <div class="terms__rule-item">
                                         <h4>1.1. Phạm vi áp dụng</h4>
                                         <ul>
                                             <li>Các quy định này áp dụng cho tất cả khách hàng sử dụng dịch vụ tại SE7ENCinema</li>
@@ -69,7 +69,7 @@
                                         </ul>
                                     </div>
 
-                                    <div class="rule-item">
+                                    <div class="terms__rule-item">
                                         <h4>1.2. Độ tuổi sử dụng dịch vụ</h4>
                                         <ul>
                                             <li>Khách hàng dưới 16 tuổi cần có sự đồng ý của phụ huynh/người giám hộ</li>
@@ -78,7 +78,7 @@
                                         </ul>
                                     </div>
 
-                                    <div class="rule-item">
+                                    <div class="terms__rule-item">
                                         <h4>1.3. Quyền và nghĩa vụ</h4>
                                         <ul>
                                             <li>Khách hàng có quyền được phục vụ theo đúng tiêu chuẩn dịch vụ</li>
@@ -90,10 +90,10 @@
                             </section>
 
                             <!-- Section 2: Quy định về vé -->
-                            <section id="section-tickets" class="terms-section">
-                                <h2 class="section-title">2. QUY ĐỊNH VỀ VÉ</h2>
-                                <div class="section-content">
-                                    <div class="rule-item">
+                            <section id="section-tickets" class="terms__section">
+                                <h2 class="terms__section-title">2. QUY ĐỊNH VỀ VÉ</h2>
+                                <div class="terms__section-content">
+                                    <div class="terms__rule-item">
                                         <h4>2.1. Mua vé</h4>
                                         <ul>
                                             <li>Vé có thể được mua tại quầy, website hoặc máy bán vé tự động</li>
@@ -103,7 +103,7 @@
                                         </ul>
                                     </div>
 
-                                    <div class="rule-item">
+                                    <div class="terms__rule-item">
                                         <h4>2.2. Sử dụng vé</h4>
                                         <ul>
                                             <li>Vé chỉ có giá trị cho suất chiếu, ngày giờ và ghế được ghi trên vé</li>
@@ -113,23 +113,23 @@
                                         </ul>
                                     </div>
 
-                                    <div class="rule-item">
+                                    <div class="terms__rule-item">
                                         <h4>2.3. Vé nhóm và vé ưu đãi</h4>
                                         <ul>
                                             <li>Vé nhóm áp dụng cho từ 10 người trở lên với giá ưu đãi</li>
                                             <li>Vé học sinh, sinh viên cần xuất trình thẻ học sinh/sinh viên hợp lệ</li>
                                             <li>Vé người cao tuổi áp dụng cho khách từ 60 tuổi trở lên</li>
-                                            <li>Không áp dụng đồng thời nhiều chương trình ưu đãi</li>
+                                            <li>Không áp dụng ��ồng thời nhiều chương trình ưu đãi</li>
                                         </ul>
                                     </div>
                                 </div>
                             </section>
 
                             <!-- Section 3: Quy định tại rạp -->
-                            <section id="section-cinema" class="terms-section">
-                                <h2 class="section-title">3. QUY ĐỊNH TẠI RẠP</h2>
-                                <div class="section-content">
-                                    <div class="rule-item">
+                            <section id="section-cinema" class="terms__section">
+                                <h2 class="terms__section-title">3. QUY ĐỊNH TẠI RẠP</h2>
+                                <div class="terms__section-content">
+                                    <div class="terms__rule-item">
                                         <h4>3.1. Hành vi được phép</h4>
                                         <ul>
                                             <li>Giữ gìn vệ sinh chung và trật tự tại rạp</li>
@@ -139,37 +139,37 @@
                                         </ul>
                                     </div>
 
-                                    <div class="rule-item">
+                                    <div class="terms__rule-item">
                                         <h4>3.2. Hành vi bị cấm</h4>
-                                        <div class="prohibited-grid">
-                                            <div class="prohibited-item">
-                                                <div class="prohibited-icon">🚫</div>
+                                        <div class="terms__prohibited-grid">
+                                            <div class="terms__prohibited-item">
+                                                <div class="terms__prohibited-icon"><i class="fas fa-ban"></i></div>
                                                 <p>Hút thuốc, sử dụng chất kích thích</p>
                                             </div>
-                                            <div class="prohibited-item">
-                                                <div class="prohibited-icon">📱</div>
+                                            <div class="terms__prohibited-item">
+                                                <div class="terms__prohibited-icon"><i class="fas fa-mobile-alt"></i></div>
                                                 <p>Sử dụng điện thoại trong phòng chiếu</p>
                                             </div>
-                                            <div class="prohibited-item">
-                                                <div class="prohibited-icon">📹</div>
+                                            <div class="terms__prohibited-item">
+                                                <div class="terms__prohibited-icon"><i class="fas fa-video"></i></div>
                                                 <p>Quay phim, chụp ảnh màn hình</p>
                                             </div>
-                                            <div class="prohibited-item">
-                                                <div class="prohibited-icon">🔊</div>
+                                            <div class="terms__prohibited-item">
+                                                <div class="terms__prohibited-icon"><i class="fas fa-volume-up"></i></div>
                                                 <p>Gây ồn ào, làm phiền khách khác</p>
                                             </div>
-                                            <div class="prohibited-item">
-                                                <div class="prohibited-icon">🍕</div>
+                                            <div class="terms__prohibited-item">
+                                                <div class="terms__prohibited-icon"><i class="fas fa-utensils"></i></div>
                                                 <p>Mang thức ăn từ bên ngoài vào</p>
                                             </div>
-                                            <div class="prohibited-item">
-                                                <div class="prohibited-icon">⚔️</div>
+                                            <div class="terms__prohibited-item">
+                                                <div class="terms__prohibited-icon"><i class="fas fa-hand-sparkles"></i></div> {{-- Changed from sword to a more generic warning --}}
                                                 <p>Mang vũ khí, vật nguy hiểm</p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="rule-item">
+                                    <div class="terms__rule-item">
                                         <h4>3.3. Xử lý vi phạm</h4>
                                         <ul>
                                             <li>Nhắc nhở lần đầu: Nhân viên sẽ lịch sự nhắc nhở</li>
@@ -182,10 +182,10 @@
                             </section>
 
                             <!-- Section 4: Thực phẩm & đồ uống -->
-                            <section id="section-food" class="terms-section">
-                                <h2 class="section-title">4. THỰC PHẨM & ĐỒ UỐNG</h2>
-                                <div class="section-content">
-                                    <div class="rule-item">
+                            <section id="section-food" class="terms__section">
+                                <h2 class="terms__section-title">4. THỰC PHẨM & ĐỒ UỐNG</h2>
+                                <div class="terms__section-content">
+                                    <div class="terms__rule-item">
                                         <h4>4.1. Quy định chung</h4>
                                         <ul>
                                             <li>Chỉ được phép sử dụng thực phẩm, đồ uống mua tại SE7ENCinema</li>
@@ -195,7 +195,7 @@
                                         </ul>
                                     </div>
 
-                                    <div class="rule-item">
+                                    <div class="terms__rule-item">
                                         <h4>4.2. Combo và ưu đãi</h4>
                                         <ul>
                                             <li>Combo có thời hạn sử dụng, không được hoàn tiền</li>
@@ -205,7 +205,7 @@
                                         </ul>
                                     </div>
 
-                                    <div class="rule-item">
+                                    <div class="terms__rule-item">
                                         <h4>4.3. Vệ sinh an toàn thực phẩm</h4>
                                         <ul>
                                             <li>SE7ENCinema cam kết đảm bảo chất lượng thực phẩm</li>
@@ -218,15 +218,15 @@
                             </section>
 
                             <!-- Section 5: Phân loại phim theo độ tuổi -->
-                            <section id="section-age-rating" class="terms-section">
-                                <h2 class="section-title">5. PHÂN LOẠI PHIM THEO ĐỘ TUỔI</h2>
-                                <div class="section-content">
-                                    <div class="rule-item">
+                            <section id="section-age-rating" class="terms__section">
+                                <h2 class="terms__section-title">5. PHÂN LOẠI PHIM THEO ĐỘ TUỔI</h2>
+                                <div class="terms__section-content">
+                                    <div class="terms__rule-item">
                                         <h4>5.1. Phân loại phim</h4>
                                         <p>SE7ENCinema Việt Nam thông báo tiêu chí phân loại phim theo lứa tuổi như sau:</p>
 
                                         <div class="age-rating-table">
-                                            <div class="rating-item rating-p">
+                                            <div class="rating-item p">
                                                 <div class="rating-badge">P</div>
                                                 <div class="rating-content">
                                                     <h5>Phim dành cho mọi lứa tuổi</h5>
@@ -234,7 +234,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="rating-item rating-k">
+                                            <div class="rating-item k">
                                                 <div class="rating-badge">K</div>
                                                 <div class="rating-content">
                                                     <h5>Phim dành cho trẻ em có người bảo hộ</h5>
@@ -242,7 +242,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="rating-item rating-t13">
+                                            <div class="rating-item t13">
                                                 <div class="rating-badge">T13</div>
                                                 <div class="rating-content">
                                                     <h5>Phim dành cho khán giả từ 13 tuổi trở lên</h5>
@@ -250,7 +250,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="rating-item rating-t16">
+                                            <div class="rating-item t16">
                                                 <div class="rating-badge">T16</div>
                                                 <div class="rating-content">
                                                     <h5>Phim dành cho khán giả từ 16 tuổi trở lên</h5>
@@ -258,7 +258,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="rating-item rating-t18">
+                                            <div class="rating-item t18">
                                                 <div class="rating-badge">T18</div>
                                                 <div class="rating-content">
                                                     <h5>Phim dành cho khán giả từ 18 tuổi trở lên</h5>
@@ -266,7 +266,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="rating-item rating-c">
+                                            <div class="rating-item c">
                                                 <div class="rating-badge">C</div>
                                                 <div class="rating-content">
                                                     <h5>Phim bị cấm chiếu</h5>
@@ -276,7 +276,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="rule-item">
+                                    <div class="terms__rule-item">
                                         <h4>5.2. Lưu ý quan trọng</h4>
                                         <ul>
                                             <li>Quý Khách Hàng xem phim được phân loại T13, T16, T18 vui lòng mang theo giấy tờ tùy thân có ảnh nhận diện và ngày tháng năm sinh để đảm bảo việc tuân thủ theo quy định.</li>
@@ -285,10 +285,10 @@
                                         </ul>
                                     </div>
 
-                                    <div class="rule-item penalty-notice">
+                                    <div class="terms__rule-item penalty-notice">
                                         <h4>5.3. Chế tài</h4>
                                         <div class="penalty-warning">
-                                            <div class="penalty-icon">⚠️</div>
+                                            <div class="penalty-icon"><i class="fas fa-exclamation-triangle"></i></div>
                                             <div class="penalty-content">
                                                 <p><strong>Phạt tiền từ 60.000.000 đồng đến 80.000.000 đồng</strong> đối với hành vi không đảm bảo người xem phim đúng độ tuổi theo phân loại phim.</p>
                                             </div>
@@ -298,10 +298,10 @@
                             </section>
 
                             <!-- Section 6: Khuyến mãi -->
-                            <section id="section-promotion" class="terms-section">
-                                <h2 class="section-title">6. KHUYẾN MÃI</h2>
-                                <div class="section-content">
-                                    <div class="rule-item">
+                            <section id="section-promotion" class="terms__section">
+                                <h2 class="terms__section-title">6. KHUYẾN MÃI</h2>
+                                <div class="terms__section-content">
+                                    <div class="terms__rule-item">
                                         <h4>6.1. Quy định chung</h4>
                                         <ul>
                                             <li>Mỗi chương trình khuyến mãi có điều kiện áp dụng riêng</li>
@@ -311,25 +311,28 @@
                                         </ul>
                                     </div>
 
-                                    <div class="rule-item">
+                                    <div class="terms__rule-item">
                                         <h4>6.2. Các loại khuyến mãi</h4>
                                         <div class="promotion-types">
                                             <div class="promo-item">
-                                                <h5>🎫 Ưu đãi vé</h5>
+                                                <i class="fas fa-ticket-alt"></i>
+                                                <h5>Ưu đãi vé</h5>
                                                 <p>Giảm giá vé theo ngày, giờ chiếu hoặc đối tượng khách hàng</p>
                                             </div>
                                             <div class="promo-item">
-                                                <h5>🍿 Combo ưu đãi</h5>
+                                                <i class="fas fa-utensils"></i>
+                                                <h5>Combo ưu đãi</h5>
                                                 <p>Giá đặc biệt cho combo bắp nước, thức ăn nhanh</p>
                                             </div>
                                             <div class="promo-item">
-                                                <h5>🎁 Quà tặng</h5>
+                                                <i class="fas fa-gift"></i>
+                                                <h5>Quà tặng</h5>
                                                 <p>Tặng kèm merchandise, poster phim hoặc voucher</p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="rule-item">
+                                    <div class="terms__rule-item">
                                         <h4>6.3. Điều kiện sử dụng</h4>
                                         <ul>
                                             <li>Xuất trình đầy đủ giấy tờ chứng minh điều kiện ưu đãi</li>
@@ -342,10 +345,10 @@
                             </section>
 
                             <!-- Section 7: Dịch vụ trực tuyến -->
-                            <section id="section-online" class="terms-section">
-                                <h2 class="section-title">7. DỊCH VỤ TRỰC TUYẾN</h2>
-                                <div class="section-content">
-                                    <div class="rule-item">
+                            <section id="section-online" class="terms__section">
+                                <h2 class="terms__section-title">7. DỊCH VỤ TRỰC TUYẾN</h2>
+                                <div class="terms__section-content">
+                                    <div class="terms__rule-item">
                                         <h4>7.1. Website</h4>
                                         <ul>
                                             <li>Đăng ký tài khoản với thông tin chính xác</li>
@@ -355,7 +358,7 @@
                                         </ul>
                                     </div>
 
-                                    <div class="rule-item">
+                                    <div class="terms__rule-item">
                                         <h4>7.2. Đặt vé trực tuyến</h4>
                                         <ul>
                                             <li>Kiểm tra kỹ thông tin trước khi thanh toán</li>
@@ -365,7 +368,7 @@
                                         </ul>
                                     </div>
 
-                                    <div class="rule-item">
+                                    <div class="terms__rule-item">
                                         <h4>7.3. Bảo mật thông tin</h4>
                                         <ul>
                                             <li>SE7ENCinema cam kết bảo mật thông tin khách hàng</li>
@@ -378,31 +381,31 @@
                             </section>
 
                             <!-- Section 8: Thanh toán -->
-                            <section id="section-payment" class="terms-section">
-                                <h2 class="section-title">8. THANH TOÁN</h2>
-                                <div class="section-content">
-                                    <div class="rule-item">
+                            <section id="section-payment" class="terms__section">
+                                <h2 class="terms__section-title">8. THANH TOÁN</h2>
+                                <div class="terms__section-content">
+                                    <div class="terms__rule-item">
                                         <h4>8.1. Phương thức thanh toán</h4>
                                         <div class="payment-methods">
                                             <div class="payment-item">
-                                                <div class="payment-icon">💵</div>
+                                                <i class="fas fa-money-bill-wave"></i>
                                                 <h5>Tiền mặt</h5>
                                                 <p>Thanh toán tại quầy rạp</p>
                                             </div>
                                             <div class="payment-item">
-                                                <div class="payment-icon">📱</div>
+                                                <i class="fas fa-mobile-alt"></i>
                                                 <h5>Ví điện tử</h5>
                                                 <p>MoMo, ZaloPay, VNPay</p>
                                             </div>
                                             <div class="payment-item">
-                                                <div class="payment-icon">🏦</div>
+                                                <i class="fas fa-university"></i>
                                                 <h5>Chuyển khoản</h5>
                                                 <p>Internet Banking, QR Code</p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="rule-item">
+                                    <div class="terms__rule-item">
                                         <h4>8.2. Quy định thanh toán</h4>
                                         <ul>
                                             <li>Thanh toán đầy đủ trước khi nhận vé/dịch vụ</li>
@@ -412,7 +415,7 @@
                                         </ul>
                                     </div>
 
-                                    <div class="rule-item">
+                                    <div class="terms__rule-item">
                                         <h4>8.3. Bảo mật giao dịch</h4>
                                         <ul>
                                             <li>Không chia sẻ thông tin thẻ, mã PIN cho người khác</li>
@@ -425,10 +428,10 @@
                             </section>
 
                             <!-- Section 9: Hoàn tiền -->
-                            <section id="section-refund" class="terms-section">
-                                <h2 class="section-title">9. HOÀN TIỀN</h2>
-                                <div class="section-content">
-                                    <div class="rule-item">
+                            <section id="section-refund" class="terms__section">
+                                <h2 class="terms__section-title">9. HOÀN TIỀN</h2>
+                                <div class="terms__section-content">
+                                    <div class="terms__rule-item">
                                         <h4>9.1. Trường hợp được hoàn tiền</h4>
                                         <ul>
                                             <li>Rạp hủy suất chiếu do sự cố kỹ thuật</li>
@@ -438,7 +441,7 @@
                                         </ul>
                                     </div>
 
-                                    <div class="rule-item">
+                                    <div class="terms__rule-item">
                                         <h4>9.2. Trường hợp không được hoàn tiền</h4>
                                         <ul>
                                             <li>Khách hàng đến muộn hoặc không đến xem</li>
@@ -448,7 +451,7 @@
                                         </ul>
                                     </div>
 
-                                    <div class="rule-item">
+                                    <div class="terms__rule-item">
                                         <h4>9.3. Quy trình hoàn tiền</h4>
                                         <ul>
                                             <li>Liên hệ bộ phận chăm sóc khách hàng trong 24h</li>
@@ -461,10 +464,10 @@
                             </section>
 
                             <!-- Section 10: Trách nhiệm -->
-                            <section id="section-liability" class="terms-section">
-                                <h2 class="section-title">10. TRÁCH NHIỆM</h2>
-                                <div class="section-content">
-                                    <div class="rule-item">
+                            <section id="section-liability" class="terms__section">
+                                <h2 class="terms__section-title">10. TRÁCH NHIỆM</h2>
+                                <div class="terms__section-content">
+                                    <div class="terms__rule-item">
                                         <h4>10.1. Trách nhiệm của SE7ENCinema</h4>
                                         <ul>
                                             <li>Cung cấp dịch vụ đúng chất lượng cam kết</li>
@@ -474,7 +477,7 @@
                                         </ul>
                                     </div>
 
-                                    <div class="rule-item">
+                                    <div class="terms__rule-item">
                                         <h4>10.2. Trách nhiệm của khách hàng</h4>
                                         <ul>
                                             <li>Tuân thủ các quy định của rạp</li>
@@ -484,7 +487,7 @@
                                         </ul>
                                     </div>
 
-                                    <div class="rule-item">
+                                    <div class="terms__rule-item">
                                         <h4>10.3. Giới hạn trách nhiệm</h4>
                                         <ul>
                                             <li>SE7ENCinema không chịu trách nhiệm với tài sản cá nhân bị mất</li>
@@ -497,42 +500,40 @@
                             </section>
 
                             <!-- Section 11: Liên hệ -->
-                            <section id="section-contact" class="terms-section">
-                                <h2 class="section-title">11. LIÊN HỆ</h2>
-                                <div class="section-content">
-                                    <div class="contact-info">
-                                        <div class="contact-methods">
-                                            <div class="contact-method">
-                                                <div class="contact-icon">📞</div>
-                                                <div class="contact-details">
-                                                    <h4>Hotline</h4>
-                                                    <p><strong>1900 6017</strong></p>
-                                                    <p>Phục vụ 24/7</p>
-                                                </div>
+                            <section id="section-contact" class="terms__section">
+                                <h2 class="terms__section-title">11. LIÊN HỆ</h2>
+                                <div class="terms__section-content">
+                                    <div class="contact-methods">
+                                        <div class="contact-method">
+                                            <div class="contact-icon"><i class="fas fa-phone"></i></div>
+                                            <div class="contact-details">
+                                                <h4>Hotline</h4>
+                                                <p><strong>1900 6017</strong></p>
+                                                <p>Phục vụ 24/7</p>
                                             </div>
-                                            <div class="contact-method">
-                                                <div class="contact-icon">📧</div>
-                                                <div class="contact-details">
-                                                    <h4>Email</h4>
-                                                    <p><strong>support@se7encinema.com.vn</strong></p>
-                                                    <p>Phản hồi trong 24h</p>
-                                                </div>
+                                        </div>
+                                        <div class="contact-method">
+                                            <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                                            <div class="contact-details">
+                                                <h4>Email</h4>
+                                                <p><strong>support@se7encinema.com.vn</strong></p>
+                                                <p>Phản hồi trong 24h</p>
                                             </div>
-                                            <div class="contact-method">
-                                                <div class="contact-icon">🏢</div>
-                                                <div class="contact-details">
-                                                    <h4>Văn phòng</h4>
-                                                    <p>29-13 Ng. 4 Đ. Vân Canh, </p>
-                                                    <p>Vân Canh, Từ Liêm, Hà Nội</p>
-                                                </div>
+                                        </div>
+                                        <div class="contact-method">
+                                            <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+                                            <div class="contact-details">
+                                                <h4>Văn phòng</h4>
+                                                <p>29-13 Ng. 4 Đ. Vân Canh,</p>
+                                                <p>Vân Canh, Từ Liêm, Hà Nội</p>
                                             </div>
-                                            <div class="contact-method">
-                                                <div class="contact-icon">💬</div>
-                                                <div class="contact-details">
-                                                    <h4>Live Chat</h4>
-                                                    <p>Website: se7encinema.com.vn</p>
-                                                    <p>Ứng dụng SE7ENCinema</p>
-                                                </div>
+                                        </div>
+                                        <div class="contact-method">
+                                            <div class="contact-icon"><i class="fas fa-comments"></i></div>
+                                            <div class="contact-details">
+                                                <h4>Live Chat</h4>
+                                                <p>Website: se7encinema.com.vn</p>
+                                                <p>Ứng dụng SE7ENCinema</p>
                                             </div>
                                         </div>
                                     </div>
@@ -551,8 +552,8 @@
                             </section>
 
                             <!-- Footer note -->
-                            <div class="terms-footer">
-                                <div class="footer-note">
+                            <div class="terms__footer">
+                                <div class="terms__footer-note">
                                     <p><strong>Điều khoản sử dụng này có hiệu lực từ ngày {{ date('d/m/Y') }}</strong></p>
                                     <p>SE7ENCinema có quyền thay đổi, bổ sung các điều khoản mà không cần thông báo trước. Khách hàng có trách nhiệm cập nhật thông tin thường xuyên.</p>
                                     <p>Bằng việc sử dụng dịch vụ, bạn đồng ý tuân thủ toàn bộ các điều khoản trên.</p>
@@ -566,46 +567,4 @@
         </div>
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Smooth scrolling for table of contents links
-    const tocLinks = document.querySelectorAll('.toc-link');
-    tocLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
-            if (targetElement) {
-                targetElement.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    });
-
-    // Highlight active section in table of contents
-    const sections = document.querySelectorAll('.terms-section');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const id = entry.target.getAttribute('id');
-                tocLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href') === `#${id}`) {
-                        link.classList.add('active');
-                    }
-                });
-            }
-        });
-    }, {
-        rootMargin: '-20% 0px -70% 0px'
-    });
-
-    sections.forEach(section => {
-        observer.observe(section);
-    });
-});
-</script>
 @endsection
