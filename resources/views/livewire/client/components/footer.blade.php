@@ -87,7 +87,8 @@
         </div>
     </div>
 </div>
-<div class="prs_bottom_footer_wrapper"> <a href="javascript:" id="return-to-top"><i
+<div class="prs_bottom_footer_wrapper">
+     <a href="javascript:" id="return-to-top"><i
             class="flaticon-play-button"></i></a>
     <div class="container">
         <div class="row">
@@ -101,7 +102,7 @@
             <div class="col-lg-6 col-md-6 col-sm-4 col-xs-12">
                 <div class="prs_footer_social_wrapper">
                     <ul>
-                        <li><a href="#"><i class="fa fa-facebook"></i></a>
+                        <li><a href="#" class="scRender"><i class="fa-brands fa-facebook"></i></a>
                         </li>
                         <li>
                             <a href="#">
@@ -111,9 +112,9 @@
                                 </svg>
                             </a>
                         </li>
-                        <li><a href="#"><i class="fa fa-linkedin"></i></a>
+                        <li><a href="#"><i class="fa-brands fa-linkedin"></i></a>
                         </li>
-                        <li><a href="#"><i class="fa fa-youtube-play"></i></a>
+                        <li><a href="#"><i class="fa-brands fa-youtube"></i></a>
                         </li>
                     </ul>
                 </div>

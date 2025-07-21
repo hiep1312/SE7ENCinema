@@ -166,8 +166,8 @@ Route::name('client.')->group(function () {
     Route::view('/seat_booking', 'livewire.client.template.bookings.seat_booking')->name('seat_booking');
     Route::view('/contact', 'livewire.client.template.contact')->name('contact');
     Route::view('/confirmation_screen', 'livewire.client.template.confirmation_screen')->name('confirmation_screen');
-    Route::view('/privacy-policy', 'livewire.client.template.abouts.privacy-policy')->name('privacy-policy');
-    Route::view('/terms-of-service', 'livewire.client.template.abouts.terms-of-service')->name('terms-of-service');
+    Route::view('/privacy_policy', 'livewire.client.template.abouts.privacy_policy')->name('privacy_policy');
+    Route::view('/terms_of_service', 'livewire.client.template.abouts.terms_of_service')->name('terms_of_service');
 });
 
 Route::view('/', 'welcome')->name('welcome');
