@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Banners;
 
 use App\Models\Banner;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -75,7 +76,7 @@ class BannerIndex extends Component
 
         $displayStatuses = array_map(function($banner){
             if(isset($banner['end_date']) && $banner['end_date'] < now()) Banner::where('id', $banner['id'])->update(['status' => 'inactive']);
-            $banner['displayStatus'] = ((isset($banner['end_date']) && $banner['end_date'] < now()) ? 'expired' : (($banner['start_date'] > now() && $banner['status'] === 'active') ? 'upcoming' : ($banner['status'] === 'active' ? 'active' : 'inactive')));
+            $banner['displayStatus'] = ((isset($banner['end_date']) && Carbon::parse($banner['end_date']) < now()) ? 'expired' : ((Carbon::parse($banner['start_date']) > now() && $banner['status'] === 'active') ? 'upcoming' : ($banner['status'] === 'active' ? 'active' : 'inactive')));
 
             return $banner;
         }, (clone $query)->get(['id', 'start_date', 'end_date', 'status'])->toArray());
