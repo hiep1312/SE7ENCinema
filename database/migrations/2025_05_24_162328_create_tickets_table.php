@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('booking_id')->constrained()->onDelete('cascade');
+            $table->foreignId('booking_seat_id')->constrained()->onDelete('cascade');
             $table->text('note')->nullable();
-            $table->string('qr_code')->nullable();
+            $table->string('qr_code');
+            $table->boolean('taken')->default(false);
             $table->enum('status', ['active', 'used', 'canceled'])->default('active');
             $table->timestamps();
         });

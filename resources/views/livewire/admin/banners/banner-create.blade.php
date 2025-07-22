@@ -1,4 +1,4 @@
-<div>
+<div class="scRender">
     @if (session()->has('error'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             {{ session('error') }}
@@ -22,13 +22,13 @@
                         <h5 class="my-1">Thông tin banner</h5>
                     </div>
                     <div class="card-body bg-dark">
-                        <form wire:submit.prevent="createBanner" enctype="multipart/form-data">
+                        <form wire:submit.prevent="createBanner" enctype="multipart/form-data" novalidate>
                             <div class="row">
                                 @if ($image)
                                     <div class="col-md-3 col-5 mb-3">
-                                        <div class="mt-1 overflow-auto" style="max-height: 230px;">
-                                            <img src="{{ $image->temporaryUrl() }}" alt="Ảnh món ăn tải lên" class="img-thumbnail"
-                                                style="width: 100%; height: 150px; object-fit: cover">
+                                        <div class="mt-1 banner-image w-100">
+                                            <img src="{{ $image->temporaryUrl() }}" alt="Ảnh banner tải lên"
+                                                style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
                                         </div>
                                     </div>
                                     <div class="col-md-9 row">

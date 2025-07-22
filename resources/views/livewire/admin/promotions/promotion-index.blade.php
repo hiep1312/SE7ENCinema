@@ -98,9 +98,9 @@
                                     <td class="text-center">{{ ($promotion->end_date)->format('d/m/Y H:i') }}</td>
                                     <td class="bg-opacity-10 border-start border-3" style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                         @if($promotion->usages->count() > 0)
-                                            <div class="showtime-info">
+                                            <div class="promotion-showtime-info">
                                                 <!-- Tên các user -->
-                                                <div class="movie-title mb-1">
+                                                <div class="promotion-movie-title mb-1">
                                                     <i class="fas fa-user-friends me-1 text-primary"></i>
                                                     <strong class="text-primary text-wrap">
                                                         {{ Str::limit($promotion->usages->pluck('booking.user.name')->map(fn($n) => $n ?? 'Khách đã xóa')->implode(', '), 45, '...') }}
@@ -144,7 +144,7 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <div class="d-flex gap-3 justify-content-center">
+                                        <div class="d-flex gap-2 justify-content-center">
                                             <a href="{{ route('admin.promotions.detail', $promotion->id) }}" class="btn btn-sm btn-info" title="Xem chi tiết">
                                                 <i style="margin-right: 0px" class="fas fa-eye"></i>
                                             </a>

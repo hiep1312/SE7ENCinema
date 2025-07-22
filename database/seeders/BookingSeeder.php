@@ -30,7 +30,7 @@ class BookingSeeder extends Seeder
                 'transaction_code' => strtoupper(fake()->unique()->bothify('TX####??')),
                 'start_transaction' => $start,
                 'end_transaction' => $end,
-                'status' => fake()->randomElement(['pending', 'confirmed', 'paid']),
+                'status' => fake()->randomElement(['pending', 'expired', 'paid', 'failed']),
                 'payment_method' => fake()->randomElement(['credit_card', 'bank_transfer', 'e_wallet', 'cash']),
             ]);
         }

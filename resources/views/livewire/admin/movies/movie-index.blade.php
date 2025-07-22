@@ -1,13 +1,13 @@
 <div class="scRender">
     @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert" wire:ignore>
+        <div class="alert alert-success alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
             {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
     @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert" wire:ignore>
+        <div class="alert alert-danger alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
             {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -86,7 +86,6 @@
                                 <th class="text-center text-light">STT</th>
                                 <th class="text-center text-light">Ảnh poster</th>
                                 <th class="text-center text-light">Tiêu đề phim</th>
-                                <th class="text-center text-light">Thời lượng</th>
                                 <th class="text-center text-light">Ngày phát hành</th>
                                 <th class="text-center text-light">Trạng thái</th>
                                 <th class="text-center text-light">Giá vé</th>
@@ -107,26 +106,31 @@
                                 <tr>
                                     <td class="text-center fw-bold">{{ $loop->iteration }}</td>
                                     <td>
-                                        <div class="overflow-auto d-block text-center position-relative"
-                                            style="max-height: 90px; width: 100px;">
-                                            <img src="{{ asset('storage/' . ($movie->poster ?? '404.webp')) }}"
-                                                alt="Ảnh phim {{ $movie->poster }}" class="rounded"
-                                                style="width: 100%; height: auto;">
-                                            <span class="position-absolute opacity-75 top-0 start-0 mt-1 ms-1 badge bg-success" style="border-radius: 50%; cursor: pointer;"
-                                                data-bs-toggle="modal" data-bs-target="#trailerPreview"
-                                                data-trailer-url="{{ getYoutubeEmbedUrl((string)$movie->trailer_url) ?: asset('storage/404.webp') }}" data-trailer-title="{{ $movie->title }}">
-                                                <i class="fas fa-play me-1" style="margin-right: 0 !important;"></i>
-                                            </span>
+                                        <div class="d-flex justify-content-center">
+                                            <div class="movie-poster position-relative scTemp temp" style="width: 80px; height: 100px; margin: 0;">
+                                                @if($movie->poster)
+                                                    <img src="{{ asset('storage/' . $movie->poster) }}"
+                                                        alt="Ảnh phim {{ $movie->title }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
+                                                @else
+                                                    <i class="fas fa-film" style="font-size: 22px;"></i>
+                                                @endif
+                                                <span class="position-absolute opacity-75 top-0 start-0 mt-1 ms-1 badge bg-success" style="border-radius: 50%; cursor: pointer;"
+                                                    data-bs-toggle="modal" data-bs-target="#trailerPreview"
+                                                    data-trailer-url="{{ getYoutubeEmbedUrl((string)$movie->trailer_url) ?: asset('storage/404.webp') }}" data-trailer-title="{{ $movie->title }}">
+                                                    <i class="fas fa-play me-1" style="margin-right: 0 !important;"></i>
+                                                </span>
+                                            </div>
                                         </div>
                                     </td>
-                                    <td>
-                                        <strong class="text-light text-wrap">{{ $movie->title }}</strong>
+                                    <td style="max-width: 200px;">
+                                        <strong class="text-light text-wrap lh-base">{{ $movie->title }}</strong>
                                         @if($movie->trashed())
                                             <span class="badge bg-danger ms-1">Đã xóa</span>
                                         @endif
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="text-light">{{ $movie->duration }}p</span>
+                                        <div class="movie-genre text-wrap lh-base" style="margin-bottom: 0; margin-top: 3px;">
+                                            <i class="fas fa-tags me-1"></i>
+                                            {{ $movie->genres->take(3)->implode('name', ', ') ?: 'Không có thể loại' }} • {{ $movie->duration }} phút
+                                        </div>
                                     </td>
                                     <td class="text-center">
                                         <div class="mb-1">
@@ -149,10 +153,10 @@
                                                     <span class="badge bg-success"><i class="fas fa-play me-1"></i>Đang chiếu</span>
                                                     @break
                                                 @case('coming_soon')
-                                                    <span class="badge" style="background-color: #2bbafc; color: #ffffff;"><i class="fas fa-clock me-1"></i>Sắp ra mắt</span>
+                                                    <span class="badge" style="background-color: #2bbafc; color: #ffffff;"><i class="fa-solid fa-calendar-clock me-1"></i>Sắp ra mắt</span>
                                                     @break
                                                 @case('ended')
-                                                    <span class="badge bg-danger"><i class="fas fa-clock me-1"></i>Đã kết thúc</span>
+                                                    <span class="badge bg-danger"><i class="fa-solid fa-calendar-xmark me-1"></i>Đã kết thúc</span>
                                                     @break
                                             @endswitch
                                         @else
@@ -171,9 +175,9 @@
                                             @php $nextShowtime = $movie->showtimes->first(); @endphp
                                             <div>
                                                 <div class="mb-1">
-                                                    <i class="fa-solid fa-person-booth text-primary"></i>
+                                                    <i class="fa-solid fa-person-booth text-primary me-1"></i>
                                                     <strong class="text-primary">
-                                                        {{ $nextShowtime->room->name ?? 'Phòng chiếu không tồn tại' }}
+                                                        {{ $nextShowtime->room->name ?? 'Không tìm thấy phòng chiếu' }}
                                                     </strong>
                                                 </div>
 
@@ -190,7 +194,6 @@
                                                     </small>
                                                 </div>
 
-                                                <!-- Giá vé -->
                                                 <div class="mb-1">
                                                     <i class="fas fa-money-bill me-1 text-warning"></i>
                                                     <span class="text-warning">
@@ -215,7 +218,7 @@
                                             </div>
                                         @else
                                             <!-- Khi không có suất chiếu -->
-                                            <div class="text-center py-2">
+                                            <div class="text-center py-2" style="margin: auto 0;">
                                                 <i class="fas fa-calendar-times fa-2x text-muted mb-2"></i>
                                                 <div class="text-muted">
                                                     <strong>Không có suất chiếu</strong>
@@ -287,7 +290,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="10" class="text-center py-4">
+                                    <td colspan="9" class="text-center py-4">
                                         <div class="text-muted">
                                             <i class="fas fa-inbox fa-3x mb-3"></i>
                                             <p>
@@ -324,8 +327,7 @@
                             </div>
                             <div class="video-wrapper">
                                 <div class="responsive-iframe">
-                                    <iframe src=""
-                                        title="YouTube video player" frameborder="0"
+                                    <iframe title="YouTube video player" frameborder="0"
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                         allowfullscreen></iframe>
                                 </div>

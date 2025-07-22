@@ -1,3 +1,4 @@
+@use('App\Models\Genre')
 @assets
 <script>
     function updateSelected(selectedAll = true){
@@ -46,13 +47,13 @@
                         <form wire:submit.prevent="createMovie" enctype="multipart/form-data" novalidate>
                             <div class="row align-items-start mb-2">
                                 @if ($poster)
-                                    <div class="col-md-3 col-5 mb-3">
-                                        <div class="mt-1 overflow-auto" style="max-height: 300px;">
-                                            <img src="{{ $poster->temporaryUrl() }}" alt="Ảnh món ăn tải lên" class="img-thumbnail"
-                                                style="width: 100%;">
+                                    <div class="col-md-3 col-xxl-2 col-6 mb-3">
+                                        <div class="mt-1 movie-poster w-100" style="aspect-ratio: 4 / 5; height: auto; margin: 0;">
+                                            <img src="{{ $poster->temporaryUrl() }}" alt="Ảnh poster mới"
+                                                style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
                                         </div>
                                     </div>
-                                    <div class="col-md-9 row">
+                                    <div class="col-md-9 col-xxl-10 row">
                                 @endif
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -107,7 +108,7 @@
                                 <div class="col-12">
                                     <div class="mb-3">
                                         <label for="description" class="form-label text-light">Mô tả </label>
-                                        <textarea id="description" wire:model="description" class="form-control bg-dark text-light border-light @error('description') is-invalid @enderror" placeholder="VD: VD: Một nhóm siêu anh hùng tập hợp lại để cứu thế giới khỏi mối đe dọa từ Thanos..."></textarea>
+                                        <textarea id="description" wire:model="description" class="form-control bg-dark text-light border-light @error('description') is-invalid @enderror" placeholder="VD: Một nhóm siêu anh hùng tập hợp lại để cứu thế giới khỏi mối đe dọa từ Thanos..."></textarea>
                                         @error('description')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -269,7 +270,7 @@
                                             <div class="col-md-6 datetime-group">
                                                 <label class="datetime-label">
                                                     <span class="label-icon start-icon">
-                                                        <i class="fas fa-play me-1" style="margin-right: 0 !important;"></i>
+                                                        <i class="fas fa-play" style="margin-right: 0 !important;"></i>
                                                     </span>
                                                     Thời gian bắt đầu
                                                 </label>
@@ -284,7 +285,7 @@
                                             <div class="col-md-6 datetime-group">
                                                 <label class="datetime-label">
                                                     <span class="label-icon end-icon">
-                                                        <i class="fas fa-stop me-1" style="margin-right: 0 !important;"></i>
+                                                        <i class="fas fa-stop" style="margin-right: 0 !important;"></i>
                                                     </span>
                                                     Thời gian kết thúc
                                                 </label>
@@ -402,7 +403,7 @@
                                         </div>
                                     @elseif($tabCurrent === 'genres')
                                         <div class="search-box">
-                                            <input type="text" wire:model.live.debounce.300ms="searchGenre" id="searchInput" placeholder="Tìm kiếm thể loại..." autocomplete="off">
+                                            <input type="text" wire:model.live.debounce.300ms="searchGenre" placeholder="Tìm kiếm thể loại..." autocomplete="off">
                                             <div class="search-icon">
                                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                     <circle cx="11" cy="11" r="8"></circle>
@@ -412,15 +413,19 @@
                                         </div>
 
                                         <div class="filter-controls">
-                                            <button type="button" id="selectAll" class="control-btn" onclick="updateSelected(true)">Chọn tất cả</button>
-                                            <button type="button" id="deselectAll" class="control-btn" onclick="updateSelected(false)">Bỏ chọn tất cả</button>
+                                            @if(!empty($searchGenre) && $genres->isEmpty())
+                                                <button type="button" id="addTag" class="control-btn-green" wire:click="addGenre">Thêm thể loại</button>
+                                            @else
+                                                <button type="button" id="selectAll" class="control-btn" onclick="updateSelected(true)">Chọn tất cả</button>
+                                                <button type="button" id="deselectAll" class="control-btn" onclick="updateSelected(false)">Bỏ chọn tất cả</button>
+                                            @endif
                                             <button type="button" id="clearSearch" class="control-btn clear-btn" wire:click="$set('searchGenre', '')">Xóa tìm kiếm</button>
                                         </div>
 
                                         <div class="checkbox-container">
                                             <div class="checkbox-list" id="checkboxList">
                                                 @forelse($genres as $genre)
-                                                    <div class="checkbox-item" onclick="this.querySelector('input[type=checkbox]').click()">
+                                                    <div class="checkbox-item" onclick="this.querySelector('input[type=checkbox]').click()" wire:key="genre-{{ $genre->id }}">
                                                         <div class="checkbox-wrapper">
                                                             <input type="checkbox" wire:model.live="genresSelected" value="{{ $genre->id }}">
                                                             <span class="checkmark"></span>
@@ -437,15 +442,15 @@
                                             <div class="selected-tags" id="selectedTags">
                                                 @forelse($genresSelected as $genreId)
                                                     <div class="tag">
-                                                        {{ \App\Models\Genre::find($genreId)?->name }}
+                                                        {{ Genre::find($genreId)?->name }}
                                                         <span class="remove-tag" onclick="document.querySelector('input[type=checkbox][value=\'{{ $genreId }}\']').click()">×</span>
                                                     </div>
                                                 @empty
-                                                    <div class="empty-state">Không tìm thấy thể loại nào</div>
+                                                    <div class="empty-state" style="padding: 10px 20px;">Chưa có thể loại nào</div>
                                                 @endforelse
                                             </div>
                                         </div>
-                                        @error('genresSelected')
+                                        @if($errors->has('searchGenre') || $errors->has('genresSelected'))
                                             <div class="error-panel" style="display: block;">
                                                 <button type="button" class="close-error" onclick="this.parentElement.style.display = 'none'">
                                                     <i class="fa-solid fa-xmark"></i>
@@ -455,7 +460,7 @@
                                                     Lỗi xác thực
                                                 </div>
                                                 <div class="error-content">
-                                                    {{ $message }}
+                                                    {{ $errors->first('searchGenre') ?: $errors->first('genresSelected') }}
                                                 </div>
                                             </div>
                                         @enderror

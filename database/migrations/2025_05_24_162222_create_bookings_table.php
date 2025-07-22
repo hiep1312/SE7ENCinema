@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('transaction_code')->unique()->nullable();
             $table->dateTime('start_transaction')->nullable();
             $table->dateTime('end_transaction')->nullable();
-            $table->enum('status', ['pending', 'confirmed', 'paid'])->default('pending');
+            $table->enum('status', ['pending', 'expired', 'paid', 'failed'])->default('pending');
             $table->enum('payment_method', ['credit_card', 'bank_transfer', 'e_wallet', 'cash'])->nullable();
             $table->timestamps();
         });

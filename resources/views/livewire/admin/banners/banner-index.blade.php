@@ -1,13 +1,13 @@
-<div>
+<div class="scRender">
     @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert" wire:ignore>
+        <div class="alert alert-success alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
             {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
     @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert" wire:ignore>
+        <div class="alert alert-danger alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
             {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -47,14 +47,14 @@
 
                     <!-- Lọc theo độ ưu tiên -->
                     <div class="col-md-5 col-lg-4 mb-2 mb-md-0 d-flex align-items-center gap-2">
-                        <span id="lowerValue" x-text="$wire.priorityFilter[0]"></span>
+                        <span id="lowerValue" x-text="$wire.priorityFilter[0]" style="width: 56px;"></span>
                         <div class="dual-range">
                             <div class="range-track"></div>
                             <div class="range-fill" id="rangeFill" wire:ignore.self></div>
                             <input type="range" class="range-input lower" id="lowerRange" min="0" max="100" value="{{ $priorityFilter[0] }}" wire:input="$js.updateSlider">
                             <input type="range" class="range-input upper" id="upperRange" min="0" max="100" value="{{ $priorityFilter[1] }}" wire:input="$js.updateSlider">
                         </div>
-                        <span id="upperValue" x-text="$wire.priorityFilter[1]"></span>
+                        <span id="upperValue" x-text="$wire.priorityFilter[1]" style="width: 56px;"></span>
                     </div>
 
                     <!-- Reset filters -->
@@ -85,17 +85,20 @@
                             @forelse($banners as $banner)
                                 <tr wire:key="{{ $banner->id }}">
                                     <td class="text-center fw-bold text-light">{{ $loop->iteration }}</td>
-                                    <td class="text-center">
-                                        <div class="mt-1 overflow-auto d-block text-center"
-                                            style="max-height: 70px; width: 100px;" data-bs-toggle="modal" data-bs-target="#bannerPreview" data-banner-id="{{ $banner->id }}">
-                                            <img src="{{ asset('storage/' . ($banner->image ?? '404.webp')) }}"
-                                                class="img-thumbnail" loading = "lazy"
-                                                alt="Ảnh banner{{ $banner->title }}"
-                                                style="width: 100px; height: 70px; object-fit: cover; border-radius: 0; cursor: pointer;">
+                                    <td>
+                                        <div class="d-flex justify-content-center">
+                                            <div class="banner-image" style="width: 130px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#bannerPreview" data-banner-id="{{ $banner->id }}">
+                                                @if($banner->image)
+                                                    <img src="{{ asset('storage/' . $banner->image) }}"
+                                                        alt="Ảnh banner {{ $banner->title }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
+                                                @else
+                                                    <i class="fa-solid fa-image-landscape"></i>
+                                                @endif
+                                            </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <strong class="text-light">{{ $banner->title }}</strong>
+                                        <strong class="text-light text-wrap lh-base">{{ $banner->title }}</strong>
                                     </td>
                                     <td class="text-center">
                                         <div class="mb-1">
@@ -111,27 +114,27 @@
                                             </small>
                                         </div>
                                         @switch($displayStatuses[$loop->index]['displayStatus'])
-                                            @case('expired')
-                                                <div class="mt-1">
-                                                    <span class="badge" style="background-color: #ffd700; color: #212529;">
-                                                        <i class="fas fa-clock me-1"></i>Đã hết hạn
-                                                    </span>
-                                                </div>
-                                                @break
                                             @case('upcoming')
                                                 <div class="mt-1">
                                                     <span class="badge" style="background-color: #40c4ff; color: #ffffff;">
                                                         <i class="fas fa-clock me-1"></i>Chưa bắt đầu
                                                     </span>
                                                 </div>
-                                                @break
+                                            @break
                                             @case('active')
                                                 <div class="mt-1">
                                                     <span class="badge" style="background-color: #28a745; color: #ffffff;">
                                                         <i class="fas fa-play me-1"></i>Đang hiển thị
                                                     </span>
                                                 </div>
-                                                @break
+                                            @break
+                                            @case('expired')
+                                                <div class="mt-1">
+                                                    <span class="badge" style="background-color: #ffd700; color: #212529;">
+                                                        <i class="fa-solid fa-calendar-xmark me-1"></i>Đã hết hạn
+                                                    </span>
+                                                </div>
+                                            @break
                                         @endswitch
                                     </td>
                                     <td class="text-center">
@@ -152,10 +155,10 @@
                                                target="_blank"
                                                class="btn btn-sm btn-outline-primary"
                                                title="Mở đường dẫn liên kết">
-                                                <i class="fas fa-external-link-alt"></i>
+                                                <i class="fas fa-external-link-alt" style="margin-right: 0;"></i>
                                             </a>
                                         @else
-                                            <span class="text-muted">Không có liên kết</span>
+                                            <span class="text-muted">Không có</span>
                                         @endif
                                     </td>
                                     <td class="text-center">
@@ -166,13 +169,12 @@
                                     <td>
                                         <div class="d-flex gap-2 justify-content-center">
                                             <!-- Toggle Status -->
-                                            @php $checkActive = ($banner->status === 'active' && $displayStatuses[$loop->index]['displayStatus'] !== 'expired') @endphp
                                             <button type="button"
                                                     wire:click="toggleStatus({{ $banner->id }})"
-                                                    class="btn btn-sm {{ $checkActive ? 'btn-info' : 'btn-success' }}"
-                                                    title="{{ $checkActive ? 'Tắt' : 'Bật' }}"
-                                                    @if($displayStatuses[$loop->index]['displayStatus'] === 'expired' || $banner->status === 'inactive') disabled @endif>
-                                                <i class="fas {{ $checkActive ? 'fa-pause' : 'fa-play' }}" style="margin-right: 0"></i>
+                                                    class="btn btn-sm {{ $banner->status === 'active' ? 'btn-info' : 'btn-success' }}"
+                                                    title="{{ $banner->status === 'active' ? 'Tắt' : 'Bật' }}"
+                                                    @if($displayStatuses[$loop->index]['displayStatus'] === 'expired') disabled @endif>
+                                                <i class="fas {{ $banner->status === 'active' ? 'fa-pause' : 'fa-play' }}" style="margin-right: 0"></i>
                                             </button>
 
                                             <a href="{{ route('admin.banners.edit', $banner->id) }}"
@@ -209,7 +211,7 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="bannerPreview" wire:ignore>
+        <div class="modal fade" id="bannerPreview" wire:ignore.self>
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -222,7 +224,7 @@
                         <div id="slideshowBanner" class="carousel slide">
                             <div class="carousel-inner">
                                 @foreach($banners as $banner)
-                                    <div class="carousel-item" data-banner-id="{{ $banner->id }}">
+                                    <div class="carousel-item" data-banner-id="{{ $banner->id }}" wire:ignore.self>
                                         <img src="{{ asset('storage/' . ($banner->image ?? '404.webp')) }}" class="d-block w-100" alt="Ảnh banner {{ $banner->title }}" style="object-fit: cover; aspect-ratio: 16 / 8;">
                                         <div class="carousel-caption d-none d-md-block text-light">
                                             <h5>{{ $banner->title }}</h5>

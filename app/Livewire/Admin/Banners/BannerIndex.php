@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Banners;
 
 use App\Models\Banner;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -25,9 +26,8 @@ class BannerIndex extends Component
     {
         if (!$status['isConfirmed']) return;
 
-        $banner = Banner::onlyTrashed()->find($bannerId);
+        $banner = Banner::findOrFail($bannerId);
 
-        // Kiểm tra image, nếu có thì xóa
         !Storage::disk('public')->exists($banner->image) ?: Storage::disk('public')->delete($banner->image);
 
         $banner->delete();
@@ -40,7 +40,6 @@ class BannerIndex extends Component
         if ($banner) {
             $newStatus = $banner->status === 'active' ? 'inactive' : 'active';
 
-            // Kiểm tra nếu banner đã hết hạn thì không cho phép kích hoạt
             if ($newStatus === 'active' && $banner->end_date < now()) {
                 session()->flash('error', 'Không thể kích hoạt banner đã hết hạn!');
                 return;
@@ -60,26 +59,27 @@ class BannerIndex extends Component
         $this->js('resetSlider');
     }
 
-    #[Title('Quản lý Banner - SE7ENCinema')]
+    #[Title('Danh sách banner - SE7ENCinema')]
     #[Layout('components.layouts.admin')]
     public function render()
     {
         $query = Banner::query()
             ->when($this->search, function ($query) {
                 $query->where(function($subQuery) {
-                    $subQuery->where('title', 'like', '%' . $this->search . '%')
-                        ->orWhere('link', 'like', '%' . $this->search . '%');
+                    $subQuery->where('title', 'like', '%' . trim($this->search) . '%')
+                        ->orWhere('link', 'like', '%' . trim($this->search) . '%');
                 });
             })
             ->when($this->statusFilter, fn($query) => $query->where('status', $this->statusFilter))
-            ->where('priority', '>=', $this->priorityFilter[0])
-            ->where('priority', '<=', $this->priorityFilter[1])
+            ->whereBetween('priority', $this->priorityFilter)
             ->orderBy('priority', 'desc')->orderBy('created_at', 'desc');
 
         $displayStatuses = array_map(function($banner){
-            $banner['displayStatus'] = ((isset($banner['end_date']) && $banner['end_date'] < now()) ? 'expired' : (($banner['start_date'] > now() && $banner['status'] === 'active') ? 'upcoming' : ($banner['status'] === 'active' ? 'active' : 'inactive')));
+            if(isset($banner['end_date']) && $banner['end_date'] < now()) Banner::where('id', $banner['id'])->update(['status' => 'inactive']);
+            $banner['displayStatus'] = ((isset($banner['end_date']) && Carbon::parse($banner['end_date']) < now()) ? 'expired' : ((Carbon::parse($banner['start_date']) > now() && $banner['status'] === 'active') ? 'upcoming' : ($banner['status'] === 'active' ? 'active' : 'inactive')));
+
             return $banner;
-        }, (clone $query)->get(['start_date', 'end_date', 'status'])->toArray());
+        }, (clone $query)->get(['id', 'start_date', 'end_date', 'status'])->toArray());
 
         $banners = $query->paginate(20);
 

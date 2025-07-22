@@ -191,6 +191,19 @@ class MovieEdit extends Component
         session()->flash('successGeneratedShowtimes', "Đã tạo thành công {$showtimeCount} suất chiếu!");
     }
 
+    public function addGenre(){
+        $this->validate([
+            'searchGenre' => 'required|string|max:255',
+        ], [
+            'searchGenre.required' => 'Tên thể loại là bắt buộc.',
+            'searchGenre.string' => 'Tên thể loại phải là một chuỗi ký tự.',
+            'searchGenre.max' => 'Tên thể loại không được vượt quá 255 ký tự.',
+        ]);
+
+        $genreAdded = Genre::create(['name' => $this->searchGenre]);
+        $this->genresSelected[] = $genreAdded->id;
+    }
+
     public function updateMovie()
     {
         if($this->end_date !== $this->movieItem->end_date?->format('Y-m-d\TH:i')) $this->rules['end_date'] .= '|after_or_equal:now';
@@ -222,11 +235,9 @@ class MovieEdit extends Component
         $this->movieItem->genres()->sync($this->genresSelected);
 
         $currentShowtimes = $this->movieItem->showtimes->pluck('id')->toArray();
-        $showtimesDeleted = array_diff($currentShowtimes, array_column($this->showtimes, 'id'));
-        $this->movieItem->showtimes()->whereIn('id', $showtimesDeleted)->delete();
 
         foreach ($this->showtimes as $showtime) {
-            $dataUpdate = [
+            $dataShowtime = [
                 'movie_id' => $this->movieItem->id,
                 'room_id' => $showtime['room_id'],
                 'start_time' => $showtime['start_time'],
@@ -238,9 +249,9 @@ class MovieEdit extends Component
             if(isset($showtime['id']) && in_array($showtime['id'], $currentShowtimes)) {
                 $showtimeEdit = $this->movieItem->showtimes()->find($showtime['id']);
 
-                $showtimeEdit->update($dataUpdate);
+                $showtimeEdit->update($dataShowtime);
             }else{
-                Showtime::create(array_merge($dataUpdate, ['status' => 'active']));
+                Showtime::create(array_merge($dataShowtime, ['status' => 'active']));
             }
         }
 

@@ -11,17 +11,17 @@ class FoodVariantAttributeValueSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(...$variant): void
+    public function run(mixed ...$variant): void
     {
-        [$combo, $foodVariantId] = $variant;
+        [$combo, $foodItemId, $foodVariantId] = $variant;
 
         foreach ($combo as $pair) {
             [$attributeName, $attributeValue] = $pair;
 
             $valueModel = FoodAttributeValue::where('value', $attributeValue)
-                ->whereHas('attribute', function ($query) use ($attributeName, $foodVariantId) {
+                ->whereHas('attribute', function ($query) use ($attributeName, $foodItemId) {
                     $query->where('name', $attributeName)
-                        ->where('food_item_id', $foodVariantId);
+                        ->where('food_item_id', $foodItemId);
                 })->first();
 
             if ($valueModel){

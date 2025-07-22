@@ -4,6 +4,8 @@ namespace App\Livewire\Admin\Movies;
 
 use App\Models\Booking;
 use App\Models\Movie;
+use App\Models\Showtime;
+use Carbon\Carbon;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -20,10 +22,29 @@ class MovieDetail extends Component
         $this->movie = Movie::with('genres', 'ratings')->findOrFail($movie);
     }
 
+    public function updateStatusMovieAndShowtimes(){
+        $releaseDate = Carbon::parse($this->movie->release_date);
+        $endDate = !$this->movie->end_date ?: Carbon::parse($this->movie->end_date);
+        if(is_object($endDate) && $endDate->isPast()) $this->movie->status = 'ended';
+        else if($releaseDate->isFuture()) $this->movie->status = 'coming_soon';
+        else $this->movie->status = 'showing';
+        $this->movie->save();
+
+        Showtime::where('movie_id', $this->movie->id)->each(function ($showtime) {
+            $startTime = $showtime->start_time;
+            $endTime = $showtime->end_time;
+            if($endTime->isPast()) $showtime->status = 'completed';
+            elseif(($startTime->isFuture() || $endTime->isFuture()) && $showtime->status === 'completed') $showtime->status = 'active';
+            $showtime->save();
+        });
+    }
+
     #[Title('Chi tiết phim - SE7ENCinema')]
     #[Layout('components.layouts.admin')]
     public function render()
     {
+        $this->updateStatusMovieAndShowtimes();
+
         $recentShowtimes = $this->movie->showtimes()
             ->with('room')
             ->where('start_time', '<=', now())

@@ -56,7 +56,7 @@ class ShowtimeIndex extends Component
         });
     }
 
-    #[Title('Danh sách phim - SE7ENCinema')]
+    #[Title('Danh sách suất chiếu - SE7ENCinema')]
     #[Layout('components.layouts.admin')]
     public function render()
     {

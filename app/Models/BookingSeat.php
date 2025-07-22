@@ -12,4 +12,16 @@ class BookingSeat extends Model
     ];
 
     public $timestamps = false;
+
+    public function booking() {
+        return $this->belongsTo(Booking::class);
+    }
+
+    public function seat() {
+        return $this->belongsTo(Seat::class);
+    }
+
+    public function ticket() {
+        return $this->hasOne(Ticket::class);
+    }
 }

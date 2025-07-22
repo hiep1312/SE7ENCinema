@@ -1,0 +1,9 @@
+{
+    "prefixRoot": ".scRender",
+    "globalCssFiles": [
+        "scanner.css"
+    ],
+    "scopedCssFiles": [
+
+    ]
+}
