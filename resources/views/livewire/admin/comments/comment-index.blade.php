@@ -80,7 +80,7 @@
 
                                     <!-- NGƯỜI DÙNG -->
                                     <td class="col-2 bg-opacity-10 border-start border-3">
-                                        <div class="showtime-info">
+                                        <div class="comment-showtime-info">
                                             <div class="d-flex align-items-center">
                                                 @if($comment->user->avatar && !str_contains($comment->user->avatar, 'placeholder.com'))
                                                     @if(filter_var($comment->user->avatar, FILTER_VALIDATE_URL))
@@ -99,7 +99,7 @@
                                                     </div>
                                                 @endif
                                                 <div>
-                                                    <div class="movie-title mb-1">
+                                                    <div class="comment-movie-title mb-1">
                                                         <i class="fas fa-user me-1 text-primary"></i>
                                                         <strong class="text-primary text-wrap">
                                                             {{ $comment->user->name }}
@@ -139,7 +139,7 @@
 
                                     <!-- PHIM -->
                                     <td class="col-2 bg-opacity-10 border-start border-3">
-                                        <div class="showtime-info">
+                                        <div class="comment-showtime-info">
                                             <div class="d-flex align-items-center">
                                                 @if($comment->movie->poster && !str_contains($comment->movie->poster, 'placeholder.com'))
                                                     @if(filter_var($comment->movie->poster, FILTER_VALIDATE_URL))
@@ -160,7 +160,7 @@
                                                     </div>
                                                 @endif
                                                 <div>
-                                                    <div class="movie-title mb-1">
+                                                    <div class="comment-movie-title mb-1">
                                                         <i class="fas fa-film me-1 text-primary"></i>
                                                         <strong class="text-primary text-wrap">
                                                             {{ Str::limit($comment->movie->title, 20, '...') }}

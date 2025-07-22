@@ -1,4 +1,5 @@
-<div>
+@use('Illuminate\Http\UploadedFile')
+<div class="scRender">
     @if (session()->has('error'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             {{ session('error') }}
@@ -22,20 +23,24 @@
                         <h5 class="my-1">Thông tin banner</h5>
                     </div>
                     <div class="card-body bg-dark">
-                        <form wire:submit.prevent="updateBanner" enctype="multipart/form-data">
+                        <form wire:submit.prevent="updateBanner" enctype="multipart/form-data" novalidate>
                             <div class="row align-items-start">
-                                <div class="col-md-3 mb-3">
-                                        <div class="mt-1 overflow-auto position-relative" style="max-height: 230px;">
-                                            <img src="{{ asset('storage/' . ($banner->image ?? '404.webp')) }}" alt="Ảnh banner hiện tại" class="img-thumbnail"
-                                            style="width: 100%; height: 150px; object-fit: cover">
+                                <div class="col-md-3 col-{{ ($image && $image instanceof UploadedFile) ? '12' : '6' }} d-flex d-md-block gap-2 mb-3">
+                                        <div class="mt-1 banner-image w-100">
+                                            @if($banner->image)
+                                                <img src="{{ asset('storage/' . $banner->image) }}" alt="Ảnh banner hiện tại"
+                                                    style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
+                                            @else
+                                                <i class="fa-solid fa-image-landscape" style="font-size: 20px;"></i>
+                                            @endif
                                             <span class="position-absolute opacity-75 top-0 start-0 mt-2 ms-2 badge rounded bg-danger">
                                                 Ảnh hiện tại
                                             </span>
                                         </div>
-                                    @if ($image && $image instanceof Illuminate\Http\UploadedFile)
-                                        <div class="mt-2 overflow-auto position-relative" style="max-height: 230px;">
-                                            <img src="{{ $image->temporaryUrl() }}" alt="Ảnh banner tải lên" class="img-thumbnail"
-                                                style="width: 100%; height: 150px; object-fit: cover">
+                                    @if ($image && $image instanceof UploadedFile)
+                                        <div class="mt-md-2 mt-1 banner-image w-100">
+                                            <img src="{{ $image->temporaryUrl() }}" alt="Ảnh banner tải lên"
+                                                style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
                                             <span class="position-absolute opacity-75 top-0 start-0 mt-2 ms-2 badge rounded bg-success">
                                                 Ảnh mới
                                             </span>
