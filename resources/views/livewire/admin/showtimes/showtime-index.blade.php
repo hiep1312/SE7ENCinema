@@ -102,11 +102,15 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td>
-                                        <strong class="text-light text-wrap">{{ $showtime->movie->title }}</strong>
+                                    <td style="max-width: 200px;">
+                                        <strong class="text-light text-wrap lh-base">{{ $showtime->movie->title }}</strong>
+                                        <div class="movie-genre" style="margin-bottom: 0; margin-top: 3px;">
+                                            <i class="fas fa-tags me-1"></i>
+                                            {{ $showtime->movie->genres->take(1)->implode('name', ', ') ?: 'Không có thể loại' }} • {{ $showtime->movie->duration }} phút
+                                        </div>
                                     </td>
                                     <td class="text-center">
-                                        <strong class="text-light text-wrap">{{ $showtime->room->name }}</strong>
+                                        <strong class="text-light text-wrap lh-base">{{ $showtime->room->name }}</strong>
                                     </td>
                                     <td class="text-center">
                                         <i class="fas fa-clock me-1" style="color: #34c759;"></i>
