@@ -17,10 +17,7 @@ class Room extends Model
 
     protected $casts = [
         'capacity' => 'integer',
-        'last_maintenance_date' => 'date',
-        'deleted_at' => 'datetime',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'last_maintenance_date' => 'date'
     ];
 
     public function seats()
