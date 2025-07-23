@@ -1,8 +1,8 @@
 @assets
-    @vite('resources/css/movie-detail.css')
+    @vite('resources/css/movieDetail.css')
 @endassets
-<div class="scRender">
-<div class="movie-detail-page">
+<div class="scRender scMovieDetail">
+<div class="movie-detail-page ">
     <div class="movie-container">
         <!-- Movie Header -->
         <div class="movie-header-block">

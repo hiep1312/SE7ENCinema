@@ -3,7 +3,6 @@
 @import 'sweetalert2/dist/sweetalert2.min.css';
 @import url('https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css');
 @import url('https://site-assets.fontawesome.com/releases/v6.7.2/css/sharp-solid.css');
-@import './style.css';
 
 /* Vite */
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';

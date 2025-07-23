@@ -39,13 +39,9 @@ use App\Livewire\Admin\Showtimes\ShowtimeEdit;
 use App\Livewire\Admin\Showtimes\ShowtimeIndex;
 use App\Livewire\Admin\Tickets\TicketIndex;
 use App\Livewire\Client\Ticket\Index as TicketIndexClient;
-
-<<<<<<< HEAD
 use App\Livewire\Client\ClientMovieDetail;
-Route::prefix('admin')->name('admin.')->group(function () {
-=======
+
 Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->group(function () {
->>>>>>> 7e1b7c7cd4d48056b6f64d12e8382be956e05809
     /* Banners */
     Route::prefix('/banners')->name('banners.')->group(function () {
         Route::get('/', BannerIndex::class)->name('index');
