@@ -69,7 +69,7 @@
     <li class="nav-item menu-items">
       <a class="nav-link" data-toggle="collapse" href="#manage-banner">
         <span class="menu-icon">
-          <i class="mdi mdi-laptop"></i>
+          <i class="fa-solid fa-display"></i>
         </span>
         <span class="menu-title">Quản lý banner</span>
         <i class="menu-arrow"></i>
@@ -84,21 +84,22 @@
     <li class="nav-item menu-items">
       <a class="nav-link" data-toggle="collapse" href="#manage-booking">
         <span class="menu-icon">
-          <i class="mdi mdi-laptop"></i>
+          <i class="fas fa-shopping-cart"></i>
         </span>
         <span class="menu-title">Quản lý đơn hàng</span>
         <i class="menu-arrow"></i>
       </a>
       <div class="collapse" id="manage-booking">
         <ul class="nav flex-column sub-menu">
-          <li class="nav-item"><a class="nav-link" href="{{ route('admin.bookings.index') }}">Danh sách đơn hàng</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.bookings.index') }}">Danh sách đơn hàng</a>
+          </li>
         </ul>
       </div>
     </li>
     <li class="nav-item menu-items">
       <a class="nav-link" data-toggle="collapse" href="#manage-genres">
         <span class="menu-icon">
-          <i class="mdi mdi-laptop"></i>
+          <i class="fas fa-folder-tree"></i>
         </span>
         <span class="menu-title">Quản lý thể loại</span>
         <i class="menu-arrow"></i>
@@ -113,7 +114,7 @@
     <li class="nav-item menu-items">
       <a class="nav-link" data-toggle="collapse" href="#manage-movies">
         <span class="menu-icon">
-          <i class="mdi mdi-laptop"></i>
+          <i class="fas fa-film"></i>
         </span>
         <span class="menu-title">Quản lý phim</span>
         <i class="menu-arrow"></i>
@@ -128,22 +129,24 @@
     <li class="nav-item menu-items">
       <a class="nav-link" data-toggle="collapse" href="#manage-notifications">
         <span class="menu-icon">
-          <i class="mdi mdi-laptop"></i>
+          <i class="fa-solid fa-bell"></i>
         </span>
         <span class="menu-title">Quản lý thông báo</span>
         <i class="menu-arrow"></i>
       </a>
       <div class="collapse" id="manage-notifications">
         <ul class="nav flex-column sub-menu">
-          <li class="nav-item"><a class="nav-link" href="{{ route('admin.notifications.create') }}">Tạo thông báo mới</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ route('admin.notifications.index') }}">Danh sách thông báo</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.notifications.create') }}">Tạo thông báo
+              mới</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.notifications.index') }}">Danh sách thông
+              báo</a></li>
         </ul>
       </div>
     </li>
     <li class="nav-item menu-items">
       <a class="nav-link" data-toggle="collapse" href="#manage-ratings">
         <span class="menu-icon">
-          <i class="mdi mdi-laptop"></i>
+          <i class="fa-classic fa-solid fa-star-sharp fa-fw"></i>
         </span>
         <span class="menu-title">Quản lý đánh giá</span>
         <i class="menu-arrow"></i>
@@ -157,7 +160,7 @@
     <li class="nav-item menu-items">
       <a class="nav-link" data-toggle="collapse" href="#manage-rooms">
         <span class="menu-icon">
-          <i class="mdi mdi-laptop"></i>
+          <i class="mdi mdi-theater"></i>
         </span>
         <span class="menu-title">Quản lý phòng chiếu</span>
         <i class="menu-arrow"></i>
@@ -165,29 +168,32 @@
       <div class="collapse" id="manage-rooms">
         <ul class="nav flex-column sub-menu">
           <li class="nav-item"><a class="nav-link" href="{{ route('admin.rooms.create') }}">Tạo phòng chiếu mới</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ route('admin.rooms.index') }}">Danh sách phòng chiếu</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.rooms.index') }}">Danh sách phòng chiếu</a>
+          </li>
         </ul>
       </div>
     </li>
     <li class="nav-item menu-items">
       <a class="nav-link" data-toggle="collapse" href="#manage-showtimes">
         <span class="menu-icon">
-          <i class="mdi mdi-laptop"></i>
+          <i class="mdi mdi-timetable"></i>
         </span>
         <span class="menu-title">Quản lý suất chiếu</span>
         <i class="menu-arrow"></i>
       </a>
       <div class="collapse" id="manage-showtimes">
         <ul class="nav flex-column sub-menu">
-          <li class="nav-item"><a class="nav-link" href="{{ route('admin.showtimes.create') }}">Tạo suất chiếu mới</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ route('admin.showtimes.index') }}">Danh sách suất chiếu</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.showtimes.create') }}">Tạo suất chiếu mới</a>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.showtimes.index') }}">Danh sách suất chiếu</a>
+          </li>
         </ul>
       </div>
     </li>
     <li class="nav-item menu-items">
       <a class="nav-link" data-toggle="collapse" href="#manage-tickets">
         <span class="menu-icon">
-          <i class="mdi mdi-laptop"></i>
+          <i class="fa-solid fa-ticket"></i>
         </span>
         <span class="menu-title">Quản lý vé</span>
         <i class="menu-arrow"></i>
@@ -198,8 +204,8 @@
         </ul>
       </div>
     </li>
-    {{-- <li class="nav-item menu-items">
-      <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+    {{-- <li class="nav-item menu-items"><a class="nav-link" data-toggle="collapse" href="#ui-basic"
+        aria-expanded="false" aria-controls="ui-basic">
         <span class="menu-icon">
           <i class="mdi mdi-laptop"></i>
         </span>

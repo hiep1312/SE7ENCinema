@@ -89,7 +89,7 @@
                                             </div>
                                             <div class="flex-grow-1">
                                                 <a class="user-name-link-dark d-block mb-1" href="{{ route('admin.users.detail', $rating->user->id) }}">
-                                                    {{ $rating->user->name, 20 }}
+                                                    {{ Str::limit($rating->user->name, 20) }}
                                                 </a>
                                                 <small class="text-muted">
                                                     <i class="fas fa-star me-1 icon-blue"></i>Người đánh giá
