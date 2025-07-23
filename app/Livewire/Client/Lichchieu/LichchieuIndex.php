@@ -97,7 +97,7 @@ class LichchieuIndex extends Component
             }
         }
     }
-
+/*
     public function bookShowtime($showtimeId)
     {
         // Kiểm tra showtime còn hợp lệ không trước khi booking
@@ -129,6 +129,7 @@ class LichchieuIndex extends Component
         // Redirect logic here
         // return redirect()->route('booking.create', ['showtime' => $showtimeId]);
     }
+*/
 
     public function render()
     {

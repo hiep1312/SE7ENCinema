@@ -1,7 +1,8 @@
 {
     "prefixRoot": ".scRender",
     "globalCssFiles": [
-        "scanner.css"
+        "scanner.css",
+        "lichchieuIndex.css"
     ],
     "scopedCssFiles": [
 
