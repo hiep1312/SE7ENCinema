@@ -4,7 +4,9 @@
                 "scanner.css",
                 "movieDetail.css",
                 "user-info.css",
-                "confirm-access.css"
+                "confirm-access.css",
+                "termsOfService.css",
+                "privacyPolicy.css"
         ],
         "scopedCssFiles": []
 }
