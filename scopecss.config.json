@@ -6,7 +6,8 @@
                 "user-info.css",
                 "confirm-access.css",
                 "termsOfService.css",
-                "privacyPolicy.css"
+                "privacyPolicy.css",
+                "promotion.css"
         ],
         "scopedCssFiles": []
 }
