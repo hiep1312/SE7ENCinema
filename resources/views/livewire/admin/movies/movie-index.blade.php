@@ -86,7 +86,6 @@
                                 <th class="text-center text-light">STT</th>
                                 <th class="text-center text-light">Ảnh poster</th>
                                 <th class="text-center text-light">Tiêu đề phim</th>
-                                <th class="text-center text-light">Thời lượng</th>
                                 <th class="text-center text-light">Ngày phát hành</th>
                                 <th class="text-center text-light">Trạng thái</th>
                                 <th class="text-center text-light">Giá vé</th>
@@ -108,7 +107,7 @@
                                     <td class="text-center fw-bold">{{ $loop->iteration }}</td>
                                     <td>
                                         <div class="d-flex justify-content-center">
-                                            <div class="movie-poster position-relative" style="width: 80px; height: 100px; margin: 0;">
+                                            <div class="movie-poster position-relative scTemp temp" style="width: 80px; height: 100px; margin: 0;">
                                                 @if($movie->poster)
                                                     <img src="{{ asset('storage/' . $movie->poster) }}"
                                                         alt="Ảnh phim {{ $movie->title }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
@@ -123,14 +122,15 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td>
-                                        <strong class="text-light text-wrap">{{ $movie->title }}</strong>
+                                    <td style="max-width: 200px;">
+                                        <strong class="text-light text-wrap lh-base">{{ $movie->title }}</strong>
                                         @if($movie->trashed())
                                             <span class="badge bg-danger ms-1">Đã xóa</span>
                                         @endif
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="text-light">{{ $movie->duration }}p</span>
+                                        <div class="movie-genre text-wrap lh-base" style="margin-bottom: 0; margin-top: 3px;">
+                                            <i class="fas fa-tags me-1"></i>
+                                            {{ $movie->genres->take(3)->implode('name', ', ') ?: 'Không có thể loại' }} • {{ $movie->duration }} phút
+                                        </div>
                                     </td>
                                     <td class="text-center">
                                         <div class="mb-1">
@@ -218,7 +218,7 @@
                                             </div>
                                         @else
                                             <!-- Khi không có suất chiếu -->
-                                            <div class="text-center py-2">
+                                            <div class="text-center py-2" style="margin: auto 0;">
                                                 <i class="fas fa-calendar-times fa-2x text-muted mb-2"></i>
                                                 <div class="text-muted">
                                                     <strong>Không có suất chiếu</strong>
@@ -290,7 +290,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="10" class="text-center py-4">
+                                    <td colspan="9" class="text-center py-4">
                                         <div class="text-muted">
                                             <i class="fas fa-inbox fa-3x mb-3"></i>
                                             <p>
@@ -327,8 +327,7 @@
                             </div>
                             <div class="video-wrapper">
                                 <div class="responsive-iframe">
-                                    <iframe src=""
-                                        title="YouTube video player" frameborder="0"
+                                    <iframe title="YouTube video player" frameborder="0"
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                         allowfullscreen></iframe>
                                 </div>

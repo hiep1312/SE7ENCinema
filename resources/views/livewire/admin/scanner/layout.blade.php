@@ -8,9 +8,9 @@
     <link rel="icon" type="image/x-icon" href="{{ asset('storage/favicon.ico') }}">
     @vite(['resources/css/app.css', 'resources/css/scanner.css'])
 </head>
-<body class="scRender">
+<body class="scRender scScanner">
     {{ $slot }}
 
-    @vite('resources/js/app.js')
+    @vite(['resources/js/app.js', 'resources/js/scannerQR.js'])
 </body>
 </html>

@@ -33,6 +33,7 @@ use App\Livewire\Admin\Users\UserDetail;
 use App\Livewire\Admin\Users\UserEdit;
 use App\Livewire\Admin\Users\UserIndex;
 use App\Livewire\Admin\Ratings\RatingIndex;
+use App\Livewire\Admin\Scanner\Index as ScannerIndex;
 use App\Livewire\Admin\Showtimes\ShowtimeCreate;
 use App\Livewire\Admin\Showtimes\ShowtimeEdit;
 use App\Livewire\Admin\Showtimes\ShowtimeIndex;
@@ -41,7 +42,7 @@ use App\Livewire\Client\Ticket\Index as TicketIndexClient;
 use App\Livewire\Client\User\UserConfirm;
 use App\Livewire\Client\User\UserInformation;
 
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->group(function () {
     /* Banners */
     Route::prefix('/banners')->name('banners.')->group(function () {
         Route::get('/', BannerIndex::class)->name('index');
@@ -125,6 +126,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/create', NotificationCreate::class)->name('create');
         Route::get('/detail/{notification}', NotificationDetail::class)->name('detail');
     });
+
+    /* Scanner */
+    Route::get('/scanner/{type}', ScannerIndex::class)
+        ->whereIn('type', ['bookings', 'tickets'])
+        ->name('scanner');
 
     /* Template */
     Route::view('/dashboard', 'livewire.admin.template.dashboard')->name('dashboard');

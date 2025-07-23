@@ -1,6 +1,9 @@
-<div>
+@assets
+@vite('resources/css/user-info.css')
+@endassets
+<div class="scUser-info">
     <div class="info">
-        <style>
+        {{-- <style>
             #preloader {
                 display: none;
             }
@@ -1095,7 +1098,7 @@
                     }
                 }
             }
-        </style>
+        </style> --}}
 
         <!-- Main Content -->
         @use('chillerlan\QRCode\QRCode')
@@ -1352,10 +1355,10 @@
                                             @endswitch
                                         </div>
                                         <div class="booking-actions">
-                                            <button class="action-btn btn-rate">
+                                            <button class="action-btn-history btn-rate">
                                                 <i class="fa-light fa-star"></i> Đánh giá
                                             </button>
-                                            <button class="action-btn btn-detail"
+                                            <button class="action-btn-history btn-detail"
                                                 wire:click="detailBooking({{$booking->id}})">
                                                 <i class="fa-light fa-eye"></i> Chi tiết
                                             </button>
@@ -1489,50 +1492,42 @@
                                     💳 Thông Tin Thanh Toán
                                 </h3>
                                 <div class="detail-grid">
+                                    <div style="font-weight: 600;color: #333; font-size: 16px;">Thức ăn kèm:</div>
+                                    <div style="text-align: right">
+                                        @if ($bookingInfo->foodOrderItems->isNotEmpty())
+                                        {{ number_format($bookingInfo->foodOrderItems->sum(fn($foodOrderItem) => $foodOrderItem->price * $foodOrderItem->quantity), 0, '.', '.') }}    
+                                        @else
+                                        Không có
+                                        @endif
+                                    </div>
+                                     @if ($bookingInfo->foodOrderItems->isNotEmpty())
+                                    @forelse ($bookingInfo->foodOrderItems as $foodOrder)
                                     <div class="detail-item" style="grid-column:span 2;">
-                                        <span class="detail-label">Thức ăn kèm:
-                                            <div style="text-wrap: balance;">
-                                                @if ($bookingInfo->foodOrderItems->isNotEmpty())
-                                                @forelse ($bookingInfo->foodOrderItems as $foodOrder)
-                                                <div class="food-item">
-                                                    <div class="food-info">
-                                                        <div class="food-name-row">
-                                                            <span
-                                                                class="food-name">{{$foodOrder->variant->foodItem->name}}</span>
-                                                            <span
-                                                                class="quantity-badge">({{$foodOrder->quantity}}x)</span>
-                                                        </div>
-                                                        <div class="variants">
-                                                            @foreach($foodOrder->variant->attributeValues as $attributeValue)
-                                                                {{ $attributeValue->attribute->name }} :{{ $attributeValue->value }}@if(!$loop->last),@endif
-                                                            @endforeach
-
-                                                        </div>
-                                                        <div class="price-detail">{{ number_format($foodOrder->price, 0,
-                                                            ',', '.') }} × {{$foodOrder->quantity}}
-                                                        </div>
-                                                    </div>
-                                                    <span class="detail-value">
-                                                        <div class="food-total">
-                                                            {{
-                                                            number_format(
-                                                            $foodOrder->quantity*$foodOrder->price,0, '.', '.')
-                                                            }}
-                                                        </div>
-                                                    </span>
-                                                </div>
-                                                @empty
-                                                @endforelse
-                                                @endif
+                                        <span class="detail-label">
+                                            {{$foodOrder->variant->foodItem->name}} ({{$foodOrder->quantity}}x)
+                                            <div class="variants">
+                                                @foreach($foodOrder->variant->attributeValues as $attributeValue)
+                                                {{ $attributeValue->attribute->name }}: {{ $attributeValue->value
+                                                }}@if(!$loop->last),@endif
+                                                @endforeach
+                                            </div>
+                                            <div class="price-detail">{{ number_format($foodOrder->price, 0,
+                                                ',', '.') }} × {{$foodOrder->quantity}}
                                             </div>
                                         </span>
                                         <span class="detail-value">
                                             @if (!$bookingInfo->foodOrderItems->isNotEmpty())
                                             Không
                                             @endif
+                                            {{
+                                            number_format(
+                                            $foodOrder->quantity*$foodOrder->price,0, '.', '.')
+                                            }}
                                         </span>
-
                                     </div>
+                                    @empty
+                                    @endforelse
+                                    @endif
                                     <div class="detail-item">
                                         <span class="detail-label">Giá vé
                                             ({{number_format($bookingInfo->seats->count(),0, '.', '.') }}x):</span>

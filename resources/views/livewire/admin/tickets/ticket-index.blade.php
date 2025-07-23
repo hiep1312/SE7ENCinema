@@ -103,7 +103,7 @@
                                     <td>
                                         <strong class="text-light">{{ $booking->booking_code }}</strong>
                                     </td>
-                                    <td class="bg-opacity-10 border-start border-3" style="width: 200px;">
+                                    <td class="bg-opacity-10 border-start border-3 align-top" style="width: 200px;">
                                         <div>
                                             <div class="mb-1">
                                                 <i class="fa-solid fa-person-booth text-primary me-1"></i>
