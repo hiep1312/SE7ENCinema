@@ -211,7 +211,7 @@
                                         <div class="flex-grow-1">
                                             <div class="movie-title">
                                                 <a href="{{ route('admin.movies.detail', $showtimeBooking->movie->id) }}" class="link-active" style="font-size: inherit">
-                                                    {{ $showtimeBooking->movie->title }}
+                                                    {{ Str::limit($showtimeBooking->movie->title, 45, '...') }}
                                                 </a>
                                             </div>
                                             <div class="movie-genre">
@@ -276,9 +276,9 @@
                                                 <i class="fas fa-user icon-white" style="font-size: 60px;"></i>
                                             @endif
                                         </div>
-                                        <h5 class="card-title">
+                                        <h5 class="card-title text-center">
                                             <a class="user-name-link-dark" href="{{ route('admin.users.detail', $booking->user_id) }}" style="font-size: inherit;">
-                                                {{ $userBooking->name ?? 'Không tìm thấy người dùng' }}
+                                                {{ Str::limit($userBooking->name, 23, '...') ?? 'Không tìm thấy người dùng' }}
                                             </a>
                                         </h5>
                                     </div>

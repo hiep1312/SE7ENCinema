@@ -83,97 +83,99 @@
                         </thead>
                         <tbody>
                             @forelse($banners as $banner)
-                            <tr wire:key="{{ $banner->id }}">
-                                <td class="text-center fw-bold text-light">{{ $loop->iteration }}</td>
-                                <td class="text-center">
-                                    <div class="mt-1 overflow-auto d-block text-center"
-                                        style="max-height: 70px; width: 100px;" data-bs-toggle="modal"
-                                        data-bs-target="#bannerPreview" data-banner-id="{{ $banner->id }}">
-                                        <img src="{{ asset('storage/' . ($banner->image ?? '404.webp')) }}"
-                                            class="img-thumbnail" loading="lazy" alt="Ảnh banner{{ $banner->title }}"
-                                            style="width: 100px; height: 70px; object-fit: cover; border-radius: 0; cursor: pointer;">
-                                    </div>
-                                </td>
-                                <td>
-                                    <strong class="text-light">{{ $banner->title }}</strong>
-                                </td>
-                                <td class="text-center">
-                                    <div class="mb-1">
-                                        <small style="color: #34c759;">
-                                            <i class="fas fa-play me-1"></i>
-                                            {{ $banner->start_date->format('d/m/Y H:i') }}
-                                        </small>
-                                    </div>
-                                    <div>
-                                        <small style="color: #ff4d4f;">
-                                            <i class="fas fa-stop me-1"></i>
-                                            {{ $banner->end_date?->format('d/m/Y H:i') ?? 'Vĩnh viễn' }}
-                                        </small>
-                                    </div>
-                                    @switch($displayStatuses[$loop->index]['displayStatus'])
-                                    @case('expired')
-                                    <div class="mt-1">
-                                        <span class="badge" style="background-color: #ffd700; color: #212529;">
-                                            <i class="fas fa-clock me-1"></i>Đã hết hạn
+                                <tr wire:key="{{ $banner->id }}">
+                                    <td class="text-center fw-bold text-light">{{ $loop->iteration }}</td>
+                                    <td>
+                                        <div class="d-flex justify-content-center">
+                                            <div class="banner-image" style="width: 130px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#bannerPreview" data-banner-id="{{ $banner->id }}">
+                                                @if($banner->image)
+                                                    <img src="{{ asset('storage/' . $banner->image) }}"
+                                                        alt="Ảnh banner {{ $banner->title }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
+                                                @else
+                                                    <i class="fa-solid fa-image-landscape"></i>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <strong class="text-light text-wrap lh-base">{{ $banner->title }}</strong>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="mb-1">
+                                            <small style="color: #34c759;">
+                                                <i class="fas fa-play me-1"></i>
+                                                {{ $banner->start_date->format('d/m/Y H:i') }}
+                                            </small>
+                                        </div>
+                                        <div>
+                                            <small style="color: #ff4d4f;">
+                                                <i class="fas fa-stop me-1"></i>
+                                                {{ $banner->end_date?->format('d/m/Y H:i') ?? 'Vĩnh viễn' }}
+                                            </small>
+                                        </div>
+                                        @switch($displayStatuses[$loop->index]['displayStatus'])
+                                            @case('upcoming')
+                                                <div class="mt-1">
+                                                    <span class="badge" style="background-color: #40c4ff; color: #ffffff;">
+                                                        <i class="fas fa-clock me-1"></i>Chưa bắt đầu
+                                                    </span>
+                                                </div>
+                                            @break
+                                            @case('active')
+                                                <div class="mt-1">
+                                                    <span class="badge" style="background-color: #28a745; color: #ffffff;">
+                                                        <i class="fas fa-play me-1"></i>Đang hiển thị
+                                                    </span>
+                                                </div>
+                                            @break
+                                            @case('expired')
+                                                <div class="mt-1">
+                                                    <span class="badge" style="background-color: #ffd700; color: #212529;">
+                                                        <i class="fa-solid fa-calendar-xmark me-1"></i>Đã hết hạn
+                                                    </span>
+                                                </div>
+                                            @break
+                                        @endswitch
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-secondary fs-6">
+                                            {{ $banner->priority }}
                                         </span>
-                                    </div>
-                                    @break
-                                    @case('upcoming')
-                                    <div class="mt-1">
-                                        <span class="badge" style="background-color: #40c4ff; color: #ffffff;">
-                                            <i class="fas fa-clock me-1"></i>Chưa bắt đầu
+                                    </td>
+                                    <td class="text-center">
+                                        @if($banner->status === 'active')
+                                            <span class="badge bg-success">Hoạt động</span>
+                                        @else
+                                            <span class="badge bg-danger">Ngừng hoạt động</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        @if($banner->link)
+                                            <a href="{{ $banner->link }}"
+                                               target="_blank"
+                                               class="btn btn-sm btn-outline-primary"
+                                               title="Mở đường dẫn liên kết">
+                                                <i class="fas fa-external-link-alt" style="margin-right: 0;"></i>
+                                            </a>
+                                        @else
+                                            <span class="text-muted">Không có</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-light">
+                                            {{ $banner->created_at->format('d/m/Y H:i') }}
                                         </span>
-                                    </div>
-                                    @break
-                                    @case('active')
-                                    <div class="mt-1">
-                                        <span class="badge" style="background-color: #28a745; color: #ffffff;">
-                                            <i class="fas fa-play me-1"></i>Đang hiển thị
-                                        </span>
-                                    </div>
-                                    @break
-                                    @endswitch
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge bg-secondary fs-6">
-                                        {{ $banner->priority }}
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    @if($banner->status === 'active')
-                                    <span class="badge bg-success">Hoạt động</span>
-                                    @else
-                                    <span class="badge bg-danger">Ngừng hoạt động</span>
-                                    @endif
-                                </td>
-                                <td class="text-center">
-                                    @if($banner->link)
-                                    <a href="{{ $banner->link }}" target="_blank" class="btn btn-sm btn-outline-primary"
-                                        title="Mở đường dẫn liên kết">
-                                        <i class="fas fa-external-link-alt"></i>
-                                    </a>
-                                    @else
-                                    <span class="text-muted">Không có liên kết</span>
-                                    @endif
-                                </td>
-                                <td class="text-center">
-                                    <span class="text-light">
-                                        {{ $banner->created_at->format('d/m/Y H:i') }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="d-flex gap-2 justify-content-center">
-                                        <!-- Toggle Status -->
-                                        @php $checkActive = ($banner->status === 'active' &&
-                                        $displayStatuses[$loop->index]['displayStatus'] !== 'expired') @endphp
-                                        <button type="button" wire:click="toggleStatus({{ $banner->id }})"
-                                            class="btn btn-sm {{ $checkActive ? 'btn-info' : 'btn-success' }}"
-                                            title="{{ $checkActive ? 'Tắt' : 'Bật' }}"
-                                            @if($displayStatuses[$loop->index]['displayStatus'] === 'expired' ||
-                                            $banner->status === 'inactive') disabled @endif>
-                                            <i class="fas {{ $checkActive ? 'fa-pause' : 'fa-play' }}"
-                                                style="margin-right: 0"></i>
-                                        </button>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-2 justify-content-center">
+                                            <!-- Toggle Status -->
+                                            <button type="button"
+                                                    wire:click="toggleStatus({{ $banner->id }})"
+                                                    class="btn btn-sm {{ $banner->status === 'active' ? 'btn-info' : 'btn-success' }}"
+                                                    title="{{ $banner->status === 'active' ? 'Tắt' : 'Bật' }}"
+                                                    @if($displayStatuses[$loop->index]['displayStatus'] === 'expired') disabled @endif>
+                                                <i class="fas {{ $banner->status === 'active' ? 'fa-pause' : 'fa-play' }}" style="margin-right: 0"></i>
+                                            </button>
 
                                         <a href="{{ route('admin.banners.edit', $banner->id) }}"
                                             class="btn btn-sm btn-warning" title="Chỉnh sửa">
