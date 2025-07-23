@@ -7,4 +7,4 @@ Artisan::command('app:refresh', function () {
     Schema::withoutForeignKeyConstraints(function () {
         Schema::dropAllTables();
     });
-})->purpose('Display an inspiring quote');
+})->purpose('Drop all database tables while ignoring foreign key constraints');
