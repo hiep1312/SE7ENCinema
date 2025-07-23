@@ -60,7 +60,7 @@ class ShowtimeCreate extends Component
         return redirect()->route('admin.showtimes.index')->with('success', 'Tạo suất chiếu thành công!');
     }
 
-    #[Title('Tạo phòng chiếu - SE7ENCinema')]
+    #[Title('Tạo suất chiếu - SE7ENCinema')]
     #[Layout('components.layouts.admin')]
     public function render()
     {

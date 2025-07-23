@@ -27,7 +27,7 @@ class BannerEdit extends Component
         'title' => 'required|string|max:255',
         'image' => 'nullable|image|max:20480',
         'link' => 'nullable|url',
-        'end_date' => 'nullable|date|after:start_date',
+        'end_date' => 'nullable|date_format:Y-m-d\TH:i|after:start_date',
         'status' => 'required|in:active,inactive',
         'priority' => 'required|integer|min:0|max:100|unique:banners,priority',
     ];
@@ -38,7 +38,7 @@ class BannerEdit extends Component
         'image.image' => 'Ảnh banner phải là một tệp hình ảnh hợp lệ.',
         'image.max' => 'Kích thước ảnh không được vượt quá 20MB',
         'link.url' => 'Đường dẫn liên kết phải là một URL hợp lệ',
-        'end_date.date' => 'Ngày giờ kết thúc phải đúng định dạng.',
+        'end_date.date_format:Y-m-d\TH:i' => 'Ngày giờ kết thúc phải đúng định dạng.',
         'end_date.after_or_equal' => 'Ngày giờ kết thúc không được nhỏ hơn ngày và giờ hiện tại.',
         'end_date.after' => 'Ngày giờ kết thúc phải sau ngày giờ bắt đầu.',
         'status.required' => 'Trạng thái là bắt buộc.',
@@ -53,9 +53,7 @@ class BannerEdit extends Component
     public function mount(Banner $banner)
     {
         $this->banner = $banner;
-        $this->fill($banner->only('title', 'link', 'status', 'priority'));
-        $this->start_date = $banner->start_date->format('Y-m-d\TH:i');
-        $this->end_date = $banner->end_date?->format('Y-m-d\TH:i');
+        $this->fill($banner->only('title', 'link', 'status', 'priority') + ['start_date' => $banner->start_date->format('Y-m-d\TH:i'), 'end_date' => $banner->end_date?->format('Y-m-d\TH:i')]);
     }
 
     public function updateBanner()
