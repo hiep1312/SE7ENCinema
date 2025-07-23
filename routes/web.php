@@ -7,6 +7,8 @@ use App\Livewire\Admin\Foods\FoodIndex;
 use App\Livewire\Admin\Banners\BannerCreate;
 use App\Livewire\Admin\Banners\BannerEdit;
 use App\Livewire\Admin\Banners\BannerIndex;
+use App\Livewire\Admin\Bookings\BookingDetail;
+use App\Livewire\Admin\Bookings\BookingIndex;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\Rooms\RoomCreate;
 use App\Livewire\Admin\Rooms\RoomDetail;
@@ -16,20 +18,30 @@ use App\Livewire\Admin\FoodVariants\FoodVariantIndex;
 use App\Livewire\Admin\FoodVariants\FoodVariantDetail;
 use App\Livewire\Admin\FoodVariants\FoodVariantCreate;
 use App\Livewire\Admin\FoodVariants\FoodVariantEdit;
+use App\Livewire\Admin\Genres\GenreCreate;
+use App\Livewire\Admin\Genres\GenreEdit;
+use App\Livewire\Admin\Genres\GenreIndex;
 use App\Livewire\Admin\Movies\MovieCreate;
 use App\Livewire\Admin\Movies\MovieDetail;
 use App\Livewire\Admin\Movies\MovieEdit;
 use App\Livewire\Admin\Movies\MovieIndex;
+use App\Livewire\Admin\Notifications\NotificationCreate;
+use App\Livewire\Admin\Notifications\NotificationDetail;
+use App\Livewire\Admin\Notifications\NotificationIndex;
 use App\Livewire\Admin\Users\UserCreate;
 use App\Livewire\Admin\Users\UserDetail;
 use App\Livewire\Admin\Users\UserEdit;
 use App\Livewire\Admin\Users\UserIndex;
 use App\Livewire\Admin\Ratings\RatingIndex;
+use App\Livewire\Admin\Scanner\Index as ScannerIndex;
 use App\Livewire\Admin\Showtimes\ShowtimeCreate;
 use App\Livewire\Admin\Showtimes\ShowtimeEdit;
 use App\Livewire\Admin\Showtimes\ShowtimeIndex;
 use App\Livewire\Client\Promotions\PromotionIndex;
-Route::prefix('admin')->name('admin.')->group(function () {
+use App\Livewire\Admin\Tickets\TicketIndex;
+use App\Livewire\Client\Ticket\Index as TicketIndexClient;
+
+Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->group(function () {
     /* Banners */
     Route::prefix('/banners')->name('banners.')->group(function () {
         Route::get('/', BannerIndex::class)->name('index');
@@ -89,6 +101,36 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/edit/{showtime}', ShowtimeEdit::class)->name('edit');
     });
 
+    /* Bookings */
+    Route::prefix('/bookings')->name('bookings.')->group(function () {
+        Route::get('/', BookingIndex::class)->name('index');
+        Route::get('/detail/{booking}', BookingDetail::class)->name('detail');
+    });
+
+    /* Genres */
+    Route::prefix('/genres')->name('genres.')->group(function () {
+        Route::get('/', GenreIndex::class)->name('index');
+        Route::get('/create', GenreCreate::class)->name('create');
+        Route::get('/edit/{genre}', GenreEdit::class)->name('edit');
+    });
+
+    /* Tickets */
+    Route::prefix('/tickets')->name('tickets.')->group(function () {
+        Route::get('/', TicketIndex::class)->name('index');
+    });
+
+    /* Notifications */
+    Route::prefix('/notifications')->name('notifications.')->group(function () {
+        Route::get('/', NotificationIndex::class)->name('index');
+        Route::get('/create', NotificationCreate::class)->name('create');
+        Route::get('/detail/{notification}', NotificationDetail::class)->name('detail');
+    });
+
+    /* Scanner */
+    Route::get('/scanner/{type}', ScannerIndex::class)
+        ->whereIn('type', ['bookings', 'tickets'])
+        ->name('scanner');
+
     /* Template */
     Route::view('/dashboard', 'livewire.admin.template.dashboard')->name('dashboard');
     Route::view('/buttons', 'livewire.admin.template.ui-features.buttons')->name('buttons');
@@ -106,6 +148,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
 });
 
 Route::name('client.')->group(function () {
+    Route::get('/ticket/{bookingCode}/{index?}', TicketIndexClient::class)->name('ticket')
+        ->whereAlphaNumeric('bookingCode')->whereNumber('index')
+        ->middleware('auth', 'role:user,staff,admin');
+
     Route::view('/home', 'livewire.client.template.index')->name('index');
     Route::view('/blog_category', 'livewire.client.template.blogs.blog_category')->name('blog_category');
     Route::view('/blog_single', 'livewire.client.template.blogs.blog_single')->name('blog_single');

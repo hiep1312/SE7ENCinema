@@ -1,5 +1,5 @@
 <div class="scRender">
-<div class="container-fluid d-flex justify-content-center align-items-start">
+<div class="container-fluid d-flex justify-content-center align-items-start scPromotion">
     <div class="container">
         <!-- Tips/Intro Section -->
         <div class="promotion-tips-box mt-4 mb-4">

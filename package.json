@@ -18,6 +18,7 @@
     },
     "dependencies": {
         "bootstrap": "^5.3.6",
+        "qr-scanner": "^1.4.2",
         "sortablejs": "^1.15.6",
         "sweetalert2": "^11.21.2"
     }

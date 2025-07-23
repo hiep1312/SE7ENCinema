@@ -165,6 +165,19 @@ class MovieCreate extends Component
         session()->flash('successGeneratedShowtimes', "Đã tạo thành công {$showtimeCount} suất chiếu!");
     }
 
+    public function addGenre(){
+        $this->validate([
+            'searchGenre' => 'required|string|max:255',
+        ], [
+            'searchGenre.required' => 'Tên thể loại là bắt buộc.',
+            'searchGenre.string' => 'Tên thể loại phải là một chuỗi ký tự.',
+            'searchGenre.max' => 'Tên thể loại không được vượt quá 255 ký tự.',
+        ]);
+
+        $genreAdded = Genre::create(['name' => $this->searchGenre]);
+        $this->genresSelected[] = $genreAdded->id;
+    }
+
     public function createMovie()
     {
         $this->validate();

@@ -1,0 +1,10 @@
+{
+    "prefixRoot": ".scRender",
+    "globalCssFiles": [
+        "scanner.css",
+        "promotion.css"
+    ],
+    "scopedCssFiles": [
+
+    ]
+}
