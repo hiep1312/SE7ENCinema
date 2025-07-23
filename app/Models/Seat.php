@@ -23,9 +23,4 @@ class Seat extends Model
     {
         return $this->belongsTo(Room::class);
     }
-
-    public function getSeatCodeAttribute()
-    {
-        return $this->seat_row . $this->seat_number;
-    }
 }

@@ -21,7 +21,7 @@ class Booking extends Model
     protected $casts = [
         'start_transaction' => 'datetime',
         'end_transaction' => 'datetime',
-        'price' => 'integer',
+        'total_price' => 'integer',
     ];
 
     public function user()
@@ -51,7 +51,6 @@ class Booking extends Model
     {
         return $this->hasOne(\App\Models\FoodOrderItem::class);
     }
-
     public function promotionUsages()
     {
         return $this->hasMany(PromotionUsage::class);
