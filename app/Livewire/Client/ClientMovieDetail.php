@@ -521,7 +521,7 @@ class ClientMovieDetail extends Component
             }
         }
 
-        return view('livewire.client.template.movies.movie-detail', [
+        return view('livewire.client.template.movies.movie_detail', [
             'showtimesByDay' => $showtimesByDay,
             'comments' => $comments,
             'visibleComments' => $visibleComments,
