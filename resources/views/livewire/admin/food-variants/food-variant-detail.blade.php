@@ -1,4 +1,4 @@
-<div>
+<div class="scRender">
     <div class="container-lg mb-4" wire:poll="realTimeVariantUpdate">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center my-3">
