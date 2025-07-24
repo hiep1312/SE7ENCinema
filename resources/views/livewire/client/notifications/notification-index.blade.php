@@ -1,151 +1,321 @@
-<div class="scRender">
+@php
+$isAllNotifications = request()->routeIs('client.notifications.allnotification');
+@endphp
+
+<div class="scRender scNotificationIndex full-notifications" wire:poll.30s="refreshNotifications"
+     x-data="{
+        openNotification(link, event, notificationId) {
+            if (!link || link === '#' || link === '' || link === null || link === undefined) {
+                event.preventDefault();
+                event.stopPropagation();
+                alert('Đường dẫn không hợp lệ hoặc đã bị xóa!');
+                return false;
+            }
+            try {
+                if (!link.startsWith('http') && !link.startsWith('/')) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    alert('Đường dẫn không hợp lệ hoặc đã bị xóa!');
+                    return false;
+                }
+            } catch (e) {
+                event.preventDefault();
+                event.stopPropagation();
+                alert('Đường dẫn không hợp lệ hoặc đã bị xóa!');
+                return false;
+            }
+            if (notificationId) {
+                $wire.markAsRead(notificationId);
+            }
+            window.open(link, '_blank');
+        }
+     }">
+
+  @if(!$isAllNotifications)
     <!-- Notification Bell Button -->
-    <button class="notification-bell" type="button" data-bs-toggle="offcanvas" data-bs-target="#notificationOffcanvas" aria-controls="notificationOffcanvas">
-        <i class="fa-regular fa-bells"></i>
-        @if($unreadCount > 0)
-            <span class="notification-count">{{ $unreadCount > 99 ? '99+' : $unreadCount }}</span>
-        @endif
+    <button class="notification-bell" type="button" wire:click="toggleOffcanvas">
+      <i class="fa-solid fa-bell"></i>
+      @if($unreadCount > 0)
+        <span class="notification-count">{{ $unreadCount > 99 ? '99+' : $unreadCount }}</span>
+      @endif
     </button>
 
     <!-- Offcanvas Notification Panel -->
-    <div class="offcanvas offcanvas-end notification-offcanvas" tabindex="-1" id="notificationOffcanvas" aria-labelledby="notificationOffcanvasLabel">
-        <!-- Offcanvas Header -->
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="notificationOffcanvasLabel">Thông báo</h5>
-            <div class="notification-header-actions">
-                <button type="button" wire:click="markAllAsRead" title="Đánh dấu tất cả đã đọc">
-                    <i class="fa-duotone fa-solid fa-ballot-check"></i>
-                </button>
-                <button type="button"
-                class="btn-close button2
-                " data-bs-dismiss="offcanvas" aria-label="Close">
-                    <i class="fa-solid fa-xmark-large"></i>
-                </button>
-            </div>
+    @if($isOpen)
+    <div class="notification-offcanvas full-notifications__container"
+         x-show="true"
+         x-cloak
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 translate-x-10"
+         x-transition:enter-end="opacity-100 translate-x-0"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 translate-x-0"
+         x-transition:leave-end="opacity-0 translate-x-10"
+         style="overflow-y: hidden; max-height: 100vh; display: flex; flex-direction: column; position: fixed; top: 0; right: 0; z-index: 1050; width: 100%; max-width: 360px; min-width: 320px; background: #fff;"
+         @keydown.window.escape="$wire.closeOffcanvas()"
+         @click.away="$wire.closeOffcanvas()">
+
+      <!-- Header -->
+      <div class="offcanvas-header full-notifications__header" style="display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <h5 class="offcanvas-title full-notifications__title" style="margin: 0;">Thông báo</h5>
+        </div>
+        @if($tab === 'all')
+        <a href="{{ route('client.notifications.allnotification') }}" class="text-primary fw-bold allntic1" style="text-decoration: none; font-size: 15px; margin-left: 12px;">Xem tất cả</a>
+        @endif
+        <div class="notification-header-actions full-notifications__actions" style="margin-left: 8px;">
+          <button type="button" wire:click="markAllAsRead" title="Đánh dấu tất cả đã đọc" class="full-notifications__menu-btn">
+            <i class="fa-solid fa-check-double"></i>
+          </button>
+          <button type="button" class="btn-close full-notifications__menu-btn" wire:click="closeOffcanvas" aria-label="Close">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="offcanvas-body p-0 d-flex flex-column full-notifications__content" style="flex: 1 1 auto; min-height: 0;">
+        <div style="display: flex; flex-direction: column; height: 100%; min-height: 0;">
+
+         <!-- Notification Tabs -->
+         <div class="notification-tabs full-notifications__nav">
+            <ul class="nav nav-pills nav-fill full-notifications__tabs" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link full-notifications__tab {{ $tab === 'all' ? 'active full-notifications__tab--active' : '' }}"
+                            wire:click="switchTab('all')">
+                        Tất cả
+                        @if($unreadCount > 0)
+                            <span class="badge bg-danger full-notifications__badge">{{ $unreadCount }}</span>
+                        @endif
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link full-notifications__tab {{ $tab === 'unread' ? 'active full-notifications__tab--active' : '' }}"
+                            wire:click="switchTab('unread')">
+                        Chưa đọc
+                        @if($unreadCount > 0)
+                            <span class="badge bg-danger full-notifications__badge">{{ $unreadCount }}</span>
+                        @endif
+                    </button>
+                </li>
+            </ul>
         </div>
 
-        <!-- Offcanvas Body -->
-        <div class="offcanvas-body p-0">
-            <div x-data="{ tab: '{{ $activeTab }}' }">
-                <!-- Notification Tabs -->
-                <div class="notification-tabs">
-                    <ul class="nav nav-pills nav-fill" role="tablist">
-                        <li class="nav-item">
-                            <button class="nav-link" :class="{ 'active': tab === 'all' }" @click="tab = 'all'">
-                                Tất cả
-                                @if($unreadCount > 0)
-                                    <span class="badge bg-danger">{{ $unreadCount }}</span>
-                                @endif
-                            </button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link" :class="{ 'active': tab === 'unread' }" @click="tab = 'unread'">
-                                Chưa đọc
-                                @if($unreadCount > 0)
-                                    <span class="badge bg-danger">{{ $unreadCount }}</span>
-                                @endif
-                            </button>
-                        </li>
-                    </ul>
+        <!-- Content -->
+        <div class="notification-content flex-grow-1" style="height: 100%; overflow-y: auto; min-height: 0;">
+          {{-- All Notifications --}}
+          @if($tab === 'all')
+          <div class="full-notifications__tab-content">
+            {{-- Section Mới --}}
+            @if($this->newNotifications->count() > 0)
+            <div class="full-notifications__section">
+                <div class="full-notifications__section-header new-section">
+                    <h2 class="full-notifications__section-title">Mới</h2>
                 </div>
-
-                <!-- Notification Content -->
-                <div class="notification-content">
-                    <div class="notification-list">
-                        <div x-show="tab === 'all'">
-                            @foreach($notifications as $notification)
-                                <div class="notification-item {{ (isset($notification->pivot) && !$notification->pivot->is_read) ? 'unread' : 'read' }}"
-                                     wire:click="markAsRead({{ isset($notification->pivot) ? $notification->pivot->id : 0 }})">
-                                    <div class="notification-avatar">
-                                        @if($notification->thumbnail)
-                                            <img src="{{ asset('storage/' . $notification->thumbnail) }}"
-                                                 alt="Avatar"
-                                                 class="rounded-circle">
-                                        @else
-                                            <div class="system-avatar bg-info text-white rounded-circle">
-                                                <i class="mdi mdi-bell-outline"></i>
-                                            </div>
-                                        @endif
-                                        @if(isset($notification->pivot) && !$notification->pivot->is_read)
-                                            <div class="notification-badge"></div>
-                                        @endif
+                <div class="full-notifications__list">
+                    @foreach($this->newNotifications as $notification)
+                        @php
+                            $isRead = $notification->pivot->is_read ?? true;
+                            $pivotId = $notification->pivot->id ?? 0;
+                        @endphp
+                        <a href="#" tabindex="0" class="notification__item {{ !$isRead ? 'notification__item--unread' : 'notification__item--read' }}"
+                           @click="openNotification('{{ $notification->link ?? '' }}', $event, {{ $pivotId }})">
+                            <span class="notification__avatar">
+                                @if($notification->thumbnail)
+                                    <img src="{{ asset('storage/' . $notification->thumbnail) }}" alt="Avatar" class="full-notifications__avatar-img">
+                                @else
+                                    <div class="full-notifications__avatar-placeholder">
+                                        <i class="fa-solid fa-bell"></i>
                                     </div>
-
-                                    <div class="notification-body">
-                                        <div class="notification-content-text">
-                                            <strong>{{ $notification->title }}</strong>
-                                            <div>{{ $notification->content }}</div>
-                                        </div>
-                                        <div class="notification-time">
-                                            <i class="mdi mdi-clock-outline"></i>
-                                            {{ isset($notification->pivot) ? $notification->pivot->updated_at->diffForHumans() : '' }}
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                        <div x-show="tab === 'unread'">
-                            @foreach($unreadNotifications as $notification)
-                                <div class="notification-item {{ (isset($notification->pivot) && !$notification->pivot->is_read) ? 'unread' : 'read' }}"
-                                     wire:click="markAsRead({{ isset($notification->pivot) ? $notification->pivot->id : 0 }})">
-                                    <div class="notification-avatar">
-                                        @if($notification->thumbnail)
-                                            <img src="{{ asset('storage/' . $notification->thumbnail) }}"
-                                                 alt="Avatar"
-                                                 class="rounded-circle">
-                                        @else
-                                            <div class="system-avatar bg-info text-white rounded-circle">
-                                                <i class="mdi mdi-bell-outline"></i>
-                                            </div>
-                                        @endif
-                                        @if(isset($notification->pivot) && !$notification->pivot->is_read)
-                                            <div class="notification-badge"></div>
-                                        @endif
-                                    </div>
-
-                                    <div class="notification-body">
-                                        <div class="notification-content-text">
-                                            <strong>{{ $notification->title }}</strong>
-                                            <div>{{ $notification->content }}</div>
-                                        </div>
-                                        <div class="notification-time">
-                                            <i class="mdi mdi-clock-outline"></i>
-                                            {{ isset($notification->pivot) ? $notification->pivot->updated_at->diffForHumans() : '' }}
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Notification Footer -->
-                <div class="notification-footer">
-                    <a href="{{ route('client.notifications.allnotification') }}" class="btn btn-link text-center w-100">
-                        Xem tất cả thông báo
-                    </a>
+                                @endif
+                                @if(!$isRead)
+                                    <div class="full-notifications__unread-indicator"></div>
+                                @endif
+                            </span>
+                            <span class="notification__body">
+                                <span class="notification__content">
+                                    <strong>{{ $notification->title }}</strong> {{ $notification->content }}
+                                </span>
+                                <span class="notification__time">{{ $notification->timeText }}</span>
+                            </span>
+                        </a>
+                    @endforeach
                 </div>
             </div>
+            @endif
+            {{-- Section Trước đó --}}
+            @if($this->oldNotifications->count() > 0)
+            <div class="full-notifications__section">
+                <div class="full-notifications__section-header old-section">
+                    <h2 class="full-notifications__section-title">Trước đó</h2>
+                </div>
+                <div class="full-notifications__list">
+                    @foreach($this->oldNotifications as $notification)
+                        @php
+                            $isRead = $notification->pivot->is_read ?? true;
+                            $pivotId = $notification->pivot->id ?? 0;
+                        @endphp
+                        <a href="#" tabindex="0" class="notification__item {{ !$isRead ? 'notification__item--unread' : 'notification__item--read' }}"
+                           @click="openNotification('{{ $notification->link ?? '' }}', $event, {{ $pivotId }})">
+                            <span class="notification__avatar">
+                                @if($notification->thumbnail)
+                                    <img src="{{ asset('storage/' . $notification->thumbnail) }}" alt="Avatar" class="full-notifications__avatar-img">
+                                @else
+                                    <div class="full-notifications__avatar-placeholder">
+                                        <i class="fa-solid fa-bell"></i>
+                                    </div>
+                                @endif
+                                @if(!$isRead)
+                                    <div class="full-notifications__unread-indicator"></div>
+                                @endif
+                            </span>
+                            <span class="notification__body">
+                                <span class="notification__content">
+                                    <strong>{{ $notification->title }}</strong> {{ $notification->content }}
+                                </span>
+                                <span class="notification__time">{{ $notification->timeText }}</span>
+                            </span>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+            {{-- Empty state --}}
+            @if($this->newNotifications->count() == 0 && $this->oldNotifications->count() == 0)
+            <div class="full-notifications__empty">
+                <div class="full-notifications__empty-icon">
+                    <i class="fa-solid fa-bell-slash"></i>
+                </div>
+                <h3 class="full-notifications__empty-title">Không có thông báo</h3>
+                <p class="full-notifications__empty-text">Bạn chưa có thông báo nào.</p>
+            </div>
+            @endif
+            @if($hasMore)
+            <div class="notification__load-more">
+                <a wire:click="loadMore"
+                        class="notification__load-more-link"
+                        wire:loading.attr="disabled">
+                    <span wire:loading.remove wire:target="loadMore">
+                        Hiển thị thêm thông báo trước đó
+                    </span>
+                    <span wire:loading wire:target="loadMore">
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                        Đang tải...
+                    </span>
+                </a>
+            </div>
+            @endif
+          </div>
+          @endif
+
+          {{-- Unread Notifications --}}
+          @if($tab === 'unread')
+          <div class="full-notifications__tab-content">
+            {{-- Section Mới --}}
+            @if($this->newUnreadNotifications->count() > 0)
+            <div class="full-notifications__section">
+                <div class="full-notifications__section-header new-section">
+                    <h2 class="full-notifications__section-title">Mới</h2>
+                </div>
+                <div class="full-notifications__list">
+                    @foreach($this->newUnreadNotifications as $notification)
+                        @php $pivotId = $notification->pivot->id ?? 0; @endphp
+                        <a href="#" tabindex="0" class="notification__item full-notifications__item--unread"
+                           @click="openNotification('{{ $notification->link ?? '' }}', $event, {{ $pivotId }})">
+                            <span class="notification__avatar">
+                                @if($notification->thumbnail)
+                                    <img src="{{ asset('storage/' . $notification->thumbnail) }}" alt="Avatar" class="full-notifications__avatar-img">
+                                @else
+                                    <div class="full-notifications__avatar-placeholder">
+                                        <i class="fa-solid fa-bell"></i>
+                                    </div>
+                                @endif
+                                <div class="full-notifications__unread-indicator"></div>
+                            </span>
+                            <span class="notification__body">
+                                <span class="notification__content">
+                                    <strong>{{ $notification->title }}</strong> {{ $notification->content }}
+                                </span>
+                                <span class="notification__time">{{ $notification->timeText }}</span>
+                            </span>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+            {{-- Section Trước đó --}}
+            @if($this->oldUnreadNotifications->count() > 0)
+            <div class="full-notifications__section">
+                <div class="full-notifications__section-header old-section">
+                    <h2 class="full-notifications__section-title">Trước đó</h2>
+                </div>
+                <div class="full-notifications__list">
+                    @foreach($this->oldUnreadNotifications as $notification)
+                        @php $pivotId = $notification->pivot->id ?? 0; @endphp
+                        <a href="#" tabindex="0" class="notification__item full-notifications__item--unread"
+                           @click="openNotification('{{ $notification->link ?? '' }}', $event, {{ $pivotId }})">
+                            <span class="notification__avatar">
+                                @if($notification->thumbnail)
+                                    <img src="{{ asset('storage/' . $notification->thumbnail) }}" alt="Avatar" class="full-notifications__avatar-img">
+                                @else
+                                    <div class="full-notifications__avatar-placeholder">
+                                        <i class="fa-solid fa-bell"></i>
+                                    </div>
+                                @endif
+                                <div class="full-notifications__unread-indicator"></div>
+                            </span>
+                            <span class="notification__body">
+                                <span class="notification__content">
+                                    <strong>{{ $notification->title }}</strong> {{ $notification->content }}
+                                </span>
+                                <span class="notification__time">{{ $notification->timeText }}</span>
+                            </span>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+            {{-- Empty state --}}
+            @if($this->newUnreadNotifications->count() == 0 && $this->oldUnreadNotifications->count() == 0)
+            <div class="full-notifications__empty">
+                <div class="full-notifications__empty-icon">
+                    <i class="fa-solid fa-bell-slash"></i>
+                </div>
+                <h3 class="full-notifications__empty-title">Không có thông báo chưa đọc</h3>
+                <p class="full-notifications__empty-text">Bạn đã đọc tất cả thông báo.</p>
+            </div>
+            @endif
+          </div>
+          @endif
         </div>
+        <!-- Xem tất cả thông báo link (chỉ hiện ở tab tất cả) -->
+        @if($tab === 'all')
+        <div class="allntic" style="display: flex; justify-content: flex-end; align-items: center; padding: 8px 16px 0 16px;">
+            <a href="{{ route('client.notifications.allnotification') }}" class="text-danger fw-bold allntic1" style="text-decoration: none; font-size: 14px;">Xem tất cả</a>
+        </div>
+        @endif
+        </div>
+      </div>
     </div>
+    @endif
+  @endif
 </div>
+
 @script
-
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Khi offcanvas mở, gọi Livewire refreshNotifications
-        var offcanvas = document.getElementById('notificationOffcanvas');
-        if (offcanvas) {
-            offcanvas.addEventListener('shown.bs.offcanvas', function () {
-                @this.call('refreshNotifications');
-            });
-        }
-
+    document.addEventListener('alpine:init', () => {
         // Auto refresh notifications every 30 seconds
         setInterval(function() {
-            @this.call('refreshNotifications');
+            if (window.Livewire) {
+                const element = document.querySelector('[wire\:poll]');
+                if (element) {
+                    const wireId = element.getAttribute('wire:id');
+                    if (wireId) {
+                        window.Livewire.find(wireId)?.call('refreshNotifications');
+                    }
+                }
+            }
         }, 30000);
     });
 </script>
-
 @endscript
