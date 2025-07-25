@@ -42,6 +42,7 @@ use App\Livewire\Admin\Showtimes\ShowtimeCreate;
 use App\Livewire\Admin\Showtimes\ShowtimeEdit;
 use App\Livewire\Admin\Showtimes\ShowtimeIndex;
 use App\Livewire\Admin\Tickets\TicketIndex;
+use App\Livewire\Client\MovieList;
 use App\Livewire\Client\Ticket\Index as TicketIndexClient;
 use App\Livewire\Test;
 
@@ -143,6 +144,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->
         Route::get('/detail/{promotion}', PromotionDetail::class)->name('detail');
     });
 
+
+
     /* Template */
     Route::view('/dashboard', 'livewire.admin.template.dashboard')->name('dashboard');
     Route::view('/buttons', 'livewire.admin.template.ui-features.buttons')->name('buttons');
@@ -163,6 +166,8 @@ Route::name('client.')->group(function () {
     Route::get('/ticket/{bookingCode}/{index?}', TicketIndexClient::class)->name('ticket')
         ->whereAlphaNumeric('bookingCode')->whereNumber('index')
         ->middleware('auth', 'role:user,staff,admin');
+
+    Route::get('/movieList', MovieList::class)->name('movieList');
 
     Route::view('/home', 'livewire.client.template.index')->name('index');
     Route::view('/blog_category', 'livewire.client.template.blogs.blog_category')->name('blog_category');
