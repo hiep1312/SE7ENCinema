@@ -4,6 +4,6 @@
         "scanner.css"
     ],
     "scopedCssFiles": [
-
+        "app.css"
     ]
 }

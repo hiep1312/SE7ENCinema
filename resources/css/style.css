@@ -1950,3 +1950,15 @@ div:where(.swal2-icon){
 .btn-collapse:hover {
     background: linear-gradient(45deg, #d62c1a, #a93226);
 }
+
+.album-slider {
+    left: 0;
+    width: 5754px; /* 7 items * 274px * 3 (3 vòng lặp) */
+    white-space: nowrap;
+    animation: slideInShake 70s linear infinite;
+}
+
+@keyframes slideInShake {
+    0% { left: 0; }
+    100% { left: -3836px; } /* 2 vòng lặp (7*274*2) */
+}
