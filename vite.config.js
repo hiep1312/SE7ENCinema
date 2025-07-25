@@ -17,6 +17,7 @@ export default defineConfig({
                 "resources/css/privacyPolicy.css",
                 "resources/css/termsOfService.css",
                 "resources/css/promotion.css",
+                'resources/css/lichchieuIndex.css'
             ],
             refresh: true,
         }),
