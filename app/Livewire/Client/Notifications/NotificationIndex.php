@@ -211,7 +211,9 @@ class NotificationIndex extends Component
 
     public function loadMore()
     {
-        $this->page++;
+        // Khi bấm loadMore, sẽ lấy toàn bộ thông báo còn lại (không phân trang nữa)
+        $this->perPage = 10000; // Đặt giá trị lớn để lấy hết
+        $this->page = 1;
         $this->loadNotifications();
     }
 

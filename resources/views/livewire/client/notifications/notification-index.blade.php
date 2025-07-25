@@ -2,7 +2,7 @@
 $isAllNotifications = request()->routeIs('client.notifications.allnotification');
 @endphp
 
-<div class="scRender scNotificationIndex full-notifications" wire:poll.30s="refreshNotifications"
+<div class="scRender scNotificationIndex" wire:poll.30s="refreshNotifications"
      x-data="{
         openNotification(link, event, notificationId) {
             if (!link || link === '#' || link === '' || link === null || link === undefined) {
@@ -60,9 +60,6 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
         <div style="display: flex; align-items: center; gap: 8px;">
           <h5 class="offcanvas-title full-notifications__title" style="margin: 0;">Thông báo</h5>
         </div>
-        @if($tab === 'all')
-        <a href="{{ route('client.notifications.allnotification') }}" class="text-primary fw-bold allntic1" style="text-decoration: none; font-size: 15px; margin-left: 12px;">Xem tất cả</a>
-        @endif
         <div class="notification-header-actions full-notifications__actions" style="margin-left: 8px;">
           <button type="button" wire:click="markAllAsRead" title="Đánh dấu tất cả đã đọc" class="full-notifications__menu-btn">
             <i class="fa-solid fa-check-double"></i>
@@ -81,22 +78,22 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
          <div class="notification-tabs full-notifications__nav">
             <ul class="nav nav-pills nav-fill full-notifications__tabs" role="tablist">
                 <li class="nav-item">
-                    <button class="nav-link full-notifications__tab {{ $tab === 'all' ? 'active full-notifications__tab--active' : '' }}"
+                    <a class="nav-link notification-tab-custom {{ $tab === 'all' ? 'active-tab-custom' : '' }}"
                             wire:click="switchTab('all')">
                         Tất cả
                         @if($unreadCount > 0)
                             <span class="badge bg-danger full-notifications__badge">{{ $unreadCount }}</span>
                         @endif
-                    </button>
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link full-notifications__tab {{ $tab === 'unread' ? 'active full-notifications__tab--active' : '' }}"
+                    <a class="nav-link notification-tab-custom {{ $tab === 'unread' ? 'active-tab-custom' : '' }}"
                             wire:click="switchTab('unread')">
                         Chưa đọc
                         @if($unreadCount > 0)
                             <span class="badge bg-danger full-notifications__badge">{{ $unreadCount }}</span>
                         @endif
-                    </button>
+                    </a>
                 </li>
             </ul>
         </div>
@@ -128,9 +125,9 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
                                         <i class="fa-solid fa-bell"></i>
                                     </div>
                                 @endif
-                                @if(!$isRead)
+                                {{-- @if(!$isRead)
                                     <div class="full-notifications__unread-indicator"></div>
-                                @endif
+                                @endif --}}
                             </span>
                             <span class="notification__body">
                                 <span class="notification__content">
@@ -291,7 +288,7 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
         <!-- Xem tất cả thông báo link (chỉ hiện ở tab tất cả) -->
         @if($tab === 'all')
         <div class="allntic" style="display: flex; justify-content: flex-end; align-items: center; padding: 8px 16px 0 16px;">
-            <a href="{{ route('client.notifications.allnotification') }}" class="text-danger fw-bold allntic1" style="text-decoration: none; font-size: 14px;">Xem tất cả</a>
+            <a href="{{ route('client.notifications.allnotification') }}" class="text-danger fw-bold allntic1" style="text-decoration: none; font-size: 14px; padding: 10px 0px;">Xem tất cả</a>
         </div>
         @endif
         </div>

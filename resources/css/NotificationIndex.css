@@ -130,7 +130,7 @@
     font-weight: 600;
     border-radius: 0;
     transition: all 0.2s ease;
-    padding: 12px 16px;
+    /* padding: 12px 16px; */
     border-bottom: 3px solid transparent;
     flex: 1;
     text-align: center;
@@ -883,7 +883,7 @@ a.notification-list__load-more-btn:disabled {
   }
 
   .full-notifications__container {
-    max-width: 680px;
+    max-width: 740px;
     margin: 0 auto;
     background: #ffffff;
     border-radius: 8px;
@@ -1712,4 +1712,31 @@ a.notification-list__load-more-btn:disabled {
         padding: 10px 18px;
         font-size: 14px;
     }
+}
+
+/* Custom Facebook-style notification tab */
+.notification-tab-custom {
+    background: #fff;
+    border: none;
+    cursor: pointer;
+    color: #65676b;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 18px;
+    transition: all 0.2s ease;
+    padding: 8px 20px;
+    margin: 6px 4px;
+    box-shadow: none;
+    outline: none;
+}
+.notification-tab-custom:hover:not(.active-tab-custom) {
+    background: #f0f2f5;
+    color: #1c1e21;
+}
+.active-tab-custom {
+    background: #e7f3ff !important;
+    color: #1877f2 !important;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(24,119,242,0.08);
+    border-radius: 18px;
 }

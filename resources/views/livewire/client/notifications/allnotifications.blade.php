@@ -30,11 +30,11 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
             window.open(link, '_blank');
         }
      }">
-     {{-- <div class="tbt "
+     <div class="tbt "
      style="clear: both;
      " >
-   </div> --}}
-    <div class="full-notifications__container">
+   </div>
+    <div class="full-notifications__container my-3">
         <!-- Header -->
         <div class="full-notifications__header">
             <div class="header-left">
