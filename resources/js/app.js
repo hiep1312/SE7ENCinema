@@ -7,3 +7,4 @@ import './utils';
 import './scAlert';
 import './scSortable';
 import './generateSeats';
+import './scChart';

@@ -49,11 +49,14 @@ use App\Livewire\Admin\Movies\MovieIndex;
 use App\Livewire\Admin\Notifications\NotificationCreate;
 use App\Livewire\Admin\Notifications\NotificationDetail;
 use App\Livewire\Admin\Notifications\NotificationIndex;
+use App\Livewire\Admin\Promotions\PromotionCreate;
+use App\Livewire\Admin\Promotions\PromotionDetail;
+use App\Livewire\Admin\Promotions\PromotionEdit;
+use App\Livewire\Admin\Promotions\PromotionIndex;
 use App\Livewire\Admin\Users\UserCreate;
 use App\Livewire\Admin\Users\UserDetail;
 use App\Livewire\Admin\Users\UserEdit;
 use App\Livewire\Admin\Users\UserIndex;
-use App\Livewire\Test;
 use App\Livewire\Admin\Ratings\RatingIndex;
 use App\Livewire\Admin\Scanner\Index as ScannerIndex;
 use App\Livewire\Admin\Showtimes\ShowtimeCreate;
@@ -63,6 +66,7 @@ use App\Livewire\Admin\Tickets\TicketIndex;
 use App\Livewire\Client\Ticket\Index as TicketIndexClient;
 use App\Livewire\Payment\VnpayPayment;
 use App\Livewire\Booking\BookingFood;
+use App\Livewire\Test;
 
 Route::get('/thanh-toan/{booking_id}', VnpayPayment::class)->name('thanh-toan');
 Route::get('/vnpay-return', [VnpayController::class, 'vnpayReturn'])->name('vnpay.return');
@@ -159,6 +163,14 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->
     Route::get('/scanner/{type}', ScannerIndex::class)
         ->whereIn('type', ['bookings', 'tickets'])
         ->name('scanner');
+
+    /* Promotions */
+    Route::prefix('/promotions')->name('promotions.')->group(function () {
+        Route::get('/', PromotionIndex::class)->name('index');
+        Route::get('/create', PromotionCreate::class)->name('create');
+        Route::get('/edit/{promotion}', PromotionEdit::class)->name('edit');
+        Route::get('/detail/{promotion}', PromotionDetail::class)->name('detail');
+    });
 
     /* Template */
     Route::view('/dashboard', 'livewire.admin.template.dashboard')->name('dashboard');
