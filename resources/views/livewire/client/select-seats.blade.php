@@ -35,6 +35,7 @@
     <p>Total Seats: {{ count($seats) }}</p>
 </div>
     <div id="user-seat-wrapper" wire:ignore></div>
+
     @script
 <script>
    $wire.on('seatuserdetail', function ([seats, selectedSeats = []]) {
