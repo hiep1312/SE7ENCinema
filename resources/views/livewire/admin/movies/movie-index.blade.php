@@ -107,7 +107,7 @@
                                     <td class="text-center fw-bold">{{ $loop->iteration }}</td>
                                     <td>
                                         <div class="d-flex justify-content-center">
-                                            <div class="movie-poster position-relative scTemp temp" style="width: 80px; height: 100px; margin: 0;">
+                                            <div class="movie-poster position-relative" style="width: 80px; height: 100px; margin: 0;">
                                                 @if($movie->poster)
                                                     <img src="{{ asset('storage/' . $movie->poster) }}"
                                                         alt="Ảnh phim {{ $movie->title }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
