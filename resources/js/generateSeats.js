@@ -865,25 +865,32 @@ function is3InDiagonal(seats) {
 frameSeats.querySelectorAll('input.seat').forEach(input => {
     input.addEventListener('change', (e) => {
         const current = e.target;
-        if (!current.checked) return;
 
         const selectedInputs = Array.from(frameSeats.querySelectorAll('input.seat:checked'));
         const selectedSeatCodes = selectedInputs.map(i => i.value);
 
-        if (is3InDiagonal(selectedSeatCodes)) {
+        console.log("🎯 Current selected seats:", selectedSeatCodes);
+        console.log("🎯 Current seat clicked:", current.value, "Checked:", current.checked);
+
+        if (selectedSeatCodes.length >= 3 && current.checked && is3InDiagonal(selectedSeatCodes)) {
             current.checked = false;
-            Swal.fire({
-                toast: true,
-                icon: 'warning',
-                title: 'Không được chọn ghế theo đường chéo!',
-                timer: 2500,
-                showConfirmButton: false,
-                position: 'top-end'
-            });
+            // Swal2.fire({
+            //     toast: true,
+            //     icon: 'warning',
+            //     title: 'Không được chọn ghế theo đường chéo!',
+            //     timer: 2500,
+            //     showConfirmButton: false,
+            //     position: 'top-end'
+            // });
+            return;
         }
+
+        const finalSelectedInputs = Array.from(frameSeats.querySelectorAll('input.seat:checked'));
+        const finalSelectedSeatCodes = finalSelectedInputs.map(i => i.value);
+        console.log("✅ Final selected seats to send:", finalSelectedSeatCodes);
+        Livewire.dispatch('updateSelectedSeats', [finalSelectedSeatCodes]);
     });
 });
-
 
     return frameSeats;
 

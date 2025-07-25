@@ -13,9 +13,6 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
 
-#[Title('Chọn ghế - SE7ENCinema')]
-#[Layout('components.layouts.client')]
-
 class SelectSeats extends Component
 {
     public $showtime_id;
@@ -23,6 +20,9 @@ class SelectSeats extends Component
     public $room;
     public $seats;
     public $selectedSeats = [];
+    public $listeners = [
+        'updateSelectedSeats' => 'updateSelectedSeats'
+    ];
 
     public function mount($showtime_id)
     {
@@ -31,6 +31,14 @@ class SelectSeats extends Component
         $this->room = $this->showtime->room;
         $this->loadSeats();
         $this->generateSeatsLayout();
+    }
+
+    public function updateSelectedSeats($seats)
+    {
+        if (is_string($seats)) {
+            $seats = explode(',', $seats);
+        }
+        $this->selectedSeats = array_filter((array) $seats);
     }
 
     public function loadSeats()
@@ -73,6 +81,21 @@ class SelectSeats extends Component
         }
 
         $this->generateSeatsLayout();
+    }
+
+    public function getSeatIdsFromCodes($seatCodes)
+    {
+        return collect($seatCodes)
+            ->map(function ($code) {
+                $row = substr($code, 0, 1);
+                $number = substr($code, 1);
+                $seat = $this->seats->first(fn($s) => $s->seat_row === $row && $s->seat_number == $number);
+                return $seat?->id;
+            })
+            ->filter()
+            ->unique()
+            ->values()
+            ->toArray();
     }
 
     public function generateSeatCodes($seatIds)
@@ -150,9 +173,11 @@ class SelectSeats extends Component
                 ->get()
                 ->sum(fn($item) => $item->seat->price ?? 0);
 
+            $booking->update(['total_price' => $totalPrice]);
+
 
             DB::commit();
-            
+
             return redirect()->route('booking.select_food', [
                 'booking_id' => $booking->id,
                 'total_price_seats' => $totalPrice,

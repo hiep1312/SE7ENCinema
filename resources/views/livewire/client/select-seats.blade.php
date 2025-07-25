@@ -28,8 +28,13 @@
             </div>
         </div>
     </div>
+    <div class="debug-info" style="background:
+#f0f0f0; padding: 10px; margin: 10px 0;">
+    <strong>Debug Info:</strong>
+    <p>Selected Seats: {{ json_encode($selectedSeats) }}</p>
+    <p>Total Seats: {{ count($seats) }}</p>
 </div>
-    <div id="user-seat-wrapper"></div>
+    <div id="user-seat-wrapper" wire:ignore></div>
     @script
 <script>
    $wire.on('seatuserdetail', function ([seats, selectedSeats = []]) {

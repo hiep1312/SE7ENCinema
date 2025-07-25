@@ -30,7 +30,6 @@ use App\Livewire\Admin\Banners\BannerEdit;
 use App\Livewire\Admin\Banners\BannerIndex;
 use App\Livewire\Admin\Bookings\BookingDetail;
 use App\Livewire\Admin\Bookings\BookingIndex;
-use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\Rooms\RoomCreate;
 use App\Livewire\Admin\Rooms\RoomDetail;
 use App\Livewire\Admin\Rooms\RoomEdit;

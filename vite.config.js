@@ -10,6 +10,7 @@ export default defineConfig({
                 'resources/css/auth.css',
                 'resources/css/ticket.css',
                 'resources/css/scanner.css',
+                'resources/css/datghe.css',
                 'resources/js/scannerQR.js',
             ],
             refresh: true,
