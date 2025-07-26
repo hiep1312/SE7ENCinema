@@ -31,6 +31,11 @@ class MovieList extends Component
         });
     }
 
+    public function gotoPage($page)
+    {
+        $this->setPage($page);
+    }
+
     public function render()
     {
         $this->updateStatusMovies();

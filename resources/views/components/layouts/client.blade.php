@@ -30,8 +30,12 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('client/assets/css/seat.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('client/assets/css/style.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('client/assets/css/responsive.css') }}" />
+
+
+
     @vite('resources/css/app.css')
     @stack('styles')
+
 </head>
 
 <body>
