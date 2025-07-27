@@ -5,6 +5,7 @@ namespace App\Livewire\Client\Promotions;
 use Livewire\Component;
 use App\Models\Promotion;
 use App\Models\Movie;
+use App\Models\PromotionUsage;
 use Livewire\WithPagination;
 
 class PromotionIndex extends Component
@@ -19,10 +20,19 @@ class PromotionIndex extends Component
 
     public function render()
     {
+        $user = auth('web')->user() ?? request()->user();
         $promotions = Promotion::where('status', 'active')
             ->where('end_date', '>=', now())
             ->orderByDesc('id')
             ->paginate(15, ['*'], 'vouchers');
+
+        $promotionUsedIds = [];
+        if ($user) {
+            $promotionUsedIds = PromotionUsage::whereHas('booking', function($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })->pluck('promotion_id')->toArray();
+        }
+
         $hotMovies = Movie::where('status', 'showing')
             // ->whereHas('showtimes', function($q) {
             //     $q->where('start_time', '>=', now())->where('status', 'active');
@@ -33,6 +43,7 @@ class PromotionIndex extends Component
         return view('livewire.client.promotions.promotion-index', [
             'promotions' => $promotions,
             'hotMovies' => $hotMovies,
+            'promotionUsedIds' => $promotionUsedIds,
         ]);
     }
 }
