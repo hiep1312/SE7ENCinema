@@ -36,16 +36,15 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="code" class="form-label text-light">Mã giảm giá *</label>
-                                    <div class="input-group">
-                                        <input type="text" id="code" wire:model="code"
-                                            class="form-control bg-dark text-light border-light @error('code') is-invalid @enderror"
-                                            placeholder="VD: SALE50, NEWUSER, GIAM10K">
-                                        <button type="button" wire:click="$set('code', '{{ strtoupper(Str::random(8)) }}')" class="btn btn-outline-warning">Tạo mã</button>
+                                    <div class="mb-3">
+                                        <label for="code" class="form-label text-light">Mã giảm giá *</label>
+                                        <div class="input-group">
+                                            <input type="text" id="code" :value="$wire.code"
+                                                class="form-control bg-dark text-light border-light"
+                                                placeholder="VD: SALE50, NEWUSER, GIAM10K" readonly>
+                                            <button type="button" wire:click="$set('code', '{{ strtoupper(Str::random(8)) }}')" class="btn btn-outline-warning" disabled>Tạo mã</button>
+                                        </div>
                                     </div>
-                                    @error('code')
-                                        <div class="invalid-feedback" style="display: block">{{ $message }}</div>
-                                    @enderror
                                 </div>
                                 <div class="col-12">
                                     <div class="mb-3">
@@ -97,8 +96,7 @@
                                     <div class="mb-3">
                                         <label for="end_date" class="form-label text-light">Thời gian kết thúc *</label>
                                         <input type="datetime-local" id="end_date" wire:model="end_date"
-                                            class="form-control bg-dark text-light border-light @error('end_date') is-invalid @enderror"
-                                            {{ $promotion->end_date->isPast() ? 'readonly' : '' }}>
+                                            class="form-control bg-dark text-light border-light @error('end_date') is-invalid @enderror">
                                         @error('end_date')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -106,8 +104,8 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="usage_limit" class="form-label text-light">Giới hạn sử dụng </label>
-                                        <input type="number" id = "usage_limit" wire:model="usage_limit"
+                                        <label for="usage_limit" class="form-label text-light">Giới hạn sử dụng @if($usage_limit) <span class="text-muted">(còn {{ $usage_limit - $promotion->usages->count() }} lượt)</span> @endif</label>
+                                        <input type="number" id = "usage_limit" wire:model.live.debounce.300ms="usage_limit"
                                             class="form-control bg-dark text-light border-light @error('usage_limit') is-invalid @enderror"
                                             placeholder="VD: 100" min="1">
                                         @error('usage_limit')
@@ -128,11 +126,11 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        @php $isExpired = $promotion->status === "expired" @endphp
                                         <label for="status" class="form-label text-light">Trạng thái *</label>
-                                        <select id="status" wire:model="status" class="form-select bg-dark text-light border-light @error('status') is-invalid @enderror"
-                                            {{ $isExpired ? 'disabled' : '' }}>
-                                            @if($isExpired) <option value="expired">Đã hết hạn</option> @endif
+                                        <select id="status" wire:model="status" class="form-select bg-dark text-light border-light @error('status') is-invalid @enderror" :disabled="Date.parse($wire.end_date) < Date.now()">
+                                            <template x-if="Date.parse($wire.end_date) < Date.now()">
+                                                <option value="expired" selected>Đã hết hạn</option>
+                                            </template>
                                             <option value="active">Hoạt động</option>
                                             <option value="inactive">Ngừng hoạt động</option>
                                         </select>
@@ -151,94 +149,96 @@
                                 </a>
                             </div>
                         </form>
-                        <div class="row mt-2">
-                            <div class="col-12">
-                                <div class="card bg-dark border-light">
-                                    <div class="card-header bg-gradient text-light"
-                                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                        <h5><i class="fas fa-layer-group me-2"></i>Danh sách người dùng đã sử dụng</h5>
-                                    </div>
-                                    <div class="card-body bg-dark"
-                                        style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
-                                        <div class="table-responsive">
-                                            <table class="table table-dark table-striped table-hover text-light border">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="text-center text-light">Ảnh avatar</th>
-                                                        <th class="text-center text-light">Tên người dùng</th>
-                                                        <th class="text-center text-light">Email / SĐT</th>
-                                                        <th class="text-center text-light">Địa chỉ</th>
-                                                        <th class="text-center text-light">Mã đơn hàng</th>
-                                                        <th class="text-center text-light">Tổng tiền</th>
-                                                        <th class="text-center text-light">Ngày sử dụng</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @forelse ($usages as $usage)
-                                                        <tr wire:key="{{ $usage->id }}">
-                                                            <td>
-                                                                <div class="user-avatar-clean" style="width: 55px; aspect-ratio: 1; height: auto; margin: 0 auto; border-radius: 50%;">
-                                                                    @if($user->avatar)
-                                                                        <img src="{{ asset('storage/' . $user->avatar) }}" alt style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">
-                                                                    @else
-                                                                        <i class="fas fa-user icon-white" style="font-size: 20px;"></i>
-                                                                    @endif
-                                                                </div>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <strong class="text-light text-wrap d-block mb-2">{{ $user->name }}</strong>
-                                                                @switch($user->status)
-                                                                    @case('active')
-                                                                        <span class="badge bg-success"><i class="fas fa-play me-1"></i>Đang hoạt động</span>
-                                                                        @break
-                                                                    @case('inactive')
-                                                                        <span class="badge bg-warning text-dark"><i class="fa-solid fa-user-slash me-1"></i>Không hoạt động</span>
-                                                                        @break
-                                                                    @case('banned')
-                                                                        <span class="badge bg-danger"><i class="fa-solid fa-ban me-1"></i>Bị cấm</span>
-                                                                        @break
-                                                                @endswitch
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <span class="badge" style="background: linear-gradient(to right, #642b73, #c6426e) !important;">{{ $user->email }}
-                                                                    @if ($user->phone)
-                                                                        / {{ $user->phone }}
-                                                                    @endif
-                                                                </span>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <p class="text-wrap text-muted lh-base" style="margin-bottom: 0;">{{ Str::limit($user->address ?? 'N/A', 50, '...') }}</p>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <strong class="text-light">{{ $usage->booking->booking_code }}</strong>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <span class="badge bg-gradient fs-6" style="background: linear-gradient(45deg, #667eea, #764ba2);">
-                                                                    {{ number_format($booking->total_price, 0, '.', '.') }}đ
-                                                                </span>
-                                                                @if($booking->promotionUsages->isNotEmpty())
-                                                                    <small class="text-danger fw-bold d-block mt-1 ms-1">- {{ number_format($booking->promotionUsages->sum('discount_amount'), 0, '.', '.') }}đ KM</small>
-                                                                @endif
-                                                            </td>
-                                                            <td class="text-center">{{ $booking->created_at->format('d/m/Y H:i') }}</td>
-                                                        </tr>
-                                                    @empty
-                                                        <tr>
-                                                            <td colspan="7" class="text-center py-4">
-                                                                <div class="text-muted">
-                                                                    <i class="fas fa-inbox fa-3x mb-3"></i>
-                                                                    <p>Chưa có người dùng nào đã sử dụng</p>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    @endforelse
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 mt-3" wire:poll>
+                <div class="card bg-dark border-light">
+                    <div class="card-header bg-gradient text-light"
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <h5><i class="fa-solid fa-list me-2"></i>Danh sách người dùng đã sử dụng</h5>
+                    </div>
+                    <div class="card-body bg-dark"
+                        style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped table-hover text-light border">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center text-light">Ảnh avatar</th>
+                                        <th class="text-center text-light">Tên người dùng</th>
+                                        <th class="text-center text-light">Email / SĐT</th>
+                                        <th class="text-center text-light">Địa chỉ</th>
+                                        <th class="text-center text-light">Mã đơn hàng</th>
+                                        <th class="text-center text-light">Tổng tiền</th>
+                                        <th class="text-center text-light">Ngày sử dụng</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($usages as $usage)
+                                        <tr wire:key="{{ $usage->id }}">
+                                            @php $user = $usage->booking->user @endphp
+                                            <td>
+                                                <div class="user-avatar-clean" style="width: 55px; aspect-ratio: 1; height: auto; margin: 0 auto; border-radius: 50%;">
+                                                    @if($user->avatar)
+                                                        <img src="{{ asset('storage/' . $user->avatar) }}" alt style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">
+                                                    @else
+                                                        <i class="fas fa-user icon-white" style="font-size: 20px;"></i>
+                                                    @endif
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <strong class="text-light text-wrap d-block mb-2">{{ $user->name }}</strong>
+                                                @switch($user->status)
+                                                    @case('active')
+                                                        <span class="badge bg-success"><i class="fas fa-play me-1"></i>Đang hoạt động</span>
+                                                        @break
+                                                    @case('inactive')
+                                                        <span class="badge bg-warning text-dark"><i class="fa-solid fa-user-slash me-1"></i>Không hoạt động</span>
+                                                        @break
+                                                    @case('banned')
+                                                        <span class="badge bg-danger"><i class="fa-solid fa-ban me-1"></i>Bị cấm</span>
+                                                        @break
+                                                @endswitch
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="text-light">{{ $user->email }}
+                                                    @if ($user->phone)
+                                                        / {{ $user->phone }}
+                                                    @endif
+                                                </span>
+                                            </td>
+                                            <td class="text-center" style="max-width: 240px;">
+                                                <p class="text-wrap text-muted lh-base" style="margin-bottom: 0;">{{ Str::limit($user->address . Str::repeat('Address ', 30) ?? 'N/A', 50, '...') }}</p>
+                                            </td>
+                                            <td class="text-center">
+                                                <strong class="text-light">{{ $usage->booking->booking_code }}</strong>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge bg-gradient fs-6">
+                                                    {{ number_format($usage->booking->total_price, 0, '.', '.') }}đ
+                                                </span>
+                                                <small class="text-danger fw-bold d-block mt-1 ms-1">- {{ number_format($usage->discount_amount, 0, '.', '.') }}đ KM</small>
+                                            </td>
+                                            <td class="text-center">{{ $usage->used_at->format('d/m/Y H:i') }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="7" class="text-center py-4">
+                                                <div class="text-muted">
+                                                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                                                    <p>Chưa có người dùng nào sử dụng</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
                         </div>
+                        @if($usages->hasPages())
+                            <div class="mt-3 mt-xl-1">
+                                {{ $usages->links() }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
