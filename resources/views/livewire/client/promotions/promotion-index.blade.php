@@ -41,8 +41,8 @@
                         </div>
                         <div class="my-1 text-secondary small">Tiêu đề: <span class="fw-medium text-dark" >{{ $promotion->title }}</span></div>
                         <span class="text-secondary small" style="font-size: 0.95rem;">Đơn tối thiểu: <b class="text-dark">{{ number_format($promotion->min_purchase, 0, '.', '.') }}đ</b></span>
-                        <div class="text-secondary small" style="margin:10px 0px !important ">HSD: <b class="text-dark">{{ $promotion->end_date->format('Y/m/d H:i') }}</b></div>
-                        <div class="my-1 text-secondary small">Số lượng còn lại: <span class="fw-medium text-dark" >{{ $promotion->usage_limit - $promotion->used_count }}</span></div>
+                        <div class="text-secondary small" style="margin:5px 0px !important ">HSD: <b class="text-dark">{{ $promotion->end_date->format('Y/m/d H:i') }}</b></div>
+                        <div class="text-secondary small">Số lượng còn lại: <span class="fw-medium text-dark" >{{ $promotion->usage_limit - $promotion->used_count }}</span></div>
                         <div class="d-flex justify-content-between align-items-center mt-2" style="gap: 0.5rem;">
                             <div>
                                 <button
@@ -59,8 +59,16 @@
                             <div>
                                 <button
                                     class="btn btn-warning color1 fw-bold px-3 py-1 rounded-pill shadow-sm border-0"
+                                    @if(isset($promotionUsedIds) && in_array($promotion->id, $promotionUsedIds)) disabled @endif
+                                    @if(!auth('web')->check()) onclick="window.location.href='{{ route('login') }}'" @endif
                                 >
-                                    Lưu voucher
+                                    @if(isset($promotionUsedIds) && in_array($promotion->id, $promotionUsedIds))
+                                        Đã sử dụng
+                                    @elseif(!auth('web')->check())
+                                        Đăng nhập để lưu
+                                    @else
+                                        Lưu voucher
+                                    @endif
                                 </button>
                             </div>
                         </div>
@@ -115,7 +123,7 @@
                         </div>
                     </div>
                     @empty
-                    <div class="alert alert-info">Hiện chưa có khuyến mãi nào.</div>
+                    <div class="alert alert-info">Bạn đã sử dụng hết các mã khuyến mãi hiện có hoặc chưa có khuyến mãi nào khả dụng.</div>
                     @endforelse
                 </div>
             </div>

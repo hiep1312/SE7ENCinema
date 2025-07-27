@@ -41,8 +41,8 @@ use App\Livewire\Admin\Scanner\Index as ScannerIndex;
 use App\Livewire\Admin\Showtimes\ShowtimeCreate;
 use App\Livewire\Admin\Showtimes\ShowtimeEdit;
 use App\Livewire\Admin\Showtimes\ShowtimeIndex;
-use App\Livewire\Client\Promotions\PromotionIndex;
 use App\Livewire\Admin\Tickets\TicketIndex;
+use App\Livewire\Client\Promotions\PromotionIndex as PromotionIndexClient;
 use App\Livewire\Client\Ticket\Index as TicketIndexClient;
 
 Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->group(function () {
@@ -183,7 +183,7 @@ Route::name('client.')->group(function () {
 
     /* Promotions */
     Route::prefix('/promotions')->name('promotions.')->group(function () {
-        Route::get('/', PromotionIndex::class)->name('index');
+        Route::get('/', PromotionIndexClient::class)->name('index');
     });
 
 });
