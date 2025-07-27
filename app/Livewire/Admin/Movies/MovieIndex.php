@@ -25,13 +25,11 @@ class MovieIndex extends Component
         if(!$status['isConfirmed']) return;
         $movie = Movie::find($movieId);
 
-        // Kiểm tra xem có suất chiếu đang hoạt động không
         if ($movie->hasActiveShowtimes()) {
             session()->flash('error', 'Không thể xóa phim có suất chiếu trong tương lai!');
             return;
         }
 
-        // Soft delete
         $movie->delete();
         session()->flash('success', 'Xóa phim thành công!');
     }
@@ -100,28 +98,19 @@ class MovieIndex extends Component
         if ($this->showDeleted) {
             $query = Movie::onlyTrashed();
         } else {
-            // Áp dụng các bộ lọc chỉ khi không xem phòng đã xóa
-            if ($this->statusFilter) {
-                $query->where('status', $this->statusFilter);
-            }
+            $fnShowtimeFilter = function($q) {
+                $q->where('start_time', '>=', now())
+                    ->where('status', 'active');
+            };
 
-            if ($this->showtimeFilter) {
-                if ($this->showtimeFilter === 'has_showtimes') {
-                    $query->whereHas('showtimes', function($q) {
-                        $q->where('start_time', '>=', now())
-                          ->where('status', 'active');
-                    });
-                } elseif ($this->showtimeFilter === 'no_showtimes') {
-                    $query->whereDoesntHave('showtimes', function($q) {
-                        $q->where('start_time', '>=', now())
-                          ->where('status', 'active');
-                    });
-                }
-            }
+            $query->when($this->statusFilter, function ($query) {
+                $query->where('status', $this->statusFilter);
+            })->when($this->showtimeFilter, function ($query) use ($fnShowtimeFilter) {
+                $this->showtimeFilter === 'has_showtimes' ? $query->whereHas('showtimes', $fnShowtimeFilter) : $query->whereDoesntHave('showtimes', $fnShowtimeFilter);
+            });
         }
 
-        $movies = $query
-            ->when($this->search, function ($query) {
+        $movies = $query->when($this->search, function ($query) {
                 $query->withTrashed();
                 $query->where('title', 'like', '%' . $this->search . '%');
             })
@@ -133,7 +122,7 @@ class MovieIndex extends Component
                     ->limit(1);
             }])
             ->orderBy('status', 'asc')
-            ->orderBy('created_at', 'desc')
+            ->orderByDesc('created_at')
             ->paginate(20);
 
         return view('livewire.admin.movies.movie-index', compact('movies'));
