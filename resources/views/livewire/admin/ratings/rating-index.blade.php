@@ -78,7 +78,7 @@
                             @forelse($ratings as $rating)
                                 <tr wire:key="{{ $rating->id }}">
                                     <td class="text-center fw-bold">{{ $loop->iteration }}</td>
-                                    <td class="text-center text-wrap">
+                                    <td class="text-center text-wrap" style="max-width: 200px;">
                                         <div class="d-flex align-items-center justify-content-center flex-wrap flex-xl-nowrap p-3 compact-dark rounded">
                                             <div class="user-avatar-clean me-3" style="width: 35px; height: 35px;">
                                                 @if($rating->user->avatar)
@@ -89,7 +89,7 @@
                                             </div>
                                             <div class="flex-grow-1">
                                                 <a class="user-name-link-dark d-block mb-1" href="{{ route('admin.users.detail', $rating->user->id) }}">
-                                                    {{ $rating->user->name, 20 }}
+                                                    {{ Str::limit($rating->user->name, 20, '...') }}
                                                 </a>
                                                 <small class="text-muted">
                                                     <i class="fas fa-star me-1 icon-blue"></i>Người đánh giá
@@ -97,10 +97,14 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-center">
-                                        <strong class="text-light">{{ $rating->movie->title }}</strong>
+                                    <td style="max-width: 230px;">
+                                        <strong class="text-light text-wrap lh-base">{{ $rating->movie->title }}</strong>
+                                        <div class="movie-genre text-wrap lh-base" style="margin-bottom: 0; margin-top: 3px;">
+                                            <i class="fas fa-tags me-1"></i>
+                                            {{ $rating->movie->genres->take(2)->implode('name', ', ') ?: 'Không có thể loại' }} • {{ $rating->movie->duration }} phút
+                                        </div>
                                     </td>
-                                    <td class="text-center text-wrap lh-base">
+                                    <td class="text-center text-wrap lh-base" style="max-width: 320px;">
                                         @if($rating->trashed())
                                             <span class="badge bg-danger">Bài đánh giá đã bị xóa</span>
                                         @else

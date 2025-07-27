@@ -33,7 +33,6 @@ class ShowtimeIndex extends Component
             return;
         }
 
-        // Force delete
         $showtime->delete();
         session()->flash('success', 'Xóa suất chiếu thành công!');
     }
@@ -62,7 +61,7 @@ class ShowtimeIndex extends Component
     {
         $this->realtimeUpdateShowtimes();
 
-        $query = Showtime::query()
+        $query = Showtime::query()->whereHas('movie')
             ->when($this->search, function($query) {
                 $query->where(function ($subQuery){
                     $subQuery->whereHas('movie', fn($q) => $q->where('title', 'like', '%' . $this->search . '%'));
