@@ -32,17 +32,17 @@
                                 <i class="fas fa-gift text-white"></i>
                             </div>
                             <div style="min-width:0; margin: 10px 0px !important">
-                                <span class="fw-bold text-gradient-orange voucher-discount" style="font-size: 1.7rem;">{{ $promotion->discount_type === 'percentage' ? $promotion->discount_value . '%' : number_format($promotion->discount_value, 0, '.', '.') . 'đ' }}</span>
-                                <span class="text-secondary ms-1 fw-medium" style="font-size: 1rem;">giảm</span>
+                                <span class="fw-bold text-gradient-orange voucher-discount" style="font-size: 1.7rem;">Giảm {{ $promotion->discount_type === 'percentage' ? $promotion->discount_value . '%' : number_format($promotion->discount_value, 0, '.', '.') . 'đ' }}</span>
                             </div>
                         </div>
                         <!-- Code & Info -->
                         <div class="mb-1" style="gap: 0.5rem; ">
                             <span class="badge bg-gradient-orange text-white px-3 py-1 fs-6 fw-bold shadow-sm voucher-code-modern" >{{ $promotion->code }}</span>
                         </div>
+                        <div class="my-1 text-secondary small">Tiêu đề: <span class="fw-medium text-dark" >{{ $promotion->title }}</span></div>
                         <span class="text-secondary small" style="font-size: 0.95rem;">Đơn tối thiểu: <b class="text-dark">{{ number_format($promotion->min_purchase, 0, '.', '.') }}đ</b></span>
-                        <div class="text-secondary small" style="margin:10px 0px !important ">HSD: <b class="text-dark">{{ $promotion->end_date->format('d/m/Y') }}</b></div>
-                        <div class="my-1 text-secondary small">Mô tả: <span class="fw-medium text-dark" >{{ Str::limit($promotion->description, 50) }}</span></div>
+                        <div class="text-secondary small" style="margin:10px 0px !important ">HSD: <b class="text-dark">{{ $promotion->end_date->format('Y/m/d H:i') }}</b></div>
+                        <div class="my-1 text-secondary small">Số lượng còn lại: <span class="fw-medium text-dark" >{{ $promotion->usage_limit - $promotion->used_count }}</span></div>
                         <div class="d-flex justify-content-between align-items-center mt-2" style="gap: 0.5rem;">
                             <div>
                                 <button
