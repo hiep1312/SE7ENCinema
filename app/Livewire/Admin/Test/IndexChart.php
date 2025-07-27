@@ -60,4 +60,3 @@ class IndexChart extends Component
         return view('livewire.admin.test.index-chart');
     }
 }
-
