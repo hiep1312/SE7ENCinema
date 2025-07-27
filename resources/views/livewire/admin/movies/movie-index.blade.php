@@ -38,8 +38,7 @@
                     <!-- Tìm kiếm -->
                     <div class="col-md-4 col-lg-3">
                         <div class="input-group">
-                            <input type="text"
-                                   wire:model.live.debounce.300ms="search"
+                            <input type="text" wire:model.live.debounce.300ms="search"
                                    class="form-control bg-dark text-light"
                                    placeholder="Tìm kiếm phim...">
                             <span class="input-group-text">
@@ -164,7 +163,7 @@
                                         @endif
                                     </td>
                                     <td class="text-center">
-                                        <span class="badge bg-gradient fs-6" style="background: linear-gradient(45deg, #667eea, #764ba2);">
+                                        <span class="badge bg-gradient fs-6">
                                             {{ number_format($movie->price, 0, '.', '.') }}đ
                                         </span>
                                     </td>

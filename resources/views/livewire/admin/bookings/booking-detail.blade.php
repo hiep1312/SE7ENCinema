@@ -136,11 +136,11 @@
                                     <tr>
                                         <td><strong class="text-warning">Tổng tiền:</strong></td>
                                         <td>
-                                            <span class="badge bg-gradient fs-6" style="background: linear-gradient(45deg, #667eea, #764ba2);">
+                                            <span class="badge bg-gradient fs-6">
                                                 {{ number_format($booking->total_price, 0, '.', '.') }}đ
                                             </span>
-                                            @if($booking->promotionUsages->isNotEmpty())
-                                                <small class="text-danger fw-bold d-block mt-1 ms-1">- {{ number_format($booking->promotionUsages->sum('discount_amount'), 0, '.', '.') }}đ KM</small>
+                                            @if($booking->promotionUsage->exists())
+                                                <small class="text-danger fw-bold d-block mt-1 ms-1">- {{ number_format($booking->promotionUsage->discount_amount, 0, '.', '.') }}đ KM</small>
                                             @endif
                                         </td>
                                     </tr>
@@ -589,7 +589,7 @@
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <a href="{{ /* route('admin.promotions.detail', $promotionUsage->promotion->id) */ '#' }}"
+                                                            <a href="{{ route('admin.promotions.detail', $promotionUsage->promotion->id) }}"
                                                                 class="btn btn-sm btn-info" title="Xem chi tiết">
                                                                 <i class="fas fa-eye" style="margin-right: 0"></i>
                                                             </a>

@@ -14,70 +14,51 @@ class PromotionIndex extends Component
 
     public $search = '';
     public $statusFilter = '';
-    public $bookingFilter = '';
+    public $usageFilter = '';
     public $discountTypeFilter = '';
 
     public function deletePromotion(array $status, int $promotionId)
     {
-        if (!$status['isConfirmed']) return;
-
+        if(!$status['isConfirmed']) return;
         $promotion = Promotion::findOrFail($promotionId);
 
-        // Kiểm tra nếu khuyến mãi đã được sử dụng
-        if ($promotion->status === 'active' && ($promotion->used_count > 0 || $promotion->usages()->exists())) {
-            session()->flash('error', 'Không thể xóa khuyến mãi đã được sử dụng!');
+        if ($promotion->usages()->exists() && $promotion->status !== "expired") {
+            session()->flash('error', 'Không thể xóa mã giảm giá đã có người sử dụng và chưa hết hạn!');
             return;
         }
 
-        // Hard delete
         $promotion->delete();
-        session()->flash('success', 'Xóa khuyến mãi thành công!');
+        session()->flash('success', 'Xóa mã giảm giá thành công!');
     }
 
     public function resetFilters()
     {
-        $this->reset(['search', 'statusFilter', 'bookingFilter', 'discountTypeFilter']);
+        $this->reset(['search', 'statusFilter', 'usageFilter', 'discountTypeFilter']);
+        $this->resetPage();
     }
 
-    public function updatePromotionStatuses()
+    public function realtimeUpdateStatus()
     {
-        // Chuyển active => expired
-        Promotion::where('status', 'active')
-            ->where('end_date', '<', now())
-            ->update(['status' => 'expired']);
-        // Chuyển expired => active nếu end_date > now
-        Promotion::where('status', 'expired')
-            ->where('end_date', '>', now())
-            ->update(['status' => 'active']);
+        Promotion::where('end_date', '>=', now())->where('status', 'expired')->update(['status' => 'active']);
+        Promotion::where('end_date', '<', now())->where('status', '!=', 'expired')->update(['status' => 'expired']);
     }
 
-    #[Title('Danh sách khuyến mãi - SE7ENCinema')]
+    #[Title('Danh sách mã giảm giá - SE7ENCinema')]
     #[Layout('components.layouts.admin')]
     public function render()
     {
-        $this->updatePromotionStatuses();
-        $promotions = Promotion::query()
+        $this->realtimeUpdateStatus();
+
+        $query = Promotion::query()->with('usages.booking.user')->withCount('usages')
             ->when($this->search, function ($query) {
-                $query->where('code', 'like', '%' . $this->search . '%')
-                      ->orWhere('description', 'like', '%' . $this->search . '%');
+                $query->where('code', 'like', '%' . trim($this->search) . '%')
+                    ->orWhere('title', 'like', '%' . trim($this->search) . '%');
             })
-            ->when($this->statusFilter, function ($query) {
-                $query->where('status', $this->statusFilter);
-            })
-            ->when($this->bookingFilter, function ($query) {
-                if ($this->bookingFilter === 'has_booking') {
-                    $query->whereHas('usages');
-                } elseif ($this->bookingFilter === 'no_booking') {
-                    $query->whereDoesntHave('usages');
-                }
-            })
-            ->when($this->discountTypeFilter, function ($query) {
-                $query->where('discount_type', $this->discountTypeFilter);
-            })
-            ->with(['usages.booking.user'])
-            ->withCount('usages')
-            ->orderBy('id', 'desc')
-            ->paginate(15);
+            ->when($this->statusFilter, fn($query) => $query->where('status', $this->statusFilter))
+            ->when($this->usageFilter !== '', fn($query) => $this->usageFilter ? $query->whereHas('usages') : $query->whereDoesntHave('usages'))
+            ->when($this->discountTypeFilter, fn($query) => $query->where('discount_type', $this->discountTypeFilter));
+
+        $promotions= $query->orderByDesc('created_at')->paginate(20);
 
         return view('livewire.admin.promotions.promotion-index', compact('promotions'));
     }

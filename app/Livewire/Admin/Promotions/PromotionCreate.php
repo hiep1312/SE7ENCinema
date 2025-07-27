@@ -31,7 +31,6 @@ class PromotionCreate extends Component
         'code' => 'required|unique:promotions,code|min:4|max:20',
         'usage_limit' => 'nullable|integer|min:1',
         'min_purchase' => 'nullable|integer|min:0',
-        // 'status' => 'required|in:active,inactive',
     ];
 
     protected $messages = [
@@ -59,8 +58,6 @@ class PromotionCreate extends Component
         'usage_limit.min' => 'Giới hạn sử dụng phải lớn hơn hoặc bằng 1.',
         'min_purchase.integer' => 'Giá trị đơn hàng tối thiểu phải là số nguyên.',
         'min_purchase.min' => 'Giá trị đơn hàng tối thiểu phải lớn hơn hoặc bằng 0.',
-        /* 'status.required' => 'Trạng thái mã giảm giá là bắt buộc.',
-        'status.in' => 'Trạng thái mã giảm giá không hợp lệ. Chỉ chấp nhận: hoạt động hoặc ngừng hoạt động.', */
     ];
 
     public function updatedDiscountType(string $type){

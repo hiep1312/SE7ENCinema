@@ -1,7 +1,7 @@
 import Swal from 'sweetalert2';
 const $sc_configAlert = {
     _config: {
-        theme: "dark",
+        theme: "light",
         showClass: undefined,
         hideClass: undefined,
         footer: "",
@@ -17,7 +17,7 @@ const $sc_configAlert = {
         timerProgressBar: false,
         keydownListenerCapture: true,
         confirmButtonText: "OK",
-        denyButtonText: "No",
+        denyButtonText: "Không",
         cancelButtonText: "Hủy",
         confirmButtonColor: undefined,
         denyButtonColor: undefined,

@@ -6,68 +6,33 @@ use App\Models\Promotion;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class PromotionDetail extends Component
 {
-
-    public $promotionId;
-    public $title;
-    public $code;
-    public $description;
-    public $discount_type;
-    public $discount_value;
-    public $start_date;
-    public $end_date;
-    public $usage_limit;
-    public $min_purchase;
-    public $status;
+    use WithPagination;
+    public $promotion;
     public $tabCurrent = 'overview';
 
-     public function mount(Promotion $promotion)
+    public function mount(int $promotion)
     {
-        $promotion = Promotion::findOrFail($promotion->id);
-        $this->promotionId = $promotion->id;
-        $this->title = $promotion->title;
-        $this->code = $promotion->code;
-        $this->description = $promotion->description;
-        $this->discount_type = $promotion->discount_type;
-        $this->discount_value = $promotion->discount_value;
-        $this->start_date = $promotion->start_date->format('Y-m-d H:i');
-        $this->end_date = $promotion->end_date->format('Y-m-d H:i');
-        $this->usage_limit = $promotion->usage_limit;
-        $this->min_purchase = $promotion->min_purchase;
-        $this->status = $promotion->status;
+        $this->promotion = Promotion::with('usages')->findOrFail($promotion);
     }
 
-    public function updatePromotionStatuses()
+    public function realtimeUpdateStatus()
     {
-        // Chuyển active => expired
-        Promotion::where('status', 'active')
-            ->where('end_date', '<', now())
-            ->update(['status' => 'expired']);
-        // Chuyển expired => active nếu end_date > now
-        Promotion::where('status', 'expired')
-            ->where('end_date', '>', now())
-            ->update(['status' => 'active']);
+        Promotion::where('end_date', '>=', now())->where('status', 'expired')->update(['status' => 'active']);
+        Promotion::where('end_date', '<', now())->where('status', '!=', 'expired')->update(['status' => 'expired']);
     }
 
-    public function resetPromotionDetail()
-    {
-        $this->updatePromotionStatuses();
-        // reload lại dữ liệu
-        // $this->mount(Promotion::findOrFail($this->promotionId));
-        // session()->flash('success', 'Đã cập nhật lại dữ liệu khuyến mãi mới nhất!');
-    }
-
+    #[Title('Chi tiết mã giảm giá - SE7ENCinema')]
     #[Layout('components.layouts.admin')]
-    #[Title('Promotion Detail')]
     public function render()
     {
-        $this->updatePromotionStatuses();
-        $promotion = Promotion::with([
-            'usages.booking.user',
-            'usages.booking.foodOrderItems.variant.foodItem',
-        ])->findOrFail($this->promotionId);
-        return view('livewire.admin.promotions.promotion-detail', compact('promotion'));
+        $this->realtimeUpdateStatus();
+
+        $usages = $this->promotion->usages()->with('booking.user', 'booking.foodOrderItems.variant.foodItem')->paginate(10);
+
+        return view('livewire.admin.promotions.promotion-detail', compact('usages'));
     }
 }

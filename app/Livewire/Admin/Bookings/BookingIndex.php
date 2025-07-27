@@ -56,7 +56,7 @@ class BookingIndex extends Component
     {
         $this->cleanupBookingsAndSyncShowtimes();
 
-        $query = Booking::with('user', 'showtime.room', 'showtime.movie', 'seats', 'foodOrderItems', 'promotionUsages')
+        $query = Booking::with('user', 'showtime.room', 'showtime.movie', 'seats', 'foodOrderItems', 'promotionUsage')
             ->when($this->search, function($query) {
                 $query->where(function($subQuery){
                     $subQuery->where('booking_code', 'like', '%' . trim($this->search) . '%')
