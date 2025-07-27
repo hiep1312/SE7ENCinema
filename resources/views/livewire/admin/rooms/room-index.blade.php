@@ -111,7 +111,7 @@
                                         @endif
                                     </td>
                                     <td class="text-center">
-                                        <span class="badge bg-gradient fs-6" style="background: linear-gradient(45deg, #667eea, #764ba2);">
+                                        <span class="badge bg-gradient fs-6">
                                             {{ $room->capacity }}/{{ $room->seats_count }}
                                         </span>
                                     </td>

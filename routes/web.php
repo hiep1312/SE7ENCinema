@@ -28,6 +28,10 @@ use App\Livewire\Admin\Movies\MovieIndex;
 use App\Livewire\Admin\Notifications\NotificationCreate;
 use App\Livewire\Admin\Notifications\NotificationDetail;
 use App\Livewire\Admin\Notifications\NotificationIndex;
+use App\Livewire\Admin\Promotions\PromotionCreate;
+use App\Livewire\Admin\Promotions\PromotionDetail;
+use App\Livewire\Admin\Promotions\PromotionEdit;
+use App\Livewire\Admin\Promotions\PromotionIndex;
 use App\Livewire\Admin\Users\UserCreate;
 use App\Livewire\Admin\Users\UserDetail;
 use App\Livewire\Admin\Users\UserEdit;
@@ -130,6 +134,14 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->
     Route::get('/scanner/{type}', ScannerIndex::class)
         ->whereIn('type', ['bookings', 'tickets'])
         ->name('scanner');
+
+    /* Promotions */
+    Route::prefix('/promotions')->name('promotions.')->group(function () {
+        Route::get('/', PromotionIndex::class)->name('index');
+        Route::get('/create', PromotionCreate::class)->name('create');
+        Route::get('/edit/{promotion}', PromotionEdit::class)->name('edit');
+        Route::get('/detail/{promotion}', PromotionDetail::class)->name('detail');
+    });
 
     /* Template */
     Route::view('/dashboard', 'livewire.admin.template.dashboard')->name('dashboard');
