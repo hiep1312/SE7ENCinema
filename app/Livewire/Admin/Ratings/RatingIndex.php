@@ -56,27 +56,27 @@ class RatingIndex extends Component
     {
         $subQuerySearch = function ($query) {
             $query->where(function($query){
-                $query->where('review', 'like', '%' . $this->search . '%')
-                ->orWhereHas('user', fn ($query) => $query->where('name', 'like', '%' . $this->search . '%'));
+                $query->where('review', 'like', '%' . trim($this->search) . '%')
+                ->orWhereHas('user', fn ($query) => $query->where('name', 'like', '%' . trim($this->search) . '%'));
             });
         };
         $subQueryMovieFilter = function ($query) {
             $query->whereHas('movie', function ($query) {
-                $query->where('id', '=', $this->movieFilter);
+                $query->where('id', $this->movieFilter);
             });
         };
 
         // Đếm số đánh giá theo người dùng và theo phim
         foreach (range(1, 5) as $score) {
-            $this->countsStar[$score] = Rating::with('user')
+            $this->countsStar[$score] = Rating::withTrashed()->with('movie.genres', 'user')->whereHas('movie')
                 ->where('score', $score)
                 ->when($this->movieFilter, $subQueryMovieFilter)
                 ->when($this->search, $subQuerySearch)->count();
         }
 
-        $query = Rating::withTrashed()->with('movie', 'user')
+        $query = Rating::withTrashed()->with('movie.genres', 'user')->whereHas('movie')
             ->when($this->search, $subQuerySearch)
-            ->where('score', 'like', '%' . $this->starFilter . '%');
+            ->whereLike('score', '%' . $this->starFilter . '%');
         $movies = Movie::select('title', 'id')
             ->whereIn('id', $query->pluck('movie_id')->unique())
             ->get();

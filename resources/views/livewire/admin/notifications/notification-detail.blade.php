@@ -185,7 +185,7 @@
                                                         @endswitch
                                                     </td>
                                                     <td class="text-center">
-                                                        <span class="badge" style="background: linear-gradient(to right, #642b73, #c6426e) !important;">{{ $user->email }}
+                                                        <span class="text-center text-light">{{ $user->email }}
                                                             @if ($user->phone)
                                                                 / {{ $user->phone }}
                                                             @endif

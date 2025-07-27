@@ -18,7 +18,7 @@ class BookingDetail extends Component
     public $tabCurrent = 'overview';
 
     public function mount(int $booking){
-        $this->booking = Booking::with('showtime.movie', 'showtime.room', 'user', 'seats', 'promotionUsages', 'foodOrderItems.variant.foodItem', 'foodOrderItems.variant.attributeValues.attribute')->findOrFail($booking);
+        $this->booking = Booking::with('showtime.movie', 'showtime.room', 'user', 'seats', 'promotionUsage', 'foodOrderItems.variant.foodItem', 'foodOrderItems.variant.attributeValues.attribute')->findOrFail($booking);
 
         $this->cleanupBookingsAndUpdateData(['isConfirmed' => true]);
     }

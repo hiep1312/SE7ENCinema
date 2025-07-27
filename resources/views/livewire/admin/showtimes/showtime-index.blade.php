@@ -124,7 +124,7 @@
                                         </small>
                                     </td>
                                     <td class="text-center">
-                                        <span class="badge bg-gradient fs-6" style="background: linear-gradient(45deg, #667eea, #764ba2);">
+                                        <span class="badge bg-gradient fs-6">
                                             {{ number_format($showtime->price, 0, '.', '.') }}đ
                                         </span>
                                     </td>

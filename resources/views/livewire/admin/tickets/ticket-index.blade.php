@@ -157,7 +157,7 @@
                                             <div class="mt-1">
                                                 <small class="text-info">
                                                     <i class="fa-solid fa-user me-1"></i>
-                                                    {{ $booking->user->name }}
+                                                    {{ Str::limit($booking->user->name, 20, '...') }}
                                                 </small>
                                             </div>
 

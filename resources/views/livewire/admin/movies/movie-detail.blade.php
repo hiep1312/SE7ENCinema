@@ -225,7 +225,7 @@
                                     <tr>
                                         <td><strong class="text-warning">Giá vé:</strong></td>
                                         <td>
-                                            <span class="badge bg-gradient fs-6" style="background: linear-gradient(45deg, #667eea, #764ba2);">
+                                            <span class="badge bg-gradient fs-6">
                                                 {{ number_format($movie->price, 0, '.', '.') }}đ
                                             </span>
                                         </td>
@@ -491,18 +491,30 @@
                                                             {{ $booking->showtime->end_time->format('H:i') }}
                                                         </small>
                                                     </td>
-                                                    <td class="text-center">
-                                                        <strong class="text-light">
-                                                            {{ Str::limit($booking->foodOrderItems()->with('variant.foodItem')->get()->pluck('variant.foodItem.name')->implode(', '), 20, '...') }}
-                                                        </strong>
+                                                    <td class="text-center" style="max-width: 200px;">
+                                                        <span class="text-light text-wrap lh-base">
+                                                            {{ Str::limit($booking->foodOrderItems()->with('variant.foodItem')->get()->pluck('variant.foodItem.name')->implode(', '), 30, '...') }}
+                                                        </span>
                                                     </td>
                                                     <td class="text-center">
-                                                        {{ $booking->foodOrderItems->sum('quantity') }}</td>
-                                                    <td class="text-center">
-                                                        <strong class="text-light">{{ $booking?->user->name ?? 'N/A' }}</strong>
+                                                        {{ $booking->foodOrderItems->sum('quantity') }}
                                                     </td>
                                                     <td class="text-center">
-                                                        <span class="badge" style="background: linear-gradient(to right, #642b73, #c6426e) !important;">{{ $booking?->user->email ?? 'N/A' }}
+                                                        <strong class="text-light text-wrap d-block mb-2">{{ $booking->user?->name ?? 'N/A' }}</strong>
+                                                        @switch($booking->user?->status)
+                                                            @case('active')
+                                                                <span class="badge bg-success"><i class="fas fa-play me-1"></i>Đang hoạt động</span>
+                                                                @break
+                                                            @case('inactive')
+                                                                <span class="badge bg-warning text-dark"><i class="fa-solid fa-user-slash me-1"></i>Không hoạt động</span>
+                                                                @break
+                                                            @case('banned')
+                                                                <span class="badge bg-danger"><i class="fa-solid fa-ban me-1"></i>Bị cấm</span>
+                                                                @break
+                                                        @endswitch
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <span class="text-light">{{ $booking?->user->email ?? 'N/A' }}
                                                             @if ($booking?->user->phone)
                                                                 / {{ $booking->user->phone }}
                                                             @endif
@@ -513,15 +525,27 @@
                                                     <td class="text-center">
                                                         @switch($booking->status)
                                                             @case('pending')
-                                                                <span class="badge bg-warning text-dark">Chờ xử lý</span>
-                                                            @break
-                                                            @case('confirmed')
-                                                                <span class="badge bg-primary">Đã xác nhận</span>
-                                                            @break
+                                                                <span class="badge bg-primary">Đang chờ xử lý</span>
+                                                                @break
+                                                            @case('expired')
+                                                                <span class="badge bg-warning text-dark">Đã hết hạn xử lý</span>
+                                                                @break
                                                             @case('paid')
                                                                 <span class="badge bg-success">Đã thanh toán</span>
                                                                 @break
+                                                            @case('failed')
+                                                                <span class="badge bg-danger">Lỗi thanh toán</span>
+                                                                @break
                                                         @endswitch
+                                                        <small class="text-muted d-block mt-1" style="font-size: 12px">
+                                                            PTTT:
+                                                            @switch($booking->payment_method)
+                                                                @case('credit_card') Thẻ tín dụng @break
+                                                                @case('bank_transfer') Chuyển khoản @break
+                                                                @case('e_wallet') Ví điện tử @break
+                                                                @case('cash') Tiền mặt @break
+                                                            @endswitch
+                                                        </small>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
