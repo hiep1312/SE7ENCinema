@@ -184,10 +184,6 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->
 });
 
 
-
-
-Route::get('/booking-food', BookingFood::class);
-
 Route::name('client.')->group(function () {
     Route::get('/ticket/{bookingCode}/{index?}', TicketIndexClient::class)->name('ticket')
         ->whereAlphaNumeric('bookingCode')->whereNumber('index')
@@ -208,13 +204,15 @@ Route::name('client.')->group(function () {
     Route::view('/seat_booking', 'livewire.client.template.bookings.seat_booking')->name('seat_booking');
     Route::view('/contact', 'livewire.client.template.contact')->name('contact');
     Route::view('/confirmation_screen', 'livewire.client.template.confirmation_screen')->name('confirmation_screen');
+    Route::get('/phim', MovieList::class)->name('movies.index');
     Route::get('/booking', SelectMovieShowtime::class)->name('booking.select_showtime');
     Route::get('/booking/seats/{showtime_id}', SelectSeats::class)->name('booking.select_seats');
     Route::get('/booking/food/{booking_id}', SelectFood::class)->name('booking.select_food');
     Route::get('/booking/confirm/{booking_id}', ConfirmBooking::class)->name('booking.confirm');
-    Route::get('/phim', MovieList::class)->name('movies.index');
+    Route::get('/booking-food', BookingFood::class);
 
 });
+
 
 Route::view('/', 'welcome')->name('welcome');
 Route::view('/clienttest', 'clienttest')->name('clienttest');

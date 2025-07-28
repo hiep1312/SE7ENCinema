@@ -103,7 +103,7 @@
                                     <div class="absolute inset-0 bg-black bg-opacity-30 rounded-lg"></div>
                                 </div>
                                 <h3 class="text-lg font-semibold text-white mt-2"><a
-                                        href="{{ route('client.movie_booking', $topEventMovie->id) }}">{{ $topEventMovie->title }}</a>
+                                        href="{{ route('client.booking.select_showtime', $topEventMovie->id) }}">{{ $topEventMovie->title }}</a>
                                 </h3>
                                 <p class="text-gray-300">Duration: {{ $topEventMovie->duration }} minutes</p>
                                 <p class="text-gray-400">Price: {{ number_format($topEventMovie->price, 0, ',', '.') }}
@@ -155,7 +155,7 @@
 																style="position: absolute; top: 8px; left: 8px; display: inline-block; background-color: {{ $color }}; color: #fff; font-size: 12px; font-weight: bold; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; z-index: 10;">
 																{{ $age }}
 															</span>
-														
+
 															<div class="prs_upcom_movie_img_overlay"></div>
 															<div class="prs_upcom_movie_img_btn_wrapper">
 																<ul>
@@ -188,7 +188,7 @@
                                                             </div>
                                                            <div class="booking-button-container" style="text-align: center; margin-top: 20px;">
                                                             @auth
-                                                            <a href="{{ route('client.movie_booking', $movie->id) }}" class="btn btn-primary"
+                                                            <a href="{{ route('client.booking.select_showtime', $movie->id) }}" class="btn btn-primary"
                                                                 style="background-color: #e50914; border: none; padding: 10px 20px; font-size: 16px; color: white; text-transform: uppercase;">
                                                                 Mua Vé Ngay
                                                             </a>
@@ -250,7 +250,7 @@
         <div class="wrap-album-slider" wire:ignore.self>
             <ul class="album-slider raw" wire:ignore.self>
                 @forelse ($topMovies as $movie)
-                    <li class="album-slider__item" wire:key="movie-{{ $movie->id }}" wire:ignore.self 
+                    <li class="album-slider__item" wire:key="movie-{{ $movie->id }}" wire:ignore.self
                        >
                         <figure class="album">
                             <div class="prs_upcom_movie_box_wrapper">
@@ -266,7 +266,7 @@
 									style="position: absolute; top: 8px; left: 8px; display: inline-block; background-color: {{ $color }}; color: #fff; font-size: 12px; font-weight: bold; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; z-index: 10;">
 									{{ $age }}
 								</span>
-							
+
 								<div class="prs_upcom_movie_img_overlay"></div>
 								<div class="prs_upcom_movie_img_btn_wrapper">
 									<ul>
@@ -279,7 +279,7 @@
                                 <div class="prs_upcom_movie_content_box">
                                     <div class="prs_upcom_movie_content_box_inner">
                                         <h2><a
-                                                href="{{ route('client.movie_booking', $movie->id) }}">{{ $movie->title }}</a>
+                                                href="{{ route('client.booking.select_showtime', $movie->id) }}">{{ $movie->title }}</a>
                                         </h2>
                                        <p>Thể loại: {{ Str::limit($movie->genres->pluck('name')->implode(', '), 10) }}</p>
                                         <p>Thời lượng: {{ $movie->duration }} phút</p>
