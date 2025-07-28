@@ -15,12 +15,6 @@ use App\Livewire\Client\SelectMovieShowtime;
 use App\Livewire\Client\SelectSeats;
 use App\Livewire\Client\SelectFood;
 use App\Livewire\Client\ConfirmBooking;
-
-Route::get('/booking', SelectMovieShowtime::class)->name('booking.select_showtime');
-Route::get('/booking/seats/{showtime_id}', SelectSeats::class)->name('booking.select_seats');
-Route::get('/booking/food/{booking_id}', SelectFood::class)->name('booking.select_food');
-Route::get('/booking/confirm/{booking_id}', ConfirmBooking::class)->name('booking.confirm');
-
 use App\Livewire\Admin\Foods\FoodCreate;
 use App\Livewire\Admin\Foods\FoodDetail;
 use App\Livewire\Admin\Foods\FoodEdit;
@@ -213,6 +207,10 @@ Route::name('client.')->group(function () {
     Route::view('/seat_booking', 'livewire.client.template.bookings.seat_booking')->name('seat_booking');
     Route::view('/contact', 'livewire.client.template.contact')->name('contact');
     Route::view('/confirmation_screen', 'livewire.client.template.confirmation_screen')->name('confirmation_screen');
+    Route::get('/booking', SelectMovieShowtime::class)->name('booking.select_showtime');
+    Route::get('/booking/seats/{showtime_id}', SelectSeats::class)->name('booking.select_seats');
+    Route::get('/booking/food/{booking_id}', SelectFood::class)->name('booking.select_food');
+    Route::get('/booking/confirm/{booking_id}', ConfirmBooking::class)->name('booking.confirm');
 });
 
 Route::view('/', 'welcome')->name('welcome');
