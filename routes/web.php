@@ -204,7 +204,7 @@ Route::name('client.')->group(function () {
     Route::view('/seat_booking', 'livewire.client.template.bookings.seat_booking')->name('seat_booking');
     Route::view('/contact', 'livewire.client.template.contact')->name('contact');
     Route::view('/confirmation_screen', 'livewire.client.template.confirmation_screen')->name('confirmation_screen');
-    Route::get('/phim', MovieList::class)->name('movies.index');
+    Route::get('/chon-phim', MovieList::class)->name('movies.index');
     Route::get('/booking', SelectMovieShowtime::class)->name('booking.select_showtime');
     Route::get('/booking/seats/{showtime_id}', SelectSeats::class)->name('booking.select_seats');
     Route::get('/booking/food/{booking_id}', SelectFood::class)->name('booking.select_food');

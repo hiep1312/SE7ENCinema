@@ -23,7 +23,7 @@ class SelectMovieShowtime extends Component
 
     public function goToSelectSeats($showtimeId)
     {
-        return redirect()->route('booking.select_seats', ['showtime_id' => $showtimeId]);
+        return redirect()->route('client.booking.select_seats', ['showtime_id' => $showtimeId]);
     }
 
     #[Title('Danh sách phim - SE7ENCinema')]
