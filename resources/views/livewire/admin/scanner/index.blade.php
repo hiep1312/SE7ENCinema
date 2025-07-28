@@ -12,7 +12,7 @@
     }
 </script>
 @endassets
-<div class="fullscreen-container scanner">
+<div class="fullscreen-container scanner scScanner">
     <div class="header-bar">
         <div class="header-title">
             <i class="fas fa-qrcode"></i>
@@ -109,7 +109,7 @@
     <input type="file" id="fileInput" class="file-input" accept="image/*" onchange="handleFileSelect(event)">
 
     <!-- Loading Screen -->
-    <div class="loading-screen" id="loadingScreen">
+    <div class="loading-screen show" id="loadingScreen">
         <div class="loading-spinner"></div>
         <div class="loading-text" id="loadingText">Đang khởi tạo camera...</div>
     </div>
@@ -143,13 +143,13 @@
             Chọn Camera
         </div>
         <div class="camera-list" id="cameraList">
-            
+
         </div>
         <div class="camera-popup-actions">
-            <button class="camera-popup-btn">
+            <button class="camera-popup-btn" id="applyCamera">
                 <i class="fas fa-check"></i> Sử dụng
             </button>
-            <button class="camera-popup-btn secondary">
+            <button class="camera-popup-btn secondary" id="cancelCamera">
                 <i class="fas fa-times"></i> Hủy
             </button>
         </div>
