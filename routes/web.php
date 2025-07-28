@@ -185,3 +185,4 @@ Route::name('client.')->group(function () {
 
 Route::view('/', 'welcome')->name('welcome');
 Route::view('/clienttest', 'clienttest')->name('clienttest');
+Route::get('/test', Test::class)->name('test');
