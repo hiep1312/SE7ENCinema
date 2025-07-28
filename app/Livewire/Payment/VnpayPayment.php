@@ -20,6 +20,7 @@ class VnpayPayment extends Component
     public $seat_total = 0;
     public $total_amount = 0;
     public $booking_id;
+    public $payment_deadline;
 
     public function mount($booking_id)
     {
@@ -37,6 +38,16 @@ class VnpayPayment extends Component
                 return $bookingSeat->seat->seat_row . $bookingSeat->seat->seat_number;
             })
             ->toArray();
+
+        $this->payment_deadline = session()->get('payment_deadline_' . $this->booking_id);
+        if (session()->has('booking_locked_' . $this->booking_id)) {
+            return redirect()->route('client.index');
+        }
+    }
+
+    public function testdeletesession()
+    {
+        session()->forget('payment_deadline_' . $this->booking_id);
     }
 
 
@@ -44,6 +55,35 @@ class VnpayPayment extends Component
 
     public function redirectToVnpay()
     {
+        $deadlineKey = 'payment_deadline_' . $this->booking_id;
+        $extendedKey = 'payment_extended_' . $this->booking_id;
+
+        // Check hết hạn cũ trước
+        $deadline = session()->get($deadlineKey);
+
+        if (!$deadline || now()->timestamp * 1000 > $deadline) {
+            session()->flash('error', 'Đã hết thời gian thanh toán. Vui lòng đặt lại vé.');
+            return redirect()->route('client.index');
+        }
+
+        // 👉 THÊM: chỉ cộng thêm 1 lần
+        if (!session()->has($extendedKey)) {
+            session()->put($deadlineKey, now()->addMinutes(15)->timestamp * 1000);
+            session()->put($extendedKey, true);
+        }
+
+        session()->put('booking_locked_' . $this->booking_id, true);
+
+        // Check booking status
+        $booking = Booking::find($this->booking_id);
+        if (!$booking || $booking->status !== 'pending') {
+            session()->flash('error', 'Đơn hàng không tồn tại hoặc không còn khả dụng.');
+            return redirect()->route('client.index');
+        }
+
+
+
+
         $vnp_TmnCode = 'P8QX0KGT'; // Mã website VNPay
         $vnp_HashSecret = 'ITBJ2BGWRYTN5J2Z2QMXMXVAEEK5WBVA'; // Secret key
         $vnp_Url = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
@@ -94,6 +134,4 @@ class VnpayPayment extends Component
 
         return redirect()->away($vnp_Url);
     }
-
-
 }

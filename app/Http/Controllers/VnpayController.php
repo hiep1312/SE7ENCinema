@@ -39,28 +39,29 @@ class VnpayController extends Controller
                 $total_amount = $food_total + $seat_total;
 
                 $booking = Booking::find($booking_id);
+
                 if ($booking) {
                     $booking->status = 'confirmed';
                     $booking->transaction_code = strtoupper(Str::random(10));
                     $booking->end_transaction = now();
                     $booking->payment_method = 'bank_transfer';
                     $booking->total_price = $total_amount;
-                    $booking->save();
+                    $booking->save();//lưu booking
 
-
-                    // Tạo FoodOrderItem nếu có món ăn
+                    //  Nếu có món ăn thì mới lưu FoodOrderItem
                     $cart = session()->get('cart', []);
-                    foreach ($cart as $foodId => $item) {
-                        FoodOrderItem::create([
-                            'booking_id' => $booking->id,
-                            'food_variant_id' => $item['variant_id'],
-                            'quantity' => $item['quantity'],
-                            'price' => $item['price'],
-                        ]);
+                    if (!empty($cart)) {
+                        foreach ($cart as $foodId => $item) {
+                            FoodOrderItem::create([
+                                'booking_id' => $booking->id,
+                                'food_variant_id' => $item['variant_id'],
+                                'quantity' => $item['quantity'],
+                                'price' => $item['price'],
+                            ]);
+                        }
                     }
 
                     session()->forget(['booking_id', 'cart', 'cart_food_total', 'cart_seat_total']);
-
 
                     return redirect()->route('client.index')->with('success', 'Thanh toán thành công!');
                 } else {

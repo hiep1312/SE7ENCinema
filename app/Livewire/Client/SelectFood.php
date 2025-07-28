@@ -41,6 +41,10 @@ class SelectFood extends Component
     {
         $this->booking_id = $booking_id;
 
+        if (session()->has('booking_locked_' . $this->booking_id)) {
+            return redirect()->route('client.index');
+        }
+
         // fallback nếu queryString không bind kịp
         if (!$this->total_price_seats) {
             $this->total_price_seats = request()->query('total_price_seats');
@@ -152,8 +156,31 @@ class SelectFood extends Component
         session()->put('cart_food_total', $this->total); // chỉ tiền food
         session()->put('cart_seat_total', $this->total_price_seats);
 
+        // ✅ Nếu chưa có thì mới lưu
+        if (!session()->has('payment_deadline_' . $this->booking_id)) {
+            session()->put('payment_deadline_' . $this->booking_id, now()->addMinutes(10)->timestamp * 1000);
+        }
+
         return redirect()->route('thanh-toan', ['booking_id' => $this->booking_id]); // route trang thanh toán VNPay
     }
+
+    public function skipFood()
+    {
+        $this->cart = [];
+        session()->put('cart', []);
+        session()->put('cart_food_total', 0);
+        session()->put('cart_seat_total', $this->total_price_seats);
+
+        // ✅ Thêm điều kiện tạo deadline nếu chưa có
+        if (!session()->has('payment_deadline_' . $this->booking_id)) {
+            session()->put('payment_deadline_' . $this->booking_id, now()->addMinutes(10)->timestamp * 1000);
+        }
+
+        return redirect()->route('thanh-toan', ['booking_id' => $this->booking_id]);
+    }
+
+
+
 
 
     public function render()

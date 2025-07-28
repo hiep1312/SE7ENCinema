@@ -21,7 +21,7 @@ class Booking extends Model
     protected $casts = [
         'start_transaction' => 'datetime',
         'end_transaction' => 'datetime',
-        'price' => 'integer',
+        'total_price' => 'integer',
     ];
 
     public function user()
@@ -37,19 +37,6 @@ class Booking extends Model
     public function seats()
     {
         return $this->belongsToMany(Seat::class, 'booking_seats');
-    }
-
-    public function tickets()
-    {
-        return $this->hasMany(Ticket::class);
-    }
-    public function bookingSeats()
-    {
-        return $this->hasMany(BookingSeat::class);
-    }
-    public function foodOrderItems()
-    {
-        return $this->hasOne(\App\Models\FoodOrderItem::class);
     }
 
     public function promotionUsages()

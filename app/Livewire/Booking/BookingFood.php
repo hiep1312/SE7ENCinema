@@ -32,7 +32,7 @@ class BookingFood extends Component
         $this->foodItems = FoodItem::where('status', 'activate')->get();
     }
 
-    
+
 
     public function selectItem($itemId)
     {
@@ -168,6 +168,8 @@ class BookingFood extends Component
             'total_price' => $totalPrice,
         ];
     }
+
+
 
     public function render()
     {
