@@ -21,6 +21,7 @@ class SelectSeats extends Component
     public $seats;
     public $selectedSeats = [];
     public $lastBookedSeatsHash = '';
+    public $sessionId;
 
     public $listeners = [
         'updateSelectedSeats' => 'updateSelectedSeats',
@@ -30,6 +31,7 @@ class SelectSeats extends Component
     public function mount($showtime_id)
     {
         $this->showtime_id = $showtime_id;
+        $this->sessionId = session()->getId();
         $this->showtime = Showtime::with('room')->findOrFail($showtime_id);
         $this->room = $this->showtime->room;
         $this->loadSeats();
@@ -43,10 +45,40 @@ class SelectSeats extends Component
         }
         $this->selectedSeats = array_filter((array) $seats);
 
+        $this->updateTemporaryHold();
+
         if ($this->hasBookedSeatsChanged()) {
             $this->loadSeats();
         }
         $this->generateSeatsLayout();
+    }
+
+    private function updateTemporaryHold()
+    {
+        $holdKey = "temp_hold_showtime_{$this->showtime_id}";
+        $currentHolds = Cache::get($holdKey, []);
+
+        $now = now();
+        $currentHolds = array_filter($currentHolds, function ($hold) use ($now) {
+            return $now->diffInMinutes($hold['created_at']) < 15;
+        });
+
+        $currentHolds = array_filter($currentHolds, function ($hold) {
+            return $hold['session_id'] !== $this->sessionId;
+        });
+
+        if (!empty($this->selectedSeats)) {
+            $seatIds = $this->getSeatIdsFromCodes($this->selectedSeats);
+            foreach ($seatIds as $seatId) {
+                $currentHolds[$seatId] = [
+                    'session_id' => $this->sessionId,
+                    'created_at' => $now,
+                    'seat_codes' => $this->selectedSeats
+                ];
+            }
+        }
+
+        Cache::put($holdKey, $currentHolds, 20);
     }
 
     public function loadSeats()
@@ -56,18 +88,32 @@ class SelectSeats extends Component
             return Seat::where('room_id', $this->showtime->room_id)->get();
         });
 
-        $bookedCacheKey = "booked_seats_showtime_{$this->showtime_id}";
-        $bookedSeatIds = Cache::remember($bookedCacheKey, 1, function () {
-            return BookingSeat::whereHas('booking', function ($q) {
-                $q->where('showtime_id', $this->showtime_id)
-                    ->whereIn('status', ['pending', 'paid']);
-            })->pluck('seat_id')->toArray();
-        });
+        $bookedSeatIds = BookingSeat::whereHas('booking', function ($q) {
+            $q->where('showtime_id', $this->showtime_id)
+                ->whereIn('status', ['pending', 'paid']);
+        })->pluck('seat_id')->toArray();
 
         $this->lastBookedSeatsHash = md5(serialize($bookedSeatIds));
 
+        $holdKey = "temp_hold_showtime_{$this->showtime_id}";
+        $currentHolds = Cache::get($holdKey, []);
+
+        $now = now();
+        $currentHolds = array_filter($currentHolds, function ($hold) use ($now) {
+            return $now->diffInMinutes($hold['created_at']) < 15;
+        });
+        Cache::put($holdKey, $currentHolds, 20);
+
+        $heldSeatIds = [];
+        foreach ($currentHolds as $seatId => $hold) {
+            if ($hold['session_id'] !== $this->sessionId) {
+                $heldSeatIds[] = $seatId;
+            }
+        }
+
         foreach ($this->seats as $seat) {
             $seat->is_booked = in_array($seat->id, $bookedSeatIds);
+            $seat->is_held = in_array($seat->id, $heldSeatIds);
         }
     }
 
@@ -84,6 +130,7 @@ class SelectSeats extends Component
 
     public function refreshSeats()
     {
+        Cache::forget("temp_hold_showtime_{$this->showtime_id}");
         $this->loadSeats();
         $this->generateSeatsLayout();
     }
@@ -107,15 +154,26 @@ class SelectSeats extends Component
 
             if ($alreadyBooked) {
                 session()->flash('error', 'Ghế đã được đặt.');
-                Cache::forget("booked_seats_showtime_{$this->showtime_id}");
                 $this->loadSeats();
                 $this->generateSeatsLayout();
+                return;
+            }
+
+            $holdKey = "temp_hold_showtime_{$this->showtime_id}";
+            $currentHolds = Cache::get($holdKey, []);
+
+            if (
+                isset($currentHolds[$seat->id]) &&
+                $currentHolds[$seat->id]['session_id'] !== $this->sessionId
+            ) {
+                session()->flash('error', 'Ghế đang được giữ bởi người khác.');
                 return;
             }
 
             $this->selectedSeats[] = $seatCode;
         }
 
+        $this->updateTemporaryHold();
         $this->generateSeatsLayout();
     }
 
@@ -156,11 +214,13 @@ class SelectSeats extends Component
                 'seat_type' => $seat->seat_type,
                 'price' => $seat->price,
                 'is_booked' => $seat->is_booked,
+                'is_held' => $seat->is_held ?? false,
             ];
         })->toArray();
 
         $seats = json_encode($seatsData);
         $selectedSeats = json_encode($this->selectedSeats);
+        $sessionId = json_encode($this->sessionId);
 
         $this->js(<<<JS
             const wrapper = document.getElementById('user-seat-wrapper');
@@ -168,7 +228,8 @@ class SelectSeats extends Component
                 wrapper.innerHTML = '';
                 const dom = window.generateClientDOMSeats({
                     seats: {$seats},
-                    selectedSeats: {$selectedSeats}
+                    selectedSeats: {$selectedSeats},
+                    sessionId: {$sessionId}
                 });
                 wrapper.appendChild(dom);
                 console.log('Seats generated successfully');
@@ -180,7 +241,6 @@ class SelectSeats extends Component
 
     public function noop()
     {
-
     }
 
     public function goToSelectFood()
@@ -192,17 +252,7 @@ class SelectSeats extends Component
 
         DB::beginTransaction();
         try {
-            $seatIds = collect($this->selectedSeats)
-                ->map(function ($code) {
-                    $row = substr($code, 0, 1);
-                    $number = substr($code, 1);
-                    $seat = $this->seats->first(fn($s) => $s->seat_row === $row && $s->seat_number == $number);
-                    return $seat?->id;
-                })
-                ->filter()
-                ->unique()
-                ->values()
-                ->toArray();
+            $seatIds = $this->getSeatIdsFromCodes($this->selectedSeats);
 
             $conflict = BookingSeat::whereIn('seat_id', $seatIds)
                 ->whereHas('booking', function ($q) {
@@ -213,7 +263,6 @@ class SelectSeats extends Component
             if ($conflict) {
                 session()->flash('error', 'Một số ghế đã bị đặt bởi người khác.');
                 DB::rollBack();
-                Cache::forget("booked_seats_showtime_{$this->showtime_id}");
                 $this->loadSeats();
                 $this->generateSeatsLayout();
                 return;
@@ -242,18 +291,22 @@ class SelectSeats extends Component
 
             $booking->update(['total_price' => $totalPrice]);
 
-            Cache::forget("booked_seats_showtime_{$this->showtime_id}");
+            $holdKey = "temp_hold_showtime_{$this->showtime_id}";
+            $currentHolds = Cache::get($holdKey, []);
+            foreach ($seatIds as $seatId) {
+                unset($currentHolds[$seatId]);
+            }
+            Cache::put($holdKey, $currentHolds, 20);
 
             DB::commit();
 
-            return redirect()->route('booking.select_food', [
+            return redirect()->route('client.booking.select_food', [
                 'booking_id' => $booking->id,
                 'total_price_seats' => $totalPrice,
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('error', 'Lỗi khi tạo booking: ' . $e->getMessage());
-            Cache::forget("booked_seats_showtime_{$this->showtime_id}");
             $this->loadSeats();
             $this->generateSeatsLayout();
         }

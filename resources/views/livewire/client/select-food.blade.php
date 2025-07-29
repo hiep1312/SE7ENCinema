@@ -1,5 +1,5 @@
 @assets
-   @vite(['resources/css/selectfood.css'])
+    @vite(['resources/css/selectfood.css'])
 @endassets
 <div class=" scRender scSelectfood container py-5">
     <div class="main-header">
@@ -11,19 +11,33 @@
 
     <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4">
         @foreach ($this->foodItems() as $food)
+            @php
+                $prices = $food->variants->pluck('price')->sort()->values();
+                $minPrice = $prices->first();
+                $maxPrice = $prices->last();
+            @endphp
+
             <div class="col">
                 <div class="card food-card h-100">
                     <img src="{{ $food->image ? asset('storage/' . $food->image) : 'https://via.placeholder.com/300x200?text=No+Image' }}"
-                         alt="{{ $food->name }}">
+                        alt="{{ $food->name }}">
 
                     <div class="card-body d-flex flex-column">
                         <div>
                             <h6 class="card-title">{{ $food->name }}</h6>
                             <p class="food-description">{{ $food->description }}</p>
+                            <p class="food-price">
+                                Giá:
+                                @if ($minPrice === $maxPrice)
+                                    {{ number_format($minPrice) }}₫
+                                @else
+                                    {{ number_format($minPrice) }}₫ - {{ number_format($maxPrice) }}₫
+                                @endif
+                            </p>
+
                         </div>
 
-                        <button class="btn btn-select-food mt-auto"
-                                wire:click="selectFood({{ $food->id }})">
+                        <button class="btn btn-select-food mt-auto" wire:click="selectFood({{ $food->id }})">
                             <i class="bi bi-plus-circle me-1"></i> Chọn món
                         </button>
 
@@ -54,15 +68,18 @@
                                     <div class="variant-info">
                                         <div class="text-success mb-2">
                                             <div><strong>SKU:</strong> {{ $selectedVariant->sku }}</div>
-                                            <div><strong>Giá:</strong> {{ number_format($selectedVariant->price) }}₫</div>
+                                            <div><strong>Giá:</strong> {{ number_format($selectedVariant->price) }}₫
+                                            </div>
                                         </div>
                                         <button wire:click="addToCart" class="btn btn-add-to-cart">
                                             <i class="bi bi-cart-plus me-1"></i> Thêm vào giỏ
                                         </button>
                                         <div class="text-danger mt-2">
-                                            <div>@error('variant')
-                                                <span class="error-message">{{ $message }}</span>
-                                            @enderror</div>
+                                            <div>
+                                                @error('variant')
+                                                    <span class="error-message">{{ $message }}</span>
+                                                @enderror
+                                            </div>
                                         </div>
                                     </div>
                                 @endif
@@ -79,7 +96,7 @@
             <h3 class="cart-title">
                 <i class="bi bi-cart3 me-2"></i>Giỏ hàng của bạn
             </h3>
-            
+
             <div class="cart-items-container">
                 @foreach ($cart as $sku => $item)
                     <div class="cart-item">
@@ -92,25 +109,25 @@
                                     @endforeach
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-8">
                                 <div class="item-controls">
                                     <div class="quantity-controls">
                                         <button wire:click="decrement('{{ $sku }}')" class="quantity-btn">
-                                            <i class="bi bi-dash"></i>
+                                            <i class="bi bi-dash">-</i>
                                         </button>
                                         <span class="quantity-display">{{ $item['quantity'] }}</span>
                                         <button wire:click="increment('{{ $sku }}')" class="quantity-btn">
-                                            <i class="bi bi-plus"></i>
+                                            <i class="bi bi-plus">+</i>
                                         </button>
                                     </div>
-                                    
+
                                     <div class="item-price">
                                         {{ number_format($item['price'] * $item['quantity']) }}₫
                                     </div>
-                                    
+
                                     <button wire:click="remove('{{ $sku }}')" class="btn btn-remove">
-                                        <i class="bi bi-trash"></i>
+                                        <i class="fas fa-trash-alt" style="margin-right: 0"></i>
                                     </button>
                                 </div>
                             </div>
@@ -134,4 +151,13 @@
             </div>
         </div>
     @endif
+    @if (count($cart) === 0)
+    <div class="action-buttons mb-3">
+        <button wire:click="skipFood" class="btn btn-skip">
+            <i class="bi bi-skip-forward me-1"></i> Bỏ qua
+        </button>
+    </div>
+    @endif
+
+
 </div>

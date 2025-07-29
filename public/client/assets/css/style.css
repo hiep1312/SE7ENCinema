@@ -2394,7 +2394,7 @@ body.active #mobile-nav {
 .prs_upcom_movie_content_box p {
 	padding-top: 5px;
 	padding-bottom: 5px;
-	margin-right: -200px;
+	margin-right: -66px;
 }
 
 .prs_upcom_movie_content_box i {
@@ -9759,24 +9759,29 @@ i:before {
 	width: auto;
 	margin-left: 40px;
 	margin-top: -5px;
+    height: auto;
 }
 
 .st_calen_asc_tecket_time_select li {
 	float: left;
 	margin-right: 15px;
+    height: 50px;
+    margin-top: 30px;
+    list-style: none
 }
 
 .st_calen_asc_tecket_time_select li a {
-	float: left;
+	display: flex;
 	font-size: 12px;
 	color: rgba(0, 0, 0, 0.54);
-	letter-spacing: 0;
-	width: 75px;
-	height: 37px;
+	width: auto;
+    height: auto;
 	text-align: center;
 	line-height: 37px;
 	border: 1px solid #d0cfcf;
 	border-radius: 4px;
+    padding: 5px;
+    text-decoration: none;
 }
 
 .st_calen_asc_tecket_time_select li a:hover {

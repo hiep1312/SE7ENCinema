@@ -56,10 +56,42 @@ class SelectFood extends Component
 
     public function selectFood($foodId)
     {
+        $food = FoodItem::with('variants.attributeValues.attribute')->find($foodId);
+
+        $hasAttributes = $food->variants
+            ->flatMap(fn($v) => $v->attributeValues)
+            ->isNotEmpty();
+
+        if (!$hasAttributes) {
+            // Thêm variant đầu tiên vào giỏ luôn
+            $variant = $food->variants->first();
+            if ($variant) {
+                $sku = $variant->sku;
+
+                if (isset($this->cart[$sku])) {
+                    $this->cart[$sku]['quantity']++;
+                } else {
+                    $this->cart[$sku] = [
+                        'variant_id' => $variant->id,
+                        'name' => $variant->foodItem->name,
+                        'attributes' => [],
+                        'price' => $variant->price,
+                        'quantity' => 1,
+                    ];
+                }
+            }
+
+            // Không hiển thị giao diện chọn thuộc tính nữa
+            $this->selectedFoodId = null;
+            return;
+        }
+
+        // Nếu có thuộc tính thì cho chọn tiếp
         $this->selectedFoodId = $foodId;
         $this->selectedAttributes = [];
         $this->selectedVariant = null;
     }
+
 
     public function selectAttribute($attributeName, $value)
     {
