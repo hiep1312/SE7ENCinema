@@ -81,7 +81,7 @@
                             </a>
                         </li>
                     </ul>
-                    <h5><span>$50</span> Payback on App Download</h5>
+                    <h5>Tải app để trải nghiệm ngay</h5>
                 </div>
             </div>
         </div>
@@ -93,8 +93,8 @@
         <div class="row">
             <div class="col-lg-6 col-md-6 col-sm-8 col-xs-12">
                 <div class="prs_bottom_footer_cont_wrapper">
-                    <p>Copyright 2025-26 <a href="#">Movie Pro</a> . All rights reserved - Design by <a
-                            href="#">Webstrot</a>
+                    <p>Bản Quyền Thuộc về nhóm <a href="#">SE7VEN CINEMA</a> Thiết kế , Sáng Tạo và Bảo Trì Hỗ trợ kĩ thuật bởi <a
+                            href="#">SE7VEN CINEMA</a>
                     </p>
                 </div>
             </div>
