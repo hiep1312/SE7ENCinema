@@ -146,443 +146,345 @@
                                     <h5 class="text-white mb-0">
                                         <i class="fas fa-chart-line me-2 text-primary"></i>Doanh thu
                                     </h5>
-                                    <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-sm {{ $revenuePeriod === 'daily' ? 'btn-primary' : 'btn-outline-primary' }}"
-                                            wire:click="changeRevenuePeriod('daily')">Ngày</button>
-                                        <button type="button" class="btn btn-sm {{ $revenuePeriod === 'monthly' ? 'btn-primary' : 'btn-outline-primary' }}"
-                                            wire:click="changeRevenuePeriod('monthly')">Tháng</button>
-                                        <button type="button" class="btn btn-sm {{ $revenuePeriod === 'yearly' ? 'btn-primary' : 'btn-outline-primary' }}"
-                                            wire:click="changeRevenuePeriod('yearly')">Năm</button>
+                                    {{-- Revenue Chart Filter --}}
+                                    <div class="btn-group mb-2" role="group">
+                                        <select wire:model="revenueYear" wire:change="changeRevenueYear($event.target.value)"
+                                            class="form-select form-select-sm w-auto border-primary text-primary fw-bold"
+                                            style="background: #23272b; border-width: 2px; border-radius: 0.5rem 0 0 0.5rem; cursor:pointer; padding: 2px 5px;">
+                                            @foreach($availableYears as $year)
+                                                <option value="{{ $year }}" class="bg-dark text-primary">Năm {{ $year }}</option>
+                                            @endforeach
+                                        </select>
+                                        <select wire:model="revenueMonth" wire:change="changeRevenueMonth($event.target.value)"
+                                            class="form-select form-select-sm w-auto border-primary text-primary fw-bold"
+                                            style="background: #23272b; border-width: 2px; border-radius: 0; cursor:pointer; padding: 2px 5px;">
+                                            @foreach($availableMonths as $month)
+                                                <option value="{{ $month }}" class="bg-dark text-primary">Tháng {{ $month }}</option>
+                                            @endforeach
+                                        </select>
+                                        <select wire:model="revenueDay" wire:change="changeRevenueDay($event.target.value)"
+                                            class="form-select form-select-sm w-auto border-primary text-primary fw-bold"
+                                            style="background: #23272b; border-width: 2px; border-radius: 0 0.5rem 0.5rem 0; cursor:pointer; padding: 2px 5px;">
+                                            @foreach($availableDays as $day)
+                                                <option value="{{ $day }}" class="bg-dark text-primary">Ngày {{ $day }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                                 <div id="revenueChart" style="height: 400px;"></div>
                             </div>
                         </div>
 
-                        <!-- Ticket Chart -->
+                        <!-- Movies Summary Chart (Top phim theo doanh thu) -->
                         <div class="col-lg-6">
                             <div class="bg-dark rounded-3 p-3">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h5 class="text-white mb-0">
-                                        <i class="fas fa-ticket me-2 text-success"></i>Lượng vé
+                                        <i class="fas fa-film me-2 text-info"></i>Top phim theo doanh thu
                                     </h5>
-                                    <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-sm {{ $ticketPeriod === 'daily' ? 'btn-success' : 'btn-outline-success' }}"
-                                            wire:click="changeTicketPeriod('daily')">Ngày</button>
-                                        <button type="button" class="btn btn-sm {{ $ticketPeriod === 'monthly' ? 'btn-success' : 'btn-outline-success' }}"
-                                            wire:click="changeTicketPeriod('monthly')">Tháng</button>
-                                        <button type="button" class="btn btn-sm {{ $ticketPeriod === 'yearly' ? 'btn-success' : 'btn-outline-success' }}"
-                                            wire:click="changeTicketPeriod('yearly')">Năm</button>
+                                    {{-- Top Movies Chart Filter --}}
+                                    <div class="btn-group mb-2" role="group">
+                                        <select wire:model="topMoviesYear" wire:change="changeTopMoviesYear($event.target.value)"
+                                            class="form-select form-select-sm w-auto border-info text-info fw-bold"
+                                            style="background: #23272b; border-width: 2px; border-radius: 0.5rem 0 0 0.5rem; cursor:pointer; padding: 2px 5px;">
+                                            @foreach($availableYears as $year)
+                                                <option value="{{ $year }}" class="bg-dark text-info">Năm {{ $year }}</option>
+                                            @endforeach
+                                        </select>
+                                        <select wire:model="topMoviesMonth" wire:change="changeTopMoviesMonth($event.target.value)"
+                                            class="form-select form-select-sm w-auto border-info text-info fw-bold"
+                                            style="background: #23272b; border-width: 2px; border-radius: 0; cursor:pointer; padding: 2px 5px;">
+                                            @foreach($availableMonths as $month)
+                                                <option value="{{ $month }}" class="bg-dark text-info">Tháng {{ $month }}</option>
+                                            @endforeach
+                                        </select>
+                                        <select wire:model="topMoviesDay" wire:change="changeTopMoviesDay($event.target.value)"
+                                            class="form-select form-select-sm w-auto border-info text-info fw-bold"
+                                            style="background: #23272b; border-width: 2px; border-radius: 0 0.5rem 0.5rem 0; cursor:pointer; padding: 2px 5px;">
+                                            @foreach($availableDays as $day)
+                                                <option value="{{ $day }}" class="bg-dark text-info">Ngày {{ $day }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
-                                <div id="ticketChart" style="height: 400px;"></div>
+                                <div id="moviesSummaryChart" style="height: 400px;"></div>
                             </div>
                         </div>
 
-                        <!-- Status Chart -->
-                        <div class="col-lg-6">
-                            <div class="bg-dark rounded-3 p-3">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 class="text-white mb-0">
-                                        <i class="fas fa-chart-pie me-2 text-warning"></i>Tình trạng đơn hàng
-                                    </h5>
-                                    <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-sm {{ $statusPeriod === 'daily' ? 'btn-warning' : 'btn-outline-warning' }}"
-                                            wire:click="changeStatusPeriod('daily')">Ngày</button>
-                                        <button type="button" class="btn btn-sm {{ $statusPeriod === 'monthly' ? 'btn-warning' : 'btn-outline-warning' }}"
-                                            wire:click="changeStatusPeriod('monthly')">Tháng</button>
-                                        <button type="button" class="btn btn-sm {{ $statusPeriod === 'yearly' ? 'btn-warning' : 'btn-outline-warning' }}"
-                                            wire:click="changeStatusPeriod('yearly')">Năm</button>
-                                    </div>
-                                </div>
-                                <div id="statusChart" style="height: 400px;"></div>
-                            </div>
-                        </div>
-
-                        <!-- Top Movies Chart -->
-                        <div class="col-lg-6">
-                            <div class="bg-dark rounded-3 p-3">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 class="text-white mb-0">
-                                        <i class="fas fa-film me-2 text-info"></i>Top phim doanh thu
-                                    </h5>
-                                    <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-sm {{ $topMoviesPeriod === 'daily' ? 'btn-info' : 'btn-outline-info' }}"
-                                            wire:click="changeTopMoviesPeriod('daily')">Ngày</button>
-                                        <button type="button" class="btn btn-sm {{ $topMoviesPeriod === 'monthly' ? 'btn-info' : 'btn-outline-info' }}"
-                                            wire:click="changeTopMoviesPeriod('monthly')">Tháng</button>
-                                        <button type="button" class="btn btn-sm {{ $topMoviesPeriod === 'yearly' ? 'btn-info' : 'btn-outline-info' }}"
-                                            wire:click="changeTopMoviesPeriod('yearly')">Năm</button>
-                                    </div>
-                                </div>
-                                <div id="topMoviesChart" style="height: 400px;"></div>
-                            </div>
-                        </div>
                     </div>
                 </div>
-
                 @script
                 <script>
                     (function() {
-                        // Function to initialize charts with scChart
-                        function initializeBookingCharts() {
+                        // Global variable to store chart instances
+                        window.chartInstances = {};
+
+                        // Function to render all charts
+                        function renderAllCharts() {
                             if (typeof window.createScChart !== 'undefined') {
+                                // Clear existing chart instances
+                                Object.values(window.chartInstances).forEach(chart => {
+                                    if (chart && typeof chart.destroy === 'function') {
+                                        chart.destroy();
+                                    }
+                                });
+                                window.chartInstances = {};
+
                                 // Revenue line chart
-                                createScChart(document.querySelector('#revenueChart'), {
-                                    chart: {
-                                        type: 'line',
-                                        height: 400,
-                                        background: 'transparent',
-                                        toolbar: {
-                                            show: false
-                                        },
-                                        animations: {
-                                            enabled: true,
-                                            easing: 'easeinout',
-                                            speed: 800,
-                                            animateGradually: {
-                                                enabled: true,
-                                                delay: 150
-                                            }
-                                        }
-                                    },
-                                    series: [
-                                        {
-                                            name: 'Doanh thu (VND)',
-                                            data: @json($revenueData['revenue'] ?? [])
-                                        },
-                                        {
-                                            name: 'Số đơn hàng',
-                                            data: @json($revenueData['bookings'] ?? [])
-                                        },
-                                        {
-                                            name: 'Doanh thu TB/đơn',
-                                            data: @json($revenueData['avgRevenue'] ?? [])
-                                        }
-                                    ],
-                                    xaxis: {
-                                        categories: @json($revenueData['labels'] ?? []),
-                                        labels: {
-                                            style: {
-                                                colors: '#ffffff',
-                                                fontSize: '12px'
-                                            }
-                                        },
-                                        axisBorder: {
-                                            show: false
-                                        },
-                                        axisTicks: {
-                                            show: false
-                                        }
-                                    },
-                                    yaxis: {
-                                        labels: {
-                                            style: {
-                                                colors: '#ffffff',
-                                                fontSize: '12px'
-                                            },
-                                            formatter: function(value) {
-                                                return new Intl.NumberFormat('vi-VN').format(value);
-                                            }
-                                        }
-                                    },
-                                    colors: ['#4285F4', '#34A853', '#FBBC04'],
-                                    stroke: {
-                                        curve: 'smooth',
-                                        width: 3,
-                                        lineCap: 'round'
-                                    },
-                                    fill: {
-                                        type: 'gradient',
-                                        gradient: {
-                                            shade: 'dark',
-                                            type: 'vertical',
-                                            shadeIntensity: 0.1,
-                                            gradientToColors: ['#4285F4'],
-                                            inverseColors: false,
-                                            opacityFrom: 0.3,
-                                            opacityTo: 0.05,
-                                            stops: [0, 100]
-                                        }
-                                    },
-                                    grid: {
-                                        show: true,
-                                        borderColor: '#2d3748',
-                                        strokeDashArray: 0,
-                                        position: 'back'
-                                    },
-                                    legend: {
-                                        position: 'top',
-                                        horizontalAlign: 'left',
-                                        labels: {
-                                            colors: '#ffffff'
-                                        }
-                                    },
-                                    tooltip: {
-                                        theme: 'dark',
-                                        y: {
-                                            formatter: function(value) {
-                                                return new Intl.NumberFormat('vi-VN', {
-                                                    style: 'currency',
-                                                    currency: 'VND'
-                                                }).format(value);
-                                            }
-                                        }
-                                    }
-                                });
-
-                                // Ticket bar chart
-                                createScChart(document.querySelector('#ticketChart'), {
-                                    chart: {
-                                        type: 'bar',
-                                        height: 400,
-                                        background: 'transparent',
-                                        toolbar: {
-                                            show: false
-                                        },
-                                        animations: {
-                                            enabled: true,
-                                            easing: 'easeinout',
-                                            speed: 800
-                                        }
-                                    },
-                                    series: [
-                                        {
-                                            name: 'Vé đã bán',
-                                            data: @json($ticketData['tickets'] ?? [])
-                                        },
-                                        {
-                                            name: 'Số đơn hàng',
-                                            data: @json($ticketData['bookings'] ?? [])
-                                        },
-                                        {
-                                            name: 'TB vé/đơn',
-                                            data: @json($ticketData['avgTicketsPerBooking'] ?? [])
-                                        }
-                                    ],
-                                    xaxis: {
-                                        categories: @json($ticketData['labels'] ?? []),
-                                        labels: {
-                                            style: {
-                                                colors: '#ffffff',
-                                                fontSize: '12px'
-                                            }
-                                        },
-                                        axisBorder: {
-                                            show: false
-                                        },
-                                        axisTicks: {
-                                            show: false
-                                        }
-                                    },
-                                    yaxis: {
-                                        labels: {
-                                            style: {
-                                                colors: '#ffffff',
-                                                fontSize: '12px'
-                                            }
-                                        }
-                                    },
-                                    colors: ['#4285F4', '#34A853', '#FBBC04'],
-                                    plotOptions: {
-                                        bar: {
-                                            horizontal: false,
-                                            columnWidth: '60%',
-                                            endingShape: 'rounded',
-                                            borderRadius: 4
-                                        }
-                                    },
-                                    grid: {
-                                        show: true,
-                                        borderColor: '#2d3748',
-                                        strokeDashArray: 0,
-                                        position: 'back'
-                                    },
-                                    legend: {
-                                        position: 'top',
-                                        horizontalAlign: 'left',
-                                        labels: {
-                                            colors: '#ffffff'
-                                        }
-                                    }
-                                });
-
-                                // Status pie chart
-                                @php
-                                    $statusLabels = ['Đã thanh toán', 'Đang chờ', 'Lỗi', 'Hết hạn'];
-                                @endphp
-                                createScChart(document.querySelector('#statusChart'), {
-                                    chart: {
-                                        type: 'donut',
-                                        height: 400,
-                                        background: 'transparent',
-                                        toolbar: {
-                                            show: false
-                                        },
-                                        animations: {
-                                            enabled: true,
-                                            easing: 'easeinout',
-                                            speed: 800,
-                                            animateGradually: {
-                                                enabled: true,
-                                                delay: 150
-                                            }
-                                        }
-                                    },
-                                    series: @json(array_values($statusData)),
-                                    labels: @json($statusLabels),
-                                    colors: ['#4285F4', '#34A853', '#FBBC04', '#EA4335'],
-                                    stroke: {
-                                        show: false
-                                    },
-                                    dataLabels: {
-                                        enabled: true
-                                    },
-                                    legend: {
-                                        position: 'bottom',
-                                        horizontalAlign: 'center',
-                                        labels: {
-                                            colors: '#ffffff'
-                                        }
-                                    },
-                                    tooltip: {
-                                        theme: 'dark',
-                                        y: {
-                                            formatter: function(value) {
-                                                return value + ' đơn hàng';
-                                            }
-                                        }
-                                    },
-                                    responsive: [{
-                                        breakpoint: 480,
-                                        options: {
-                                            chart: {
-                                                height: 300
-                                            },
-                                            legend: {
-                                                position: 'bottom'
-                                            }
-                                        }
-                                    }]
-                                });
-
-                                // Top movies chart
-                                createScChart(document.querySelector('#topMoviesChart'), {
-                                    chart: {
-                                        type: 'bar',
-                                        height: 400,
-                                        background: 'transparent',
-                                        toolbar: {
-                                            show: false
-                                        },
-                                        animations: {
-                                            enabled: true,
-                                            easing: 'easeinout',
-                                            speed: 800
-                                        }
-                                    },
-                                    series: [
-                                        {
-                                            name: 'Doanh thu (VND)',
-                                            data: @json($topMovies['revenue'] ?? [])
-                                        }
-                                    ],
-                                    xaxis: {
-                                        categories: @json($topMovies['labels'] ?? []),
-                                        labels: {
-                                            style: {
-                                                colors: '#ffffff',
-                                                fontSize: '11px'
-                                            },
-                                            rotate: -45,
-                                            rotateAlways: false
-                                        },
-                                        axisBorder: {
-                                            show: false
-                                        },
-                                        axisTicks: {
-                                            show: false
-                                        }
-                                    },
-                                    yaxis: {
-                                        labels: {
-                                            style: {
-                                                colors: '#ffffff',
-                                                fontSize: '12px'
-                                            },
-                                            formatter: function(value) {
-                                                return new Intl.NumberFormat('vi-VN').format(value);
-                                            }
-                                        }
-                                    },
-                                    colors: ['#4285F4'],
-                                    plotOptions: {
-                                        bar: {
-                                            horizontal: false,
-                                            columnWidth: '70%',
-                                            endingShape: 'rounded',
-                                            borderRadius: 4
-                                        }
-                                    },
-                                    grid: {
-                                        show: true,
-                                        borderColor: '#2d3748',
-                                        strokeDashArray: 0,
-                                        position: 'back'
-                                    },
-                                    legend: {
-                                        position: 'top',
-                                        horizontalAlign: 'left',
-                                        labels: {
-                                            colors: '#ffffff'
-                                        }
-                                    },
-                                    tooltip: {
-                                        theme: 'dark',
-                                        y: {
-                                            formatter: function(value) {
-                                                return new Intl.NumberFormat('vi-VN', {
-                                                    style: 'currency',
-                                                    currency: 'VND'
-                                                }).format(value);
-                                            }
-                                        }
-                                    }
-                                });
-                            }
-                        }
-
-                        // Initialize charts when component is ready
-                        document.addEventListener('livewire:init', () => {
-                            if (document.querySelector('#revenueChart')) {
-                                initializeBookingCharts();
-                            }
-                        });
-
-                        // Re-initialize charts when tab changes or data updates
-                        document.addEventListener('livewire:updated', () => {
-                            if (document.querySelector('#revenueChart') && typeof window.createScChart !== 'undefined') {
-                                setTimeout(() => {
-                                    initializeBookingCharts();
-                                }, 100);
-                            }
-                        });
-
-                        // Also initialize when DOM is ready
-                        if (document.readyState === 'loading') {
-                            document.addEventListener('DOMContentLoaded', () => {
                                 if (document.querySelector('#revenueChart')) {
-                                    initializeBookingCharts();
+                                    window.chartInstances.revenueChart = createScChart(document.querySelector('#revenueChart'), {
+                                        chart: {
+                                            height: 400,
+                                            type: 'line',
+                                            stacked: false,
+                                            background: 'transparent',
+                                            toolbar: { show: false }
+                                        },
+                                        dataLabels: {
+                                            enabled: false
+                                        },
+                                        colors: ['#FF1654', '#247BA0'],
+                                        series: [
+                                            {
+                                                name: 'Doanh thu (VND)',
+                                                data: @json($revenueData['revenue'] ?? [])
+                                            },
+                                            {
+                                                name: 'Số đơn hàng',
+                                                data: @json($revenueData['bookings'] ?? [])
+                                            }
+                                        ],
+                                        stroke: {
+                                            width: [4, 4],
+                                            curve: 'smooth'
+                                        },
+                                        plotOptions: {
+                                            bar: {
+                                                columnWidth: '20%'
+                                            }
+                                        },
+                                        xaxis: {
+                                            categories: @json($revenueData['labels'] ?? []),
+                                            labels: {
+                                                style: {
+                                                    colors: '#ffffff',
+                                                    fontSize: '12px'
+                                                }
+                                            },
+                                            axisBorder: {
+                                                show: false
+                                            },
+                                            axisTicks: {
+                                                show: false
+                                            }
+                                        },
+                                        yaxis: [
+                                            {
+                                                axisTicks: {
+                                                    show: true
+                                                },
+                                                axisBorder: {
+                                                    show: true,
+                                                    color: '#FF1654'
+                                                },
+                                            labels: {
+                                                style: {
+                                                        colors: '#FF1654',
+                                                    fontSize: '12px'
+                                                },
+                                                formatter: function(value) {
+                                                    return new Intl.NumberFormat('vi-VN').format(value);
+                                                    }
+                                                },
+                                                title: {
+                                                    text: 'Doanh thu (VND)',
+                                                    style: {
+                                                        color: '#FF1654'
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                opposite: true,
+                                                axisTicks: {
+                                                    show: true
+                                                },
+                                                axisBorder: {
+                                                    show: true,
+                                                    color: '#247BA0'
+                                                },
+                                            labels: {
+                                                style: {
+                                                        colors: '#247BA0',
+                                                    fontSize: '12px'
+                                                    },
+                                                    formatter: function(value) {
+                                                        return new Intl.NumberFormat('vi-VN').format(value);
+                                                    }
+                                                },
+                                                title: {
+                                                    text: 'Số đơn hàng',
+                                                style: {
+                                                        color: '#247BA0'
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        tooltip: {
+                                            shared: false,
+                                            intersect: true,
+                                            theme: 'dark',
+                                            x: {
+                                                show: false
+                                            },
+                                            y: {
+                                                formatter: function(value) {
+                                                    return new Intl.NumberFormat('vi-VN').format(value);
+                                                }
+                                            }
+                                        },
+                                        legend: {
+                                            horizontalAlign: 'left',
+                                            offsetX: 40,
+                                            labels: {
+                                                colors: '#ffffff'
+                                            }
+                                        },
+                                        grid: {
+                                            show: true,
+                                            borderColor: '#2d3748',
+                                            strokeDashArray: 0,
+                                            position: 'back'
+                                        }
+                                    });
                                 }
-                            });
-                        } else {
-                            if (document.querySelector('#revenueChart')) {
-                                initializeBookingCharts();
+
+                                // Movies Summary chart (Top phim theo doanh thu)
+                                if (document.querySelector('#moviesSummaryChart')) {
+                                    window.chartInstances.moviesSummaryChart = createScChart(document.querySelector('#moviesSummaryChart'), {
+                                        chart: {
+                                            height: 400,
+                                            background: 'transparent',
+                                            toolbar: { show: false },
+                                        },
+                                        dataLabels: { enabled: false },
+                                        series: [
+                                            {
+                                                name: 'Doanh thu',
+                                                type: 'column',
+                                                data: @json($topMovies['revenue'] ?? [])
+                                            },
+                                            {
+                                                name: 'Vé bán',
+                                                type: 'area',
+                                                data: @json($topMovies['tickets'] ?? [])
+                                            }
+                                        ],
+                                        fill: {
+                                            type: ['solid', 'gradient'],
+                                            gradient: {
+                                                shadeIntensity: 1,
+                                                opacityFrom: 0.7,
+                                                opacityTo: 0.9,
+                                                stops: [0, 90, 100],
+                                                colorStops: [
+                                                    [],
+                                                    [
+                                                        { offset: 0, color: '#4bc3e6', opacity: 0.7 },
+                                                        { offset: 100, color: '#23272b', opacity: 0.1 }
+                                                    ]
+                                                ]
+                                            }
+                                        },
+                                        xaxis: {
+                                            categories: @json($topMovies['labels'] ?? []),
+                                            labels: {
+                                                style: {
+                                                    colors: '#ffffff',
+                                                    fontSize: '12px'
+                                                },
+                                                rotate: -45,
+                                                rotateAlways: false
+                                            },
+                                            axisBorder: { show: false },
+                                            axisTicks: { show: false }
+                                        },
+                                        yaxis: [
+                                            {
+                                                title: { text: 'Doanh thu (VND)', style: { color: '#ffd700' } },
+                                                labels: {
+                                                    style: { colors: '#ffd700', fontSize: '12px' },
+                                                    formatter: function(value) {
+                                                        return new Intl.NumberFormat('vi-VN').format(value);
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                opposite: true,
+                                                title: { text: 'Vé bán', style: { color: '#4bc3e6' } },
+                                            labels: {
+                                                    style: { colors: '#4bc3e6', fontSize: '12px' },
+                                                formatter: function(value) {
+                                                    return new Intl.NumberFormat('vi-VN').format(value);
+                                                }
+                                            }
+                                            }
+                                        ],
+                                        colors: ['#ffd700', '#4bc3e6'],
+                                        plotOptions: {
+                                            bar: {
+                                                horizontal: false,
+                                                columnWidth: '60%',
+                                                endingShape: 'rounded',
+                                                borderRadius: 4
+                                            }
+                                        },
+                                        legend: {
+                                            position: 'top',
+                                            horizontalAlign: 'left',
+                                            labels: { colors: '#ffffff' }
+                                        },
+                                        tooltip: {
+                                            theme: 'dark',
+                                            custom: function({series, seriesIndex, dataPointIndex, w}) {
+                                                const phim = w.globals.labels[dataPointIndex] || '';
+                                                const doanhThu = w.globals.series[0][dataPointIndex] || 0;
+                                                const veBan = w.globals.series[1][dataPointIndex] || 0;
+                                                const donHang = @json($topMovies['bookings'] ?? [])[dataPointIndex] || 0;
+                                                return `
+                                                    <div style="background:#18191a;padding:14px 18px;border-radius:10px;min-width:220px;box-shadow:0 4px 16px #0007;">
+                                                        <div style="font-weight:700;font-size:16px;color:#fff;margin-bottom:10px;line-height:1.3;">🎬 ${phim}</div>
+                                                        <div style="color:#ffd700;font-size:15px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">
+                                                            <span>Doanh thu:</span> <b>${new Intl.NumberFormat('vi-VN').format(doanhThu)}đ</b>
+                                                        </div>
+                                                        <div style="color:#4bc3e6;font-size:15px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">
+                                                            <span>Vé bán:</span> <b>${veBan}</b>
+                                                        </div>
+                                                        <div style="color:#34a853;font-size:15px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
+                                                            <span>Đơn hàng:</span> <b>${donHang}</b>
+                                                        </div>
+                                                    </div>
+                                                `;
+                                            }
+                                        },
+                                        grid: {
+                                            show: true,
+                                            borderColor: '#2d3748',
+                                            strokeDashArray: 0,
+                                            position: 'back'
+                                        }
+                                    });
+                                }
                             }
                         }
+
+                        // Make renderAllCharts available globally for Livewire
+                        window.renderAllCharts = renderAllCharts;
+
+                        // Initial render
+                                renderAllCharts();
                     })();
                 </script>
-                @endscript
+            @endscript
             @endif
             @if ($tabCurrent === 'overview')
                 <div class="row">
@@ -1155,3 +1057,4 @@
 </div>
 </div>
 </div>
+
