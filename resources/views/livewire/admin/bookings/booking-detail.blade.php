@@ -1,6 +1,6 @@
 @use('chillerlan\QRCode\QRCode')
 <div class="scRender">
-    <div class="container-lg mb-4" @if(session()->missing('deleteExpired')) wire:poll="cleanupBookingsAndUpdateData" @endif>
+    <div class="container-lg mb-4" @if (session()->missing('deleteExpired')) wire:poll="cleanupBookingsAndUpdateData" @endif>
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2 class="text-light">Chi tiết đơn hàng: {{ $booking->booking_code }}</h2>
@@ -34,7 +34,8 @@
                         <div class="d-flex justify-content-between">
                             <div>
                                 <h6 class="card-title">SL món ăn đặt kèm</h6>
-                                <h3 class="mb-0">{{ number_format($booking->foodOrderItems->count(), 0, '.', '.') }}</h3>
+                                <h3 class="mb-0">{{ number_format($booking->foodOrderItems->count(), 0, '.', '.') }}
+                                </h3>
                                 <small>Món ăn</small>
                             </div>
                             <div class="align-self-center">
@@ -50,7 +51,10 @@
                         <div class="d-flex justify-content-between">
                             <div>
                                 <h6 class="card-title">Doanh thu món ăn</h6>
-                                <h3 class="mb-0" style="color: #ffefbe; text-shadow: 0 0 6px rgba(197, 169, 86, 0.8);">{{ number_format($booking->foodOrderItems->sum(fn($foodOrderItem) => $foodOrderItem->price * $foodOrderItem->quantity), 0, '.', '.') }}đ</h3>
+                                <h3 class="mb-0"
+                                    style="color: #ffefbe; text-shadow: 0 0 6px rgba(197, 169, 86, 0.8);">
+                                    {{ number_format($booking->foodOrderItems->sum(fn($foodOrderItem) => $foodOrderItem->price * $foodOrderItem->quantity), 0, '.', '.') }}đ
+                                </h3>
                                 <small>VNĐ</small>
                             </div>
                             <div class="align-self-center">
@@ -66,7 +70,8 @@
                         <div class="d-flex justify-content-between">
                             <div>
                                 <h6 class="card-title">SL mã giảm giá sử dụng</h6>
-                                <h3 class="mb-0">{{ number_format($booking->promotionUsages->count(), 0, '.', '.') }}</h3>
+                                <h3 class="mb-0">{{ number_format($booking->promotionUsages->count(), 0, '.', '.') }}
+                                </h3>
                                 <small>Mã giảm giá</small>
                             </div>
                             <div class="align-self-center">
@@ -81,37 +86,48 @@
         <!-- Tabs Navigation -->
         <ul class="nav nav-tabs bg-dark" role="tablist">
             <li class="nav-item">
-                <button class="nav-link @if($tabCurrent === 'overview') active bg-light text-dark @else text-light @endif"
-                        wire:click="$set('tabCurrent', 'overview')"
-                        style="border-top-right-radius: 0;">
+                <button
+                    class="nav-link @if ($tabCurrent === 'information') active bg-light text-dark @else text-light @endif"
+                    wire:click="changeTab('information')" style="border-top-right-radius: 0;">
                     <i class="fas fa-info-circle me-1"></i>Tổng quan
                 </button>
             </li>
             <li class="nav-item">
-                <button class="nav-link @if($tabCurrent === 'seats') active bg-light text-dark @else text-light @endif"
-                        wire:click="$set('tabCurrent', 'seats')"
-                        style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                <button
+                    class="nav-link @if ($tabCurrent === 'overview') active bg-light text-dark @else text-light @endif"
+                    wire:click="changeTab('overview')"
+                    style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                    <i class="fa-solid fa-chair me-1"></i>Thông tin ghế
+                </button>
+            </li>
+            <li class="nav-item">
+                <button
+                    class="nav-link @if ($tabCurrent === 'seats') active bg-light text-dark @else text-light @endif"
+                    wire:click="changeTab('seats')"
+                    style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <i class="fa-solid fa-chair me-1"></i>Ghế đặt
                 </button>
             </li>
             <li class="nav-item">
-                <button class="nav-link @if($tabCurrent === 'tickets') active bg-light text-dark @else text-light @endif"
-                        wire:click="$set('tabCurrent', 'tickets')"
-                        style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                <button
+                    class="nav-link @if ($tabCurrent === 'tickets') active bg-light text-dark @else text-light @endif"
+                    wire:click="changeTab('tickets')"
+                    style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <i class="fa-solid fa-ticket me-1"></i>Thông tin vé
                 </button>
             </li>
             <li class="nav-item">
-                <button class="nav-link @if($tabCurrent === 'foodsOrder') active bg-light text-dark @else text-light @endif"
-                        wire:click="$set('tabCurrent', 'foodsOrder')"
-                        style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                <button
+                    class="nav-link @if ($tabCurrent === 'foodsOrder') active bg-light text-dark @else text-light @endif"
+                    wire:click="changeTab('foodsOrder')"
+                    style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <i class="fa-solid fa-burger me-1"></i>Món ăn
                 </button>
             </li>
             <li class="nav-item">
-                <button class="nav-link @if($tabCurrent === 'promotions') active bg-light text-dark @else text-light @endif"
-                        wire:click="$set('tabCurrent', 'promotions')"
-                        style="border-top-left-radius: 0;">
+                <button
+                    class="nav-link @if ($tabCurrent === 'promotions') active bg-light text-dark @else text-light @endif"
+                    wire:click="changeTab('promotions')" style="border-top-left-radius: 0;">
                     <i class="fa-solid fa-swatchbook me-1"></i>Mã giảm giá
                 </button>
             </li>
@@ -119,15 +135,607 @@
 
         <!-- Tab Content -->
         <div class="tab-content mt-1">
-            <!-- Overview Tab -->
-            @if($tabCurrent === 'overview')
+            <!-- Information Tab -->
+            @if ($tabCurrent === 'information')
+                <div class="container-fluid" wire:ignore>
+                    <div class="row g-4">
+                        <!-- Revenue Chart -->
+                        <div class="col-lg-6">
+                            <div class="bg-dark rounded-3 p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="text-white mb-0">
+                                        <i class="fas fa-chart-line me-2 text-primary"></i>Doanh thu
+                                    </h5>
+                                    {{-- Revenue Chart Filter --}}
+                                    <div class="btn-group mb-2" role="group">
+                                        <select wire:model="revenueYear" wire:change="changeRevenueYear($event.target.value)"
+                                            class="form-select form-select-sm w-auto border-primary text-primary fw-bold"
+                                            style="background: #23272b; border-width: 2px; border-radius: 0.5rem 0 0 0.5rem; cursor:pointer; padding: 2px 5px;">
+                                            @foreach($availableYears as $year)
+                                                <option value="{{ $year }}" class="bg-dark text-primary">Năm {{ $year }}</option>
+                                            @endforeach
+                                        </select>
+                                        <select wire:model="revenueMonth" wire:change="changeRevenueMonth($event.target.value)"
+                                            class="form-select form-select-sm w-auto border-primary text-primary fw-bold"
+                                            style="background: #23272b; border-width: 2px; border-radius: 0; cursor:pointer; padding: 2px 5px;">
+                                            @foreach($availableMonths as $month)
+                                                <option value="{{ $month }}" class="bg-dark text-primary">Tháng {{ $month }}</option>
+                                            @endforeach
+                                        </select>
+                                        <select wire:model="revenueDay" wire:change="changeRevenueDay($event.target.value)"
+                                            class="form-select form-select-sm w-auto border-primary text-primary fw-bold"
+                                            style="background: #23272b; border-width: 2px; border-radius: 0 0.5rem 0.5rem 0; cursor:pointer; padding: 2px 5px;">
+                                            @foreach($availableDays as $day)
+                                                <option value="{{ $day }}" class="bg-dark text-primary">Ngày {{ $day }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div id="revenueChart" style="height: 400px;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Ticket Chart -->
+                        <div class="col-lg-6">
+                            <div class="bg-dark rounded-3 p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="text-white mb-0">
+                                        <i class="fas fa-ticket me-2 text-success"></i>Lượng vé
+                                    </h5>
+                                    {{-- Ticket Chart Filter --}}
+                                    <div class="btn-group mb-2" role="group">
+                                        <select wire:model="ticketYear" wire:change="changeTicketYear($event.target.value)"
+                                            class="form-select form-select-sm w-auto border-success text-success fw-bold"
+                                            style="background: #23272b; border-width: 2px; border-radius: 0.5rem 0 0 0.5rem; cursor:pointer; padding: 2px 5px;">
+                                            @foreach($availableYears as $year)
+                                                <option value="{{ $year }}" class="bg-dark text-success">Năm {{ $year }}</option>
+                                            @endforeach
+                                        </select>
+                                        <select wire:model="ticketMonth" wire:change="changeTicketMonth($event.target.value)"
+                                            class="form-select form-select-sm w-auto border-success text-success fw-bold"
+                                            style="background: #23272b; border-width: 2px; border-radius: 0; cursor:pointer; padding: 2px 5px;">
+                                            @foreach($availableMonths as $month)
+                                                <option value="{{ $month }}" class="bg-dark text-success">Tháng {{ $month }}</option>
+                                            @endforeach
+                                        </select>
+                                        <select wire:model="ticketDay" wire:change="changeTicketDay($event.target.value)"
+                                            class="form-select form-select-sm w-auto border-success text-success fw-bold"
+                                            style="background: #23272b; border-width: 2px; border-radius: 0 0.5rem 0.5rem 0; cursor:pointer; padding: 2px 5px;">
+                                            @foreach($availableDays as $day)
+                                                <option value="{{ $day }}" class="bg-dark text-success">Ngày {{ $day }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div id="ticketChart" style="height: 400px;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Status Chart -->
+                        <div class="col-lg-6">
+                            <div class="bg-dark rounded-3 p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="text-white mb-0">
+                                        <i class="fas fa-chart-pie me-2 text-warning"></i>Tình trạng đơn hàng
+                                    </h5>
+                                    {{-- Status Chart Filter --}}
+                                    <div class="btn-group mb-2" role="group">
+                                        <select wire:model="statusYear" wire:change="changeStatusYear($event.target.value)"
+                                            class="form-select form-select-sm w-auto border-warning text-warning fw-bold"
+                                            style="background: #23272b; border-width: 2px; border-radius: 0.5rem 0 0 0.5rem; cursor:pointer; padding: 2px 5px;">
+                                            @foreach($availableYears as $year)
+                                                <option value="{{ $year }}" class="bg-dark text-warning">Năm {{ $year }}</option>
+                                            @endforeach
+                                        </select>
+                                        <select wire:model="statusMonth" wire:change="changeStatusMonth($event.target.value)"
+                                            class="form-select form-select-sm w-auto border-warning text-warning fw-bold"
+                                            style="background: #23272b; border-width: 2px; border-radius: 0; cursor:pointer; padding: 2px 5px;">
+                                            @foreach($availableMonths as $month)
+                                                <option value="{{ $month }}" class="bg-dark text-warning">Tháng {{ $month }}</option>
+                                            @endforeach
+                                        </select>
+                                        <select wire:model="statusDay" wire:change="changeStatusDay($event.target.value)"
+                                            class="form-select form-select-sm w-auto border-warning text-warning fw-bold"
+                                            style="background: #23272b; border-width: 2px; border-radius: 0 0.5rem 0.5rem 0; cursor:pointer; padding: 2px 5px;">
+                                            @foreach($availableDays as $day)
+                                                <option value="{{ $day }}" class="bg-dark text-warning">Ngày {{ $day }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div id="statusChart" style="height: 400px;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Top Movies Chart -->
+                        <div class="col-lg-6">
+                            <div class="bg-dark rounded-3 p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="text-white mb-0">
+                                        <i class="fas fa-film me-2 text-info"></i>Top phim doanh thu
+                                    </h5>
+                                    {{-- Top Movies Chart Filter --}}
+                                    <div class="btn-group mb-2" role="group">
+                                        <select wire:model="topMoviesYear" wire:change="changeTopMoviesYear($event.target.value)"
+                                            class="form-select form-select-sm w-auto border-info text-info fw-bold"
+                                            style="background: #23272b; border-width: 2px; border-radius: 0.5rem 0 0 0.5rem; cursor:pointer; padding: 2px 5px;">
+                                            @foreach($availableYears as $year)
+                                                <option value="{{ $year }}" class="bg-dark text-info">Năm {{ $year }}</option>
+                                            @endforeach
+                                        </select>
+                                        <select wire:model="topMoviesMonth" wire:change="changeTopMoviesMonth($event.target.value)"
+                                            class="form-select form-select-sm w-auto border-info text-info fw-bold"
+                                            style="background: #23272b; border-width: 2px; border-radius: 0; cursor:pointer; padding: 2px 5px;">
+                                            @foreach($availableMonths as $month)
+                                                <option value="{{ $month }}" class="bg-dark text-info">Tháng {{ $month }}</option>
+                                            @endforeach
+                                        </select>
+                                        <select wire:model="topMoviesDay" wire:change="changeTopMoviesDay($event.target.value)"
+                                            class="form-select form-select-sm w-auto border-info text-info fw-bold"
+                                            style="background: #23272b; border-width: 2px; border-radius: 0 0.5rem 0.5rem 0; cursor:pointer; padding: 2px 5px;">
+                                            @foreach($availableDays as $day)
+                                                <option value="{{ $day }}" class="bg-dark text-info">Ngày {{ $day }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div id="topMoviesChart" style="height: 400px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @script
+                <script>
+                    (function() {
+                        // Global variable to store chart instances
+                        window.chartInstances = {};
+
+                        // Function to render all charts
+                        function renderAllCharts() {
+                            if (typeof window.createScChart !== 'undefined') {
+                                // Clear existing chart instances
+                                Object.values(window.chartInstances).forEach(chart => {
+                                    if (chart && typeof chart.destroy === 'function') {
+                                        chart.destroy();
+                                    }
+                                });
+                                window.chartInstances = {};
+
+                                // Revenue line chart
+                                if (document.querySelector('#revenueChart')) {
+                                    window.chartInstances.revenueChart = createScChart(document.querySelector('#revenueChart'), {
+                                        chart: {
+                                            type: 'line',
+                                            height: 400,
+                                            background: 'transparent',
+                                            toolbar: {
+                                                show: false
+                                            },
+                                            animations: {
+                                                enabled: true,
+                                                easing: 'easeinout',
+                                                speed: 800,
+                                                animateGradually: {
+                                                    enabled: true,
+                                                    delay: 150
+                                                }
+                                            }
+                                        },
+                                        series: [
+                                            {
+                                                name: 'Doanh thu (VND)',
+                                                data: @json($revenueData['revenue'] ?? [])
+                                            },
+                                            {
+                                                name: 'Số đơn hàng',
+                                                data: @json($revenueData['bookings'] ?? [])
+                                            },
+                                            {
+                                                name: 'Doanh thu TB/đơn',
+                                                data: @json($revenueData['avgRevenue'] ?? [])
+                                            }
+                                        ],
+                                        xaxis: {
+                                            categories: @json($revenueData['labels'] ?? []),
+                                            labels: {
+                                                style: {
+                                                    colors: '#ffffff',
+                                                    fontSize: '12px'
+                                                }
+                                            },
+                                            axisBorder: {
+                                                show: false
+                                            },
+                                            axisTicks: {
+                                                show: false
+                                            }
+                                        },
+                                        yaxis: {
+                                            labels: {
+                                                style: {
+                                                    colors: '#ffffff',
+                                                    fontSize: '12px'
+                                                },
+                                                formatter: function(value) {
+                                                    return new Intl.NumberFormat('vi-VN').format(value);
+                                                }
+                                            }
+                                        },
+                                        colors: ['#4285F4', '#34A853', '#FBBC04'],
+                                        stroke: {
+                                            curve: 'smooth',
+                                            width: 3,
+                                            lineCap: 'round'
+                                        },
+                                        fill: {
+                                            type: 'gradient',
+                                            gradient: {
+                                                shade: 'dark',
+                                                type: 'vertical',
+                                                shadeIntensity: 0.1,
+                                                gradientToColors: ['#4285F4'],
+                                                inverseColors: false,
+                                                opacityFrom: 0.3,
+                                                opacityTo: 0.05,
+                                                stops: [0, 100]
+                                            }
+                                        },
+                                        grid: {
+                                            show: true,
+                                            borderColor: '#2d3748',
+                                            strokeDashArray: 0,
+                                            position: 'back'
+                                        },
+                                        legend: {
+                                            position: 'top',
+                                            horizontalAlign: 'left',
+                                            labels: {
+                                                colors: '#ffffff'
+                                            }
+                                        },
+                                        tooltip: {
+                                            theme: 'dark',
+                                            y: {
+                                                formatter: function(value) {
+                                                    return new Intl.NumberFormat('vi-VN', {
+                                                        style: 'currency',
+                                                        currency: 'VND'
+                                                    }).format(value);
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+
+                                // Ticket bar chart
+                                if (document.querySelector('#ticketChart')) {
+                                    window.chartInstances.ticketChart = createScChart(document.querySelector('#ticketChart'), {
+                                        chart: {
+                                            type: 'bar',
+                                            height: 400,
+                                            background: 'transparent',
+                                            toolbar: {
+                                                show: false
+                                            },
+                                            dropShadow: {
+                                                enabled: true,
+                                            },
+                                            animations: {
+                                                enabled: true,
+                                                easing: 'easeinout',
+                                                speed: 800
+                                            }
+                                        },
+                                        series: [
+                                            {
+                                                name: 'Vé đã bán',
+                                                data: @json($ticketData['tickets'] ?? [])
+                                            },
+                                            {
+                                                name: 'Số đơn hàng',
+                                                data: @json($ticketData['bookings'] ?? [])
+                                            },
+                                            {
+                                                name: 'TB vé/đơn',
+                                                data: @json($ticketData['avgTicketsPerBooking'] ?? [])
+                                            }
+                                        ],
+                                        xaxis: {
+                                            categories: @json($ticketData['labels'] ?? []),
+                                            labels: {
+                                                style: {
+                                                    colors: '#ffffff',
+                                                    fontSize: '12px'
+                                                }
+                                            },
+                                            axisBorder: {
+                                                show: false
+                                            },
+                                            axisTicks: {
+                                                show: false
+                                            }
+                                        },
+                                        yaxis: {
+                                            labels: {
+                                                style: {
+                                                    colors: '#ffffff',
+                                                    fontSize: '12px'
+                                                }
+                                            }
+                                        },
+                                        colors: [
+                                            '#F44F5E',
+                                            '#E55A89',
+                                            '#D863B1',
+                                            '#CA6CD8',
+                                            '#B57BED',
+                                            '#8D95EB',
+                                            '#62ACEA',
+                                            '#4BC3E6',
+                                        ],
+                                        plotOptions: {
+                                            bar: {
+                                                borderRadius: 0,
+                                                horizontal: true,
+                                                distributed: true,
+                                                barHeight: '80%',
+                                                isFunnel: true,
+                                            }
+                                        },
+                                        dataLabels: {
+                                            enabled: true,
+                                            formatter: function (val, opt) {
+                                                return opt.w.globals.labels[opt.dataPointIndex]
+                                            },
+                                            style: {
+                                                colors: ['#ffffff'],
+                                                fontSize: '12px',
+                                                fontWeight: 'bold'
+                                            },
+                                            dropShadow: {
+                                                enabled: true,
+                                            },
+                                        },
+                                        grid: {
+                                            show: true,
+                                            borderColor: '#2d3748',
+                                            strokeDashArray: 0,
+                                            position: 'back'
+                                        },
+                                        legend: {
+                                            show: true,
+                                            position: 'top',
+                                            horizontalAlign: 'left',
+                                            labels: {
+                                                colors: '#ffffff'
+                                            }
+                                        },
+                                        tooltip: {
+                                            theme: 'dark',
+                                            style: {
+                                                fontSize: '12px'
+                                            },
+                                            y: {
+                                                formatter: function(value) {
+                                                    return new Intl.NumberFormat('vi-VN').format(value);
+                                                }
+                                            }
+                                        },
+                                        states: {
+                                            hover: {
+                                                filter: {
+                                                    type: 'lighten',
+                                                    value: 0.1
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+
+                                // Status pie chart
+                                if (document.querySelector('#statusChart')) {
+                                    @php
+                                        $statusLabels = ['Đã thanh toán', 'Đang chờ', 'Lỗi', 'Hết hạn'];
+                                    @endphp
+                                    window.chartInstances.statusChart = createScChart(document.querySelector('#statusChart'), {
+                                        chart: {
+                                            type: 'donut',
+                                            height: 400,
+                                            background: 'transparent',
+                                            toolbar: {
+                                                show: false
+                                            },
+                                            animations: {
+                                                enabled: true,
+                                                easing: 'easeinout',
+                                                speed: 800,
+                                                animateGradually: {
+                                                    enabled: true,
+                                                    delay: 150
+                                                }
+                                            }
+                                        },
+                                        series: @json(array_values($statusData)),
+                                        labels: @json($statusLabels),
+                                        colors: ['#4285F4', '#34A853', '#FBBC04', '#EA4335'],
+                                        stroke: {
+                                            show: false
+                                        },
+                                        dataLabels: {
+                                            enabled: true
+                                        },
+                                        legend: {
+                                            position: 'bottom',
+                                            horizontalAlign: 'center',
+                                            labels: {
+                                                colors: '#ffffff'
+                                            }
+                                        },
+                                        tooltip: {
+                                            theme: 'dark',
+                                            y: {
+                                                formatter: function(value) {
+                                                    return value + ' đơn hàng';
+                                                }
+                                            }
+                                        },
+                                        responsive: [{
+                                            breakpoint: 480,
+                                            options: {
+                                                chart: {
+                                                    height: 300
+                                                },
+                                                legend: {
+                                                    position: 'bottom'
+                                                }
+                                            }
+                                        }]
+                                    });
+                                }
+
+                                // Top movies chart
+                                if (document.querySelector('#topMoviesChart')) {
+                                    window.chartInstances.topMoviesChart = createScChart(document.querySelector('#topMoviesChart'), {
+                                        chart: {
+                                            type: 'bar',
+                                            height: 400,
+                                            background: 'transparent',
+                                            toolbar: {
+                                                show: false
+                                            },
+                                            animations: {
+                                                enabled: true,
+                                                easing: 'easeinout',
+                                                speed: 800
+                                            }
+                                        },
+                                        series: [
+                                            {
+                                                name: 'Doanh thu (VND)',
+                                                data: @json($topMovies['revenue'] ?? [])
+                                            }
+                                        ],
+                                        xaxis: {
+                                            categories: @json($topMovies['labels'] ?? []),
+                                            labels: {
+                                                style: {
+                                                    colors: '#ffffff',
+                                                    fontSize: '11px'
+                                                },
+                                                rotate: -45,
+                                                rotateAlways: false
+                                            },
+                                            axisBorder: {
+                                                show: false
+                                            },
+                                            axisTicks: {
+                                                show: false
+                                            }
+                                        },
+                                        yaxis: {
+                                            labels: {
+                                                style: {
+                                                    colors: '#ffffff',
+                                                    fontSize: '12px'
+                                                },
+                                                formatter: function(value) {
+                                                    return new Intl.NumberFormat('vi-VN').format(value);
+                                                }
+                                            }
+                                        },
+                                        colors: ['#4285F4'],
+                                        plotOptions: {
+                                            bar: {
+                                                horizontal: false,
+                                                columnWidth: '70%',
+                                                endingShape: 'rounded',
+                                                borderRadius: 4
+                                            }
+                                        },
+                                        grid: {
+                                            show: true,
+                                            borderColor: '#2d3748',
+                                            strokeDashArray: 0,
+                                            position: 'back'
+                                        },
+                                        legend: {
+                                            position: 'top',
+                                            horizontalAlign: 'left',
+                                            labels: {
+                                                colors: '#ffffff'
+                                            }
+                                        },
+                                        tooltip: {
+                                            theme: 'dark',
+                                            y: {
+                                                formatter: function(value) {
+                                                    return new Intl.NumberFormat('vi-VN', {
+                                                        style: 'currency',
+                                                        currency: 'VND'
+                                                    }).format(value);
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        }
+
+                        // Make renderAllCharts available globally
+                        window.renderAllCharts = renderAllCharts;
+
+                        // Initialize charts when component is ready
+                        document.addEventListener('livewire:init', () => {
+                            if (document.querySelector('#revenueChart')) {
+                                renderAllCharts();
+                            }
+                        });
+
+                        // Re-initialize charts when tab changes or data updates
+                        document.addEventListener('livewire:updated', () => {
+                            // Small delay to ensure DOM is updated
+                            setTimeout(() => {
+                                if (document.querySelector('#revenueChart') && typeof window.createScChart !== 'undefined') {
+                                    renderAllCharts();
+                                }
+                            }, 100);
+                        });
+
+                        // Listen for custom tab change event
+                        document.addEventListener('tabChanged', function(e) {
+                            if (e.detail && e.detail[0] === 'information') {
+                                setTimeout(() => {
+                                    renderAllCharts();
+                                }, 150);
+                            }
+                        });
+
+                        // Also initialize when DOM is ready
+                        if (document.readyState === 'loading') {
+                            document.addEventListener('DOMContentLoaded', () => {
+                                if (document.querySelector('#revenueChart')) {
+                                    renderAllCharts();
+                                }
+                            });
+                        } else {
+                            if (document.querySelector('#revenueChart')) {
+                                renderAllCharts();
+                            }
+                        }
+                    })();
+                </script>
+            @endscript
+            @endif
+            @if ($tabCurrent === 'overview')
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="card bg-dark border-light">
-                            <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <div class="card-header bg-gradient text-light"
+                                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                                 <h5><i class="fas fa-info me-2"></i>Thông tin chi tiết</h5>
                             </div>
-                            <div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
+                            <div class="card-body bg-dark"
+                                style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
                                 <table class="table table-borderless text-light">
                                     <tr>
                                         <td><strong class="text-warning">Mã đơn hàng:</strong></td>
@@ -136,11 +744,14 @@
                                     <tr>
                                         <td><strong class="text-warning">Tổng tiền:</strong></td>
                                         <td>
-                                            <span class="badge bg-gradient fs-6" style="background: linear-gradient(45deg, #667eea, #764ba2);">
+                                            <span class="badge bg-gradient fs-6"
+                                                style="background: linear-gradient(45deg, #667eea, #764ba2);">
                                                 {{ number_format($booking->total_price, 0, '.', '.') }}đ
                                             </span>
-                                            @if($booking->promotionUsages->isNotEmpty())
-                                                <small class="text-danger fw-bold d-block mt-1 ms-1">- {{ number_format($booking->promotionUsages->sum('discount_amount'), 0, '.', '.') }}đ KM</small>
+                                            @if ($booking->promotionUsages->isNotEmpty())
+                                                <small class="text-danger fw-bold d-block mt-1 ms-1">-
+                                                    {{ number_format($booking->promotionUsages->sum('discount_amount'), 0, '.', '.') }}đ
+                                                    KM</small>
                                             @endif
                                         </td>
                                     </tr>
@@ -154,16 +765,19 @@
                                             @switch($booking->status)
                                                 @case('pending')
                                                     <span class="badge bg-primary">Đang chờ xử lý</span>
-                                                    @break
+                                                @break
+
                                                 @case('expired')
                                                     <span class="badge bg-warning text-dark">Đã hết hạn xử lý</span>
-                                                    @break
+                                                @break
+
                                                 @case('paid')
                                                     <span class="badge bg-success">Đã thanh toán</span>
-                                                    @break
+                                                @break
+
                                                 @case('failed')
                                                     <span class="badge bg-danger">Lỗi thanh toán</span>
-                                                    @break
+                                                @break
                                             @endswitch
                                         </td>
                                     </tr>
@@ -173,10 +787,21 @@
                                             <span class="badge-clean-base badge-clean-gray">
                                                 <i class="fa-solid fa-badge-dollar me-1"></i>
                                                 @switch($booking->payment_method)
-                                                    @case('credit_card') Thẻ tín dụng @break
-                                                    @case('bank_transfer') Chuyển khoản @break
-                                                    @case('e_wallet') Ví điện tử @break
-                                                    @case('cash') Tiền mặt @break
+                                                    @case('credit_card')
+                                                        Thẻ tín dụng
+                                                    @break
+
+                                                    @case('bank_transfer')
+                                                        Chuyển khoản
+                                                    @break
+
+                                                    @case('e_wallet')
+                                                        Ví điện tử
+                                                    @break
+
+                                                    @case('cash')
+                                                        Tiền mặt
+                                                    @break
                                                 @endswitch
                                             </span>
                                         </td>
@@ -201,37 +826,44 @@
                                 <div class="movie-showtime-card">
                                     <div class="d-flex flex-wrap">
                                         <div class="movie-poster mb-1">
-                                            @if($poster = $showtimeBooking->movie->poster)
+                                            @if ($poster = $showtimeBooking->movie->poster)
                                                 <img src="{{ asset('storage/' . $poster) }}"
-                                                    alt="Ảnh phim {{ $showtimeBooking->movie->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                    alt="Ảnh phim {{ $showtimeBooking->movie->title }}"
+                                                    style="width: 100%; height: 100%; object-fit: cover;">
                                             @else
                                                 <i class="fas fa-film"></i>
                                             @endif
                                         </div>
                                         <div class="flex-grow-1">
                                             <div class="movie-title">
-                                                <a href="{{ route('admin.movies.detail', $showtimeBooking->movie->id) }}" class="link-active" style="font-size: inherit">
+                                                <a href="{{ route('admin.movies.detail', $showtimeBooking->movie->id) }}"
+                                                    class="link-active" style="font-size: inherit">
                                                     {{ Str::limit($showtimeBooking->movie->title, 45, '...') }}
                                                 </a>
                                             </div>
                                             <div class="movie-genre">
                                                 <i class="fas fa-tags me-1"></i>
-                                                {{ $showtimeBooking->movie->genres->take(3)->implode('name', ', ') ?: 'Không có thể loại' }} • {{ $showtimeBooking->movie->duration }} phút
+                                                {{ $showtimeBooking->movie->genres->take(3)->implode('name', ', ') ?: 'Không có thể loại' }}
+                                                • {{ $showtimeBooking->movie->duration }} phút
                                             </div>
 
                                             <div class="showtime-info text-start">
                                                 <i class="fas fa-door-open"></i>
-                                                <span>Phòng chiếu: <strong>{{ $showtimeBooking->room->name }}</strong></span>
+                                                <span>Phòng chiếu:
+                                                    <strong>{{ $showtimeBooking->room->name }}</strong></span>
                                             </div>
 
                                             <div class="showtime-info text-start">
                                                 <i class="fas fa-clock"></i>
-                                                <span>Thời gian chiếu: <strong>{{ $showtimeBooking->start_time->format('d/m/Y H:i') }} - {{ $showtimeBooking->end_time->format('H:i') }}</strong></span>
+                                                <span>Thời gian chiếu:
+                                                    <strong>{{ $showtimeBooking->start_time->format('d/m/Y H:i') }} -
+                                                        {{ $showtimeBooking->end_time->format('H:i') }}</strong></span>
                                             </div>
 
                                             <div class="showtime-info text-start">
                                                 <i class="fa-solid fa-square-dollar"></i>
-                                                <span>Giá vé: <strong>{{ number_format((int)$showtimeBooking->movie->price + (int)$showtimeBooking->price, 0, '.', '.') }}</strong></span>
+                                                <span>Giá vé:
+                                                    <strong>{{ number_format((int) $showtimeBooking->movie->price + (int) $showtimeBooking->price, 0, '.', '.') }}</strong></span>
                                             </div>
 
                                             <div class="showtime-info text-start">
@@ -240,14 +872,22 @@
                                                     <strong>
                                                         @switch($showtimeBooking->status)
                                                             @case('active')
-                                                                <div class="badge bg-primary"><i class="fa-solid fa-clapperboard-play me-1 text-light"></i>Đang hoạt động</div>
-                                                                @break
+                                                                <div class="badge bg-primary"><i
+                                                                        class="fa-solid fa-clapperboard-play me-1 text-light"></i>Đang
+                                                                    hoạt động</div>
+                                                            @break
+
                                                             @case('completed')
-                                                                <div class="badge bg-success"><i class="fa-solid fa-calendar-check me-1 text-light"></i>Đã hoàn thành</div>
-                                                                @break
+                                                                <div class="badge bg-success"><i
+                                                                        class="fa-solid fa-calendar-check me-1 text-light"></i>Đã
+                                                                    hoàn thành</div>
+                                                            @break
+
                                                             @case('canceled')
-                                                                <div class="badge bg-danger"><i class="fa-solid fa-hexagon-xmark me-1 text-light"></i>Đã bị hủy</div>
-                                                                @break
+                                                                <div class="badge bg-danger"><i
+                                                                        class="fa-solid fa-hexagon-xmark me-1 text-light"></i>Đã
+                                                                    bị hủy</div>
+                                                            @break
                                                         @endswitch
                                                     </strong>
                                                 </span>
@@ -267,28 +907,35 @@
                             <div class="card-body bg-dark"
                                 style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
                                 @php $userBooking = $booking->user @endphp
-                                <div class="d-flex align-items-start justify-content-center flex-wrap flex-lg-nowrap p-3 compact-dark rounded">
+                                <div
+                                    class="d-flex align-items-start justify-content-center flex-wrap flex-lg-nowrap p-3 compact-dark rounded">
                                     <div class="d-flex flex-column align-items-center me-md-3 gap-2">
-                                        <div class="user-avatar-clean" style="width: 160px; aspect-ratio: 1; height: auto; margin-bottom: 0; border-radius: 50%;">
-                                            @if($userBooking->avatar)
-                                                <img src="{{ asset('storage/' . $userBooking->avatar) }}" alt style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">
+                                        <div class="user-avatar-clean"
+                                            style="width: 160px; aspect-ratio: 1; height: auto; margin-bottom: 0; border-radius: 50%;">
+                                            @if ($userBooking->avatar)
+                                                <img src="{{ asset('storage/' . $userBooking->avatar) }}" alt
+                                                    style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">
                                             @else
                                                 <i class="fas fa-user icon-white" style="font-size: 60px;"></i>
                                             @endif
                                         </div>
                                         <h5 class="card-title text-center">
-                                            <a class="user-name-link-dark" href="{{ route('admin.users.detail', $booking->user_id) }}" style="font-size: inherit;">
+                                            <a class="user-name-link-dark"
+                                                href="{{ route('admin.users.detail', $booking->user_id) }}"
+                                                style="font-size: inherit;">
                                                 {{ Str::limit($userBooking->name, 23, '...') ?? 'Không tìm thấy người dùng' }}
                                             </a>
                                         </h5>
                                     </div>
                                     <div class="flex-grow-1 w-100 text-center">
                                         <style>
-                                            #user-info-table td{
+                                            #user-info-table td {
                                                 padding: .75rem .5rem !important;
                                             }
                                         </style>
-                                        <table class="table table-md table-bordered table-striped-columns table-hover text-light text-start mb-0" id="user-info-table">
+                                        <table
+                                            class="table table-md table-bordered table-striped-columns table-hover text-light text-start mb-0"
+                                            id="user-info-table">
                                             <tr>
                                                 <td><strong class="text-warning">Email:</strong></td>
                                                 <td><strong>{{ $userBooking->email }}</strong></td>
@@ -301,7 +948,8 @@
                                                 <td><strong class="text-warning">Địa chỉ:</strong></td>
                                                 <td>
                                                     @if ($userBooking->address)
-                                                        <span class="text-light text-wrap lh-base">{{ Str::limit($userBooking->address, 200, '...') }}</span>
+                                                        <span
+                                                            class="text-light text-wrap lh-base">{{ Str::limit($userBooking->address, 200, '...') }}</span>
                                                     @else
                                                         <span class="text-muted">Không tìm thấy địa chỉ</span>
                                                     @endif
@@ -312,7 +960,8 @@
                                                 <td>
                                                     <span>{{ $userBooking->birthday?->format('d/m/Y') ?? 'N/A' }}</span>
                                                     <small class="text-muted d-block mt-1" style="font-size: 12px">
-                                                        Giới tính: {{ $userBooking->gender === "man" ? "Nam" : ($userBooking->gender === "woman" ? "Nữ" : "Khác") }}
+                                                        Giới tính:
+                                                        {{ $userBooking->gender === 'man' ? 'Nam' : ($userBooking->gender === 'woman' ? 'Nữ' : 'Khác') }}
                                                     </small>
                                                 </td>
                                             </tr>
@@ -325,19 +974,21 @@
                                                                 <i class="fa-solid fa-crown me-1"></i>
                                                                 Quản trị viên
                                                             </span>
-                                                            @break
+                                                        @break
+
                                                         @case('staff')
                                                             <span class="badge-clean-base badge-clean-rose">
                                                                 <i class="fa-solid fa-user-tie me-1"></i>
                                                                 Nhân viên
                                                             </span>
-                                                            @break
+                                                        @break
+
                                                         @case('user')
                                                             <span class="badge-clean-base badge-clean-purple">
                                                                 <i class="fa-solid fa-user me-1"></i>
                                                                 Người dùng
                                                             </span>
-                                                            @break
+                                                        @break
                                                     @endswitch
                                                 </td>
                                             </tr>
@@ -348,9 +999,11 @@
                                                         @case('active')
                                                             <span class="badge bg-success">Đang hoạt động</span>
                                                         @break
+
                                                         @case('inactive')
                                                             <span class="badge bg-warning text-dark">Không hoạt động</span>
                                                         @break
+
                                                         @case('banned')
                                                             <span class="badge bg-danger">Bị cấm</span>
                                                         @break
@@ -372,10 +1025,12 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card bg-dark border-light">
-                            <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <div class="card-header bg-gradient text-light"
+                                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                                 <h5><i class="fa-solid fa-chair-office me-2"></i>Danh sách ghế đã đặt</h5>
                             </div>
-                            <div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
+                            <div class="card-body bg-dark"
+                                style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
 
                             </div>
                         </div>
@@ -385,11 +1040,15 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card bg-dark border-light">
-                            <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <div class="card-header bg-gradient text-light"
+                                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                                 <h5><i class="fa-solid fa-film me-2"></i>Chi tiết vé phim</h5>
                             </div>
-                            <div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
-                                <table class="table table-md table-bordered table-striped table-hover text-light text-start mb-0" id="user-info-table">
+                            <div class="card-body bg-dark"
+                                style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
+                                <table
+                                    class="table table-md table-bordered table-striped table-hover text-light text-start mb-0"
+                                    id="user-info-table">
                                     <thead>
                                         <tr>
                                             <th class="text-center text-light">Mã QR</th>
@@ -405,15 +1064,19 @@
                                                 <td>
                                                     <div class="d-flex justify-content-center">
                                                         <div class="qr-code" style="margin-bottom: 0;">
-                                                            <img src="{{ (new QRCode)->render($ticket->qr_code) }}" alt="QR code" style="width: 100%; height: 100%; border-radius: 0;">
+                                                            <img src="{{ new QRCode()->render($ticket->qr_code) }}"
+                                                                alt="QR code"
+                                                                style="width: 100%; height: 100%; border-radius: 0;">
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td class="text-muted text-center">
-                                                    <p class="text-wrap lh-base" style="margin-bottom: 0;">{{ Str::limit($ticket->description ?: "Không có ghi chú", 150, '...') }}</p>
+                                                    <p class="text-wrap lh-base" style="margin-bottom: 0;">
+                                                        {{ Str::limit($ticket->description ?: 'Không có ghi chú', 150, '...') }}
+                                                    </p>
                                                 </td>
                                                 <td class="text-center">
-                                                    @if($ticket->taken)
+                                                    @if ($ticket->taken)
                                                         <span class="badge-clean-base badge-clean-green">
                                                             <i class="fas fa-check-circle me-1"></i>
                                                             Đã lấy vé
@@ -430,9 +1093,11 @@
                                                         @case('active')
                                                             <span class="badge bg-primary">Chưa sử dụng</span>
                                                         @break
+
                                                         @case('used')
                                                             <span class="badge bg-success">Đã sử dụng</span>
                                                         @break
+
                                                         @case('canceled')
                                                             <span class="badge bg-danger">Đã bị hủy</span>
                                                         @break
@@ -440,15 +1105,16 @@
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        @if($ticket->isValidTicketOrder())
-                                                            <a href="{{ route('client.ticket', [$booking->booking_code, $ticket->getCurrentIndex()]) }}" target="_blank"
-                                                                class="btn btn-sm btn-outline-info" title="Xem chi tiết">
+                                                        @if ($ticket->isValidTicketOrder())
+                                                            <a href="{{ route('client.ticket', [$booking->booking_code, $ticket->getCurrentIndex()]) }}"
+                                                                target="_blank" class="btn btn-sm btn-outline-info"
+                                                                title="Xem chi tiết">
                                                                 <i class="fas fa-eye" style="margin-right: 0"></i>
                                                             </a>
                                                         @else
                                                             <button type="button" class="btn btn-sm btn-outline-info"
-                                                                    wire:sc-alert.error="Không thể xem chi tiết vé phim này!"
-                                                                    wire:sc-model title="Xem chi tiết">
+                                                                wire:sc-alert.error="Không thể xem chi tiết vé phim này!"
+                                                                wire:sc-model title="Xem chi tiết">
                                                                 <i class="fas fa-eye" style="margin-right: 0"></i>
                                                             </button>
                                                         @endif
@@ -466,10 +1132,12 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card bg-dark border-light">
-                            <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <div class="card-header bg-gradient text-light"
+                                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                                 <h5><i class="fa-solid fa-burger-soda me-2"></i>Danh sách món ăn đặt kèm</h5>
                             </div>
-                            <div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
+                            <div class="card-body bg-dark"
+                                style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
                                 @php $foodOrderItems = $booking->foodOrderItems @endphp
                                 <div class="table-responsive">
                                     <table class="table table-dark table-striped table-hover text-light">
@@ -490,9 +1158,10 @@
                                                     <td>
                                                         <div class="d-flex justify-content-center">
                                                             <div class="food-image">
-                                                                @if($foodImage = $foodOrder->variant->image)
+                                                                @if ($foodImage = $foodOrder->variant->image)
                                                                     <img src="{{ asset('storage/' . $foodImage) }}"
-                                                                        alt="Ảnh món ăn {{ $foodOrder->variant->foodItem->name }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
+                                                                        alt="Ảnh món ăn {{ $foodOrder->variant->foodItem->name }}"
+                                                                        style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
                                                                 @else
                                                                     <i class="fas fa-film"></i>
                                                                 @endif
@@ -500,18 +1169,23 @@
                                                         </div>
                                                     </td>
                                                     <td class="text-center">
-                                                        <strong class="text-light">{{ $foodOrder->variant->foodItem->name }}</strong>
+                                                        <strong
+                                                            class="text-light">{{ $foodOrder->variant->foodItem->name }}</strong>
                                                     </td>
                                                     <td class="text-muted text-center">
-                                                        <p class="text-wrap lh-base" style="margin-bottom: 0;">{{ Str::limit($foodOrder->variant->foodItem->description ?: "Không có mô tả", 100, '...') }}</p>
+                                                        <p class="text-wrap lh-base" style="margin-bottom: 0;">
+                                                            {{ Str::limit($foodOrder->variant->foodItem->description ?: 'Không có mô tả', 100, '...') }}
+                                                        </p>
                                                     </td>
                                                     <td>
-                                                        @foreach($foodOrder->variant->attributeValues as $attributeValue)
+                                                        @foreach ($foodOrder->variant->attributeValues as $attributeValue)
                                                             <ul class="food-attributes-list">
                                                                 <li>
                                                                     <i class="fas fa-leaf icon-special"></i>
-                                                                    <span class="attr-label">{{ $attributeValue->attribute->name }}:</span>
-                                                                    <span class="attr-value" style="color: #a78bfa;">{{ $attributeValue->value }}</span>
+                                                                    <span
+                                                                        class="attr-label">{{ $attributeValue->attribute->name }}:</span>
+                                                                    <span class="attr-value"
+                                                                        style="color: #a78bfa;">{{ $attributeValue->value }}</span>
                                                                 </li>
                                                             </ul>
                                                         @endforeach
@@ -526,95 +1200,100 @@
                                                         {{ number_format($foodOrder->price * $foodOrder->quantity, 0, ',', '.') }}đ
                                                     </td>
                                                 </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="7" class="text-center py-4">
-                                                            <div class="text-muted">
-                                                                <i class="fas fa-inbox fa-3x mb-3"></i>
-                                                                <p>Không đặt kèm món ăn nào</p>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @elseif($tabCurrent === 'promotions')
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card bg-dark border-light">
-                            <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <h5><i class="fa-solid fa-tag me-2"></i>Danh sách mã giảm giá đã áp dụng</h5>
-                            </div>
-                            <div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
-                                @php $promotionUsages = $booking->promotionUsages @endphp
-                                <div class="table-responsive">
-                                    <table class="table table-dark table-striped table-hover text-light">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-center text-light">Mã giảm giá</th>
-                                                <th class="text-center text-light">Tên mã</th>
-                                                <th class="text-center text-light">Mô tả</th>
-                                                <th class="text-center text-light">Số tiền giảm</th>
-                                                <th class="text-center text-light">Tổng tiền đã giảm</th>
-                                                <th class="text-center text-light">Ngày sử dụng</th>
-                                                <th class="text-center text-light">Hành động</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse ($promotionUsages as $promotionUsage)
-                                                <tr wire:key="promotion-{{ $promotionUsage->id }}">
-                                                    <td class="text-center">
-                                                        {{ $promotionUsage->promotion?->code ?? 'N/A' }}
-                                                    </td>
-                                                    <td class="text-center">
-                                                        <strong class="text-light">{{ $promotionUsage->promotion->title }}</strong>
-                                                    </td>
-                                                    <td class="text-muted text-center">
-                                                        <p class="text-wrap lh-base" style="margin-bottom: 0;">{{ Str::limit($promotionUsage->promotion->description ?: "Không có mô tả", 100, '...') }}</p>
-                                                    </td>
-                                                    <td class="text-center text-warning fw-bold">
-                                                        {{ number_format($promotionUsage->promotion->discount_value, 0, ',', '.') }}{{ $promotionUsage->promotion->discount_type === 'percentage' ? '%' : 'đ' }}
-                                                    </td>
-                                                    <td class="text-center text-warning fw-bold">
-                                                        {{ number_format($promotionUsage->discount_amount, 0, ',', '.') }}đ
-                                                    </td>
-                                                    <td class="text-center">
-                                                        {{ $promotionUsage->used_at->format('d/m/Y H:i') }}
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            <a href="{{ /* route('admin.promotions.detail', $promotionUsage->promotion->id) */ '#' }}"
-                                                                class="btn btn-sm btn-info" title="Xem chi tiết">
-                                                                <i class="fas fa-eye" style="margin-right: 0"></i>
-                                                            </a>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="7" class="text-center py-4">
+                                                        <div class="text-muted">
+                                                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                                                            <p>Không đặt kèm món ăn nào</p>
                                                         </div>
                                                     </td>
                                                 </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="7" class="text-center py-4">
-                                                            <div class="text-muted">
-                                                                <i class="fas fa-inbox fa-3x mb-3"></i>
-                                                                <p>Không áp dụng mã giảm giá nào</p>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            @endif
+        </div>
+    @elseif($tabCurrent === 'promotions')
+        <div class="row">
+            <div class="col-12">
+                <div class="card bg-dark border-light">
+                    <div class="card-header bg-gradient text-light"
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <h5><i class="fa-solid fa-tag me-2"></i>Danh sách mã giảm giá đã áp dụng</h5>
+                    </div>
+                    <div class="card-body bg-dark"
+                        style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
+                        @php $promotionUsages = $booking->promotionUsages @endphp
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped table-hover text-light">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center text-light">Mã giảm giá</th>
+                                        <th class="text-center text-light">Tên mã</th>
+                                        <th class="text-center text-light">Mô tả</th>
+                                        <th class="text-center text-light">Số tiền giảm</th>
+                                        <th class="text-center text-light">Tổng tiền đã giảm</th>
+                                        <th class="text-center text-light">Ngày sử dụng</th>
+                                        <th class="text-center text-light">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($promotionUsages as $promotionUsage)
+                                        <tr wire:key="promotion-{{ $promotionUsage->id }}">
+                                            <td class="text-center">
+                                                {{ $promotionUsage->promotion?->code ?? 'N/A' }}
+                                            </td>
+                                            <td class="text-center">
+                                                <strong
+                                                    class="text-light">{{ $promotionUsage->promotion->title }}</strong>
+                                            </td>
+                                            <td class="text-muted text-center">
+                                                <p class="text-wrap lh-base" style="margin-bottom: 0;">
+                                                    {{ Str::limit($promotionUsage->promotion->description ?: 'Không có mô tả', 100, '...') }}
+                                                </p>
+                                            </td>
+                                            <td class="text-center text-warning fw-bold">
+                                                {{ number_format($promotionUsage->promotion->discount_value, 0, ',', '.') }}{{ $promotionUsage->promotion->discount_type === 'percentage' ? '%' : 'đ' }}
+                                            </td>
+                                            <td class="text-center text-warning fw-bold">
+                                                {{ number_format($promotionUsage->discount_amount, 0, ',', '.') }}đ
+                                            </td>
+                                            <td class="text-center">
+                                                {{ $promotionUsage->used_at->format('d/m/Y H:i') }}
+                                            </td>
+                                            <td>
+                                                <div class="d-flex justify-content-center">
+                                                    <a href="{{ /* route('admin.promotions.detail', $promotionUsage->promotion->id) */ '#' }}"
+                                                        class="btn btn-sm btn-info" title="Xem chi tiết">
+                                                        <i class="fas fa-eye" style="margin-right: 0"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="7" class="text-center py-4">
+                                                <div class="text-muted">
+                                                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                                                    <p>Không áp dụng mã giảm giá nào</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+    @endif
+</div>
+</div>
 </div>

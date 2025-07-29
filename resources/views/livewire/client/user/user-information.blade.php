@@ -1243,7 +1243,7 @@
 
                             <div class="forgot-password">
                                 <button type="button" wire:click='openModal'>🔒 Đổi mật khẩu</button>
-                                <a href="{{route('userConfirm')}}">
+                                <a href="{{route('client.userConfirm')}}">
                                     Xóa tài khoản
                                 </a>
                             </div>

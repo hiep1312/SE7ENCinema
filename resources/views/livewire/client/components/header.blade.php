@@ -336,7 +336,7 @@
                 </div>
                 <ul class="mobile-list-nav">
                     @auth
-                    <li><a href="{{ route('userInfo',Auth::id())}}">THÔNG TIN TÀI KHOẢN</a>
+                    <li><a href="{{ route('client.userInfo',Auth::id())}}">THÔNG TIN TÀI KHOẢN</a>
                     </li>
                     @endauth
                     <li><a href="{{ route('client.movie_single')}}">MOVIE</a>

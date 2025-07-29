@@ -7778,13 +7778,17 @@
         {
             "name": "laravel/pint",
             "version": "v1.24.0",
+            "version": "v1.24.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/pint.git",
                 "reference": "0345f3b05f136801af8c339f9d16ef29e6b4df8a"
+                "reference": "0345f3b05f136801af8c339f9d16ef29e6b4df8a"
             },
             "dist": {
                 "type": "zip",
+                "url": "https://api.github.com/repos/laravel/pint/zipball/0345f3b05f136801af8c339f9d16ef29e6b4df8a",
+                "reference": "0345f3b05f136801af8c339f9d16ef29e6b4df8a",
                 "url": "https://api.github.com/repos/laravel/pint/zipball/0345f3b05f136801af8c339f9d16ef29e6b4df8a",
                 "reference": "0345f3b05f136801af8c339f9d16ef29e6b4df8a",
                 "shasum": ""
@@ -7797,6 +7801,7 @@
                 "php": "^8.2.0"
             },
             "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.82.2",
                 "friendsofphp/php-cs-fixer": "^3.82.2",
                 "illuminate/view": "^11.45.1",
                 "larastan/larastan": "^3.5.0",
@@ -7845,6 +7850,7 @@
                 "issues": "https://github.com/laravel/pint/issues",
                 "source": "https://github.com/laravel/pint"
             },
+            "time": "2025-07-10T18:09:32+00:00"
             "time": "2025-07-10T18:09:32+00:00"
         },
         {

@@ -101,7 +101,7 @@ class UserInformation extends Component
             'address' => $this->address,
         ]);
 
-        return redirect()->route('userInfo', [$this->user->id])->with('success', 'Cập nhật người dùng thành công!');
+        return redirect()->route('client.userInfo', [$this->user->id])->with('success', 'Cập nhật người dùng thành công!');
     }
     public function changePassword()
     {
@@ -123,7 +123,7 @@ class UserInformation extends Component
             $this->user->update([
                 'password' => bcrypt($this->newPassword),
             ]);
-            return redirect()->route('userInfo', [$this->user->id])->with('success', 'Đổi mật khẩu thành công!');
+            return redirect()->route('client.userInfo', [$this->user->id])->with('success', 'Đổi mật khẩu thành công!');
         } else {
             session()->flash('error', 'Mật khẩu hiện tại không đúng.');
             return;

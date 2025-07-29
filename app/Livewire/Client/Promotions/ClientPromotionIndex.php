@@ -7,7 +7,7 @@ use App\Models\Promotion;
 use App\Models\Movie;
 use Livewire\WithPagination;
 
-class PromotionIndex extends Component
+class ClientPromotionIndex extends Component
 {
     use WithPagination;
     public $expandedPromotionId = null;
