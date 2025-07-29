@@ -1,9 +1,11 @@
 {
     "prefixRoot": ".scRender",
     "globalCssFiles": [
-        "scanner.css"
+      "selectfood.css"
+
     ],
     "scopedCssFiles": [
+      "datghe.css"
 
     ]
 }

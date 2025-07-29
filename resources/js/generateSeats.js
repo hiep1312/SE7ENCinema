@@ -1,5 +1,4 @@
 document.addEventListener("livewire:init", () => {
-    // Global variables for seat management
     window.currentSeatsPerRow = 17;
     window.currentRows = 10;
     window.currentVipRows = "A";
@@ -29,7 +28,7 @@ document.addEventListener("livewire:init", () => {
             if (remaining < 6) {
                 groupSize = remaining;
             }
-            else if(i + groupSize <= totalSeats) {
+            else if (i + groupSize <= totalSeats) {
                 aislePositions.push(i + groupSize);
             }
 
@@ -147,10 +146,9 @@ document.addEventListener("livewire:init", () => {
             font-weight: 600;
             z-index: 1000;
             animation: slideIn 0.3s ease-out;
-            ${
-                type === "success"
-                    ? "background: #28a745;"
-                    : "background: #17a2b8;"
+            ${type === "success"
+                ? "background: #28a745;"
+                : "background: #17a2b8;"
             }
         `;
 
@@ -184,13 +182,13 @@ document.addEventListener("livewire:init", () => {
         const rowChar = rowElement.dataset.row;
         const vipArr = window.currentVipRows
             ? window.currentVipRows
-                  .split(",")
-                  .map((r) => r.trim().toUpperCase())
+                .split(",")
+                .map((r) => r.trim().toUpperCase())
             : [];
         const coupleArr = window.currentCoupleRows
             ? window.currentCoupleRows
-                  .split(",")
-                  .map((r) => r.trim().toUpperCase())
+                .split(",")
+                .map((r) => r.trim().toUpperCase())
             : [];
 
         const isVip = vipArr.includes(rowChar);
@@ -556,11 +554,10 @@ document.addEventListener("livewire:init", () => {
             <div class="st_seat_full_container" style="float: none">
                 <div class="st_seat_lay_economy_wrapper float_left" style="width: 100% !important">
                     <div class="screen">
-                        <img src="${
-                            pathScreen ||
-                            location.origin +
-                                "/client/assets/images/content/screen.png"
-                        }">
+                        <img src="${pathScreen ||
+            location.origin +
+            "/client/assets/images/content/screen.png"
+            }">
                     </div>
                 </div>
                 <div class="st_seat_lay_economy_wrapper st_seat_lay_economy_wrapperexicutive float_left" style="width: auto !important" id="seats-layout"></div>
@@ -598,8 +595,8 @@ document.addEventListener("livewire:init", () => {
                 const seatType = isCouple
                     ? "double"
                     : isVip
-                    ? "vip"
-                    : "standard";
+                        ? "vip"
+                        : "standard";
                 const seatClass = `seat seat-${seatType}`;
                 const seatId = `${rowChar}${j}`;
                 const seatLabel = `Chỗ ngồi ${seatId}`;
@@ -656,41 +653,210 @@ document.addEventListener("livewire:init", () => {
         return frameSeats.cloneNode(true);
     };
 
-window.generateClientDOMSeats = function ({ seats, selectedSeats = [] }, pathScreen, modelBinding = 'selectedSeats') {
-    if (!seats || seats.length === 0) return;
 
-    const rowSet = new Set();
-    const rowInfo = {};
-
-    for (const seat of seats) {
-        const row = seat.seat_row.toUpperCase();
-        rowSet.add(row);
-
-        if (!rowInfo[row]) {
-            rowInfo[row] = {
-                maxNumber: 0,
-                type: seat.seat_type
-            };
-        }
-
-        if (seat.seat_number > rowInfo[row].maxNumber) {
-            rowInfo[row].maxNumber = seat.seat_number;
+    function setCookie(name, value, minutes = 10) {
+        try {
+            const expires = new Date();
+            expires.setTime(expires.getTime() + (minutes * 60 * 1000));
+            document.cookie = `${name}=${encodeURIComponent(value)};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+            if (!getCookie(name)) {
+                localStorage.setItem(name, value);
+            }
+        } catch (error) {
+            console.warn('Cookie not available, using localStorage:', error);
+            localStorage.setItem(name, value);
         }
     }
 
-    const sortedRows = Array.from(rowSet).sort();
-    const rows = sortedRows.length;
-    const seatsPerRow = Math.max(...Object.values(rowInfo).map(r => r.maxNumber));
-    const vipRows = sortedRows.filter(r => rowInfo[r].type === 'vip').join(',');
-    const coupleRows = sortedRows.filter(r => rowInfo[r].type === 'couple').join(',');
+    function getCookie(name) {
+        try {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) {
+                    return decodeURIComponent(c.substring(nameEQ.length, c.length));
+                }
+            }
 
-    const vipArr = vipRows.split(',').map(r => r.trim().toUpperCase());
-    const coupleArr = coupleRows.split(',').map(r => r.trim().toUpperCase());
+            return localStorage.getItem(name);
+        } catch (error) {
+            console.warn('Cookie not available, using localStorage:', error);
+            return localStorage.getItem(name);
+        }
+    }
 
-    const frameSeats = document.createElement("div");
-    frameSeats.setAttribute("wire:ignore", "");
-    frameSeats.classList = "st_seatlayout_main_wrapper w-100 mt-2";
-    frameSeats.innerHTML = `
+    function deleteCookie(name) {
+        try {
+            const pastDate = new Date();
+            pastDate.setTime(pastDate.getTime() - 1000);
+            document.cookie = `${name}=;expires=${pastDate.toUTCString()};path=/;`;
+            localStorage.removeItem(name);
+        } catch (error) {
+            localStorage.removeItem(name);
+        }
+    }
+
+    class SeatSynchronizer {
+        constructor() {
+            this.lastSelectedSeats = getCookie("selectedSeats") || "[]";
+            this.isIncognito = this.detectIncognitoMode();
+            this.setupSynchronization();
+        }
+
+        detectIncognitoMode() {
+            try {
+                const testName = '_test_cookie_' + Date.now();
+                document.cookie = `${testName}=test;path=/`;
+                const cookieWorks = document.cookie.includes(testName);
+
+                if (cookieWorks) {
+                    const pastDate = new Date();
+                    pastDate.setTime(pastDate.getTime() - 1000);
+                    document.cookie = `${testName}=;expires=${pastDate.toUTCString()};path=/;`;
+                    return false;
+                }
+                return true;
+            } catch (error) {
+                return true;
+            }
+        }
+
+        setupSynchronization() {
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'selectedSeats' && e.newValue !== e.oldValue) {
+                    this.handleSeatUpdate(e.newValue || "[]");
+                }
+            });
+
+            if ('BroadcastChannel' in window) {
+                this.broadcastChannel = new BroadcastChannel('seat_updates');
+                this.broadcastChannel.addEventListener('message', (event) => {
+                    if (event.data.type === 'seat_update') {
+                        this.handleSeatUpdate(JSON.stringify(event.data.seats));
+                    }
+                });
+            }
+
+            this.setupPolling();
+
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) {
+                    this.checkForUpdates();
+                }
+            });
+        }
+
+        setupPolling() {
+            setInterval(() => {
+                this.checkForUpdates();
+            }, 1000);
+        }
+
+        checkForUpdates() {
+            const currentSelectedSeats = getCookie("selectedSeats") || "[]";
+
+            if (currentSelectedSeats !== this.lastSelectedSeats) {
+                this.handleSeatUpdate(currentSelectedSeats);
+            }
+        }
+
+        handleSeatUpdate(newSelectedSeatsJson) {
+            this.lastSelectedSeats = newSelectedSeatsJson;
+
+            const newSelected = JSON.parse(newSelectedSeatsJson);
+            const selectedOnThisTab = Array.from(document.querySelectorAll('input.seat:checked')).map(i => i.value);
+
+            document.querySelectorAll('input.seat').forEach(input => {
+                const seatCode = input.value;
+                const isExternal = newSelected.includes(seatCode);
+                const isMine = selectedOnThisTab.includes(seatCode);
+                const isBooked = input.dataset.booked === 'true';
+                const parentLi = input.closest('li.seat-item');
+
+                parentLi?.classList.remove("seat-held", "seat-selected", "seat-available");
+
+                if (isBooked) {
+                    parentLi?.classList.add("seat-booked");
+                } else if (isExternal && !isMine) {
+                    input.disabled = true;
+                    input.dataset.disabled = "true";
+                    input.checked = true;
+                    parentLi?.classList.add("seat-held");
+                } else {
+                    input.disabled = false;
+                    input.dataset.disabled = "false";
+                    input.checked = isMine;
+                    parentLi?.classList.add(isMine ? "seat-selected" : "seat-available");
+                }
+            });
+
+            if (typeof window.reloadSeatsFromBlade === 'function') {
+                window.reloadSeatsFromBlade();
+            }
+        }
+
+        broadcastUpdate(seats) {
+            setCookie("selectedSeats", JSON.stringify(seats), 15);
+
+            if (this.broadcastChannel) {
+                this.broadcastChannel.postMessage({
+                    type: 'seat_update',
+                    seats: seats,
+                    timestamp: Date.now()
+                });
+            }
+
+            localStorage.setItem('selectedSeats', JSON.stringify(seats));
+            localStorage.setItem('selectedSeats_timestamp', Date.now().toString());
+        }
+    }
+
+    const seatSynchronizer = new SeatSynchronizer();
+
+    window.reloadSeatsFromBlade = function () {
+        if (typeof Livewire !== 'undefined') {
+            Livewire.dispatch('reloadSeats');
+        }
+    };
+
+    window.generateClientDOMSeats = function ({ seats, selectedSeats = [] }, pathScreen, modelBinding = 'selectedSeats') {
+        window.currentSelectedSeats = selectedSeats;
+        if (!seats || seats.length === 0) return;
+
+        const rowSet = new Set();
+        const rowInfo = {};
+
+        for (const seat of seats) {
+            const row = seat.seat_row.toUpperCase();
+            rowSet.add(row);
+
+            if (!rowInfo[row]) {
+                rowInfo[row] = {
+                    maxNumber: 0,
+                    type: seat.seat_type
+                };
+            }
+
+            if (seat.seat_number > rowInfo[row].maxNumber) {
+                rowInfo[row].maxNumber = seat.seat_number;
+            }
+        }
+
+        const sortedRows = Array.from(rowSet).sort();
+        const rows = sortedRows.length;
+        const seatsPerRow = Math.max(...Object.values(rowInfo).map(r => r.maxNumber));
+        const vipRows = sortedRows.filter(r => rowInfo[r].type === 'vip').join(',');
+        const coupleRows = sortedRows.filter(r => rowInfo[r].type === 'couple').join(',');
+
+        const vipArr = vipRows.split(',').map(r => r.trim().toUpperCase());
+        const coupleArr = coupleRows.split(',').map(r => r.trim().toUpperCase());
+
+        const frameSeats = document.createElement("div");
+        frameSeats.setAttribute("wire:ignore", "");
+        frameSeats.classList = "st_seatlayout_main_wrapper w-100 mt-2";
+        frameSeats.innerHTML = `
         <div class="container">
             <div class="st_seat_lay_heading float_left">
                 <h3>SE7ENCINEMA SCREEN</h3>
@@ -706,187 +872,296 @@ window.generateClientDOMSeats = function ({ seats, selectedSeats = [] }, pathScr
         </div>
     `;
 
-    const seatsLayout = frameSeats.querySelector("#seats-layout");
-    const caculateColumnAsile = calculateSeatDistribution(seatsPerRow);
-    const caculateRowAsile = calculateSeatDistribution(rows);
+        const seatsLayout = frameSeats.querySelector("#seats-layout");
+        const caculateColumnAsile = calculateSeatDistribution(seatsPerRow);
+        const caculateRowAsile = calculateSeatDistribution(rows);
 
-    for (let i = 0; i < sortedRows.length; i++) {
-        const rowChar = sortedRows[i];
-        const isVip = vipArr.includes(rowChar);
-        const isCouple = coupleArr.includes(rowChar);
+        for (let i = 0; i < sortedRows.length; i++) {
+            const rowChar = sortedRows[i];
+            const isVip = vipArr.includes(rowChar);
+            const isCouple = coupleArr.includes(rowChar);
 
-        const frameRow = document.createElement("ul");
-        frameRow.id = `row-${rowChar}`;
-        frameRow.className = "seat-row-layout list-unstyled float_left d-flex flex-nowrap gap-2 justify-content-start align-items-center";
-        frameRow.setAttribute("data-row", rowChar);
-        frameRow.style.position = "relative";
+            const frameRow = document.createElement("ul");
+            frameRow.id = `row-${rowChar}`;
+            frameRow.className = "seat-row-layout list-unstyled float_left d-flex flex-nowrap gap-2 justify-content-start align-items-center";
+            frameRow.setAttribute("data-row", rowChar);
+            frameRow.style.position = "relative";
 
-        for (let j = 1; j <= seatsPerRow; j++) {
-            const seatId = `${rowChar}${j}`;
-            const seat = seats.find(s => s.seat_row.toUpperCase() === rowChar && s.seat_number === j);
-            if (!seat) continue;
+            for (let j = 1; j <= seatsPerRow; j++) {
+                const seatId = `${rowChar}${j}`;
+                const seat = seats.find(s => s.seat_row.toUpperCase() === rowChar && s.seat_number === j);
+                if (!seat) continue;
 
-            const seatType = isCouple ? "double" : isVip ? "vip" : "standard";
-            const seatClass = `seat seat-${seatType}`;
-            const seatLabel = `Chỗ ngồi ${seatId}`;
-            const isChecked = selectedSeats.includes(seatId) ? 'checked' : '';
+                const seatType = isCouple ? "double" : isVip ? "vip" : "standard";
+                const seatClass = `seat seat-${seatType}`;
+                const seatLabel = `Chỗ ngồi ${seatId}`;
+                const isChecked = selectedSeats.includes(seatId) ? 'checked' : '';
+                const externalSelectedSeats = JSON.parse(getCookie("selectedSeats") || "[]");
+                const isExternalSelected = externalSelectedSeats.includes(seatId) && !selectedSeats.includes(seatId);
+                const isBooked = seat.is_booked === true || seat.is_booked === 1;
+                const isDisabled = isExternalSelected || isBooked ? 'disabled' : '';
+                const dataDisabled = isExternalSelected || isBooked ? 'true' : 'false';
+                const toastalert = isExternalSelected
+                    ? `wire:sc-alert.warning.icon.position.timer.5000 wire:sc-title="Ghế ${seatId} đang được giữ bởi người khác" wire:sc-model="noop"`
+                    : 'wire:sc-model="noop"';
 
-            const seatCeil = document.createElement("li");
-            seatCeil.innerHTML = `
+                const seatCeil = document.createElement("li");
+                seatCeil.innerHTML = `
                 <input
                     type="checkbox"
                     class="${seatClass}"
                     id="${seatId}"
                     value="${seatId}"
-                    wire:model="${modelBinding}"
+                    wire:model.live="${modelBinding}"
                     data-number="${j}"
+                    data-disabled="${dataDisabled}"
+                    data-booked="${isBooked ? 'true' : 'false'}"
                     ${isChecked}
-                >
+                    ${toastalert}
+                    >
             `;
-            seatCeil.dataset.seat = seatType;
-            seatCeil.className = "seat-item";
-            frameRow.appendChild(seatCeil);
 
-            if (caculateColumnAsile.includes(j + 1) && j < seatsPerRow) {
-                const aisleCeil = document.createElement("li");
-                aisleCeil.innerHTML = `
+                seatCeil.dataset.seat = seatType;
+                seatCeil.className = "seat-item";
+
+                if (isBooked) {
+                    seatCeil.classList.add("seat-booked");
+                } else if (isExternalSelected) {
+                    seatCeil.classList.add("seat-held");
+                } else if (selectedSeats.includes(seatId)) {
+                    seatCeil.classList.add("seat-selected");
+                } else {
+                    seatCeil.classList.add("seat-available");
+                }
+
+                frameRow.appendChild(seatCeil);
+
+                if (caculateColumnAsile.includes(j + 1) && j < seatsPerRow) {
+                    const aisleCeil = document.createElement("li");
+                    aisleCeil.innerHTML = `
                     <span class="seat-helper">Lối đi</span>
                     <div class="aisle"></div>
                 `;
-                aisleCeil.dataset.seat = "aisle";
-                aisleCeil.className = "aisle-item";
-                frameRow.appendChild(aisleCeil);
+                    aisleCeil.dataset.seat = "aisle";
+                    aisleCeil.className = "aisle-item";
+                    frameRow.appendChild(aisleCeil);
+                }
+
+                if (isCouple) j++;
             }
 
-            if (isCouple) j++;
-        }
+            seatsLayout.appendChild(frameRow);
 
-        seatsLayout.appendChild(frameRow);
-
-        if (caculateRowAsile.includes(i + 2) && i < rows) {
-            const aisleRow = document.createElement("div");
-            aisleRow.className = "row-aisle";
-            aisleRow.style.height = "20px";
-            aisleRow.style.width = "100%";
-            seatsLayout.appendChild(aisleRow);
-        }
-    }
-
-function getPos(s) {
-    const row = s.match(/[A-Z]/i)[0];
-    const rowCode = row.charCodeAt(0);
-    const col = parseInt(s.replace(/[A-Z]/i, ''));
-    return [row, rowCode, col];
-}
-
-function isStraightDiagonal(a, b, c) {
-    const [_, r1, c1] = getPos(a);
-    const [__, r2, c2] = getPos(b);
-    const [___, r3, c3] = getPos(c);
-
-    const rowDiff1 = r2 - r1;
-    const rowDiff2 = r3 - r2;
-    const colDiff1 = c2 - c1;
-    const colDiff2 = c3 - c2;
-
-    return (
-        Math.abs(rowDiff1) === 1 &&
-        rowDiff1 === rowDiff2 &&
-        Math.abs(colDiff1) === 1 &&
-        colDiff1 === colDiff2
-    );
-}
-function isSplitVerticalPattern(a, b, c) {
-    const [ra, caCode, ca] = getPos(a);
-    const [rb, cbCode, cb] = getPos(b);
-    const [rc, ccCode, cc] = getPos(c);
-
-    const isColAligned = (ca === cc) && (cb !== ca);
-    const isRowBetween = (cbCode > Math.min(caCode, ccCode) && cbCode < Math.max(caCode, ccCode));
-
-    return isColAligned && isRowBetween;
-}
-
-
-function isDiagonalTriangle(a, b, c, selectedSet) {
-    const [rowA, r1, c1] = getPos(a);
-    const [rowB, r2, c2] = getPos(b);
-    const [rowC, r3, c3] = getPos(c);
-
-    const allRows = [r1, r2, r3];
-    const allCols = [c1, c2, c3];
-
-    const rowCount = {};
-    allRows.forEach(r => rowCount[r] = (rowCount[r] || 0) + 1);
-
-
-    const repeatedRow = Object.entries(rowCount).find(([_, count]) => count === 2);
-    if (!repeatedRow) return false;
-
-    const baseRowCode = parseInt(repeatedRow[0]);
-    const baseRowSeats = allCols.filter((_, i) => allRows[i] === baseRowCode).sort((a, b) => a - b);
-
-
-    if (baseRowSeats.length === 2) {
-        const middle = (baseRowSeats[0] + baseRowSeats[1]) / 2;
-        if (Number.isInteger(middle)) {
-            const baseRow = String.fromCharCode(baseRowCode);
-            const middleSeatCode = `${baseRow}${middle}`;
-            if (!selectedSet.has(middleSeatCode)) {
-                return true;
+            if (caculateRowAsile.includes(i + 2) && i < rows) {
+                const aisleRow = document.createElement("div");
+                aisleRow.className = "row-aisle";
+                aisleRow.style.height = "20px";
+                aisleRow.style.width = "100%";
+                seatsLayout.appendChild(aisleRow);
             }
         }
-    }
 
-    return false;
-}
-
-function is3InDiagonal(seats) {
-    if (seats.length < 3) return false;
-    const selectedSet = new Set(seats);
-    for (let i = 0; i < seats.length; i++) {
-        for (let j = i + 1; j < seats.length; j++) {
-            for (let k = j + 1; k < seats.length; k++) {
-                const a = seats[i], b = seats[j], c = seats[k];
-                if (
-                    isStraightDiagonal(a, b, c) ||
-                    isDiagonalTriangle(a, b, c, selectedSet) ||
-                    isSplitVerticalPattern(a, b, c)
-                ) {
-                    return true;
+        function updateSeatVisualState(seatCode, isSelected, isHeld, isBooked) {
+            const input = frameSeats.querySelector(`input[value="${seatCode}"]`);
+            const parentLi = input?.closest('li.seat-item');
+            if (!parentLi) return;
+            parentLi.classList.remove("seat-held", "seat-selected", "seat-booked", "seat-available");
+            if (isBooked) {
+                parentLi.classList.add("seat-booked");
+                input.disabled = true;
+                input.dataset.disabled = "true";
+                input.dataset.booked = "true";
+                input.checked = false;
+            } else if (isHeld) {
+                parentLi.classList.add("seat-held");
+                input.disabled = true;
+                input.dataset.disabled = "true";
+                input.checked = true;
+            } else {
+                input.disabled = false;
+                input.dataset.disabled = "false";
+                if (isSelected) {
+                    parentLi.classList.add("seat-selected");
+                    input.checked = true;
+                } else {
+                    parentLi.classList.add("seat-available");
+                    input.checked = false;
                 }
             }
         }
-    }
-    return false;
-}
+
+        function hasLonelySeat(selectedSeats) {
+            const grouped = {};
+
+            for (const code of selectedSeats) {
+                const row = code.match(/[A-Z]/i)[0];
+                const col = parseInt(code.replace(/[A-Z]/i, ''));
+                if (!grouped[row]) grouped[row] = [];
+                grouped[row].push(col);
+            }
+
+            for (const row in grouped) {
+                const cols = grouped[row].sort((a, b) => a - b);
+                const minCol = Math.min(...cols);
+                const maxCol = Math.max(...cols);
+
+                for (let col = minCol; col <= maxCol; col++) {
+                    const currentSeatId = `${row}${col}`;
+                    const input = document.querySelector(`input[value="${currentSeatId}"]`);
+
+                    if (!input || input.disabled || input.dataset.booked === 'true') {
+                        continue;
+                    }
+
+                    const isSelected = selectedSeats.includes(currentSeatId);
+
+                    if (!isSelected) {
+                        const leftSelected = selectedSeats.includes(`${row}${col - 1}`);
+                        const rightSelected = selectedSeats.includes(`${row}${col + 1}`);
+
+                        if (leftSelected && rightSelected) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
 
 
-frameSeats.querySelectorAll('input.seat').forEach(input => {
-    input.addEventListener('change', (e) => {
-        const current = e.target;
-        if (!current.checked) return;
+        function hasSole(selectedSeats) {
+            const grouped = {};
+            for (const code of selectedSeats) {
+                const row = code.match(/[A-Z]/i)[0];
+                const col = parseInt(code.replace(/[A-Z]/i, ''));
+                if (!grouped[row]) grouped[row] = [];
+                grouped[row].push(col);
+            }
 
-        const selectedInputs = Array.from(frameSeats.querySelectorAll('input.seat:checked'));
-        const selectedSeatCodes = selectedInputs.map(i => i.value);
+            for (const cols of Object.values(grouped)) {
+                cols.sort((a, b) => a - b);
+                for (let i = 0; i < cols.length - 1; i++) {
+                    if (cols[i + 1] - cols[i] > 1) {
+                        return true; // sole
+                    }
+                }
+            }
+            return false;
+        }
 
-        if (is3InDiagonal(selectedSeatCodes)) {
-            current.checked = false;
-            Swal.fire({
-                toast: true,
-                icon: 'warning',
-                title: 'Không được chọn ghế theo đường chéo!',
-                timer: 2500,
-                showConfirmButton: false,
-                position: 'top-end'
+
+        function hasInvalidDiagonal(selectedSeats) {
+            if (selectedSeats.length < 2) return false;
+
+            const positions = selectedSeats.map(code => {
+                const rowCode = code.match(/[A-Z]/i)[0].charCodeAt(0);
+                const col = parseInt(code.replace(/[A-Z]/i, ''));
+                return { rowCode, col };
             });
+
+            for (let i = 0; i < positions.length; i++) {
+                for (let j = i + 1; j < positions.length; j++) {
+                    const a = positions[i];
+                    const b = positions[j];
+                    if (Math.abs(a.rowCode - b.rowCode) === Math.abs(a.col - b.col)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        frameSeats.querySelectorAll('input.seat').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const current = e.target;
+                const seatCode = current.value;
+
+                const externalHeld = JSON.parse(getCookie("selectedSeats") || "[]");
+                const isBooked = current.dataset.booked === 'true';
+                const isDisabled = current.dataset.disabled === 'true' || current.disabled === true;
+
+                const checkedInputs = Array.from(frameSeats.querySelectorAll('input.seat:checked'));
+                const selectedSeatCodes = checkedInputs.map(i => i.value);
+
+                if (isBooked) {
+                    e.preventDefault();
+                    current.checked = false;
+
+                    current.setAttribute('wire:sc-alert.error.icon.position.timer.2500', '');
+                    current.setAttribute('wire:sc-title', `Ghế ${seatCode} đã được đặt!`);
+                    current.setAttribute('wire:sc-html', 'Ghế này đã được đặt trước đó và không thể chọn.');
+                    return;
+                }
+
+                if (externalHeld.includes(seatCode)) {
+                    e.preventDefault();
+                    current.checked = false;
+
+                    current.setAttribute('wire:sc-alert.warning.icon.position.timer.5000', '');
+                    current.setAttribute('wire:sc-title', `Ghế ${seatCode} đang được giữ bởi người khác`);
+                    current.setAttribute('wire:sc-model', 'noop');
+                    return;
+                }
+
+                if (hasLonelySeat(selectedSeatCodes)) {
+                    e.preventDefault();
+                    current.checked = false;
+
+                    current.setAttribute('wire:sc-alert.error.icon.position.timer.5000', '');
+                    current.setAttribute('wire:sc-title', 'Không được để ghế lẻ!');
+                    current.setAttribute('wire:sc-html', 'Vui lòng chọn lại ghế, không để ghế lẻ.');
+                    return;
+                }
+
+                if (hasInvalidDiagonal(selectedSeatCodes)) {
+                    e.preventDefault();
+                    current.checked = false;
+
+                    current.setAttribute('wire:sc-alert.error.icon.position.timer.5000', '');
+                    current.setAttribute('wire:sc-title', 'Không được chọn ghế chéo!');
+                    current.setAttribute('wire:sc-html', 'Bạn đang chọn ghế theo đường chéo không hợp lệ.');
+                    return;
+                }
+
+                if (hasSole(selectedSeatCodes)) {
+                    e.preventDefault();
+                    current.checked = false;
+
+                    current.setAttribute('wire:sc-alert.error.icon.position.timer.5000', '');
+                    current.setAttribute('wire:sc-title', 'Không được chọn sole!');
+                    current.setAttribute('wire:sc-html', 'Vui lòng chọn ghế liền kề, không để khoảng trống.');
+                    return;
+                }
+
+                // Update visual & cookie
+                const finalSelectedInputs = Array.from(frameSeats.querySelectorAll('input.seat:checked'));
+                const finalSelectedSeatCodes = finalSelectedInputs.map(i => i.value);
+
+                window.currentSelectedSeats = finalSelectedSeatCodes;
+                seatSynchronizer.broadcastUpdate(finalSelectedSeatCodes);
+
+                frameSeats.querySelectorAll('input.seat').forEach(seatInput => {
+                    const code = seatInput.value;
+                    const isSelected = finalSelectedSeatCodes.includes(code);
+                    const isHeld = externalHeld.includes(code) && !finalSelectedSeatCodes.includes(code);
+                    const isBookedSeat = seatInput.dataset.booked === 'true';
+                    updateSeatVisualState(code, isSelected, isHeld, isBookedSeat);
+                });
+
+                Livewire.dispatch('updateSelectedSeats', [finalSelectedSeatCodes]);
+            });
+        });
+
+
+
+        return frameSeats;
+    };
+
+    window.addEventListener('beforeunload', () => {
+        if (seatSynchronizer.broadcastChannel) {
+            seatSynchronizer.broadcastChannel.close();
         }
     });
-});
-
-
-    return frameSeats;
-
-};
 
 });

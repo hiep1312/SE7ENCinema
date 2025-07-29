@@ -388,3 +388,14 @@
     outline: none; /* Bỏ viền khi nhấn */
     box-shadow: 0 0 5px 2px rgba(0, 123, 255, 0.5); /* Hiệu ứng viền khi có focus */
 }
+
+.seat-held > .seat::before {
+    background-color: rgb(1, 160, 91);
+    color: #ffffff;
+    border: 1px solid rgb(1, 160, 91);
+}
+.seat-held > .seat::after {
+    background-color: rgb(1, 160, 91);
+    border: 1px solid rgb(1, 160, 91);
+
+}

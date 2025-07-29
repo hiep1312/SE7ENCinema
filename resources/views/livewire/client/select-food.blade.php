@@ -1,75 +1,34 @@
-<div class="scRender container py-4">
+@assets
+   @vite(['resources/css/selectfood.css'])
+@endassets
+<div class=" scRender scSelectfood container py-5">
+    <div class="main-header">
+        <h1 class="main-title">
+            <i class="bi bi-camera-reels me-2"></i>Chọn đồ ăn kèm
+        </h1>
+        <p class="main-subtitle">Thưởng thức những món ăn ngon nhất cùng bộ phim của bạn</p>
+    </div>
 
-    <style>
-        .card.food-card {
-            transition: all 0.3s ease-in-out;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .card.food-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-        }
-
-        .food-card img {
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-            object-fit: cover;
-            height: 200px;
-        }
-
-        .food-card .card-body {
-            padding: 1rem 1.2rem;
-        }
-
-        .food-card .card-title {
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .food-card .card-text {
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-
-        .btn-select-food {
-            border-radius: 20px;
-            font-size: 0.85rem;
-            padding: 0.4rem 1.1rem;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-select-food i {
-            font-size: 0.95rem;
-        }
-    </style>
-
-    <h3 class="mb-4 fw-bold text-primary">🍿 Chọn đồ ăn kèm</h3>
-
-    <div class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4">
         @foreach ($this->foodItems() as $food)
             <div class="col">
-                <div class="card h-100 border-0 food-card">
-                    @if ($food->image)
-                        <img src="{{ asset('storage/' . $food->image) }}" class="card-img-top" alt="{{ $food->name }}">
-                    @else
-                        <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top" alt="No image">
-                    @endif
+                <div class="card food-card h-100">
+                    <img src="{{ $food->image ? asset('storage/' . $food->image) : 'https://via.placeholder.com/300x200?text=No+Image' }}"
+                         alt="{{ $food->name }}">
 
                     <div class="card-body d-flex flex-column">
-                        <h5 class="card-title text-primary">{{ $food->name }}</h5>
-                        <p class="card-text">{{ $food->description }}</p>
+                        <div>
+                            <h6 class="card-title">{{ $food->name }}</h6>
+                            <p class="food-description">{{ $food->description }}</p>
+                        </div>
 
-                        <button class="btn btn-outline-primary btn-select-food mt-auto" wire:click="selectFood({{ $food->id }})">
-                            <i class="bi bi-plus-circle"></i> Chọn món
+                        <button class="btn btn-select-food mt-auto"
+                                wire:click="selectFood({{ $food->id }})">
+                            <i class="bi bi-plus-circle me-1"></i> Chọn món
                         </button>
 
                         @if ($selectedFoodId === $food->id)
-                            <div class="mt-3 pt-3 border-top">
+                            <div class="attributes-section">
                                 @php
                                     $attributes = $food->variants
                                         ->flatMap(fn($v) => $v->attributeValues)
@@ -77,14 +36,13 @@
                                 @endphp
 
                                 @foreach ($attributes as $attributeName => $values)
-                                    <div class="mb-2">
-                                        <label class="form-label fw-bold">{{ $attributeName }}:</label><br>
-                                        <div class="btn-group flex-wrap" role="group">
+                                    <div class="mb-3">
+                                        <label class="attribute-label">{{ $attributeName }}:</label>
+                                        <div class="d-flex flex-wrap">
                                             @foreach ($values->unique('value') as $value)
                                                 <button type="button"
                                                     wire:click="selectAttribute('{{ $attributeName }}', '{{ $value->value }}')"
-                                                    class="btn btn-sm btn-outline-secondary me-1 mb-1
-                                                        {{ isset($selectedAttributes[$attributeName]) && $selectedAttributes[$attributeName] === $value->value ? 'active' : '' }}">
+                                                    class="attribute-btn {{ isset($selectedAttributes[$attributeName]) && $selectedAttributes[$attributeName] === $value->value ? 'active' : '' }}">
                                                     {{ $value->value }}
                                                 </button>
                                             @endforeach
@@ -93,18 +51,19 @@
                                 @endforeach
 
                                 @if ($selectedVariant)
-                                    <div class="alert alert-success py-2 px-3 mt-2 small">
-                                        <div><strong>SKU:</strong> {{ $selectedVariant->sku }}</div>
-                                        <div><strong>Giá:</strong> {{ number_format($selectedVariant->price) }}₫</div>
-                                    </div>
-                                    <button wire:click="addToCart" class="btn btn-success btn-sm">
-                                        ➕ Thêm vào giỏ
-                                    </button>
-                                @endif
-
-                                @if ($errors->has('variant'))
-                                    <div class="alert alert-danger mt-2">
-                                        {{ $errors->first('variant') }}
+                                    <div class="variant-info">
+                                        <div class="text-success mb-2">
+                                            <div><strong>SKU:</strong> {{ $selectedVariant->sku }}</div>
+                                            <div><strong>Giá:</strong> {{ number_format($selectedVariant->price) }}₫</div>
+                                        </div>
+                                        <button wire:click="addToCart" class="btn btn-add-to-cart">
+                                            <i class="bi bi-cart-plus me-1"></i> Thêm vào giỏ
+                                        </button>
+                                        <div class="text-danger mt-2">
+                                            <div>@error('variant')
+                                                <span class="error-message">{{ $message }}</span>
+                                            @enderror</div>
+                                        </div>
                                     </div>
                                 @endif
                             </div>
@@ -116,51 +75,63 @@
     </div>
 
     @if (count($cart) > 0)
-        <div class="mt-5 p-4 border rounded shadow-sm bg-white">
-            <h4 class="fw-bold text-success mb-3">🛒 Giỏ hàng</h4>
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover align-middle small">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Món</th>
-                            <th>Thuộc tính</th>
-                            <th>Số lượng</th>
-                            <th>Giá</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($cart as $sku => $item)
-                            <tr>
-                                <td>{{ $item['name'] }}</td>
-                                <td>
+        <div class="cart-section">
+            <h3 class="cart-title">
+                <i class="bi bi-cart3 me-2"></i>Giỏ hàng của bạn
+            </h3>
+            
+            <div class="cart-items-container">
+                @foreach ($cart as $sku => $item)
+                    <div class="cart-item">
+                        <div class="row align-items-center">
+                            <div class="col-md-4">
+                                <div class="item-name">{{ $item['name'] }}</div>
+                                <div class="item-attributes">
                                     @foreach ($item['attributes'] as $k => $v)
-                                        <span class="badge bg-secondary">{{ $k }}: {{ $v }}</span>
+                                        <span class="badge badge-attr">{{ $k }}: {{ $v }}</span>
                                     @endforeach
-                                </td>
-                                <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <button wire:click="decrement('{{ $sku }}')" class="btn btn-outline-secondary">-</button>
-                                        <button class="btn btn-light" disabled>{{ $item['quantity'] }}</button>
-                                        <button wire:click="increment('{{ $sku }}')" class="btn btn-outline-secondary">+</button>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-8">
+                                <div class="item-controls">
+                                    <div class="quantity-controls">
+                                        <button wire:click="decrement('{{ $sku }}')" class="quantity-btn">
+                                            <i class="bi bi-dash"></i>
+                                        </button>
+                                        <span class="quantity-display">{{ $item['quantity'] }}</span>
+                                        <button wire:click="increment('{{ $sku }}')" class="quantity-btn">
+                                            <i class="bi bi-plus"></i>
+                                        </button>
                                     </div>
-                                </td>
-                                <td>{{ number_format($item['price'] * $item['quantity']) }}₫</td>
-                                <td>
-                                    <button wire:click="remove('{{ $sku }}')" class="btn btn-sm btn-danger">🗑️</button>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                                    
+                                    <div class="item-price">
+                                        {{ number_format($item['price'] * $item['quantity']) }}₫
+                                    </div>
+                                    
+                                    <button wire:click="remove('{{ $sku }}')" class="btn btn-remove">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
             </div>
-            <div class="fw-bold fs-5 text-end mt-3">
-                Tổng tiền đồ ăn: <span class="text-danger">{{ number_format($this->total) }}₫</span>
+
+            <div class="total-section">
+                <div class="total-label">Tổng tiền thanh toán</div>
+                <div class="total-amount">{{ number_format($this->total) }}₫</div>
             </div>
-            <div class="d-flex justify-content-end gap-2 mt-3">
-                <button wire:click="goToCheckout" class="btn btn-primary">✅ Tiến hành thanh toán</button>
+
+            <div class="action-buttons">
+                <button wire:click="goToCheckout" class="btn btn-checkout">
+                    <i class="bi bi-credit-card me-1"></i> Thanh toán
+                </button>
+                <button wire:click="skipFood" class="btn btn-skip">
+                    <i class="bi bi-skip-forward me-1"></i> Bỏ qua
+                </button>
             </div>
         </div>
     @endif
-    <button wire:click="skipFood" class="btn btn-outline-secondary">⏭️ Bỏ qua</button>
 </div>

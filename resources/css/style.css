@@ -1369,6 +1369,90 @@ div:where(.swal2-icon){
     }
 }
 
+
+   .navbar-brand img {
+            height: 40px;
+        }
+        .breadcrumb-item a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .user-info-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .combo-item {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: white;
+        }
+        .combo-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .price-text {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .movie-sidebar {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .movie-poster {
+            width: 100%;
+            max-width: 200px;
+            border-radius: 8px;
+        }
+        .showtime-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 4px;
+            margin: 2px;
+            font-size: 12px;
+        }
+        .payment-methods {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .payment-icon {
+            width: 50px;
+            height: 30px;
+            object-fit: contain;
+            margin: 5px;
+        }
+        .total-section {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .footer-section {
+            background: #343a40;
+            color: white;
+            padding: 40px 0;
+        }
+        .footer-section h6 {
+            color: #ffc107;
+            margin-bottom: 15px;
+        }
+        .footer-section a {
+            color: #adb5bd;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .footer-section a:hover {
+            color: white;
+        }
 /* Compact Dark Style */
 .user-avatar-clean {
     width: 45px;

@@ -20,7 +20,7 @@
 
         <!-- Form thông tin phòng chiếu -->
         <div class="row">
-            <div class="col-12">
+            <div class="col-12 sanbox sanbox1">
                 <div class="card bg-dark">
                     <div class="card-header bg-gradient text-light"
                         style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">

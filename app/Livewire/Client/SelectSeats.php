@@ -11,10 +11,7 @@ use App\Models\Booking;
 use App\Models\BookingSeat;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-
-
-#[Title('Chọn ghế - SE7ENCinema')]
-#[Layout('components.layouts.client')]
+use Illuminate\Support\Facades\Cache;
 
 class SelectSeats extends Component
 {
@@ -23,6 +20,12 @@ class SelectSeats extends Component
     public $room;
     public $seats;
     public $selectedSeats = [];
+    public $lastBookedSeatsHash = '';
+
+    public $listeners = [
+        'updateSelectedSeats' => 'updateSelectedSeats',
+        'reloadSeats' => 'refreshSeats'
+    ];
 
     public function mount($showtime_id)
     {
@@ -33,18 +36,56 @@ class SelectSeats extends Component
         $this->generateSeatsLayout();
     }
 
+    public function updateSelectedSeats($seats)
+    {
+        if (is_string($seats)) {
+            $seats = explode(',', $seats);
+        }
+        $this->selectedSeats = array_filter((array) $seats);
+
+        if ($this->hasBookedSeatsChanged()) {
+            $this->loadSeats();
+        }
+        $this->generateSeatsLayout();
+    }
+
     public function loadSeats()
     {
-        $this->seats = Seat::where('room_id', $this->showtime->room_id)->get();
+        $cacheKey = "seats_room_{$this->showtime->room_id}";
+        $this->seats = Cache::remember($cacheKey, 30, function () {
+            return Seat::where('room_id', $this->showtime->room_id)->get();
+        });
 
+        $bookedCacheKey = "booked_seats_showtime_{$this->showtime_id}";
+        $bookedSeatIds = Cache::remember($bookedCacheKey, 1, function () {
+            return BookingSeat::whereHas('booking', function ($q) {
+                $q->where('showtime_id', $this->showtime_id)
+                    ->whereIn('status', ['pending', 'paid']);
+            })->pluck('seat_id')->toArray();
+        });
+
+        $this->lastBookedSeatsHash = md5(serialize($bookedSeatIds));
+
+        foreach ($this->seats as $seat) {
+            $seat->is_booked = in_array($seat->id, $bookedSeatIds);
+        }
+    }
+
+    private function hasBookedSeatsChanged()
+    {
         $bookedSeatIds = BookingSeat::whereHas('booking', function ($q) {
             $q->where('showtime_id', $this->showtime_id)
                 ->whereIn('status', ['pending', 'paid']);
         })->pluck('seat_id')->toArray();
 
-        foreach ($this->seats as $seat) {
-            $seat->is_booked = in_array($seat->id, $bookedSeatIds);
-        }
+        $currentHash = md5(serialize($bookedSeatIds));
+        return $currentHash !== $this->lastBookedSeatsHash;
+    }
+
+    public function refreshSeats()
+    {
+        $this->loadSeats();
+        $this->generateSeatsLayout();
     }
 
     public function toggleSeat($seatCode)
@@ -66,6 +107,9 @@ class SelectSeats extends Component
 
             if ($alreadyBooked) {
                 session()->flash('error', 'Ghế đã được đặt.');
+                Cache::forget("booked_seats_showtime_{$this->showtime_id}");
+                $this->loadSeats();
+                $this->generateSeatsLayout();
                 return;
             }
 
@@ -73,6 +117,21 @@ class SelectSeats extends Component
         }
 
         $this->generateSeatsLayout();
+    }
+
+    public function getSeatIdsFromCodes($seatCodes)
+    {
+        return collect($seatCodes)
+            ->map(function ($code) {
+                $row = substr($code, 0, 1);
+                $number = substr($code, 1);
+                $seat = $this->seats->first(fn($s) => $s->seat_row === $row && $s->seat_number == $number);
+                return $seat?->id;
+            })
+            ->filter()
+            ->unique()
+            ->values()
+            ->toArray();
     }
 
     public function generateSeatCodes($seatIds)
@@ -89,11 +148,39 @@ class SelectSeats extends Component
 
     public function generateSeatsLayout()
     {
-        $this->dispatch(
-            'seatuserdetail',
-            $this->seats,
-            $this->selectedSeats
-        );
+        $seatsData = $this->seats->map(function ($seat) {
+            return [
+                'id' => $seat->id,
+                'seat_row' => $seat->seat_row,
+                'seat_number' => $seat->seat_number,
+                'seat_type' => $seat->seat_type,
+                'price' => $seat->price,
+                'is_booked' => $seat->is_booked,
+            ];
+        })->toArray();
+
+        $seats = json_encode($seatsData);
+        $selectedSeats = json_encode($this->selectedSeats);
+
+        $this->js(<<<JS
+            const wrapper = document.getElementById('user-seat-wrapper');
+            try {
+                wrapper.innerHTML = '';
+                const dom = window.generateClientDOMSeats({
+                    seats: {$seats},
+                    selectedSeats: {$selectedSeats}
+                });
+                wrapper.appendChild(dom);
+                console.log('Seats generated successfully');
+            } catch (error) {
+                console.error('Error generating seats:', error);
+            }
+        JS);
+    }
+
+    public function noop()
+    {
+
     }
 
     public function goToSelectFood()
@@ -105,27 +192,6 @@ class SelectSeats extends Component
 
         DB::beginTransaction();
         try {
-            $conflict = BookingSeat::whereIn('seat_id', $this->selectedSeats)
-                ->whereHas('booking', function ($q) {
-                    $q->where('showtime_id', $this->showtime_id)
-                        ->whereIn('status', ['pending', 'paid']);
-                })->exists();
-
-            if ($conflict) {
-                session()->flash('error', 'Một số ghế đã bị đặt bởi người khác.');
-                DB::rollBack();
-                return;
-            }
-
-            $booking = Booking::create([
-                'user_id' => 1,
-                'showtime_id' => $this->showtime_id,
-                'booking_code' => strtoupper(Str::random(8)),
-                'total_price' => 0,
-                'status' => 'pending',
-                'start_transaction' => now(),
-            ]);
-
             $seatIds = collect($this->selectedSeats)
                 ->map(function ($code) {
                     $row = substr($code, 0, 1);
@@ -137,6 +203,30 @@ class SelectSeats extends Component
                 ->unique()
                 ->values()
                 ->toArray();
+
+            $conflict = BookingSeat::whereIn('seat_id', $seatIds)
+                ->whereHas('booking', function ($q) {
+                    $q->where('showtime_id', $this->showtime_id)
+                        ->whereIn('status', ['pending', 'paid']);
+                })->exists();
+
+            if ($conflict) {
+                session()->flash('error', 'Một số ghế đã bị đặt bởi người khác.');
+                DB::rollBack();
+                Cache::forget("booked_seats_showtime_{$this->showtime_id}");
+                $this->loadSeats();
+                $this->generateSeatsLayout();
+                return;
+            }
+
+            $booking = Booking::create([
+                'user_id' => 1,
+                'showtime_id' => $this->showtime_id,
+                'booking_code' => strtoupper(Str::random(8)),
+                'total_price' => 0,
+                'status' => 'pending',
+                'start_transaction' => now(),
+            ]);
 
             foreach ($seatIds as $seatId) {
                 BookingSeat::create([
@@ -150,9 +240,12 @@ class SelectSeats extends Component
                 ->get()
                 ->sum(fn($item) => $item->seat->price ?? 0);
 
+            $booking->update(['total_price' => $totalPrice]);
+
+            Cache::forget("booked_seats_showtime_{$this->showtime_id}");
 
             DB::commit();
-            
+
             return redirect()->route('booking.select_food', [
                 'booking_id' => $booking->id,
                 'total_price_seats' => $totalPrice,
@@ -160,13 +253,21 @@ class SelectSeats extends Component
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('error', 'Lỗi khi tạo booking: ' . $e->getMessage());
+            Cache::forget("booked_seats_showtime_{$this->showtime_id}");
+            $this->loadSeats();
+            $this->generateSeatsLayout();
         }
     }
 
     #[Title('Chọn ghế - SE7ENCinema')]
     #[Layout('components.layouts.client')]
+
     public function render()
     {
+        if ($this->hasBookedSeatsChanged()) {
+            $this->loadSeats();
+        }
+
         return view('livewire.client.select-seats', [
             'room' => $this->room
         ]);
