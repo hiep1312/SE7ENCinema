@@ -100,7 +100,7 @@
                                                 @endif
                                                 <div>
                                                     <div class="comment-movie-title mb-1">
-                                                        <i class="fas fa-user me-1 text-primary"></i>
+                                                        <i class="fas fa-user me-1 text-light"></i>
                                                         <strong class="text-wrap">
                                                             {{ $comment->user->name }}
                                                         </strong>
@@ -117,11 +117,11 @@
                                     </td>
 
                                     <!-- NỘI DUNG BÌNH LUẬN -->
-                                    <td class="col-2">
+                                    <td class="col-3">
                                         @if ($comment->content)
-                                            <span class="text-light text-wrap">{{ Str::limit($comment->content, 25, '...') }}</span>
+                                            <span class="text-muted lh-base text-wrap">{{ Str::limit($comment->content, 100, '...') }}</span>
                                             <div class="mt-1">
-                                                <small class="text-info">
+                                                <small class="text-secondary">
                                                     <i class="fas fa-comments me-1"></i>
                                                     {{ $comment->replies_count }} phản hồi
                                                 </small>
@@ -132,7 +132,7 @@
                                     </td>
 
                                     <!-- PHIM -->
-                                    <td class="col-3 bg-opacity-10 border-start border-3">
+                                    <td class="col-2 bg-opacity-10 border-start border-3">
                                         <div class="comment-showtime-info">
                                             <div class="d-flex align-items-center">
                                                 @if($comment->movie->poster && !str_contains($comment->movie->poster, 'placeholder.com'))
@@ -154,7 +154,7 @@
                                                     </div>
                                                 @endif
                                                 <div>
-                                                    <div class="comment-movie-title mb-1">
+                                                    <div class="comment-movie-title mb-1 lh-base">
                                                         <i class="fas fa-film me-1 "></i>
                                                         <strong class=" text-wrap">
                                                             {{ $comment->movie->title }}
@@ -169,7 +169,9 @@
                                                             @else
                                                                 Không có thể loại
                                                             @endif
-                                                            • {{ $comment->movie->duration ?? 'N/A' }} phút
+                                                            <span class="text-muted">
+                                                                • {{ $comment->movie->duration ?? 'N/A' }} phút
+                                                            </span>
                                                         </span>
                                                     </div>
                                                 </div>

@@ -77,7 +77,7 @@
         </ul>
 
         <!-- Tabs Content -->
-        <div class="tab-content mt-3">
+        <div class="tab-content mt-1">
             <!-- Overview Tab -->
             @if($tabCurrent === 'overview')
             <div class="tab-pane fade show active" id="overview" role="tabpanel">
@@ -112,21 +112,7 @@
                                                 <h6 class="mb-0 text-light">{{ $comment->user->name }}</h6>
                                                 <small class="text-muted">{{ $comment->user->email }}</small>
                                             </div>
-                                            <div>
-                                                @switch($comment->status)
-                                                    @case('active')
-                                                        <span class="badge bg-success">Hoạt động</span>
-                                                        @break
-                                                    @case('hidden')
-                                                        <span class="badge bg-warning text-dark">Ẩn</span>
-                                                        @break
-                                                    @case('deleted')
-                                                        <span class="badge bg-danger">Đã xóa</span>
-                                                        @break
-                                                    @default
-                                                        <span class="badge bg-secondary">{{ $statusOptions[$comment->status] ?? $comment->status }}</span>
-                                                @endswitch
-                                            </div>
+
                                         </div>
 
                                         <!-- Nội dung -->
@@ -134,31 +120,7 @@
                                             <p class="text-light mb-0" style="white-space: pre-wrap;">{{ $comment->content }}</p>
                                         </div>
 
-                                        <!-- Thông tin phim -->
-                                        <div class="d-flex align-items-center bg-opacity-5 rounded p-2">
-                                            @if($comment->movie->poster && !str_contains($comment->movie->poster, 'placeholder.com'))
-                                                @if(filter_var($comment->movie->poster, FILTER_VALIDATE_URL))
-                                                    <img src="{{ $comment->movie->poster }}" alt="{{ $comment->movie->title }}" class="me-2 rounded" style="width: 40px; height: 50px; object-fit: cover;">
-                                                @else
-                                                    <img src="{{ asset('storage/' . $comment->movie->poster) }}" alt="{{ $comment->movie->title }}" class="me-2 rounded" style="width: 40px; height: 50px; object-fit: cover;">
-                                                @endif
-                                            @else
-                                                <div class="bg-secondary me-2 rounded d-flex align-items-center justify-content-center" style="width: 40px; height: 50px;">
-                                                    <i class="fas fa-film text-white"></i>
-                                                </div>
-                                            @endif
-                                            <div>
-                                                <div class="text-light fw-bold">{{ $comment->movie->title }}</div>
-                                                <small class="text-muted">
-                                                    @if($comment->movie->genres->count() > 0)
-                                                        {{ $comment->movie->genres->pluck('name')->implode(', ') }}
-                                                    @else
-                                                        Không có thể loại
-                                                    @endif
-                                                    • {{ $comment->movie->duration ?? 'N/A' }} phút
-                                                </small>
-                                            </div>
-                                        </div>
+
 
                                     </div>
                                 </div>
@@ -244,34 +206,50 @@
                                     </div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label text-light fw-bold">Phim:</label>
-                                    <div class="text-light">{{ $comment->movie->title }}</div>
-                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label text-light fw-bold mb-3">
+                                      Thông tin phim
+                                    </label>
+                                    <div class="d-flex align-items-start bg-light bg-opacity-10 rounded-3 p-3">
+                                        <div class="flex-shrink-0 me-3">
+                                            @if($comment->movie->poster && !str_contains($comment->movie->poster, 'placeholder.com'))
+                                                @if(filter_var($comment->movie->poster, FILTER_VALIDATE_URL))
+                                                    <img src="{{ $comment->movie->poster }}" alt="{{ $comment->movie->title }}" class="rounded" style="width: 60px; height: 80px; object-fit: cover;">
+                                                @else
+                                                    <img src="{{ asset('storage/' . $comment->movie->poster) }}" alt="{{ $comment->movie->title }}" class="rounded" style="width: 60px; height: 80px; object-fit: cover;">
+                                                @endif
+                                            @else
+                                                <div class="bg-secondary rounded d-flex align-items-center justify-content-center" style="width: 60px; height: 80px;">
+                                                    <i class="fas fa-film text-white fa-2x"></i>
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="text-light fw-bold mb-1">{{ $comment->movie->title }}</h6>
+                                            <div class="text-muted small mb-2">
 
-
-                                <div class="mb-3">
-                                    <label class="form-label text-light fw-bold">Thể loại:</label>
-                                    <div class="text-light">
-                                        @if($comment->movie->genres->count() > 0)
-                                            {{ $comment->movie->genres->pluck('name')->implode(', ') }}
-                                        @else
-                                            Không có thể loại
-                                        @endif
+                                            </div>
+                                            <div class="text-muted small">
+                                                <i class="fas fa-tags me-1"></i>
+                                                @if($comment->movie->genres->count() > 0)
+                                                    {{ $comment->movie->genres->pluck('name')->implode(', ') }}
+                                                @else
+                                                    Không có thể loại
+                                                @endif
+                                                <span class="text-muted mt-3">• {{ $comment->movie->duration ?? 'N/A' }} phút</span>
+                                            </small>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label text-light fw-bold">Tạo lúc:</label>
+                                <div class="mb-3 mt-2">
+                                    <label class="form-label text-light fw-bold">Ngày tạo:</label>
                                     <div class="text-light">{{ $comment->created_at->format('d/m/Y H:i') }}</div>
                                 </div>
-
-                                @if($comment->updated_at != $comment->created_at)
                                 <div class="mb-3">
                                     <label class="form-label text-light fw-bold">Cập nhật:</label>
-                                    <div class="text-light">{{ $comment->updated_at->diffForHumans() }}</div>
+                                    <div class="text-light">{{ $comment->updated_at->format('d/m/Y H:i') }}</div>
                                 </div>
-                                @endif
                             </div>
                         </div>
                     </div>

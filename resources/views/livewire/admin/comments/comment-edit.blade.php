@@ -165,7 +165,7 @@
                                     </div>
                                 @endif
 
-                             <div class="mt-3">
+                             <div class="mt-2">
                                     <button type="button" class="btn btn-primary" wire:click="addChildComment">
                                         <i class="fas fa-plus"></i> Thêm bình luận con
                                     </button>
@@ -182,87 +182,90 @@
                             </div>
 
                             <!-- Bình luận con (child comments) -->
-                            @if(!$comment->parent_comment_id)
-
-                                <!-- Current Comment Info -->
-                                <div class="row mt-4">
-                                    <div class="col-12">
-                                        <div class="card bg-dark border-light">
-                                            <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                                <h5 class="my-1">Thông tin bình luận hiện tại</h5>
-                                            </div>
-                                            <div class="card-body bg-dark">
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <table class="table table-borderless text-light">
-                                                            <tr>
-                                                                <td><strong class="text-warning">Người tạo:</strong></td>
-                                                                <td>{{ $comment->user->name }}</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td><strong class="text-warning">Phim:</strong></td>
-                                                                <td>{{ $comment->movie->title }}</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td><strong class="text-warning">Ngày tạo:</strong></td>
-                                                                <td>{{ $comment->created_at->format('d/m/Y H:i') }}</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td><strong class="text-warning">Cập nhật cuối:</strong></td>
-                                                                <td>{{ $comment->updated_at->format('d/m/Y H:i') }}</td>
-                                                            </tr>
-                                                        </table>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        @if($comment->parent_comment_id)
-                                                            <div class="mb-3">
-                                                                <h6 class="text-warning">Bình luận cha:</h6>
-                                                                <div class="p-3 bg-secondary bg-opacity-25 rounded border">
-                                                                    {{ Str::limit($comment->parent->content, 200) }}
-                                                                    <div class="text-muted small mt-1">
-                                                                        - {{ $comment->parent->user->name }}
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        @endif
-
-                                                        @if($comment->reply_comment_id)
-                                                            <div class="mb-3">
-                                                                <h6 class="text-warning">Trả lời cho:</h6>
-                                                                <div class="p-3 bg-secondary bg-opacity-25 rounded border">
-                                                                    {{ Str::limit($comment->reply->content, 200) }}
-                                                                    <div class="text-muted small mt-1">
-                                                                        - {{ $comment->reply->user->name }}
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        @endif
-
-                                                        @if(!$comment->parent_comment_id)
-                                                            @php
-                                                                $existingChildren = \App\Models\Comment::where('parent_comment_id', $comment->id)->count();
-                                                            @endphp
-                                                            <div class="mb-3">
-                                                                <h6 class="text-info">Thống kê:</h6>
-                                                                <div class="p-3 bg-info bg-opacity-10 rounded border border-info border-opacity-25">
-                                                                    <div class="text-info">
-                                                                        <i class="fas fa-comments me-1"></i>
-                                                                        Đã có {{ $existingChildren }} bình luận con
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
                         </form>
                     </div>
                 </div>
             </div>
+            @if(!$comment->parent_comment_id)
+
+            <!-- Current Comment Info -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card bg-dark border-light">
+                        <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <h5 class="my-1">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Thông tin bình luận hiện tại
+                            </h5>
+                        </div>
+                        <div class="card-body bg-dark">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <table class="table table-borderless text-light">
+                                        <tr>
+                                            <td><strong class="text-warning">Người tạo:</strong></td>
+                                            <td>{{ $comment->user->name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong class="text-warning">Phim:</strong></td>
+                                            <td>{{ $comment->movie->title }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong class="text-warning">Ngày tạo:</strong></td>
+                                            <td>{{ $comment->created_at->format('d/m/Y H:i') }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong class="text-warning">Cập nhật cuối:</strong></td>
+                                            <td>{{ $comment->updated_at->format('d/m/Y H:i') }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    @if($comment->parent_comment_id)
+                                        <div class="mb-3">
+                                            <h6 class="text-warning">Bình luận cha:</h6>
+                                            <div class="p-3 bg-secondary bg-opacity-25 rounded border">
+                                                {{ Str::limit($comment->parent->content, 200) }}
+                                                <div class="text-muted small mt-1">
+                                                    - {{ $comment->parent->user->name }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    @if($comment->reply_comment_id)
+                                        <div class="mb-3">
+                                            <h6 class="text-warning">Trả lời cho:</h6>
+                                            <div class="p-3 bg-secondary bg-opacity-25 rounded border">
+                                                {{ Str::limit($comment->reply->content, 200) }}
+                                                <div class="text-muted small mt-1">
+                                                    - {{ $comment->reply->user->name }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    @if(!$comment->parent_comment_id)
+                                        @php
+                                            $existingChildren = \App\Models\Comment::where('parent_comment_id', $comment->id)->count();
+                                        @endphp
+                                        <div class="mb-3">
+                                            <h6 class="text-info">Thống kê:</h6>
+                                            <div class="p-3 bg-info bg-opacity-10 rounded border border-info border-opacity-25">
+                                                <div class="text-info">
+                                                    <i class="fas fa-comments me-1"></i>
+                                                    Đã có {{ $existingChildren }} bình luận con
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
         </div>
     </div>
 </div>

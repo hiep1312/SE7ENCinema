@@ -89,22 +89,22 @@
             </li>
             <li class="nav-item">
                 <button class="nav-link @if($tabCurrent === 'seats') active bg-light text-dark @else text-light @endif"
-                        wire:click="$set('tabCurrent', 'seats')"
-                        style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                    wire:click="$set('tabCurrent', 'seats')"
+                    style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <i class="fa-solid fa-chair me-1"></i>Ghế đặt
                 </button>
             </li>
             <li class="nav-item">
                 <button class="nav-link @if($tabCurrent === 'tickets') active bg-light text-dark @else text-light @endif"
-                        wire:click="$set('tabCurrent', 'tickets')"
-                        style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                    wire:click="$set('tabCurrent', 'tickets')"
+                    style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <i class="fa-solid fa-ticket me-1"></i>Thông tin vé
                 </button>
             </li>
             <li class="nav-item">
                 <button class="nav-link @if($tabCurrent === 'foodsOrder') active bg-light text-dark @else text-light @endif"
-                        wire:click="$set('tabCurrent', 'foodsOrder')"
-                        style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                    wire:click="$set('tabCurrent', 'foodsOrder')"
+                    style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <i class="fa-solid fa-burger me-1"></i>Món ăn
                 </button>
             </li>
@@ -154,16 +154,16 @@
                                             @switch($booking->status)
                                                 @case('pending')
                                                     <span class="badge bg-primary">Đang chờ xử lý</span>
-                                                    @break
+                                                @break
                                                 @case('expired')
                                                     <span class="badge bg-warning text-dark">Đã hết hạn xử lý</span>
-                                                    @break
+                                                @break
                                                 @case('paid')
                                                     <span class="badge bg-success">Đã thanh toán</span>
-                                                    @break
+                                                @break
                                                 @case('failed')
                                                     <span class="badge bg-danger">Lỗi thanh toán</span>
-                                                    @break
+                                                @break
                                             @endswitch
                                         </td>
                                     </tr>
@@ -241,13 +241,13 @@
                                                         @switch($showtimeBooking->status)
                                                             @case('active')
                                                                 <div class="badge bg-primary"><i class="fa-solid fa-clapperboard-play me-1 text-light"></i>Đang hoạt động</div>
-                                                                @break
+                                                            @break
                                                             @case('completed')
                                                                 <div class="badge bg-success"><i class="fa-solid fa-calendar-check me-1 text-light"></i>Đã hoàn thành</div>
-                                                                @break
+                                                            @break
                                                             @case('canceled')
                                                                 <div class="badge bg-danger"><i class="fa-solid fa-hexagon-xmark me-1 text-light"></i>Đã bị hủy</div>
-                                                                @break
+                                                            @break
                                                         @endswitch
                                                     </strong>
                                                 </span>
@@ -325,19 +325,19 @@
                                                                 <i class="fa-solid fa-crown me-1"></i>
                                                                 Quản trị viên
                                                             </span>
-                                                            @break
+                                                        @break
                                                         @case('staff')
                                                             <span class="badge-clean-base badge-clean-rose">
                                                                 <i class="fa-solid fa-user-tie me-1"></i>
                                                                 Nhân viên
                                                             </span>
-                                                            @break
+                                                        @break
                                                         @case('user')
                                                             <span class="badge-clean-base badge-clean-purple">
                                                                 <i class="fa-solid fa-user me-1"></i>
                                                                 Người dùng
                                                             </span>
-                                                            @break
+                                                        @break
                                                     @endswitch
                                                 </td>
                                             </tr>
@@ -447,8 +447,8 @@
                                                             </a>
                                                         @else
                                                             <button type="button" class="btn btn-sm btn-outline-info"
-                                                                    wire:sc-alert.error="Không thể xem chi tiết vé phim này!"
-                                                                    wire:sc-model title="Xem chi tiết">
+                                                                wire:sc-alert.error="Không thể xem chi tiết vé phim này!"
+                                                                wire:sc-model title="Xem chi tiết">
                                                                 <i class="fas fa-eye" style="margin-right: 0"></i>
                                                             </button>
                                                         @endif
@@ -526,95 +526,95 @@
                                                         {{ number_format($foodOrder->price * $foodOrder->quantity, 0, ',', '.') }}đ
                                                     </td>
                                                 </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="7" class="text-center py-4">
-                                                            <div class="text-muted">
-                                                                <i class="fas fa-inbox fa-3x mb-3"></i>
-                                                                <p>Không đặt kèm món ăn nào</p>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @elseif($tabCurrent === 'promotions')
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card bg-dark border-light">
-                            <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <h5><i class="fa-solid fa-tag me-2"></i>Danh sách mã giảm giá đã áp dụng</h5>
-                            </div>
-                            <div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
-                                @php $promotionUsages = $booking->promotionUsages @endphp
-                                <div class="table-responsive">
-                                    <table class="table table-dark table-striped table-hover text-light">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-center text-light">Mã giảm giá</th>
-                                                <th class="text-center text-light">Tên mã</th>
-                                                <th class="text-center text-light">Mô tả</th>
-                                                <th class="text-center text-light">Số tiền giảm</th>
-                                                <th class="text-center text-light">Tổng tiền đã giảm</th>
-                                                <th class="text-center text-light">Ngày sử dụng</th>
-                                                <th class="text-center text-light">Hành động</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse ($promotionUsages as $promotionUsage)
-                                                <tr wire:key="promotion-{{ $promotionUsage->id }}">
-                                                    <td class="text-center">
-                                                        {{ $promotionUsage->promotion?->code ?? 'N/A' }}
-                                                    </td>
-                                                    <td class="text-center">
-                                                        <strong class="text-light">{{ $promotionUsage->promotion->title }}</strong>
-                                                    </td>
-                                                    <td class="text-muted text-center">
-                                                        <p class="text-wrap lh-base" style="margin-bottom: 0;">{{ Str::limit($promotionUsage->promotion->description ?: "Không có mô tả", 100, '...') }}</p>
-                                                    </td>
-                                                    <td class="text-center text-warning fw-bold">
-                                                        {{ number_format($promotionUsage->promotion->discount_value, 0, ',', '.') }}{{ $promotionUsage->promotion->discount_type === 'percentage' ? '%' : 'đ' }}
-                                                    </td>
-                                                    <td class="text-center text-warning fw-bold">
-                                                        {{ number_format($promotionUsage->discount_amount, 0, ',', '.') }}đ
-                                                    </td>
-                                                    <td class="text-center">
-                                                        {{ $promotionUsage->used_at->format('d/m/Y H:i') }}
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            <a href="{{ /* route('admin.promotions.detail', $promotionUsage->promotion->id) */ '#' }}"
-                                                                class="btn btn-sm btn-info" title="Xem chi tiết">
-                                                                <i class="fas fa-eye" style="margin-right: 0"></i>
-                                                            </a>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="7" class="text-center py-4">
+                                                        <div class="text-muted">
+                                                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                                                            <p>Không đặt kèm món ăn nào</p>
                                                         </div>
                                                     </td>
                                                 </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="7" class="text-center py-4">
-                                                            <div class="text-muted">
-                                                                <i class="fas fa-inbox fa-3x mb-3"></i>
-                                                                <p>Không áp dụng mã giảm giá nào</p>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            @endif
+        </div>
+    @elseif($tabCurrent === 'promotions')
+        <div class="row">
+            <div class="col-12">
+                <div class="card bg-dark border-light">
+                            <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <h5><i class="fa-solid fa-tag me-2"></i>Danh sách mã giảm giá đã áp dụng</h5>
+                    </div>
+                            <div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
+                        @php $promotionUsages = $booking->promotionUsages @endphp
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped table-hover text-light">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center text-light">Mã giảm giá</th>
+                                        <th class="text-center text-light">Tên mã</th>
+                                        <th class="text-center text-light">Mô tả</th>
+                                        <th class="text-center text-light">Số tiền giảm</th>
+                                        <th class="text-center text-light">Tổng tiền đã giảm</th>
+                                        <th class="text-center text-light">Ngày sử dụng</th>
+                                        <th class="text-center text-light">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($promotionUsages as $promotionUsage)
+                                        <tr wire:key="promotion-{{ $promotionUsage->id }}">
+                                            <td class="text-center">
+                                                {{ $promotionUsage->promotion?->code ?? 'N/A' }}
+                                            </td>
+                                            <td class="text-center">
+                                                        <strong class="text-light">{{ $promotionUsage->promotion->title }}</strong>
+                                            </td>
+                                            <td class="text-muted text-center">
+                                                        <p class="text-wrap lh-base" style="margin-bottom: 0;">{{ Str::limit($promotionUsage->promotion->description ?: "Không có mô tả", 100, '...') }}</p>
+                                            </td>
+                                            <td class="text-center text-warning fw-bold">
+                                                {{ number_format($promotionUsage->promotion->discount_value, 0, ',', '.') }}{{ $promotionUsage->promotion->discount_type === 'percentage' ? '%' : 'đ' }}
+                                            </td>
+                                            <td class="text-center text-warning fw-bold">
+                                                {{ number_format($promotionUsage->discount_amount, 0, ',', '.') }}đ
+                                            </td>
+                                            <td class="text-center">
+                                                {{ $promotionUsage->used_at->format('d/m/Y H:i') }}
+                                            </td>
+                                            <td>
+                                                <div class="d-flex justify-content-center">
+                                                    <a href="{{ /* route('admin.promotions.detail', $promotionUsage->promotion->id) */ '#' }}"
+                                                        class="btn btn-sm btn-info" title="Xem chi tiết">
+                                                        <i class="fas fa-eye" style="margin-right: 0"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="7" class="text-center py-4">
+                                                <div class="text-muted">
+                                                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                                                    <p>Không áp dụng mã giảm giá nào</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+    @endif
+</div>
+</div>
 </div>
