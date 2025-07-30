@@ -137,77 +137,359 @@
         <div class="tab-content mt-1">
             <!-- Information Tab -->
             @if ($tabCurrent === 'information')
-                <div class="container-fluid" wire:ignore>
+                <div class="container-fluid">
                     <div class="row g-4">
                         <!-- Revenue Chart -->
-                        <div class="col-lg-6">
+                        <div class="col-xl-6 col-lg-12">
                             <div class="bg-dark rounded-3 p-3">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h5 class="text-white mb-0">
                                         <i class="fas fa-chart-line me-2 text-primary"></i>Doanh thu
                                     </h5>
                                     {{-- Revenue Chart Filter --}}
-                                    <div class="btn-group mb-2" role="group">
-                                        <select wire:model="revenueYear" wire:change="changeRevenueYear($event.target.value)"
-                                            class="form-select form-select-sm w-auto border-primary text-primary fw-bold"
-                                            style="background: #23272b; border-width: 2px; border-radius: 0.5rem 0 0 0.5rem; cursor:pointer; padding: 2px 5px;">
-                                            @foreach($availableYears as $year)
-                                                <option value="{{ $year }}" class="bg-dark text-primary">Năm {{ $year }}</option>
-                                            @endforeach
-                                        </select>
-                                        <select wire:model="revenueMonth" wire:change="changeRevenueMonth($event.target.value)"
-                                            class="form-select form-select-sm w-auto border-primary text-primary fw-bold"
-                                            style="background: #23272b; border-width: 2px; border-radius: 0; cursor:pointer; padding: 2px 5px;">
-                                            @foreach($availableMonths as $month)
-                                                <option value="{{ $month }}" class="bg-dark text-primary">Tháng {{ $month }}</option>
-                                            @endforeach
-                                        </select>
-                                        <select wire:model="revenueDay" wire:change="changeRevenueDay($event.target.value)"
-                                            class="form-select form-select-sm w-auto border-primary text-primary fw-bold"
-                                            style="background: #23272b; border-width: 2px; border-radius: 0 0.5rem 0.5rem 0; cursor:pointer; padding: 2px 5px;">
-                                            @foreach($availableDays as $day)
-                                                <option value="{{ $day }}" class="bg-dark text-primary">Ngày {{ $day }}</option>
-                                            @endforeach
-                                        </select>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-filter me-1"></i>
+                                            @switch($revenuePeriod)
+                                                @case('3_days')
+                                                    3 ngày gần nhất
+                                                    @break
+                                                @case('7_days')
+                                                    7 ngày gần nhất
+                                                    @break
+                                                @case('30_days')
+                                                    30 ngày gần nhất
+                                                    @break
+                                                @case('1_month')
+                                                    1 tháng gần nhất
+                                                    @break
+                                                @case('3_months')
+                                                    3 tháng gần nhất
+                                                    @break
+                                                @case('1_year')
+                                                    1 năm gần nhất
+                                                    @break
+                                                @case('2_years')
+                                                    2 năm gần nhất
+                                                    @break
+                                                @default
+                                                    7 ngày gần nhất
+                                            @endswitch
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-dark">
+                                            <li><h6 class="dropdown-header text-primary">Ngày</h6></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeRevenuePeriod('3_days')">3 ngày gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeRevenuePeriod('7_days')">7 ngày gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeRevenuePeriod('30_days')">30 ngày gần nhất</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><h6 class="dropdown-header text-primary">Tháng</h6></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeRevenuePeriod('1_month')">1 tháng gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeRevenuePeriod('3_months')">3 tháng gần nhất</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><h6 class="dropdown-header text-primary">Năm</h6></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeRevenuePeriod('1_year')">1 năm gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeRevenuePeriod('2_years')">2 năm gần nhất</a></li>
+                                        </ul>
                                     </div>
                                 </div>
+                                <div wire:ignore>
                                 <div id="revenueChart" style="height: 400px;"></div>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Movies Summary Chart (Top phim theo doanh thu) -->
-                        <div class="col-lg-6">
+                        <div class="col-xl-6 col-lg-12">
                             <div class="bg-dark rounded-3 p-3">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h5 class="text-white mb-0">
                                         <i class="fas fa-film me-2 text-info"></i>Top phim theo doanh thu
                                     </h5>
                                     {{-- Top Movies Chart Filter --}}
-                                    <div class="btn-group mb-2" role="group">
-                                        <select wire:model="topMoviesYear" wire:change="changeTopMoviesYear($event.target.value)"
-                                            class="form-select form-select-sm w-auto border-info text-info fw-bold"
-                                            style="background: #23272b; border-width: 2px; border-radius: 0.5rem 0 0 0.5rem; cursor:pointer; padding: 2px 5px;">
-                                            @foreach($availableYears as $year)
-                                                <option value="{{ $year }}" class="bg-dark text-info">Năm {{ $year }}</option>
-                                            @endforeach
-                                        </select>
-                                        <select wire:model="topMoviesMonth" wire:change="changeTopMoviesMonth($event.target.value)"
-                                            class="form-select form-select-sm w-auto border-info text-info fw-bold"
-                                            style="background: #23272b; border-width: 2px; border-radius: 0; cursor:pointer; padding: 2px 5px;">
-                                            @foreach($availableMonths as $month)
-                                                <option value="{{ $month }}" class="bg-dark text-info">Tháng {{ $month }}</option>
-                                            @endforeach
-                                        </select>
-                                        <select wire:model="topMoviesDay" wire:change="changeTopMoviesDay($event.target.value)"
-                                            class="form-select form-select-sm w-auto border-info text-info fw-bold"
-                                            style="background: #23272b; border-width: 2px; border-radius: 0 0.5rem 0.5rem 0; cursor:pointer; padding: 2px 5px;">
-                                            @foreach($availableDays as $day)
-                                                <option value="{{ $day }}" class="bg-dark text-info">Ngày {{ $day }}</option>
-                                            @endforeach
-                                        </select>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-info btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-filter me-1"></i>
+                                            @switch($topMoviesPeriod)
+                                                @case('3_days')
+                                                    3 ngày gần nhất
+                                                    @break
+                                                @case('7_days')
+                                                    7 ngày gần nhất
+                                                    @break
+                                                @case('30_days')
+                                                    30 ngày gần nhất
+                                                    @break
+                                                @case('1_month')
+                                                    1 tháng gần nhất
+                                                    @break
+                                                @case('3_months')
+                                                    3 tháng gần nhất
+                                                    @break
+                                                @case('1_year')
+                                                    1 năm gần nhất
+                                                    @break
+                                                @case('2_years')
+                                                    2 năm gần nhất
+                                                    @break
+                                                @default
+                                                    7 ngày gần nhất
+                                            @endswitch
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-dark">
+                                            <li><h6 class="dropdown-header text-info">Ngày</h6></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeTopMoviesPeriod('3_days')">3 ngày gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeTopMoviesPeriod('7_days')">7 ngày gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeTopMoviesPeriod('30_days')">30 ngày gần nhất</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><h6 class="dropdown-header text-info">Tháng</h6></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeTopMoviesPeriod('1_month')">1 tháng gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeTopMoviesPeriod('3_months')">3 tháng gần nhất</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><h6 class="dropdown-header text-info">Năm</h6></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeTopMoviesPeriod('1_year')">1 năm gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeTopMoviesPeriod('2_years')">2 năm gần nhất</a></li>
+                                        </ul>
                                     </div>
                                 </div>
+                                <div wire:ignore>
                                 <div id="moviesSummaryChart" style="height: 400px;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Seats Chart -->
+                        <div class="col-xl-6 col-lg-12">
+                            <div class="bg-dark rounded-3 p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="text-white mb-0">
+                                        <i class="fas fa-chair me-2 text-success"></i>Phân tích đặt ghế
+                                    </h5>
+                                    {{-- Seats Chart Filter --}}
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-success btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-filter me-1"></i>
+                                            @switch($seatsPeriod)
+                                                @case('3_days')
+                                                    3 ngày gần nhất
+                                                    @break
+                                                @case('7_days')
+                                                    7 ngày gần nhất
+                                                    @break
+                                                @case('30_days')
+                                                    30 ngày gần nhất
+                                                    @break
+                                                @case('1_month')
+                                                    1 tháng gần nhất
+                                                    @break
+                                                @case('3_months')
+                                                    3 tháng gần nhất
+                                                    @break
+                                                @case('1_year')
+                                                    1 năm gần nhất
+                                                    @break
+                                                @case('2_years')
+                                                    2 năm gần nhất
+                                                    @break
+                                                @default
+                                                    7 ngày gần nhất
+                                            @endswitch
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-dark">
+                                            <li><h6 class="dropdown-header text-success">Ngày</h6></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeSeatsPeriod('3_days')">3 ngày gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeSeatsPeriod('7_days')">7 ngày gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeSeatsPeriod('30_days')">30 ngày gần nhất</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><h6 class="dropdown-header text-success">Tháng</h6></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeSeatsPeriod('1_month')">1 tháng gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeSeatsPeriod('3_months')">3 tháng gần nhất</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><h6 class="dropdown-header text-success">Năm</h6></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeSeatsPeriod('1_year')">1 năm gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeSeatsPeriod('2_years')">2 năm gần nhất</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div wire:ignore>
+                                    <div id="seatsChart" style="height: 400px;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Foods Chart -->
+                        <div class="col-xl-6 col-lg-12">
+                            <div class="bg-dark rounded-3 p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="text-white mb-0">
+                                        <i class="fas fa-utensils me-2 text-warning"></i>Phân tích đặt đồ ăn & thức uống
+                                    </h5>
+                                    {{-- Foods Chart Filter --}}
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-warning btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-filter me-1"></i>
+                                            @switch($foodsPeriod)
+                                                @case('3_days')
+                                                    3 ngày gần nhất
+                                                    @break
+                                                @case('7_days')
+                                                    7 ngày gần nhất
+                                                    @break
+                                                @case('30_days')
+                                                    30 ngày gần nhất
+                                                    @break
+                                                @case('1_month')
+                                                    1 tháng gần nhất
+                                                    @break
+                                                @case('3_months')
+                                                    3 tháng gần nhất
+                                                    @break
+                                                @case('1_year')
+                                                    1 năm gần nhất
+                                                    @break
+                                                @case('2_years')
+                                                    2 năm gần nhất
+                                                    @break
+                                                @default
+                                                    7 ngày gần nhất
+                                            @endswitch
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-dark">
+                                            <li><h6 class="dropdown-header text-warning">Ngày</h6></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeFoodsPeriod('3_days')">3 ngày gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeFoodsPeriod('7_days')">7 ngày gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeFoodsPeriod('30_days')">30 ngày gần nhất</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><h6 class="dropdown-header text-warning">Tháng</h6></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeFoodsPeriod('1_month')">1 tháng gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeFoodsPeriod('3_months')">3 tháng gần nhất</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><h6 class="dropdown-header text-warning">Năm</h6></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeFoodsPeriod('1_year')">1 năm gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeFoodsPeriod('2_years')">2 năm gần nhất</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div wire:ignore>
+                                    <div id="foodsChart" style="height: 400px;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Top Foods Chart -->
+                        <div class="col-xl-6 col-lg-12">
+                            <div class="bg-dark rounded-3 p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="text-white mb-0">
+                                        <i class="fas fa-trophy me-2 text-danger"></i>Top món ăn & thức uống bán chạy
+                                    </h5>
+                                    {{-- Top Foods Chart Filter --}}
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-danger btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-filter me-1"></i>
+                                            @switch($foodsPeriod)
+                                                @case('3_days')
+                                                    3 ngày gần nhất
+                                                    @break
+                                                @case('7_days')
+                                                    7 ngày gần nhất
+                                                    @break
+                                                @case('30_days')
+                                                    30 ngày gần nhất
+                                                    @break
+                                                @case('1_month')
+                                                    1 tháng gần nhất
+                                                    @break
+                                                @case('3_months')
+                                                    3 tháng gần nhất
+                                                    @break
+                                                @case('1_year')
+                                                    1 năm gần nhất
+                                                    @break
+                                                @case('2_years')
+                                                    2 năm gần nhất
+                                                    @break
+                                                @default
+                                                    7 ngày gần nhất
+                                            @endswitch
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-dark">
+                                            <li><h6 class="dropdown-header text-danger">Ngày</h6></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeFoodsPeriod('3_days')">3 ngày gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeFoodsPeriod('7_days')">7 ngày gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeFoodsPeriod('30_days')">30 ngày gần nhất</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><h6 class="dropdown-header text-danger">Tháng</h6></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeFoodsPeriod('1_month')">1 tháng gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeFoodsPeriod('3_months')">3 tháng gần nhất</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><h6 class="dropdown-header text-danger">Năm</h6></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeFoodsPeriod('1_year')">1 năm gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeFoodsPeriod('2_years')">2 năm gần nhất</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div wire:ignore>
+                                    <div id="topFoodsChart" style="height: 400px;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Top Movies & Rooms Chart -->
+                        <div class="col-xl-6 col-lg-12">
+                            <div class="bg-dark rounded-3 p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="text-white mb-0">
+                                        <i class="fas fa-star me-2 text-purple"></i>Top phòng chiếu bán chạy
+                                    </h5>
+                                    {{-- Top Movies & Rooms Chart Filter --}}
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-purple btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-filter me-1"></i>
+                                            @switch($seatsPeriod)
+                                                @case('3_days')
+                                                    3 ngày gần nhất
+                                                    @break
+                                                @case('7_days')
+                                                    7 ngày gần nhất
+                                                    @break
+                                                @case('30_days')
+                                                    30 ngày gần nhất
+                                                    @break
+                                                @case('1_month')
+                                                    1 tháng gần nhất
+                                                    @break
+                                                @case('3_months')
+                                                    3 tháng gần nhất
+                                                    @break
+                                                @case('1_year')
+                                                    1 năm gần nhất
+                                                    @break
+                                                @case('2_years')
+                                                    2 năm gần nhất
+                                                    @break
+                                                @default
+                                                    7 ngày gần nhất
+                                            @endswitch
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-dark">
+                                            <li><h6 class="dropdown-header text-purple">Ngày</h6></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeSeatsPeriod('3_days')">3 ngày gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeSeatsPeriod('7_days')">7 ngày gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeSeatsPeriod('30_days')">30 ngày gần nhất</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><h6 class="dropdown-header text-purple">Tháng</h6></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeSeatsPeriod('1_month')">1 tháng gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeSeatsPeriod('3_months')">3 tháng gần nhất</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><h6 class="dropdown-header text-purple">Năm</h6></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeSeatsPeriod('1_year')">1 năm gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#" wire:click.prevent="changeSeatsPeriod('2_years')">2 năm gần nhất</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div wire:ignore>
+                                    <div id="topMoviesAndRoomsChart" style="height: 400px;"></div>
+                                </div>
                             </div>
                         </div>
 
@@ -238,10 +520,57 @@
                                             type: 'line',
                                             stacked: false,
                                             background: 'transparent',
-                                            toolbar: { show: false }
+                                            toolbar: {
+                                                show: true,
+                                                offsetX: 0,
+                                                offsetY: 0,
+                                                tools: {
+                                                    download: true,
+                                                    selection: true,
+                                                    zoom: true,
+                                                    zoomin: true,
+                                                    zoomout: true,
+                                                    pan: true,
+                                                    reset: true
+                                                },
+                                                export: {
+                                                    csv: {
+                                                        filename: 'doanh-thu',
+                                                        columnDelimiter: ',',
+                                                        headerCategory: 'Ngày',
+                                                        headerValue: 'Doanh thu',
+                                                        categoryFormatter: function(x) {
+                                                            return x;
+                                                        },
+                                                        valueFormatter: function(y) {
+                                                            return new Intl.NumberFormat('vi-VN').format(y);
+                                                        }
+                                                    },
+                                                    svg: {
+                                                        filename: 'doanh-thu',
+                                                    },
+                                                    png: {
+                                                        filename: 'doanh-thu',
+                                                    }
+                                                },
+                                                autoSelected: 'zoom'
+                                            },
+                                            animations: {
+                                                enabled: true,
+                                                easing: 'easeinout',
+                                                speed: 800,
+                                                animateGradually: {
+                                                    enabled: true,
+                                                    delay: 150
+                                                },
+                                                dynamicAnimation: {
+                                                    enabled: true,
+                                                    speed: 350
+                                                }
+                                            }
                                         },
                                         dataLabels: {
-                                            enabled: false
+                                            enabled: false,
                                         },
                                         colors: ['#FF1654', '#247BA0'],
                                         series: [
@@ -269,7 +598,10 @@
                                                 style: {
                                                     colors: '#ffffff',
                                                     fontSize: '12px'
-                                                }
+                                                },
+                                                rotate: -45,
+                                                rotateAlways: false,
+                                                maxHeight: 60
                                             },
                                             axisBorder: {
                                                 show: false
@@ -333,13 +665,40 @@
                                             shared: false,
                                             intersect: true,
                                             theme: 'dark',
-                                            x: {
-                                                show: false
-                                            },
-                                            y: {
-                                                formatter: function(value) {
-                                                    return new Intl.NumberFormat('vi-VN').format(value);
-                                                }
+                                            custom: function({series, seriesIndex, dataPointIndex, w}) {
+                                                const ngay = w.globals.labels[dataPointIndex] || '';
+                                                const doanhThu = w.globals.series[0][dataPointIndex] || 0;
+                                                const donHang = w.globals.series[1][dataPointIndex] || 0;
+                                                const tbDoanhThu = donHang > 0 ? Math.round(doanhThu / donHang) : 0;
+                                                const phanTramTang = dataPointIndex > 0 ? ((doanhThu - w.globals.series[0][dataPointIndex - 1]) / w.globals.series[0][dataPointIndex - 1] * 100).toFixed(1) : 0;
+                                                const mauPhanTram = phanTramTang >= 0 ? '#34a853' : '#ff6b6b';
+                                                const iconPhanTram = phanTramTang >= 0 ? '📈' : '📉';
+                                                const iconNgay = phanTramTang >= 0 ? '📊' : '📊';
+
+                                                return `
+                                                    <div class="bg-dark border border-secondary rounded-3 p-3 shadow-lg" style="min-width: 300px;">
+                                                        <div class="d-flex align-items-center mb-3">
+                                                            <span class="fs-5 me-2">${iconNgay}</span>
+                                                            <h6 class="mb-0 text-white fw-bold">${ngay}</h6>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <span class="text-danger">💰 Doanh thu:</span>
+                                                            <span class="fw-bold fs-6 text-danger">${new Intl.NumberFormat('vi-VN').format(doanhThu)}đ</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <span class="text-info">🛒 Đơn hàng:</span>
+                                                            <span class="fw-bold fs-6 text-info">${donHang}</span>
+                                                        </div>
+
+                                                        ${dataPointIndex > 0 ? `
+                                                        <hr class="my-2">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span style="color: ${mauPhanTram}">${iconPhanTram} So với trước:</span>
+                                                            <span class="fw-bold" style="color: ${mauPhanTram}">${phanTramTang >= 0 ? '+' : ''}${phanTramTang}%</span>
+                                                        </div>
+                                                        ` : ''}
+                                                    </div>
+                                                `;
                                             }
                                         },
                                         legend: {
@@ -364,9 +723,58 @@
                                         chart: {
                                             height: 400,
                                             background: 'transparent',
-                                            toolbar: { show: false },
+                                            toolbar: {
+                                                show: true,
+                                                offsetX: 0,
+                                                offsetY: 0,
+                                                tools: {
+                                                    download: true,
+                                                    selection: true,
+                                                    zoom: true,
+                                                    zoomin: true,
+                                                    zoomout: true,
+                                                    pan: true,
+                                                    reset: true
+                                                },
+                                                export: {
+                                                    csv: {
+                                                        filename: 'top-phim',
+                                                        columnDelimiter: ',',
+                                                        headerCategory: 'Phim',
+                                                        headerValue: 'Doanh thu',
+                                                        categoryFormatter: function(x) {
+                                                            return x;
+                                                        },
+                                                        valueFormatter: function(y) {
+                                                            return new Intl.NumberFormat('vi-VN').format(y);
+                                                        }
+                                                    },
+                                                    svg: {
+                                                        filename: 'top-phim',
+                                                    },
+                                                    png: {
+                                                        filename: 'top-phim',
+                                                    }
+                                                },
+                                                autoSelected: 'zoom'
+                                            },
+                                            animations: {
+                                                enabled: true,
+                                                easing: 'easeinout',
+                                                speed: 800,
+                                                animateGradually: {
+                                                    enabled: true,
+                                                    delay: 150
+                                                },
+                                                dynamicAnimation: {
+                                                    enabled: true,
+                                                    speed: 350
+                                                }
+                                            }
                                         },
-                                        dataLabels: { enabled: false },
+                                        dataLabels: {
+                                            enabled: false,
+                                        },
                                         series: [
                                             {
                                                 name: 'Doanh thu',
@@ -450,17 +858,734 @@
                                                 const doanhThu = w.globals.series[0][dataPointIndex] || 0;
                                                 const veBan = w.globals.series[1][dataPointIndex] || 0;
                                                 const donHang = @json($topMovies['bookings'] ?? [])[dataPointIndex] || 0;
+                                                const tbVeDon = donHang > 0 ? Math.round(veBan / donHang) : 0;
+                                                const tbDoanhThuDon = donHang > 0 ? Math.round(doanhThu / donHang) : 0;
                                                 return `
-                                                    <div style="background:#18191a;padding:14px 18px;border-radius:10px;min-width:220px;box-shadow:0 4px 16px #0007;">
-                                                        <div style="font-weight:700;font-size:16px;color:#fff;margin-bottom:10px;line-height:1.3;">🎬 ${phim}</div>
-                                                        <div style="color:#ffd700;font-size:15px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">
-                                                            <span>Doanh thu:</span> <b>${new Intl.NumberFormat('vi-VN').format(doanhThu)}đ</b>
+                                                    <div class="bg-dark border border-secondary rounded-3 p-3 shadow-lg" style="min-width: 320px;">
+                                                        <div class="d-flex align-items-center mb-3">
+                                                            <span class="fs-5 me-2">🎬</span>
+                                                            <h6 class="mb-0 text-white fw-bold">${phim}</h6>
                                                         </div>
-                                                        <div style="color:#4bc3e6;font-size:15px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">
-                                                            <span>Vé bán:</span> <b>${veBan}</b>
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <span class="text-warning">💰 Doanh thu:</span>
+                                                            <span class="fw-bold fs-6 text-warning">${new Intl.NumberFormat('vi-VN').format(doanhThu)}đ</span>
                                                         </div>
-                                                        <div style="color:#34a853;font-size:15px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
-                                                            <span>Đơn hàng:</span> <b>${donHang}</b>
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <span class="text-info">🎫 Vé bán:</span>
+                                                            <span class="fw-bold fs-6 text-info">${veBan}</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <span class="text-white">🛒 Đơn hàng:</span>
+                                                            <span class="fw-bold fs-6 text-white">${donHang}</span>
+                                                        </div>
+
+                                                    </div>
+                                                `;
+                                            }
+                                        },
+                                        grid: {
+                                            show: true,
+                                            borderColor: '#2d3748',
+                                            strokeDashArray: 0,
+                                            position: 'back'
+                                        }
+                                    });
+                                }
+
+                                // Seats Chart
+                                if (document.querySelector('#seatsChart')) {
+                                    window.chartInstances.seatsChart = createScChart(document.querySelector('#seatsChart'), {
+                                        chart: {
+                                            height: 400,
+                                            type: 'area',
+                                            background: 'transparent',
+                                            toolbar: {
+                                                show: true,
+                                                offsetX: 0,
+                                                offsetY: 0,
+                                                tools: {
+                                                    download: true,
+                                                    selection: true,
+                                                    zoom: true,
+                                                    zoomin: true,
+                                                    zoomout: true,
+                                                    pan: true,
+                                                    reset: true
+                                                },
+                                                export: {
+                                                    csv: {
+                                                        filename: 'phan-tich-ghe',
+                                                        columnDelimiter: ',',
+                                                        headerCategory: 'Ngày',
+                                                        headerValue: 'Số lượng',
+                                                        categoryFormatter: function(x) {
+                                                            return x;
+                                                        },
+                                                        valueFormatter: function(y) {
+                                                            return new Intl.NumberFormat('vi-VN').format(y);
+                                                        }
+                                                    },
+                                                    svg: {
+                                                        filename: 'phan-tich-ghe',
+                                                    },
+                                                    png: {
+                                                        filename: 'phan-tich-ghe',
+                                                    }
+                                                },
+                                                autoSelected: 'zoom'
+                                            },
+                                            animations: {
+                                                enabled: true,
+                                                easing: 'easeinout',
+                                                speed: 800,
+                                                animateGradually: {
+                                                    enabled: true,
+                                                    delay: 150
+                                                },
+                                                dynamicAnimation: {
+                                                    enabled: true,
+                                                    speed: 350
+                                                }
+                                            }
+                                        },
+                                        dataLabels: { enabled: false },
+                                        colors: ['#28a745', '#17a2b8', '#ffc107', '#dc3545'],
+                                        series: [
+                                            {
+                                                name: 'Tổng ghế',
+                                                type: 'area',
+                                                data: @json($seatsData['totalSeats'] ?? [])
+                                            },
+                                            {
+                                                name: 'Tổng đơn hàng',
+                                                type: 'line',
+                                                data: @json($seatsData['totalBookings'] ?? [])
+                                            },
+                                            {
+                                                name: 'Số phim',
+                                                type: 'column',
+                                                data: @json($seatsData['totalMovies'] ?? [])
+                                            },
+                                            {
+                                                name: 'Số phòng',
+                                                type: 'column',
+                                                data: @json($seatsData['totalRooms'] ?? [])
+                                            }
+                                        ],
+                                        fill: {
+                                            type: ['gradient', 'solid', 'solid'],
+                                            gradient: {
+                                                shadeIntensity: 1,
+                                                opacityFrom: 0.7,
+                                                opacityTo: 0.9,
+                                                stops: [0, 90, 100],
+                                                colorStops: [
+                                                    [
+                                                        { offset: 0, color: '#28a745', opacity: 0.7 },
+                                                        { offset: 100, color: '#23272b', opacity: 0.1 }
+                                                    ]
+                                                ]
+                                            }
+                                        },
+                                        stroke: {
+                                            width: [0, 4, 2],
+                                            curve: 'smooth'
+                                        },
+                                        xaxis: {
+                                            categories: @json($seatsData['labels'] ?? []),
+                                            labels: {
+                                                style: {
+                                                    colors: '#ffffff',
+                                                    fontSize: '12px'
+                                                },
+                                                rotate: -45,
+                                                rotateAlways: false,
+                                                maxHeight: 60
+                                            },
+                                            axisBorder: { show: false },
+                                            axisTicks: { show: false }
+                                        },
+                                        yaxis: [
+                                            {
+                                                title: { text: 'Số lượng', style: { color: '#28a745' } },
+                                                labels: {
+                                                    style: { colors: '#28a745', fontSize: '12px' },
+                                                    formatter: function(value) {
+                                                        return new Intl.NumberFormat('vi-VN').format(value);
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                opposite: true,
+                                                title: { text: 'Số phim/phòng', style: { color: '#ffc107' } },
+                                                labels: {
+                                                    style: { colors: '#ffc107', fontSize: '12px' },
+                                                    formatter: function(value) {
+                                                        return new Intl.NumberFormat('vi-VN').format(value);
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        legend: {
+                                            position: 'top',
+                                            horizontalAlign: 'left',
+                                            labels: { colors: '#ffffff' }
+                                        },
+                                        tooltip: {
+                                            theme: 'dark',
+                                                custom: function({series, seriesIndex, dataPointIndex, w}) {
+                                                const ngay = w.globals.labels[dataPointIndex] || '';
+                                                const tongGhe = w.globals.series[0][dataPointIndex] || 0;
+                                                const tongDonHang = w.globals.series[1][dataPointIndex] || 0;
+                                                const soPhim = w.globals.series[2][dataPointIndex] || 0;
+                                                const soPhong = w.globals.series[3][dataPointIndex] || 0;
+
+                                                return `
+                                                    <div class="bg-dark border border-secondary rounded-3 p-3 shadow-lg" style="min-width: 300px;">
+                                                        <div class="d-flex align-items-center mb-3">
+                                                            <span class="fs-5 me-2">🪑</span>
+                                                            <h6 class="mb-0 text-white fw-bold">${ngay}</h6>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <span class="text-success">🪑 Tổng ghế:</span>
+                                                            <span class="fw-bold fs-6 text-success">${new Intl.NumberFormat('vi-VN').format(tongGhe)}</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <span class="text-info">📋 Tổng đơn hàng:</span>
+                                                            <span class="fw-bold fs-6 text-info">${new Intl.NumberFormat('vi-VN').format(tongDonHang)}</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <span class="text-warning">🎬 Số phim:</span>
+                                                            <span class="fw-bold fs-6 text-warning">${new Intl.NumberFormat('vi-VN').format(soPhim)}</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span class="text-danger">🎭 Số phòng:</span>
+                                                            <span class="fw-bold fs-6 text-danger">${new Intl.NumberFormat('vi-VN').format(soPhong)}</span>
+                                                        </div>
+                                                    </div>
+                                                `;
+                                            }
+                                        },
+                                        grid: {
+                                            show: true,
+                                            borderColor: '#2d3748',
+                                            strokeDashArray: 0,
+                                            position: 'back'
+                                        }
+                                    });
+                                }
+
+                                // Foods Chart
+                                if (document.querySelector('#foodsChart')) {
+                                    window.chartInstances.foodsChart = createScChart(document.querySelector('#foodsChart'), {
+                                        chart: {
+                                            height: 400,
+                                            type: 'bar',
+                                            background: 'transparent',
+                                            toolbar: {
+                                                show: true,
+                                                offsetX: 0,
+                                                offsetY: 0,
+                                                tools: {
+                                                    download: true,
+                                                    selection: true,
+                                                    zoom: true,
+                                                    zoomin: true,
+                                                    zoomout: true,
+                                                    pan: true,
+                                                    reset: true
+                                                },
+                                                export: {
+                                                    csv: {
+                                                        filename: 'phan-tich-mon-an',
+                                                        columnDelimiter: ',',
+                                                        headerCategory: 'Ngày',
+                                                        headerValue: 'Số lượng',
+                                                        categoryFormatter: function(x) {
+                                                            return x;
+                                                        },
+                                                        valueFormatter: function(y) {
+                                                            return new Intl.NumberFormat('vi-VN').format(y);
+                                                        }
+                                                    },
+                                                    svg: {
+                                                        filename: 'phan-tich-mon-an',
+                                                    },
+                                                    png: {
+                                                        filename: 'phan-tich-mon-an',
+                                                    }
+                                                },
+                                                autoSelected: 'zoom'
+                                            },
+                                            animations: {
+                                                enabled: true,
+                                                easing: 'easeinout',
+                                                speed: 800,
+                                                animateGradually: {
+                                                    enabled: true,
+                                                    delay: 150
+                                                },
+                                                dynamicAnimation: {
+                                                    enabled: true,
+                                                    speed: 350
+                                                }
+                                            }
+                                        },
+                                        dataLabels: { enabled: false },
+                                        colors: ['#fd7e14', '#e83e8c', '#6f42c1', '#20c997'],
+                                        series: [
+                                            {
+                                                name: 'Tổng món ăn',
+                                                type: 'bar',
+                                                data: @json($foodsData['totalFoodItems'] ?? [])
+                                            },
+                                            {
+                                                name: 'Doanh thu món ăn',
+                                                type: 'line',
+                                                data: @json($foodsData['totalFoodRevenue'] ?? [])
+                                            },
+                                            {
+                                                name: 'TB món/đơn',
+                                                type: 'area',
+                                                data: @json($foodsData['avgFoodItems'] ?? [])
+                                            }
+                                        ],
+                                        fill: {
+                                            type: ['solid', 'solid', 'gradient'],
+                                            gradient: {
+                                                shadeIntensity: 1,
+                                                opacityFrom: 0.7,
+                                                opacityTo: 0.9,
+                                                stops: [0, 90, 100],
+                                                colorStops: [
+                                                    [],
+                                                    [],
+                                                    [
+                                                        { offset: 0, color: '#20c997', opacity: 0.7 },
+                                                        { offset: 100, color: '#23272b', opacity: 0.1 }
+                                                    ]
+                                                ]
+                                            }
+                                        },
+                                        stroke: {
+                                            width: [0, 4, 0],
+                                            curve: 'smooth'
+                                        },
+                                        plotOptions: {
+                                            bar: {
+                                                horizontal: false,
+                                                columnWidth: '60%',
+                                                endingShape: 'rounded',
+                                                borderRadius: 4
+                                            }
+                                        },
+                                        xaxis: {
+                                            categories: @json($foodsData['labels'] ?? []),
+                                            labels: {
+                                                style: {
+                                                    colors: '#ffffff',
+                                                    fontSize: '12px'
+                                                },
+                                                rotate: -45,
+                                                rotateAlways: false,
+                                                maxHeight: 60
+                                            },
+                                            axisBorder: { show: false },
+                                            axisTicks: { show: false }
+                                        },
+                                        yaxis: [
+                                            {
+                                                title: { text: 'Số lượng', style: { color: '#fd7e14' } },
+                                                labels: {
+                                                    style: { colors: '#fd7e14', fontSize: '12px' },
+                                                    formatter: function(value) {
+                                                        return new Intl.NumberFormat('vi-VN').format(value);
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                opposite: true,
+                                                title: { text: 'Doanh thu (VND)', style: { color: '#e83e8c' } },
+                                                labels: {
+                                                    style: { colors: '#e83e8c', fontSize: '12px' },
+                                                    formatter: function(value) {
+                                                        return new Intl.NumberFormat('vi-VN').format(value);
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        legend: {
+                                            position: 'top',
+                                            horizontalAlign: 'left',
+                                            labels: { colors: '#ffffff' }
+                                        },
+                                        tooltip: {
+                                            theme: 'dark',
+                                                                                        custom: function({series, seriesIndex, dataPointIndex, w}) {
+                                                const ngay = w.globals.labels[dataPointIndex] || '';
+                                                const tongMonAn = w.globals.series[0][dataPointIndex] || 0;
+                                                const doanhThuMonAn = w.globals.series[1][dataPointIndex] || 0;
+                                                const tbMonDon = w.globals.series[2][dataPointIndex] || 0;
+
+                                                return `
+                                                    <div class="bg-dark border border-secondary rounded-3 p-3 shadow-lg" style="min-width: 280px;">
+                                                        <div class="d-flex align-items-center mb-3">
+                                                            <span class="fs-5 me-2">🍽️</span>
+                                                            <h6 class="mb-0 text-white fw-bold">${ngay}</h6>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <span class="text-warning">🍽️ Tổng món ăn:</span>
+                                                            <span class="fw-bold fs-6 text-warning">${new Intl.NumberFormat('vi-VN').format(tongMonAn)}</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <span class="text-danger">💰 Doanh thu món ăn:</span>
+                                                            <span class="fw-bold fs-6 text-danger">${new Intl.NumberFormat('vi-VN').format(doanhThuMonAn)}đ</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span class="text-success">📊 TB món/đơn:</span>
+                                                            <span class="fw-bold fs-6 text-success">${tbMonDon.toFixed(1)}</span>
+                                                        </div>
+                                                    </div>
+                                                `;
+                                            }
+                                        },
+                                        grid: {
+                                            show: true,
+                                            borderColor: '#2d3748',
+                                            strokeDashArray: 0,
+                                            position: 'back'
+                                        }
+                                    });
+                                }
+
+                                // Top Foods Chart
+                                if (document.querySelector('#topFoodsChart')) {
+                                    const topFoodsData = @json($topFoods ?? []);
+                                    const foodLabels = topFoodsData.map(item => item.food_name);
+                                    const foodQuantities = topFoodsData.map(item => item.total_quantity);
+                                    const foodRevenues = topFoodsData.map(item => item.total_revenue);
+                                    const foodBookings = topFoodsData.map(item => item.total_bookings);
+
+                                    window.chartInstances.topFoodsChart = createScChart(document.querySelector('#topFoodsChart'), {
+                                        chart: {
+                                            height: 400,
+                                            type: 'bar',
+                                            background: 'transparent',
+                                            toolbar: {
+                                                show: true,
+                                                offsetX: 0,
+                                                offsetY: 0,
+                                                tools: {
+                                                    download: true,
+                                                    selection: true,
+                                                    zoom: true,
+                                                    zoomin: true,
+                                                    zoomout: true,
+                                                    pan: true,
+                                                    reset: true
+                                                },
+                                                export: {
+                                                    csv: {
+                                                        filename: 'top-mon-an',
+                                                        columnDelimiter: ',',
+                                                        headerCategory: 'Món ăn',
+                                                        headerValue: 'Số lượng',
+                                                        categoryFormatter: function(x) {
+                                                            return x;
+                                                        },
+                                                        valueFormatter: function(y) {
+                                                            return new Intl.NumberFormat('vi-VN').format(y);
+                                                        }
+                                                    },
+                                                    svg: {
+                                                        filename: 'top-mon-an',
+                                                    },
+                                                    png: {
+                                                        filename: 'top-mon-an',
+                                                    }
+                                                },
+                                                autoSelected: 'zoom'
+                                            },
+                                            animations: {
+                                                enabled: true,
+                                                easing: 'easeinout',
+                                                speed: 800,
+                                                animateGradually: {
+                                                    enabled: true,
+                                                    delay: 150
+                                                },
+                                                dynamicAnimation: {
+                                                    enabled: true,
+                                                    speed: 350
+                                                }
+                                            }
+                                        },
+                                        dataLabels: { enabled: false },
+                                        colors: ['#dc3545', '#fd7e14', '#ffc107', '#28a745', '#17a2b8'],
+                                        series: [
+                                            {
+                                                name: 'Số lượng bán',
+                                                type: 'bar',
+                                                data: foodQuantities
+                                            },
+                                            {
+                                                name: 'Doanh thu',
+                                                type: 'line',
+                                                data: foodRevenues
+                                            }
+                                        ],
+                                        stroke: {
+                                            width: [0, 4],
+                                            curve: 'smooth'
+                                        },
+                                        plotOptions: {
+                                            bar: {
+                                                horizontal: false,
+                                                columnWidth: '60%',
+                                                endingShape: 'rounded',
+                                                borderRadius: 4
+                                            }
+                                        },
+                                        xaxis: {
+                                            categories: foodLabels,
+                                            labels: {
+                                                style: {
+                                                    colors: '#ffffff',
+                                                    fontSize: '11px'
+                                                },
+                                                rotate: -45,
+                                                rotateAlways: false,
+                                                maxHeight: 60
+                                            },
+                                            axisBorder: { show: false },
+                                            axisTicks: { show: false }
+                                        },
+                                        yaxis: [
+                                            {
+                                                title: { text: 'Số lượng', style: { color: '#dc3545' } },
+                                                labels: {
+                                                    style: { colors: '#dc3545', fontSize: '12px' },
+                                                    formatter: function(value) {
+                                                        return new Intl.NumberFormat('vi-VN').format(value);
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                opposite: true,
+                                                title: { text: 'Doanh thu (VND)', style: { color: '#fd7e14' } },
+                                                labels: {
+                                                    style: { colors: '#fd7e14', fontSize: '12px' },
+                                                    formatter: function(value) {
+                                                        return new Intl.NumberFormat('vi-VN').format(value);
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        legend: {
+                                            position: 'top',
+                                            horizontalAlign: 'left',
+                                            labels: { colors: '#ffffff' }
+                                        },
+                                        tooltip: {
+                                            theme: 'dark',
+                                            custom: function({series, seriesIndex, dataPointIndex, w}) {
+                                                const monAn = w.globals.labels[dataPointIndex] || '';
+                                                const soLuongBan = w.globals.series[0][dataPointIndex] || 0;
+                                                const doanhThu = w.globals.series[1][dataPointIndex] || 0;
+                                                const tongDonHang = foodBookings[dataPointIndex] || 0;
+
+                                                return `
+                                                    <div class="bg-dark border border-secondary rounded-3 p-3 shadow-lg" style="min-width: 300px;">
+                                                        <div class="d-flex align-items-center mb-3">
+                                                            <span class="fs-5 me-2">🏆</span>
+                                                            <h6 class="mb-0 text-white fw-bold">${monAn}</h6>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <span class="text-danger">🍽️ Số lượng bán:</span>
+                                                            <span class="fw-bold fs-6 text-danger">${new Intl.NumberFormat('vi-VN').format(soLuongBan)}</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <span class="text-warning">💰 Doanh thu:</span>
+                                                            <span class="fw-bold fs-6 text-warning">${new Intl.NumberFormat('vi-VN').format(doanhThu)}đ</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span class="text-info">📋 Tổng đơn hàng:</span>
+                                                            <span class="fw-bold fs-6 text-info">${new Intl.NumberFormat('vi-VN').format(tongDonHang)}</span>
+                                                        </div>
+                                                    </div>
+                                                `;
+                                            }
+                                        },
+                                        grid: {
+                                            show: true,
+                                            borderColor: '#2d3748',
+                                            strokeDashArray: 0,
+                                            position: 'back'
+                                        }
+                                    });
+                                }
+
+                                                                // Top Rooms Chart
+                                if (document.querySelector('#topMoviesAndRoomsChart')) {
+                                    const topMoviesAndRoomsData = @json($topMoviesAndRooms ?? []);
+                                    const topRooms = topMoviesAndRoomsData.topRooms || [];
+
+                                    // Tạo dữ liệu cho chart
+                                    const roomLabels = topRooms.map(item => item.room_name);
+                                    const roomSeats = topRooms.map(item => item.total_seats);
+                                    const roomRevenues = topRooms.map(item => item.total_revenue);
+                                    const roomBookings = topRooms.map(item => item.total_bookings);
+
+                                    window.chartInstances.topMoviesAndRoomsChart = createScChart(document.querySelector('#topMoviesAndRoomsChart'), {
+                                        chart: {
+                                            height: 400,
+                                            type: 'bar',
+                                            background: 'transparent',
+                                            toolbar: {
+                                                show: true,
+                                                offsetX: 0,
+                                                offsetY: 0,
+                                                tools: {
+                                                    download: true,
+                                                    selection: true,
+                                                    zoom: true,
+                                                    zoomin: true,
+                                                    zoomout: true,
+                                                    pan: true,
+                                                    reset: true
+                                                },
+                                                export: {
+                                                    csv: {
+                                                        filename: 'top-phong-chieu',
+                                                        columnDelimiter: ',',
+                                                        headerCategory: 'Phòng',
+                                                        headerValue: 'Số lượng',
+                                                        categoryFormatter: function(x) {
+                                                            return x;
+                                                        },
+                                                        valueFormatter: function(y) {
+                                                            return new Intl.NumberFormat('vi-VN').format(y);
+                                                        }
+                                                    },
+                                                    svg: {
+                                                        filename: 'top-phong-chieu',
+                                                    },
+                                                    png: {
+                                                        filename: 'top-phong-chieu',
+                                                    }
+                                                },
+                                                autoSelected: 'zoom'
+                                            },
+                                            animations: {
+                                                enabled: true,
+                                                easing: 'easeinout',
+                                                speed: 800,
+                                                animateGradually: {
+                                                    enabled: true,
+                                                    delay: 150
+                                                },
+                                                dynamicAnimation: {
+                                                    enabled: true,
+                                                    speed: 350
+                                                }
+                                            }
+                                        },
+                                        dataLabels: { enabled: false },
+                                        colors: ['#6f42c1', '#e83e8c', '#fd7e14'],
+                                        series: [
+                                            {
+                                                name: 'Ghế bán',
+                                                type: 'bar',
+                                                data: roomSeats
+                                            },
+                                            {
+                                                name: 'Doanh thu',
+                                                type: 'line',
+                                                data: roomRevenues
+                                            },
+                                            {
+                                                name: 'Đơn hàng',
+                                                type: 'area',
+                                                data: roomBookings
+                                            }
+                                        ],
+                                        stroke: {
+                                            width: [0, 4, 0],
+                                            curve: 'smooth'
+                                        },
+                                        plotOptions: {
+                                            bar: {
+                                                horizontal: false,
+                                                columnWidth: '40%',
+                                                endingShape: 'rounded',
+                                                borderRadius: 4
+                                            }
+                                        },
+                                        xaxis: {
+                                            categories: roomLabels,
+                                            labels: {
+                                                style: {
+                                                    colors: '#ffffff',
+                                                    fontSize: '12px'
+                                                },
+                                                rotate: -45,
+                                                rotateAlways: false,
+                                                maxHeight: 60
+                                            },
+                                            axisBorder: { show: false },
+                                            axisTicks: { show: false }
+                                        },
+                                        yaxis: [
+                                            {
+                                                title: { text: 'Số lượng', style: { color: '#6f42c1' } },
+                                                labels: {
+                                                    style: { colors: '#6f42c1', fontSize: '12px' },
+                                                    formatter: function(value) {
+                                                        return new Intl.NumberFormat('vi-VN').format(value);
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                opposite: true,
+                                                title: { text: 'Doanh thu (VND)', style: { color: '#e83e8c' } },
+                                                labels: {
+                                                    style: { colors: '#e83e8c', fontSize: '12px' },
+                                                    formatter: function(value) {
+                                                        return new Intl.NumberFormat('vi-VN').format(value);
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        legend: {
+                                            position: 'top',
+                                            horizontalAlign: 'left',
+                                            labels: { colors: '#ffffff' }
+                                        },
+                                                                                tooltip: {
+                                            theme: 'dark',
+                                            custom: function({series, seriesIndex, dataPointIndex, w}) {
+                                                const phong = w.globals.labels[dataPointIndex] || '';
+                                                const gheBan = w.globals.series[0][dataPointIndex] || 0;
+                                                const doanhThu = w.globals.series[1][dataPointIndex] || 0;
+                                                const donHang = w.globals.series[2][dataPointIndex] || 0;
+
+                                                return `
+                                                    <div class="bg-dark border border-secondary rounded-3 p-3 shadow-lg" style="min-width: 300px;">
+                                                        <div class="d-flex align-items-center mb-3">
+                                                            <span class="fs-5 me-2">🎭</span>
+                                                            <h6 class="mb-0 text-white fw-bold">${phong}</h6>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <span class="text-purple">🪑 Ghế bán:</span>
+                                                            <span class="fw-bold fs-6 text-purple">${new Intl.NumberFormat('vi-VN').format(gheBan)}</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <span class="text-pink">💰 Doanh thu:</span>
+                                                            <span class="fw-bold fs-6 text-pink">${new Intl.NumberFormat('vi-VN').format(doanhThu)}đ</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span class="text-warning">📋 Đơn hàng:</span>
+                                                            <span class="fw-bold fs-6 text-warning">${new Intl.NumberFormat('vi-VN').format(donHang)}</span>
                                                         </div>
                                                     </div>
                                                 `;
@@ -1056,5 +2181,10 @@
     @endif
 </div>
 </div>
+<style>
+    .apexcharts-menu {
+        color: black;
+    }
+</style>
 </div>
 
