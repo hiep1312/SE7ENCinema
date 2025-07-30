@@ -38,14 +38,15 @@ class RoomDetail extends Component
     // Chart data properties (updated)
     public $allRoomsStatsData = [];  // Gộp vé bán và doanh thu theo phòng
     public $occupancyRateData = [];
-    public $seatStatusData = [];     // Mới: tình trạng ghế
-    public $topMoviesData = [];
+    public $seatStatusData = [];     // Tình trạng ghế
+    public $roomMoviesData = [];     // Phim được xem nhiều nhất của phòng
 
     // Chart periods (kept for backward compatibility)
-    public $roomStatsPeriod = 'monthly';
-    public $occupancyPeriod = 'monthly';
-    public $seatStatusPeriod = 'monthly';
-    public $moviesPeriod = 'monthly';
+public $roomStatsPeriod = '7_days';
+
+    public $occupancyPeriod = '7_days';
+    public $seatStatusPeriod = '7_days';
+    public $roomMoviesPeriod = 'monthly';
 
     // NEW: Dynamic filter options for charts
     public $availableYears = [], $availableMonths = [], $availableDays = [];
@@ -59,8 +60,8 @@ class RoomDetail extends Component
     // Seat Status filters
     public $seatStatusYear, $seatStatusMonth, $seatStatusDay;
 
-    // Top Movies filters
-    public $topMoviesYear, $topMoviesMonth, $topMoviesDay;
+    // Room Movies filters
+    public $roomMoviesYear, $roomMoviesMonth, $roomMoviesDay;
 
     // Biến chuyển đổi
     public array $daysOfWeek = [
@@ -77,7 +78,7 @@ class RoomDetail extends Component
     {
         $this->room = Room::with([
             'seats',
-            'showtimes' => function($query) {
+            'showtimes' => function ($query) {
                 $query->with('movie')->orderBy('start_time', 'desc');
             }
         ])->findOrFail($room);
@@ -95,12 +96,12 @@ class RoomDetail extends Component
     {
         $this->availableYears = $this->getAvailableYears();
 
-        // Set default values for all charts
-        $defaultYear = $this->availableYears[0] ?? now()->year;
+        // Set default values for all charts - FIX: Check if arrays are empty
+        $defaultYear = !empty($this->availableYears) ? $this->availableYears[0] : now()->year;
         $this->availableMonths = $this->getAvailableMonths($defaultYear);
-        $defaultMonth = $this->availableMonths[0] ?? now()->month;
+        $defaultMonth = !empty($this->availableMonths) ? $this->availableMonths[0] : now()->month;
         $this->availableDays = $this->getAvailableDays($defaultYear, $defaultMonth);
-        $defaultDay = $this->availableDays[0] ?? now()->day;
+        $defaultDay = !empty($this->availableDays) ? $this->availableDays[0] : now()->day;
 
         // Room Stats
         $this->roomStatsYear = $defaultYear;
@@ -117,28 +118,31 @@ class RoomDetail extends Component
         $this->seatStatusMonth = $defaultMonth;
         $this->seatStatusDay = $defaultDay;
 
-        // Top Movies
-        $this->topMoviesYear = $defaultYear;
-        $this->topMoviesMonth = $defaultMonth;
-        $this->topMoviesDay = $defaultDay;
+        // Room Movies
+        $this->roomMoviesYear = $defaultYear;
+        $this->roomMoviesMonth = $defaultMonth;
+        $this->roomMoviesDay = $defaultDay;
     }
 
-    // NEW: Get available years/months/days with data
+    // NEW: Get available years/months/days with data - FIX: Add fallback for empty data
     private function getAvailableYears()
     {
-        return Booking::join('showtimes', 'bookings.showtime_id', '=', 'showtimes.id')
+        $years = Booking::join('showtimes', 'bookings.showtime_id', '=', 'showtimes.id')
             ->where('showtimes.room_id', $this->room->id)
             ->selectRaw('YEAR(bookings.created_at) as year')
             ->distinct()
             ->orderBy('year', 'desc')
             ->pluck('year')
             ->toArray();
+
+        // FIX: If no data, return current year
+        return !empty($years) ? $years : [now()->year];
     }
 
     private function getAvailableMonths($year = null)
     {
         $year = $year ?? now()->year;
-        return Booking::join('showtimes', 'bookings.showtime_id', '=', 'showtimes.id')
+        $months = Booking::join('showtimes', 'bookings.showtime_id', '=', 'showtimes.id')
             ->where('showtimes.room_id', $this->room->id)
             ->whereYear('bookings.created_at', $year)
             ->selectRaw('MONTH(bookings.created_at) as month')
@@ -146,13 +150,16 @@ class RoomDetail extends Component
             ->orderBy('month')
             ->pluck('month')
             ->toArray();
+
+        // FIX: If no data, return current month
+        return !empty($months) ? $months : [now()->month];
     }
 
     private function getAvailableDays($year = null, $month = null)
     {
         $year = $year ?? now()->year;
         $month = $month ?? now()->month;
-        return Booking::join('showtimes', 'bookings.showtime_id', '=', 'showtimes.id')
+        $days = Booking::join('showtimes', 'bookings.showtime_id', '=', 'showtimes.id')
             ->where('showtimes.room_id', $this->room->id)
             ->whereYear('bookings.created_at', $year)
             ->whereMonth('bookings.created_at', $month)
@@ -161,6 +168,9 @@ class RoomDetail extends Component
             ->orderBy('day')
             ->pluck('day')
             ->toArray();
+
+        // FIX: If no data, return current day
+        return !empty($days) ? $days : [now()->day];
     }
 
     // Test method để debug tab switching
@@ -181,14 +191,14 @@ class RoomDetail extends Component
         }
     }
 
-    // NEW: Room Stats filter methods
+    // NEW: Room Stats filter methods - FIX: Add proper error handling
     public function changeRoomStatsYear($year)
     {
         $this->roomStatsYear = $year;
         $this->availableMonths = $this->getAvailableMonths($year);
-        $this->roomStatsMonth = $this->availableMonths[0] ?? 1;
+        $this->roomStatsMonth = !empty($this->availableMonths) ? $this->availableMonths[0] : 1;
         $this->availableDays = $this->getAvailableDays($year, $this->roomStatsMonth);
-        $this->roomStatsDay = $this->availableDays[0] ?? 1;
+        $this->roomStatsDay = !empty($this->availableDays) ? $this->availableDays[0] : 1;
         $this->loadChartData();
     }
 
@@ -196,7 +206,7 @@ class RoomDetail extends Component
     {
         $this->roomStatsMonth = $month;
         $this->availableDays = $this->getAvailableDays($this->roomStatsYear, $month);
-        $this->roomStatsDay = $this->availableDays[0] ?? 1;
+        $this->roomStatsDay = !empty($this->availableDays) ? $this->availableDays[0] : 1;
         $this->loadChartData();
     }
 
@@ -206,14 +216,14 @@ class RoomDetail extends Component
         $this->loadChartData();
     }
 
-    // NEW: Occupancy filter methods
+    // NEW: Occupancy filter methods - FIX: Add proper error handling
     public function changeOccupancyYear($year)
     {
         $this->occupancyYear = $year;
         $this->availableMonths = $this->getAvailableMonths($year);
-        $this->occupancyMonth = $this->availableMonths[0] ?? 1;
+        $this->occupancyMonth = !empty($this->availableMonths) ? $this->availableMonths[0] : 1;
         $this->availableDays = $this->getAvailableDays($year, $this->occupancyMonth);
-        $this->occupancyDay = $this->availableDays[0] ?? 1;
+        $this->occupancyDay = !empty($this->availableDays) ? $this->availableDays[0] : 1;
         $this->loadChartData();
     }
 
@@ -221,7 +231,7 @@ class RoomDetail extends Component
     {
         $this->occupancyMonth = $month;
         $this->availableDays = $this->getAvailableDays($this->occupancyYear, $month);
-        $this->occupancyDay = $this->availableDays[0] ?? 1;
+        $this->occupancyDay = !empty($this->availableDays) ? $this->availableDays[0] : 1;
         $this->loadChartData();
     }
 
@@ -231,14 +241,14 @@ class RoomDetail extends Component
         $this->loadChartData();
     }
 
-    // NEW: Seat Status filter methods
+    // NEW: Seat Status filter methods - FIX: Add proper error handling
     public function changeSeatStatusYear($year)
     {
         $this->seatStatusYear = $year;
         $this->availableMonths = $this->getAvailableMonths($year);
-        $this->seatStatusMonth = $this->availableMonths[0] ?? 1;
+        $this->seatStatusMonth = !empty($this->availableMonths) ? $this->availableMonths[0] : 1;
         $this->availableDays = $this->getAvailableDays($year, $this->seatStatusMonth);
-        $this->seatStatusDay = $this->availableDays[0] ?? 1;
+        $this->seatStatusDay = !empty($this->availableDays) ? $this->availableDays[0] : 1;
         $this->loadChartData();
     }
 
@@ -246,7 +256,7 @@ class RoomDetail extends Component
     {
         $this->seatStatusMonth = $month;
         $this->availableDays = $this->getAvailableDays($this->seatStatusYear, $month);
-        $this->seatStatusDay = $this->availableDays[0] ?? 1;
+        $this->seatStatusDay = !empty($this->availableDays) ? $this->availableDays[0] : 1;
         $this->loadChartData();
     }
 
@@ -256,28 +266,28 @@ class RoomDetail extends Component
         $this->loadChartData();
     }
 
-    // NEW: Top Movies filter methods
-    public function changeTopMoviesYear($year)
+    // NEW: Room Movies filter methods - FIX: Add proper error handling
+    public function changeRoomMoviesYear($year)
     {
-        $this->topMoviesYear = $year;
+        $this->roomMoviesYear = $year;
         $this->availableMonths = $this->getAvailableMonths($year);
-        $this->topMoviesMonth = $this->availableMonths[0] ?? 1;
-        $this->availableDays = $this->getAvailableDays($year, $this->topMoviesMonth);
-        $this->topMoviesDay = $this->availableDays[0] ?? 1;
+        $this->roomMoviesMonth = !empty($this->availableMonths) ? $this->availableMonths[0] : 1;
+        $this->availableDays = $this->getAvailableDays($year, $this->roomMoviesMonth);
+        $this->roomMoviesDay = !empty($this->availableDays) ? $this->availableDays[0] : 1;
         $this->loadChartData();
     }
 
-    public function changeTopMoviesMonth($month)
+    public function changeRoomMoviesMonth($month)
     {
-        $this->topMoviesMonth = $month;
-        $this->availableDays = $this->getAvailableDays($this->topMoviesYear, $month);
-        $this->topMoviesDay = $this->availableDays[0] ?? 1;
+        $this->roomMoviesMonth = $month;
+        $this->availableDays = $this->getAvailableDays($this->roomMoviesYear, $month);
+        $this->roomMoviesDay = !empty($this->availableDays) ? $this->availableDays[0] : 1;
         $this->loadChartData();
     }
 
-    public function changeTopMoviesDay($day)
+    public function changeRoomMoviesDay($day)
     {
-        $this->topMoviesDay = $day;
+        $this->roomMoviesDay = $day;
         $this->loadChartData();
     }
 
@@ -300,9 +310,9 @@ class RoomDetail extends Component
         $this->loadChartData();
     }
 
-    public function changeMoviesPeriod($period)
+    public function changeRoomMoviesPeriod($period)
     {
-        $this->moviesPeriod = $period;
+        $this->roomMoviesPeriod = $period;
         $this->loadChartData();
     }
 
@@ -317,8 +327,8 @@ class RoomDetail extends Component
         // 3. Tình trạng ghế
         $this->seatStatusData = $this->getSeatStatusData($this->seatStatusPeriod);
 
-        // 4. Top phim được xem nhiều nhất trong phòng này
-        $this->topMoviesData = $this->getTopMoviesData($this->moviesPeriod);
+        // 4. Phim được xem nhiều nhất của phòng này
+        $this->roomMoviesData = $this->getRoomMoviesData($this->roomMoviesPeriod);
 
         // Dispatch event to re-render charts when data changes
         if ($this->tabCurrent === 'analytics') {
@@ -326,7 +336,7 @@ class RoomDetail extends Component
         }
     }
 
-    // UPDATED: Modified to use dynamic filters
+    // UPDATED: Modified to use dynamic filters - FIX: Better data validation
     private function getAllRoomsStatsData($period)
     {
         // Use dynamic filters based on current selection
@@ -335,9 +345,9 @@ class RoomDetail extends Component
         // Lấy thống kê tất cả phòng
         $roomStats = Room::select('rooms.id', 'rooms.name')
             ->leftJoin('showtimes', 'rooms.id', '=', 'showtimes.room_id')
-            ->leftJoin('bookings', function($join) use ($dateCondition) {
+            ->leftJoin('bookings', function ($join) use ($dateCondition) {
                 $join->on('showtimes.id', '=', 'bookings.showtime_id')
-                     ->where('bookings.status', '=', 'paid');
+                    ->where('bookings.status', '=', 'paid');
 
                 // Apply dynamic date filters
                 if (isset($dateCondition['year'])) {
@@ -355,10 +365,17 @@ class RoomDetail extends Component
             ->selectRaw('COUNT(booking_seats.id) as tickets_sold, COALESCE(SUM(bookings.total_price), 0) as revenue')
             ->get();
 
-        // Nếu không có dữ liệu, tạo dữ liệu mẫu cho tất cả phòng
-        if ($roomStats->isEmpty()) {
+        // FIX: Better handling of empty data
+        if ($roomStats->isEmpty() || $roomStats->every(fn($room) => $room->tickets_sold == 0)) {
+            // Get all rooms for consistent display
             $allRooms = Room::select('id', 'name')->get();
             $labels = $allRooms->pluck('name')->toArray();
+
+            // Ensure we have at least one data point
+            if (empty($labels)) {
+                $labels = ['Không có dữ liệu'];
+            }
+
             $ticketsData = array_fill(0, count($labels), 0);
             $revenueData = array_fill(0, count($labels), 0);
         } else {
@@ -374,7 +391,7 @@ class RoomDetail extends Component
         ];
     }
 
-    // UPDATED: Modified to use dynamic filters
+    // UPDATED: Modified to use dynamic filters - FIX: Better error handling
     private function getOccupancyData($period)
     {
         $dateCondition = $this->getDateConditionForOccupancy($period);
@@ -422,94 +439,142 @@ class RoomDetail extends Component
         ];
     }
 
-    // UPDATED: Modified to use dynamic filters
+    // UPDATED: Modified to use dynamic filters - FIX: Better data structure and colors
+    // UPDATED: Modified to use dynamic filters - FIX: Better data structure and colors
     private function getSeatStatusData($period)
     {
         $dateCondition = $this->getDateConditionForSeatStatus($period);
 
-        // Tổng số ghế trong phòng
-        $totalSeats = $this->room->seats->count();
-
-        $query = BookingSeat::join('bookings', 'booking_seats.booking_id', '=', 'bookings.id')
-            ->join('showtimes', 'bookings.showtime_id', '=', 'showtimes.id')
-            ->join('seats', 'booking_seats.seat_id', '=', 'seats.id')
-            ->where('showtimes.room_id', $this->room->id)
-            ->where('bookings.status', 'paid');
-
-        // Apply dynamic date filters
-        if (isset($dateCondition['year'])) {
-            $query->whereYear('bookings.created_at', $dateCondition['year']);
-        }
-        if (isset($dateCondition['month'])) {
-            $query->whereMonth('bookings.created_at', $dateCondition['month']);
-        }
-        if (isset($dateCondition['day'])) {
-            $query->whereDay('bookings.created_at', $dateCondition['day']);
-        }
-
-        // Ghế đã được đặt trong khoảng thời gian
-        $bookedSeats = $query->distinct('booking_seats.seat_id')->count();
-
-        // Ghế trống
-        $availableSeats = $totalSeats - $bookedSeats;
-
-        // Thống kê theo loại ghế
+        // Tổng số ghế trong phòng theo loại
         $seatsByType = $this->room->seats->groupBy('seat_type');
         $seatTypeStats = [];
 
+        $typeNames = [
+            'standard' => 'Ghế thường',
+            'vip' => 'Ghế VIP',
+            'couple' => 'Ghế đôi',
+            // 'aisle' => 'Ghế lối đi'
+        ];
+
+        $statusLabels = ['Còn trống', 'Đã đặt', 'Bảo trì'];
+
+        // Prepare data for stacked bar chart
+        $chartCategories = []; // X-axis: seat types
+        $chartSeries = [
+            [
+                'name' => $statusLabels[0], // Còn trống
+                'data' => []
+            ],
+            [
+                'name' => $statusLabels[1], // Đã đặt
+                'data' => []
+            ],
+            [
+                'name' => $statusLabels[2], // Bảo trì
+                'data' => []
+            ]
+        ];
+
+        // FIX: Lặp qua tất cả các loại ghế có trong phòng, không chỉ những loại đã định nghĩa
         foreach ($seatsByType as $type => $seats) {
-            $typeQuery = BookingSeat::join('bookings', 'booking_seats.booking_id', '=', 'bookings.id')
+            if ($seats->count() == 0) continue;
+
+            // FIX: Sử dụng tên từ mảng typeNames hoặc tạo tên mặc định
+            $seatTypeName = $typeNames[$type] ?? ucfirst($type);
+
+            // Get booked seats for this type based on date filter
+            $bookedQuery = BookingSeat::join('bookings', 'booking_seats.booking_id', '=', 'bookings.id')
                 ->join('showtimes', 'bookings.showtime_id', '=', 'showtimes.id')
                 ->join('seats', 'booking_seats.seat_id', '=', 'seats.id')
                 ->where('showtimes.room_id', $this->room->id)
                 ->where('seats.seat_type', $type)
                 ->where('bookings.status', 'paid');
 
-            // Apply same date filters
+            // Apply date filters
             if (isset($dateCondition['year'])) {
-                $typeQuery->whereYear('bookings.created_at', $dateCondition['year']);
+                $bookedQuery->whereYear('bookings.created_at', $dateCondition['year']);
             }
             if (isset($dateCondition['month'])) {
-                $typeQuery->whereMonth('bookings.created_at', $dateCondition['month']);
+                $bookedQuery->whereMonth('bookings.created_at', $dateCondition['month']);
             }
             if (isset($dateCondition['day'])) {
-                $typeQuery->whereDay('bookings.created_at', $dateCondition['day']);
+                $bookedQuery->whereDay('bookings.created_at', $dateCondition['day']);
             }
 
-            $bookedByType = $typeQuery->distinct('booking_seats.seat_id')->count();
+            $bookedCount = $bookedQuery->distinct('booking_seats.seat_id')->count();
 
+            // Get maintenance seats (assuming seats with status 'maintenance' or 'disabled')
+            $maintenanceCount = $seats->whereIn('status', ['maintenance', 'disabled'])->count();
+
+            $totalByType = $seats->count();
+            $availableCount = $totalByType - $bookedCount - $maintenanceCount;
+
+            // Ensure non-negative values
+            $availableCount = max(0, $availableCount);
+            $bookedCount = max(0, $bookedCount);
+            $maintenanceCount = max(0, $maintenanceCount);
+
+            // Add to chart data
+            $chartCategories[] = $seatTypeName;
+            $chartSeries[0]['data'][] = $availableCount;  // Available
+            $chartSeries[1]['data'][] = $bookedCount;     // Booked
+            $chartSeries[2]['data'][] = $maintenanceCount; // Maintenance
+
+            // Keep detailed stats for table display
             $seatTypeStats[] = [
-                'name' => match($type) {
-                    'standard' => 'Ghế thường',
-                    'vip' => 'Ghế VIP',
-                    'couple' => 'Ghế đôi',
-                    default => ucfirst($type)
-                },
-                'booked' => $bookedByType,
-                'total' => $seats->count(),
-                'available' => $seats->count() - $bookedByType
+                'name' => $seatTypeName,
+                'type' => $type,
+                'total' => $totalByType,
+                'available' => $availableCount,
+                'booked' => $bookedCount,
+                'maintenance' => $maintenanceCount,
+                'utilization_rate' => $totalByType > 0 ? round(($bookedCount / $totalByType) * 100, 1) : 0
             ];
         }
 
+        // Nếu không có dữ liệu
+        if (empty($chartCategories)) {
+            return [
+                'total_seats' => 0,
+                'booked_seats' => 0,
+                'available_seats' => 0,
+                'maintenance_seats' => 0,
+                'occupancy_percentage' => 0,
+                'seat_types' => [],
+                'chart_data' => [
+                    'categories' => ['Không có ghế'],
+                    'series' => [
+                        ['name' => $statusLabels[0], 'data' => [0]],
+                        ['name' => $statusLabels[1], 'data' => [0]],
+                        ['name' => $statusLabels[2], 'data' => [0]]
+                    ]
+                ]
+            ];
+        }
+
+        $totalSeats = $this->room->seats->count();
+        $totalBooked = array_sum($chartSeries[1]['data']);
+        $totalMaintenance = array_sum($chartSeries[2]['data']);
+        $totalAvailable = array_sum($chartSeries[0]['data']);
+
         return [
             'total_seats' => $totalSeats,
-            'booked_seats' => $bookedSeats,
-            'available_seats' => $availableSeats,
-            'occupancy_percentage' => $totalSeats > 0 ? round(($bookedSeats / $totalSeats) * 100, 1) : 0,
+            'booked_seats' => $totalBooked,
+            'available_seats' => $totalAvailable,
+            'maintenance_seats' => $totalMaintenance,
+            'occupancy_percentage' => $totalSeats > 0 ? round(($totalBooked / $totalSeats) * 100, 1) : 0,
             'seat_types' => $seatTypeStats,
-            // Dữ liệu cho biểu đồ
             'chart_data' => [
-                'labels' => ['Đã đặt', 'Còn trống'],
-                'data' => [$bookedSeats, $availableSeats],
-                'colors' => ['#dc3545', '#28a745']
+                'categories' => $chartCategories,
+                'series' => $chartSeries
             ]
         ];
     }
 
-    // UPDATED: Modified to use dynamic filters
-    private function getTopMoviesData($period)
+    // NEW: Get room movies data - Phim được xem nhiều nhất của phòng
+    private function getRoomMoviesData($period)
     {
-        $dateCondition = $this->getDateConditionForTopMovies($period);
+        $dateCondition = $this->getDateConditionForRoomMovies($period);
 
         $query = Booking::select('movies.title', DB::raw('COUNT(booking_seats.id) as tickets_sold'), DB::raw('SUM(bookings.total_price) as revenue'))
             ->join('showtimes', 'bookings.showtime_id', '=', 'showtimes.id')
@@ -534,6 +599,7 @@ class RoomDetail extends Component
             ->limit(10)
             ->get();
 
+        // FIX: Ensure we always return valid data structure
         if ($data->isEmpty()) {
             return [
                 'labels' => ['Không có dữ liệu'],
@@ -547,9 +613,9 @@ class RoomDetail extends Component
         $revenueData = [];
 
         foreach ($data as $item) {
-            $labels[] = $item->title;
-            $ticketsData[] = (int)$item->tickets_sold;
-            $revenueData[] = (int)$item->revenue;
+            $labels[] = $item->title ?? 'Không có tên';
+            $ticketsData[] = max((int)$item->tickets_sold, 0);
+            $revenueData[] = max((int)$item->revenue, 0);
         }
 
         return [
@@ -587,12 +653,12 @@ class RoomDetail extends Component
         ];
     }
 
-    private function getDateConditionForTopMovies($period)
+    private function getDateConditionForRoomMovies($period)
     {
         return [
-            'year' => $this->topMoviesYear,
-            'month' => $this->topMoviesMonth,
-            'day' => $this->topMoviesDay
+            'year' => $this->roomMoviesYear,
+            'month' => $this->roomMoviesMonth,
+            'day' => $this->roomMoviesDay
         ];
     }
 
