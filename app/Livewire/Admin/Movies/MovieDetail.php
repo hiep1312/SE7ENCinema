@@ -31,10 +31,10 @@ class MovieDetail extends Component
     {
         $this->dailyChart = $time;
     }
-    public function setTab($tab)
-    {
-        $this->tabCurrent = $tab;
-        $this->dispatch('tabChanged', $tab);
+    public function updatedTabCurrent(){
+        $this->js(<<<JS
+             setTimeout(renderAllCharts, 150);
+        JS);
     }
     public function updateStatusMovieAndShowtimes()
     {

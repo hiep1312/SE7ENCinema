@@ -98,35 +98,35 @@
         <ul class="nav nav-tabs bg-dark" role="tablist">
             <li class="nav-item">
                 <button class="nav-link @if($tabCurrent === 'chart') active bg-light text-dark @else text-light @endif"
-                    wire:click="setTab('chart')" style="border-top-right-radius: 0;">
+                    wire:click="$set('tabCurrent', 'chart')" style="border-top-right-radius: 0;">
                     <i class="fas fa-info-circle me-1"></i>Thông tin tổng quan
                 </button>
             </li>
             <li class="nav-item">
                 <button
                     class="nav-link @if($tabCurrent === 'overview') active bg-light text-dark @else text-light @endif"
-                    wire:click="setTab('overview')" style="border-top-right-radius: 0;">
+                    wire:click="$set('tabCurrent', 'overview')" style="border-top-right-radius: 0;">
                     <i class="fa-solid fa-chart-pie-simple me-1"></i> Tổng quan
                 </button>
             </li>
             <li class="nav-item">
                 <button
                     class="nav-link @if($tabCurrent === 'showtimes') active bg-light text-dark @else text-light @endif"
-                    wire:click="setTab('showtimes')" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                    wire:click="$set('tabCurrent', 'showtimes')" style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <i class="fas fa-calendar me-1"></i>Suất chiếu
                 </button>
             </li>
             <li class="nav-item">
                 <button
                     class="nav-link @if($tabCurrent === 'ratingsAndComments') active bg-light text-dark @else text-light @endif"
-                    wire:click="setTab('ratingsAndComments')"
+                    wire:click="$set('tabCurrent', 'ratingsAndComments')"
                     style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <i class="fas fa-comments me-1"></i>Đánh giá và bình luận
                 </button>
             </li>
             <li class="nav-item">
                 <button class="nav-link @if($tabCurrent === 'orders') active bg-light text-dark @else text-light @endif"
-                    wire:click="setTab('orders')" style="border-top-left-radius: 0;">
+                    wire:click="$set('tabCurrent', 'orders')" style="border-top-left-radius: 0;">
                     <i class="fas fa-shopping-cart me-1"></i>Đơn hàng
                 </button>
             </li>
@@ -592,385 +592,380 @@
             </div>
             @endif
             @if($tabCurrent === 'chart')
-                <div class="row">
-                    <!-- 2. Bảng so sánh vé bán theo suất chiếu -->
-                    <div class="col-lg-6">
-                        <div class="bg-dark rounded-3 p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="text-white mb-0">
-                                    <i class="fas fa-ticket me-2 text-success"></i>Vé đã bán theo suất chiếu
-                                </h5>
-                                <div class="btn-group" role="group">
-                                    <button type="button"
-                                        class="btn btn-sm {{ $showtimeChart === 'daily' ? 'btn-success' : 'btn-outline-success' }}"
-                                        wire:click="changeshowtimeChart('daily')">Ngày</button>
-                                    <button type="button"
-                                        class="btn btn-sm {{ $showtimeChart === 'monthly' ? 'btn-success' : 'btn-outline-success' }}"
-                                        wire:click="changeshowtimeChart('monthly')">Tháng</button>
-                                    <button type="button"
-                                        class="btn btn-sm {{ $showtimeChart === 'yearly' ? 'btn-success' : 'btn-outline-success' }}"
-                                        wire:click="changeshowtimeChart('yearly')">Năm</button>
-                                </div>
+            <div class="row">
+                <!-- 2. Bảng so sánh vé bán theo suất chiếu -->
+                <div class="col-lg-6">
+                    <div class="bg-dark rounded-3 p-3">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="text-white mb-0">
+                                <i class="fas fa-ticket me-2 text-success"></i>Vé đã bán theo suất chiếu
+                            </h5>
+                            <div class="btn-group" role="group">
+                                <button type="button"
+                                    class="btn btn-sm {{ $showtimeChart === 'daily' ? 'btn-success' : 'btn-outline-success' }}"
+                                    wire:click="changeshowtimeChart('daily')">Ngày</button>
+                                <button type="button"
+                                    class="btn btn-sm {{ $showtimeChart === 'monthly' ? 'btn-success' : 'btn-outline-success' }}"
+                                    wire:click="changeshowtimeChart('monthly')">Tháng</button>
+                                <button type="button"
+                                    class="btn btn-sm {{ $showtimeChart === 'yearly' ? 'btn-success' : 'btn-outline-success' }}"
+                                    wire:click="changeshowtimeChart('yearly')">Năm</button>
                             </div>
-                            <div wire:ignore><div id="showtimeChart" style="height: 400px;"></div></div>
                         </div>
-                    </div>
-    
-                    <!-- 3. Tỷ lệ check-in -->
-                    <div class="col-lg-6">
-                        <div class="bg-dark rounded-3 p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="text-white mb-0">
-                                    <i class="fas fa-chart-pie me-2 text-warning"></i>Hiệu suất
-                                </h5>
-                                <div class="btn-group" role="group">
-                                    <button type="button"
-                                        class="btn btn-sm {{ $checkinChart === 'daily' ? 'btn-warning' : 'btn-outline-warning' }}"
-                                        wire:click="changecheckinChart('daily')">Ngày</button>
-                                    <button type="button"
-                                        class="btn btn-sm {{ $checkinChart === 'monthly' ? 'btn-warning' : 'btn-outline-warning' }}"
-                                        wire:click="changecheckinChart('monthly')">Tháng</button>
-                                    <button type="button"
-                                        class="btn btn-sm {{ $checkinChart === 'yearly' ? 'btn-warning' : 'btn-outline-warning' }}"
-                                        wire:click="changecheckinChart('yearly')">Năm</button>
-                                </div>
-                            </div>
-                            <div wire:ignore><div id="checkinChart" style="height: 400px;"></div></div>
-                        </div>
-                    </div>
-                    <!-- 1. Biểu đồ số vé đã bán -->
-                    <div class="col-lg-12">
-                        <div class="bg-dark rounded-3 p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="text-white mb-0">
-                                    <i class="fas fa-chart-line me-2 text-primary"></i>Vé đã bán theo ngày
-                                </h5>
-                                <div class="btn-group" role="group">
-                                    <button type="button"
-                                        class="btn btn-sm {{ $dailyChart === 'weekly' ? 'btn-primary' : 'btn-outline-primary' }}"
-                                        onclick="updateChart('daily')">Ngày</button>
-                                    <button type="button"
-                                        class="btn btn-sm {{ $dailyChart === 'monthly' ? 'btn-primary' : 'btn-outline-primary' }}"
-                                        onclick="updateChart('monthly')">Tháng</button>
-                                    <button type="button"
-                                        class="btn btn-sm {{ $dailyChart === 'yearly' ? 'btn-primary' : 'btn-outline-primary' }}"
-                                        onclick="updateChart('yearly')">Năm</button>
-                                </div>
-                            </div>
-                                <div wire:ignore><div id="dailyChart" style="height: 400px;"></div></div>
+                        <div wire:ignore>
+                            <div id="showtimeChart" style="height: 400px;"></div>
                         </div>
                     </div>
                 </div>
+
+                <!-- 3. Tỷ lệ check-in -->
+                <div class="col-lg-6">
+                    <div class="bg-dark rounded-3 p-3">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="text-white mb-0">
+                                <i class="fas fa-chart-pie me-2 text-warning"></i>Tỉ lệ đã vé bán so với vé chưa bán
+                            </h5>
+                            <div class="btn-group" role="group">
+                                <button type="button"
+                                    class="btn btn-sm {{ $checkinChart === 'daily' ? 'btn-warning' : 'btn-outline-warning' }}"
+                                    wire:click="changecheckinChart('daily')">Ngày</button>
+                                <button type="button"
+                                    class="btn btn-sm {{ $checkinChart === 'monthly' ? 'btn-warning' : 'btn-outline-warning' }}"
+                                    wire:click="changecheckinChart('monthly')">Tháng</button>
+                                <button type="button"
+                                    class="btn btn-sm {{ $checkinChart === 'yearly' ? 'btn-warning' : 'btn-outline-warning' }}"
+                                    wire:click="changecheckinChart('yearly')">Năm</button>
+                            </div>
+                        </div>
+                        <div wire:ignore>
+                            <div id="checkinChart" style="height: 400px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 1. Biểu đồ số vé đã bán -->
+                <div class="col-lg-12">
+                    <div class="bg-dark rounded-3 p-3">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="text-white mb-0">
+                                <i class="fas fa-chart-line me-2 text-primary"></i>Vé đã bán theo ngày
+                            </h5>
+                            <div class="btn-group" role="group">
+                                <button type="button"
+                                    class="btn btn-sm {{ $dailyChart === 'daily' ? 'btn-primary' : 'btn-outline-primary' }}"
+                                    >Ngày</button>
+                                <button type="button"
+                                    class="btn btn-sm {{ $dailyChart === 'monthly' ? 'btn-primary' : 'btn-outline-primary' }}"
+                                    onclick="updateChart('monthly')">Tháng</button>
+                                <button type="button"
+                                    class="btn btn-sm {{ $dailyChart === 'yearly' ? 'btn-primary' : 'btn-outline-primary' }}"
+                                    onclick="updateChart('yearly')">Năm</button>
+                            </div>
+                        </div>
+                        <div wire:ignore>
+                            <div id="dailyChart" style="height: 400px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             @endif
         </div>
     </div>
-    @script
-    <script>
-        
-        function updateChart (period) {
-            @this.call('changedailyChart', period);
-        }
-
-        let chartInstances = {};
-        const showtimeDate = @json($bookingCountFormatted);
-        const failedCounts = Object.values(showtimeDate).map(count => count.failed);
-        const paidCounts = Object.values(showtimeDate).map(count => count.paid);
-        
-        const stats = @json($bookingStatByDate);
-        const labels = Object.keys(stats);
-        const paid = labels.map(d => stats[d].paid);  
-        const cancelled = labels.map(d => stats[d].cancelled);
-        const total = labels.map(d => stats[d].total);
-        const totalRevenue = labels.map(d => stats[d].totalRevenue || 0);
-        const optionsDailyChart = {
-                series: [{
-                    name: 'Số vé đã bán',
-                    data: total
-                }],
-                chart: {
-                    height: 400,
-                    type: 'area',
-                    background: 'transparent',
-                    toolbar: { show: false },
-                    zoom: { enabled: false },
-                    animations: {
-                        enabled: true,
-                        easing: 'easeinout',
-                        speed: 800,
-                    }
-                },
-                colors: ['#4285F4'],
-                stroke: {
-                    curve: 'smooth',
-                    width: 3
-                },
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shade: 'dark',
-                        type: 'vertical',
-                        shadeIntensity: 0.3,
-                        gradientToColors: ['#4285F4'],
-                        inverseColors: false,
-                        opacityFrom: 0.4,
-                        opacityTo: 0.1,
-                        stops: [0, 100]
-                    }
-                },
-                dataLabels: { enabled: false },
-                markers: {
-                    size: 6,
-                    colors: ['#4285F4'],
-                    strokeColors: '#2c3034',
-                    strokeWidth: 2,
-                    hover: { size: 8 }
-                },
-                xaxis: {
-                    categories: labels,
-                    axisBorder: { show: false },
-                    axisTicks: { show: false },
-                    labels: {
-                        style: {
-                            colors: '#adb5bd',
-                            fontSize: '12px',
-                            fontWeight: 600
-                        }
-                    }
-                },
-                yaxis: {
-                    min: 0,
-                    max: 500,
-                    tickAmount: 5,
-                    labels: {
-                        style: {
-                            colors: '#adb5bd', /* Muted text color */
-                            fontSize: '12px'
-                        }
-                    }
-                },
-                grid: {
-                    show: true,
-                    borderColor: '#495057', /* Darker grid lines */
-                    strokeDashArray: 2
-                },
-                tooltip: {
-                    theme: 'dark',
-                    custom: function({series, seriesIndex, dataPointIndex, w}) {
-                        const value = paid[dataPointIndex];                    
-                        const cancelledValue = cancelled[dataPointIndex];
-                        const revenue = totalRevenue.map(n => n.toLocaleString('de-DE'))[dataPointIndex];
-                        return `
-                            <div style="
-                                background: linear-gradient(135deg, #4285F4 0%, #1976D2 100%);
-                                color: white;
-                                padding: 15px;
-                                border-radius: 10px;
-                                box-shadow: 0 4px 20px rgba(66, 133, 244, 0.3);
-                                min-width: 200px;
-                            ">
-                                <div style="margin-bottom: 6px;">
-                                    🎟️ Vé bán: <strong>${value}</strong>
-                                </div>
-                                <div style="margin-bottom: 6px;">
-                                    ❌ Hủy: <strong>${cancelledValue}</strong>
-                                </div>
-                                <div style="margin-bottom: 6px;">
-                                    💵 Doanh thu: <strong>${revenue}</strong>
-                                </div>
-                            </div>
-                        `;
-                    }
-                }
-            };
-        const optionsShowtimeChart = {
-                series: [
-                    {
-                        name: 'Vé đã bán',
-                        data: Object.values(showtimeDate)
-                    },
-                    {
-                        name: 'Sức chứa',
-                        data: Object.values(@json($todayCapacities))
-                    }
-                ],
-                chart: {
-                    type: 'bar',
-                    height: 400,
-                    background: 'transparent',
-                    toolbar: { show: false },
-                    animations: {
-                        enabled: true,
-                        easing: 'easeinout',
-                        speed: 800
-                    }
-                },
-                colors: ['#4285F4', '#34A853'],
-                plotOptions: {
-                    bar: {
-                        horizontal: false,
-                        columnWidth: '60%',
-                        endingShape: 'rounded',
-                        borderRadius: 6
-                    }
-                },
-                dataLabels: { enabled: false },
-                stroke: { show: false },
-                xaxis: {
-                    categories:Object.keys(showtimeDate),
-                    axisBorder: { show: false },
-                    axisTicks: { show: false },
-                    labels: {
-                        style: {
-                            colors: '#adb5bd',
-                            fontSize: '12px',
-                            fontWeight: 600
-                        }
-                    }
-                },
-                yaxis: {
-                    min: 0,
-                    max: 140,
-                    tickAmount: 7,
-                    labels: {
-                        style: {
-                            colors: '#adb5bd', /* Muted text color */
-                            fontSize: '12px'
-                        }
-                    }
-                },
-                grid: {
-                    show: true,
-                    borderColor: '#495057', /* Darker grid lines */
-                    strokeDashArray: 2,
-                    xaxis: { lines: { show: false } }
-                },
-                legend: {
-                    show: true,
-                    position: 'top',
-                    horizontalAlign: 'left',
-                    offsetY: -10,
-                    labels: { colors: '#f8f9fa' }, /* Light text color */
-                    markers: {
-                        width: 12,
-                        height: 12,
-                        fillColors: ['#4285F4', '#34A853'],
-                        radius: 3
-                    }
-                },
-                tooltip: {
-                    shared: true,
-                    intersect: false,
-                    theme: 'dark',
-                    custom: function({series, seriesIndex, dataPointIndex, w}) {
-                        const time = Object.keys(showtimeDate)[dataPointIndex];
-                        const sold = paidCounts[dataPointIndex];
-                        const failed = failedCounts[dataPointIndex];
-                        const capacity = Object.values(@json($todayCapacities))[dataPointIndex];
-                        const percentage = ((sold / capacity) * 100).toFixed(1);
-                        return `
-                            <div style="
-                                background: #2c3034; /* Card background color */
-                                color: #f8f9fa; /* Light text color */
-                                padding: 15px;
-                                border-radius: 10px;
-                                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-                                min-width: 200px;
-                                border: 1px solid #495057; /* Darker border */
-                            ">
-                                <div style="font-weight: 600; font-size: 14px; margin-bottom: 8px;">
-                                    🎬 Suất ${time}
-                                </div>
-                                <div style="margin-bottom: 6px;">
-                                    🎟️ Vé bán: <strong>${sold}</strong>
-                                </div>
-                                <div style="margin-bottom: 6px;">
-                                    🎟️ Sức chứa: ${capacity}
-                                </div>
-                                <div style="margin-bottom: 6px;">
-                                    📊 Tỷ lệ lấp đầy: <strong>${percentage}%</strong>
-                                </div>
-                                <div style="margin-bottom: 6px;">
-                                    ❌ Đã hủy: <strong>${failed}</strong>
-                                </div>
-                            </div>
-                        `;
-                    }
-                }
-            };
-        const optionsCheckinChart = {
-                series: [@json($totalCount),@json($caps)],
-                chart: {
-                    type: 'pie',
-                    height: 400,
-                    background: 'transparent',
-                    animations: {
-                        enabled: false,
-                    },
-                },
-                labels: ['Số vé đã bán', 'Số vé còn lại'], //tính theo số ghế còn lại của từng showtime
-                colors: ['#34A853', '#FBBC04'],
-                stroke: { show: false },
-                dataLabels: {
-                    enabled: true,
-                    style: {
-                        fontSize: '14px',
-                        fontWeight: 600,
-                        colors: ['#fff']
-                    },
-                    formatter: function (val, opts) {
-                        return Math.round(val) + '%';
-                    }
-                },
-                plotOptions: {
-                    pie: {
-                        expandOnClick: false,
-                        donut: { size: '0%' }
-                    }
-                },
-                legend: {
-                    show: true,
-                    position: 'bottom',
-                    horizontalAlign: 'center',
-                    offsetY: 10,
-                    labels: { colors: '#f8f9fa' }, /* Light text color */
-                    markers: {
-                        width: 12,
-                        height: 12,
-                        fillColors: ['#34A853', '#FBBC04'],
-                        radius: 3
-                    }
-                },
-                tooltip: {
-                    theme: 'dark',
-                    y: {
-                        formatter: function (val) {
-                            const percentage = ((val / (@json($totalCount)+@json($caps))) * 100).toFixed(1);
-                            return `${val.toLocaleString()} vé (${percentage}%)`;
-                        }
-                    }
-                }
-            };
-        function renderAllCharts() {
-                if (chartInstances.dailyChart) chartInstances.dailyChart.destroy();
-                if (chartInstances.showtimeChart) chartInstances.showtimeChart.destroy();
-                if (chartInstances.checkinChart) chartInstances.checkinChart.destroy();
-
-                const dailyChartEl = document.querySelector("#dailyChart");
-                const showtimeChartEl = document.querySelector("#showtimeChart");
-                const checkinChartEl = document.querySelector("#checkinChart");
-
-                if (dailyChartEl) chartInstances.dailyChart = createScChart(dailyChartEl, optionsDailyChart);
-                if (showtimeChartEl) chartInstances.showtimeChart = createScChart(showtimeChartEl, optionsShowtimeChart);
-                if (checkinChartEl) chartInstances.checkinChart = createScChart(checkinChartEl, optionsCheckinChart);
-            }
-        renderAllCharts();
-        document.addEventListener('tabChanged', function(e) {
-                if (e.detail && e.detail[0] === 'chart') {
-                    setTimeout(() => {
-                        renderAllCharts();
-                    }, 150);
-                }
-            });
-    </script>
-    @endscript
 </div>
+@script
+                <script>
+                    let chartInstances = {};
+                    const showtimeDate = @json($bookingCountFormatted);
+                    const failedCounts = Object.values(showtimeDate).map(count => count.failed);
+                    const paidCounts = Object.values(showtimeDate).map(count => count.paid);
+                    
+                    const stats = @json($bookingStatByDate);
+                    const labels = Object.keys(stats);
+                    const paid = labels.map(d => stats[d].paid);  
+                    const cancelled = labels.map(d => stats[d].cancelled);
+                    const total = labels.map(d => stats[d].total);
+                    const totalRevenue = labels.map(d => stats[d].totalRevenue || 0);
+                    const optionsDailyChart = {
+                            series: [{
+                                name: 'Số vé đã bán',
+                                data: [100,199,199,1999,100,102,700]
+                            }],
+                            chart: {
+                                height: 400,
+                                type: 'area',
+                                background: 'transparent',
+                                toolbar: { show: false },
+                                zoom: { enabled: false },
+                                animations: {
+                                    enabled: true,
+                                    easing: 'easeinout',
+                                    speed: 800,
+                                }
+                            },
+                            colors: ['#4285F4'],
+                            stroke: {
+                                curve: 'smooth',
+                                width: 3
+                            },
+                            fill: {
+                                type: 'gradient',
+                                gradient: {
+                                    shade: 'dark',
+                                    type: 'vertical',
+                                    shadeIntensity: 0.3,
+                                    gradientToColors: ['#4285F4'],
+                                    inverseColors: false,
+                                    opacityFrom: 0.4,
+                                    opacityTo: 0.1,
+                                    stops: [0, 100]
+                                }
+                            },
+                            dataLabels: { enabled: false },
+                            markers: {
+                                size: 6,
+                                colors: ['#4285F4'],
+                                strokeColors: '#2c3034',
+                                strokeWidth: 2,
+                                hover: { size: 8 }
+                            },
+                            xaxis: {
+                                categories: labels,
+                                axisBorder: { show: false },
+                                axisTicks: { show: false },
+                                labels: {
+                                    style: {
+                                        colors: '#adb5bd',
+                                        fontSize: '12px',
+                                        fontWeight: 600
+                                    }
+                                }
+                            },
+                            yaxis: {
+                                min: 0,
+                                max: 2000,
+                                tickAmount: 5,
+                                labels: {
+                                    style: {
+                                        colors: '#adb5bd', /* Muted text color */
+                                        fontSize: '12px'
+                                    }
+                                }
+                            },
+                            grid: {
+                                show: true,
+                                borderColor: '#495057', /* Darker grid lines */
+                                strokeDashArray: 2
+                            },
+                            tooltip: {
+                                theme: 'dark',
+                                custom: function({series, seriesIndex, dataPointIndex, w}) {
+                                    const value = paid[dataPointIndex];                    
+                                    const cancelledValue = cancelled[dataPointIndex];
+                                    const revenue = totalRevenue.map(n => n.toLocaleString('vi'))[dataPointIndex];
+                                    return `
+                                        <div style="
+                                            background: linear-gradient(135deg, #4285F4 0%, #1976D2 100%);
+                                            color: white;
+                                            padding: 15px;
+                                            border-radius: 10px;
+                                            box-shadow: 0 4px 20px rgba(66, 133, 244, 0.3);
+                                            min-width: 200px;
+                                        ">
+                                            <div style="margin-bottom: 6px;">
+                                                🎟️ Vé bán: <strong>${value}</strong>
+                                            </div>
+                                            <div style="margin-bottom: 6px;">
+                                                ❌ Hủy: <strong>${cancelledValue}</strong>
+                                            </div>
+                                            <div style="margin-bottom: 6px;">
+                                                💵 Doanh thu: <strong>${revenue}</strong>
+                                            </div>
+                                        </div>
+                                    `;
+                                }
+                            }
+                        };
+                    const optionsShowtimeChart = {
+                            series: [
+                                {
+                                    name: 'Vé đã bán',
+                                    data: Object.values(showtimeDate)
+                                },
+                                {
+                                    name: 'Sức chứa',
+                                    data: Object.values(@json($todayCapacities))
+                                }
+                            ],
+                            chart: {
+                                type: 'bar',
+                                height: 400,
+                                background: 'transparent',
+                                toolbar: { show: false },
+                                animations: {
+                                    enabled: true,
+                                    easing: 'easeinout',
+                                    speed: 800
+                                }
+                            },
+                            colors: ['#4285F4', '#34A853'],
+                            plotOptions: {
+                                bar: {
+                                    horizontal: false,
+                                    columnWidth: '60%',
+                                    endingShape: 'rounded',
+                                    borderRadius: 6
+                                }
+                            },
+                            dataLabels: { enabled: false },
+                            stroke: { show: false },
+                            xaxis: {
+                                categories:Object.keys(showtimeDate),
+                                axisBorder: { show: false },
+                                axisTicks: { show: false },
+                                labels: {
+                                    style: {
+                                        colors: '#adb5bd',
+                                        fontSize: '12px',
+                                        fontWeight: 600
+                                    }
+                                }
+                            },
+                            yaxis: {
+                                min: 0,
+                                max: 140,
+                                tickAmount: 7,
+                                labels: {
+                                    style: {
+                                        colors: '#adb5bd', /* Muted text color */
+                                        fontSize: '12px'
+                                    }
+                                }
+                            },
+                            grid: {
+                                show: true,
+                                borderColor: '#495057', /* Darker grid lines */
+                                strokeDashArray: 2,
+                                xaxis: { lines: { show: false } }
+                            },
+                            legend: {
+                                show: true,
+                                position: 'top',
+                                horizontalAlign: 'left',
+                                offsetY: -10,
+                                labels: { colors: '#f8f9fa' }, /* Light text color */
+                                markers: {
+                                    width: 12,
+                                    height: 12,
+                                    fillColors: ['#4285F4', '#34A853'],
+                                    radius: 3
+                                }
+                            },
+                            tooltip: {
+                                shared: true,
+                                intersect: false,
+                                theme: 'dark',
+                                custom: function({series, seriesIndex, dataPointIndex, w}) {
+                                    const time = Object.keys(showtimeDate)[dataPointIndex];
+                                    const sold = paidCounts[dataPointIndex];
+                                    const failed = failedCounts[dataPointIndex];
+                                    const capacity = Object.values(@json($todayCapacities))[dataPointIndex];
+                                    const percentage = ((sold / capacity) * 100).toFixed(1);
+                                    return `
+                                        <div style="
+                                            background: #2c3034; /* Card background color */
+                                            color: #f8f9fa; /* Light text color */
+                                            padding: 15px;
+                                            border-radius: 10px;
+                                            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+                                            min-width: 200px;
+                                            border: 1px solid #495057; /* Darker border */
+                                        ">
+                                            <div style="font-weight: 600; font-size: 14px; margin-bottom: 8px;">
+                                                🎬 Suất ${time}
+                                            </div>
+                                            <div style="margin-bottom: 6px;">
+                                                🎟️ Vé bán: <strong>${sold}</strong>
+                                            </div>
+                                            <div style="margin-bottom: 6px;">
+                                                🎟️ Sức chứa: ${capacity}
+                                            </div>
+                                            <div style="margin-bottom: 6px;">
+                                                📊 Tỷ lệ lấp đầy: <strong>${percentage}%</strong>
+                                            </div>
+                                            <div style="margin-bottom: 6px;">
+                                                ❌ Đã hủy: <strong>${failed}</strong>
+                                            </div>
+                                        </div>
+                                    `;
+                                }
+                            }
+                        };
+                    const optionsCheckinChart = {
+                            series: [@json($totalCount),@json($caps)],
+                            chart: {
+                                type: 'pie',
+                                height: 400,
+                                background: 'transparent',
+                                animations: {
+                                    enabled: false,
+                                },
+                            },
+                            labels: ['Số vé đã bán', 'Số vé còn lại'], 
+                            colors: ['#34A853', '#FBBC04'],
+                            stroke: { show: false },
+                            dataLabels: {
+                                enabled: true,
+                                style: {
+                                    fontSize: '14px',
+                                    fontWeight: 600,
+                                    colors: ['#fff']
+                                },
+                                formatter: function (val, opts) {
+                                    return Math.round(val) + '%';
+                                }
+                            },
+                            plotOptions: {
+                                pie: {
+                                    expandOnClick: false,
+                                    donut: { size: '0%' }
+                                }
+                            },
+                            legend: {
+                                show: true,
+                                position: 'bottom',
+                                horizontalAlign: 'center',
+                                offsetY: 10,
+                                labels: { colors: '#f8f9fa' }, /* Light text color */
+                                markers: {
+                                    width: 12,
+                                    height: 12,
+                                    fillColors: ['#34A853', '#FBBC04'],
+                                    radius: 3
+                                }
+                            },
+                            tooltip: {
+                                theme: 'dark',
+                                y: {
+                                    formatter: function (val) {
+                                        const percentage = ((val / (@json($totalCount)+@json($caps))) * 100).toFixed(1);
+                                        return `${val.toLocaleString()} vé (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        };
+                    window.renderAllCharts = function() {
+                            if (chartInstances.dailyChart) chartInstances.dailyChart.destroy();
+                            if (chartInstances.showtimeChart) chartInstances.showtimeChart.destroy();
+                            if (chartInstances.checkinChart) chartInstances.checkinChart.destroy();
+
+                            const dailyChartEl = document.querySelector("#dailyChart");
+                            const showtimeChartEl = document.querySelector("#showtimeChart");
+                            const checkinChartEl = document.querySelector("#checkinChart");                          
+                            
+                            if (dailyChartEl) chartInstances.dailyChart = createScChart(dailyChartEl, optionsDailyChart);
+                            if (showtimeChartEl) chartInstances.showtimeChart = createScChart(showtimeChartEl, optionsShowtimeChart);
+                            if (checkinChartEl) chartInstances.checkinChart = createScChart(checkinChartEl, optionsCheckinChart);
+                        }
+                    renderAllCharts();
+                </script>
+            @endscript
