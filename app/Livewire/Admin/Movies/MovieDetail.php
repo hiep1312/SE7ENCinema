@@ -114,17 +114,16 @@ class MovieDetail extends Component
             });
             $paidCount = $bookingsOnDate->where('status', 'paid')->count();
             $cancelledCount = $bookingsOnDate->whereIn('status', ['failed', 'expired'])->count();
-            $total = $paidCount + $cancelledCount;
             $totalRevenue = $bookingsOnDate->where('status', 'paid')->sum('total_price');
             return [
                 $dateStr => [
                     'paid' => $paidCount,
                     'cancelled' => $cancelledCount,
-                    'total' => $total,
                     'totalRevenue' => $totalRevenue,
                 ]
             ];
         });
+        $totalMax = $bookingStatByDate->pluck('paid')->max();
         // CHART Vé đã bán theo suất chiếu
         // capacity của room
         $todayCapacities = $showtimes
@@ -165,6 +164,6 @@ class MovieDetail extends Component
         $ratings = $this->movie->ratings()->with('user')->orderBy('created_at', 'desc')->paginate(10, ['*'], 'ratings');
         $comments = $this->movie->comments()->with('user')->orderBy('created_at', 'desc')->paginate(10, ['*'], 'comments');
 
-        return view('livewire.admin.movies.movie-detail', compact('recentShowtimes', 'upcomingShowtimes', 'ratings', 'comments', 'bookings', 'totalOrdersIn30Days', 'bookingCountFormatted', 'todayCapacities', 'dates', 'bookingStatByDate', 'caps', 'totalCount'));
+        return view('livewire.admin.movies.movie-detail', compact('recentShowtimes', 'upcomingShowtimes', 'ratings', 'comments', 'bookings', 'totalOrdersIn30Days', 'bookingCountFormatted', 'todayCapacities', 'dates', 'bookingStatByDate', 'caps', 'totalCount','totalMax'));
     }
 }

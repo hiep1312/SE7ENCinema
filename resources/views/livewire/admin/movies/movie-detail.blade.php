@@ -112,7 +112,8 @@
             <li class="nav-item">
                 <button
                     class="nav-link @if($tabCurrent === 'showtimes') active bg-light text-dark @else text-light @endif"
-                    wire:click="$set('tabCurrent', 'showtimes')" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                    wire:click="$set('tabCurrent', 'showtimes')"
+                    style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <i class="fas fa-calendar me-1"></i>Suất chiếu
                 </button>
             </li>
@@ -613,7 +614,7 @@
                             </div>
                         </div>
                         <div wire:ignore>
-                            <div id="showtimeChart" style="height: 400px;"></div>
+                            <div id="showtimeChart" style="height: 400px;color:black"></div>
                         </div>
                     </div>
                 </div>
@@ -623,7 +624,7 @@
                     <div class="bg-dark rounded-3 p-3">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="text-white mb-0">
-                                <i class="fas fa-chart-pie me-2 text-warning"></i>Tỉ lệ đã vé bán so với vé chưa bán
+                                <i class="fas fa-chart-pie me-2 text-warning"></i>Tỉ lệ vé đã bán so với vé chưa bán
                             </h5>
                             <div class="btn-group" role="group">
                                 <button type="button"
@@ -638,7 +639,7 @@
                             </div>
                         </div>
                         <div wire:ignore>
-                            <div id="checkinChart" style="height: 400px;"></div>
+                            <div id="checkinChart" style="height: 400px;color:black"></div>
                         </div>
                     </div>
                 </div>
@@ -651,8 +652,7 @@
                             </h5>
                             <div class="btn-group" role="group">
                                 <button type="button"
-                                    class="btn btn-sm {{ $dailyChart === 'daily' ? 'btn-primary' : 'btn-outline-primary' }}"
-                                    >Ngày</button>
+                                    class="btn btn-sm {{ $dailyChart === 'daily' ? 'btn-primary' : 'btn-outline-primary' }}">Ngày</button>
                                 <button type="button"
                                     class="btn btn-sm {{ $dailyChart === 'monthly' ? 'btn-primary' : 'btn-outline-primary' }}"
                                     onclick="updateChart('monthly')">Tháng</button>
@@ -662,19 +662,19 @@
                             </div>
                         </div>
                         <div wire:ignore>
-                            <div id="dailyChart" style="height: 400px;"></div>
+                            <div id="dailyChart" style="height: 400px;color:black"></div>
                         </div>
                     </div>
                 </div>
             </div>
-            
+
             @endif
         </div>
     </div>
 </div>
 @script
-                <script>
-                    let chartInstances = {};
+<script>
+    let chartInstances = {};
                     const showtimeDate = @json($bookingCountFormatted);
                     const failedCounts = Object.values(showtimeDate).map(count => count.failed);
                     const paidCounts = Object.values(showtimeDate).map(count => count.paid);
@@ -683,18 +683,30 @@
                     const labels = Object.keys(stats);
                     const paid = labels.map(d => stats[d].paid);  
                     const cancelled = labels.map(d => stats[d].cancelled);
-                    const total = labels.map(d => stats[d].total);
                     const totalRevenue = labels.map(d => stats[d].totalRevenue || 0);
                     const optionsDailyChart = {
                             series: [{
                                 name: 'Số vé đã bán',
-                                data: [100,199,199,1999,100,102,700]
+                                data: paid
                             }],
                             chart: {
                                 height: 400,
                                 type: 'area',
                                 background: 'transparent',
-                                toolbar: { show: false },
+                                toolbar: { 
+                                    show: true,
+                                    color: '#000000',
+                                    tools: {
+                                        download: true, // Cho phép nút download
+                                        selection: true,
+                                        zoom: true,     
+                                        zoomin: true,
+                                        zoomout: true,
+                                        pan: true,
+                                        reset: true,
+                                        customIcons: []
+                                    }
+                                },
                                 zoom: { enabled: false },
                                 animations: {
                                     enabled: true,
@@ -742,7 +754,7 @@
                             },
                             yaxis: {
                                 min: 0,
-                                max: 2000,
+                                max: @json($totalMax),
                                 tickAmount: 5,
                                 labels: {
                                     style: {
@@ -800,7 +812,7 @@
                                 type: 'bar',
                                 height: 400,
                                 background: 'transparent',
-                                toolbar: { show: false },
+                                toolbar: { show: true },
                                 animations: {
                                     enabled: true,
                                     easing: 'easeinout',
@@ -906,6 +918,7 @@
                                 type: 'pie',
                                 height: 400,
                                 background: 'transparent',
+                                toolbar: { show: true },
                                 animations: {
                                     enabled: false,
                                 },
@@ -967,5 +980,5 @@
                             if (checkinChartEl) chartInstances.checkinChart = createScChart(checkinChartEl, optionsCheckinChart);
                         }
                     renderAllCharts();
-                </script>
-            @endscript
+</script>
+@endscript
