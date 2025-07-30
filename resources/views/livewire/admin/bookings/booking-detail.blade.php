@@ -736,6 +736,7 @@
                                                     pan: true,
                                                     reset: true
                                                 },
+                                                zoom: {enabled: true,},
                                                 export: {
                                                     csv: {
                                                         filename: 'top-phim',
@@ -912,6 +913,7 @@
                                                     pan: true,
                                                     reset: true
                                                 },
+
                                                 export: {
                                                     csv: {
                                                         filename: 'phan-tich-ghe',
@@ -933,6 +935,11 @@
                                                     }
                                                 },
                                                 autoSelected: 'zoom'
+                                            },
+                                            zoom: {
+                                                enabled: true,
+                                                type: 'x',
+                                                autoScaleYaxis: true,
                                             },
                                             animations: {
                                                 enabled: true,
@@ -1003,7 +1010,8 @@
                                                 maxHeight: 60
                                             },
                                             axisBorder: { show: false },
-                                            axisTicks: { show: false }
+                                            axisTicks: { show: false },
+                                            tickPlacement: 'on'
                                         },
                                         yaxis: [
                                             {
@@ -1117,6 +1125,7 @@
                                                 },
                                                 autoSelected: 'zoom'
                                             },
+                                            zoom: {   enabled: true},
                                             animations: {
                                                 enabled: true,
                                                 easing: 'easeinout',
@@ -1191,7 +1200,8 @@
                                                 maxHeight: 60
                                             },
                                             axisBorder: { show: false },
-                                            axisTicks: { show: false }
+                                            axisTicks: { show: false },
+                                            tickPlacement: 'on'
                                         },
                                         yaxis: [
                                             {
@@ -1221,7 +1231,7 @@
                                         },
                                         tooltip: {
                                             theme: 'dark',
-                                                                                        custom: function({series, seriesIndex, dataPointIndex, w}) {
+                                                custom: function({series, seriesIndex, dataPointIndex, w}) {
                                                 const ngay = w.globals.labels[dataPointIndex] || '';
                                                 const tongMonAn = w.globals.series[0][dataPointIndex] || 0;
                                                 const doanhThuMonAn = w.globals.series[1][dataPointIndex] || 0;
