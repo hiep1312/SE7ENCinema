@@ -99,10 +99,10 @@
                                     <td class="text-center fw-bold">{{ $loop->iteration }}</td>
                                     <td>
                                         <div class="mt-1 overflow-auto d-block text-center"
-                                            style="max-height: 100px; width: 100px;">
+                                            style="width: 120px; aspect-ratio: 4/3;">
                                             <img src="{{ asset('storage/' . ($food->image ?? '404.webp')) }}"
                                                 alt="Ảnh sản phẩm {{ $food->name }}" class="rounded"
-                                                style="width: 100%; height: auto;">
+                                                style="width: 100%; height: auto; aspect-ratio: 4/3; object-fit: cover;">
                                         </div>
                                     </td>
                                     <td>

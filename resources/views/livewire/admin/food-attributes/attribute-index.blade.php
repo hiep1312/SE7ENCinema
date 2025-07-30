@@ -1,88 +1,84 @@
 <div class="scRender">
-    {{-- ALERT --}}
-    @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible fade show" wire:ignore>
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <div class="container-lg mb-4">
+        <div class="d-flex justify-content-between align-items-center my-3">
+            <h2 class="text-light">Quản lý Thuộc tính</h2>
+            <div>
+                <button wire:click="toggleCreateForm" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Thêm thuộc tính mới
+                </button>
+            </div>
         </div>
-    @endif
 
-    <div class="container mb-4">
-        <h2 class="text-light mb-4">📋 Quản lý Thuộc tính & Giá trị</h2>
+        {{-- Form tạo mới --}}
+        @if ($showCreateForm)
+            <div class="card bg-dark mb-4">
+                <div class="card-header bg-gradient text-light">
+                    <h5 class="mb-0"> Thêm Thuộc tính mới</h5>
+                </div>
+                <div class="card-body bg-dark">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <input type="text" wire:model.defer="newName" id="newName"
+                                    class="form-control bg-dark text-light border-secondary"
+                                    placeholder="Tên thuộc tính">
+                                <label for="newName">Tên thuộc tính</label>
+                            </div>
+                            @error('newName')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <input type="text" wire:model.defer="newDescription" id="newDescription"
+                                    class="form-control bg-dark text-light border-secondary" placeholder="Mô tả">
+                                <label for="newDescription">Mô tả</label>
+                            </div>
+                            @error('newDescription')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <input type="text" wire:model.defer="newValues" id="newValues"
+                                    class="form-control bg-dark text-light border-secondary"
+                                    placeholder="Giá trị mặc định">
+                                <label for="newValues">Giá trị mặc định (phân cách phẩy)</label>
+                            </div>
+                            @error('newValues')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="mt-3 text-end">
+                        <button wire:click="create" class="btn btn-success">
+                            <i class="fas fa-check me-1"></i> Lưu
+                        </button>
+                        <button wire:click="toggleCreateForm" class="btn btn-outline-light">❌ Huỷ</button>
+                    </div>
+                </div>
+            </div>
+        @endif
 
-        <div class="card bg-dark border-0 shadow-sm">
-            {{-- HEADER --}}
-            <div class="card-header border-0 cool-gradient">
-                <div class="row align-items-center">
+        {{-- Bảng thuộc tính --}}
+        <div class="card bg-dark" wire:poll.6s>
+            <div class="card-header bg-gradient text-light"
+                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="row g-3">
                     <div class="col-md-4 col-lg-3">
                         <div class="input-group">
-                            <span class="input-group-text bg-dark border-0 text-light">
-                                <i class="fas fa-search"></i>
-                            </span>
                             <input type="text" wire:model.live.debounce.300ms="search"
-                                class="form-control bg-dark border-0 text-light" placeholder="Tìm kiếm thuộc tính...">
+                                class="form-control bg-dark text-light" placeholder="Tìm kiếm món ăn...">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {{-- BODY --}}
-            <div class="card-body">
-                {{-- FORM THÊM --}}
-                {{-- Nút Thêm mới --}}
-                <div class="mb-3">
-                    <button wire:click="toggleCreateForm" class="btn btn-success">
-                        <i class="fas fa-plus"></i> Thêm thuộc tính mới
-                    </button>
-                </div>
-
-                {{-- FORM THÊM --}}
-                @if ($showCreateForm)
-                    <div class="card mb-4" style="background-color: #4a4a4a;">
-                        <div class="card-header">
-                            <h5 class="mb-0">➕ Thêm Thuộc tính mới</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <div class="col-md-4">
-                                    <input type="text" wire:model.defer="newName" class="form-control"
-                                        placeholder="Tên thuộc tính">
-                                    @error('newName')
-                                        <small class="text-danger">{{ $message }}</small>
-                                    @enderror
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="text" wire:model.defer="newDescription" class="form-control"
-                                        placeholder="Mô tả">
-                                    @error('newDescription')
-                                        <small class="text-danger">{{ $message }}</small>
-                                    @enderror
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="text" wire:model.defer="newValues" class="form-control"
-                                        placeholder="Giá trị mặc định (phân cách phẩy)">
-                                    @error('newValues')
-                                        <small class="text-danger">{{ $message }}</small>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="mt-3 text-end">
-                                <button wire:click="create" class="btn btn-success">
-                                    <i class="fas fa-check me-1"></i> Lưu
-                                </button>
-                                <button wire:click="toggleCreateForm" class="btn btn-outline-light">
-                                    ❌ Huỷ
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-
-
-                {{-- BẢNG --}}
+            <div class="card-body bg-dark">
                 <div class="table-responsive">
                     <table class="table table-dark table-striped table-hover">
-                        <thead class="cool-gradient" >
+                        <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                             <tr>
                                 <th>#</th>
                                 <th>Thuộc tính</th>
@@ -109,15 +105,17 @@
                                         @endif
                                     </td>
                                     <td class="text-end">
-                                        <div class="gap-2 justify-content-center">
+                                        <div class="d-flex justify-content-end gap-2">
                                             <button wire:click="editAttribute({{ $attribute->id }})"
                                                 class="btn btn-sm btn-warning">
                                                 <i class="fas fa-edit"></i>
                                             </button>
+
                                             <button wire:click="toggleExpand({{ $attribute->id }})"
                                                 class="btn btn-sm btn-info">
                                                 <i class="fas fa-cogs"></i>
                                             </button>
+
                                             <button wire:click="deleteAttribute({{ $attribute->id }})"
                                                 onclick="return confirm('Bạn có chắc chắn muốn xoá thuộc tính này?')"
                                                 class="btn btn-sm btn-danger">
@@ -127,27 +125,39 @@
                                     </td>
                                 </tr>
 
-                                {{-- FORM EDIT --}}
+                                {{-- Form chỉnh sửa thuộc tính --}}
                                 @if ($editingAttributeId === $attribute->id)
                                     <tr>
                                         <td colspan="5">
-                                            <div class="p-3" style="background-color: #4a4a4a;">
-                                                {{-- màu xám đậm --}}
+                                            <div class="p-3 bg-dark border border-secondary rounded-3">
                                                 <div class="row g-2">
                                                     <div class="col-md-5">
-                                                        <input wire:model.defer="editingAttributeName"
-                                                            class="form-control" placeholder="Tên thuộc tính">
+                                                        <div class="form-floating">
+                                                            <input wire:model.defer="editingAttributeName"
+                                                                id="editName{{ $attribute->id }}"
+                                                                class="form-control bg-dark text-light border-secondary"
+                                                                placeholder="Tên thuộc tính">
+                                                            <label for="editName{{ $attribute->id }}">Tên thuộc
+                                                                tính</label>
+                                                        </div>
                                                         @error('editingAttributeName')
                                                             <small class="text-danger">{{ $message }}</small>
                                                         @enderror
                                                     </div>
                                                     <div class="col-md-5">
-                                                        <input wire:model.defer="editingAttributeDescription"
-                                                            class="form-control" placeholder="Mô tả">
+                                                        <div class="form-floating">
+                                                            <input wire:model.defer="editingAttributeDescription"
+                                                                id="editDesc{{ $attribute->id }}"
+                                                                class="form-control bg-dark text-light border-secondary"
+                                                                placeholder="Mô tả">
+                                                            <label for="editDesc{{ $attribute->id }}">Mô tả</label>
+                                                        </div>
                                                     </div>
                                                     <div class="col-md-2 text-end">
                                                         <button wire:click="saveAttribute"
-                                                            class="btn btn-success btn-sm">💾 Lưu</button>
+                                                            class="btn btn-success btn-sm">
+                                                            <i class="fas fa-check me-1"></i> Lưu
+                                                        </button>
                                                         <button wire:click="resetAttributeEdit"
                                                             class="btn btn-outline-light btn-sm">❌ Huỷ</button>
                                                     </div>
@@ -157,21 +167,22 @@
                                     </tr>
                                 @endif
 
-                                {{-- FORM GIÁ TRỊ --}}
+                                {{-- Form quản lý giá trị --}}
                                 @if ($expandedAttributeId === $attribute->id)
                                     <tr>
                                         <td colspan="5">
-                                            <div class="p-3" style="background-color: #4a4a4a;">
-                                                {{-- xám đậm --}}
-                                                <h6 class="mb-3">🔧 Quản lý Giá trị</h6>
-                                                {{-- List --}}
+                                            <div class="p-3 bg-dark border border-secondary rounded-3">
+                                                <h6 class="mb-3 text-light">Quản lý Giá trị</h6>
                                                 @forelse ($attribute->values as $value)
-                                                    <div class="d-flex justify-content-between mb-2">
-                                                        <span>{{ $value->value }}</span>
-                                                        <div class="gap-2 justify-content-center">
+                                                    <div
+                                                        class="d-flex justify-content-between align-items-center mb-2">
+                                                        <span class="badge bg-primary">{{ $value->value }}</span>
+                                                        <div class="d-flex gap-2">
                                                             <button wire:click="editValue({{ $value->id }})"
-                                                                class="btn btn-sm btn-warning"><i
-                                                                    class="fas fa-edit"></i></button>
+                                                                class="btn btn-sm btn-warning">
+                                                                <i class="fas fa-edit"></i>
+                                                            </button>
+
                                                             <button wire:click="deleteValue({{ $value->id }})"
                                                                 onclick="return confirm('Bạn có chắc chắn muốn xoá giá trị này?')"
                                                                 class="btn btn-sm btn-danger">
@@ -183,17 +194,19 @@
                                                     <div class="text-muted fst-italic">Chưa có giá trị.</div>
                                                 @endforelse
 
-                                                {{-- Input --}}
-                                                <div class="input-group mt-3">
-                                                    <input wire:model.defer="editingValue"
-                                                        class="form-control bg-dark text-light"
-                                                        placeholder="Nhập giá trị mới...">
+                                                <div class="form-floating mt-3">
+                                                    <input wire:model.defer="editingValue" id="editingValueInput"
+                                                        class="form-control bg-dark text-light border-secondary"
+                                                        placeholder="Giá trị mới">
+                                                    <label for="editingValueInput">Nhập giá trị mới...</label>
+                                                </div>
+                                                <div class="mt-2">
                                                     <button wire:click="saveValue({{ $attribute->id }})"
                                                         class="btn btn-success btn-sm">
-                                                        {{ $editingValueId ? '💾 Cập nhật' : '➕ Thêm' }}
+                                                        {!! $editingValueId ? '💾 Cập nhật' : '<i class="fas fa-plus"></i> Thêm' !!}
                                                     </button>
                                                     <button wire:click="resetValueEdit"
-                                                        class="btn btn-outline-light btn-sm">Huỷ</button>
+                                                        class="btn btn-outline-light btn-sm">❌ Huỷ</button>
                                                 </div>
                                                 @error('editingValue')
                                                     <div><small class="text-danger">{{ $message }}</small></div>
@@ -213,7 +226,6 @@
                         </tbody>
                     </table>
                 </div>
-
             </div>
         </div>
     </div>

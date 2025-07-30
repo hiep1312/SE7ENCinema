@@ -117,8 +117,8 @@
                         </div>
                         <div class="card-body">
                             {{-- Phần quản lý thuộc tính --}}
-                            <div class="mb-4 p-3 border rounded" style="border-color: #4a5568 !important;">
-                                <h6 class="text-primary fw-bold">
+                            <div class="mb-4">
+                                <h6 class="text-light fw-bold">
                                     {{ $editingAttributeIndex !== null ? 'Chỉnh sửa thuộc tính' : 'Thêm thuộc tính mới' }}
                                 </h6>
                                 {{-- Bắt đầu: Phần chọn thuộc tính có sẵn (áp dụng chuẩn FoodEdit) --}}
@@ -259,6 +259,75 @@
                                 <div class="alert alert-success">{{ session('attribute_success') }}</div>
                             @endif
 
+                            <div class="card bg-dark text-light my-4">
+                                <div class="card-header bg-gradient"
+                                    style="background: linear-gradient(to right, #3b82f6, #1e3a8a);">
+                                    <h5 class="my-1">Gán giá trị cho tất cả biến thể</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3 align-items-end">
+                                        <div class="col-md-4">
+                                            <label class="form-label">Chọn mục muốn áp dụng</label>
+                                            <select wire:model.live="bulkTarget"
+                                                class="form-select bg-dark text-light border-secondary">
+                                                <option value="">-- Chọn mục --</option>
+                                                <option value="price">Giá</option>
+                                                <option value="quantity">Số lượng</option>
+                                                <option value="limit">Giới hạn</option>
+                                                <option value="status">Trạng thái</option>
+                                            </select>
+                                        </div>
+
+                                        @if ($bulkTarget === 'price')
+                                            <div class="col-md-4">
+                                                <label class="form-label">Giá</label>
+                                                <input type="number" wire:model="bulkPrice"
+                                                    class="form-control bg-dark text-light border-secondary">
+                                            </div>
+                                        @elseif ($bulkTarget === 'quantity')
+                                            <div class="col-md-4">
+                                                <label class="form-label">Số lượng</label>
+                                                <input type="number" wire:model="bulkQuantity"
+                                                    class="form-control bg-dark text-light border-secondary">
+                                            </div>
+                                        @elseif ($bulkTarget === 'limit')
+                                            <div class="col-md-4">
+                                                <label class="form-label">Giới hạn</label>
+                                                <input type="number" wire:model="bulkLimit"
+                                                    class="form-control bg-dark text-light border-secondary">
+                                            </div>
+                                        @elseif ($bulkTarget === 'status')
+                                            <div class="col-md-4">
+                                                <label class="form-label">Trạng thái</label>
+                                                <select wire:model="bulkStatus"
+                                                    class="form-select bg-dark text-light border-secondary">
+                                                    <option value="">-- Mặc định --</option>
+                                                    <option value="available">Còn hàng</option>
+                                                    <option value="out_of_stock">Hết hàng</option>
+                                                    <option value="hidden">Ẩn</option>
+                                                </select>
+                                            </div>
+                                        @endif
+
+                                        @if ($bulkTarget)
+                                            <div class="col-md-4">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        wire:model="bulkReplace" id="bulkReplace">
+                                                    <label class="form-check-label" for="bulkReplace">
+                                                        Ghi đè cả những biến thể đã điền sẵn
+                                                    </label>
+                                                </div>
+                                                <button type="button" class="btn btn-info mt-2"
+                                                    wire:click="applyBulkValues">
+                                                    <i class="fas fa-magic me-1"></i> Áp dụng cho tất cả biến thể
+                                                </button>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
                             {{-- Danh sách các thuộc tính đã thêm --}}
                             <h6 class="text-light mt-4">Danh sách thuộc tính</h6>
                             @if (empty($variantAttributes))
@@ -288,13 +357,55 @@
                                 </div>
                             @endif
 
+
+                            @if ($showManualVariant ?? false)
+                                <div class="card bg-dark text-light mt-4">
+                                    <div class="card-body">
+                                        <h6 class="text-light mb-3">Tạo biến thể thủ công</h6>
+
+                                        <div class="row">
+                                            @foreach ($variantAttributes as $attr)
+                                                <div class="col-md-4 mb-3">
+                                                    <label class="form-label">{{ $attr['name'] }}</label>
+                                                    <select
+                                                        wire:model.defer="manualAttributeValues.{{ $attr['name'] }}"
+                                                        class="form-select bg-dark text-light border-secondary">
+                                                        <option value="">-- Chọn {{ $attr['name'] }} --</option>
+                                                        @foreach ($attr['values'] as $val)
+                                                            <option value="{{ $val }}">{{ $val }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error("manualAttributeValues.{$attr['name']}")
+                                                        <small class="text-danger">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                            @endforeach
+                                        </div>
+
+                                        <div class="mt-3">
+                                            <button type="button" class="btn btn-success"
+                                                wire:click="addManualVariant">
+                                                <i class="fas fa-plus me-1"></i> Thêm biến thể
+                                            </button>
+                                            <button type="button" class="btn btn-secondary ms-2"
+                                                wire:click="$set('showManualVariant', false)">
+                                                <i class="fas fa-times me-1"></i> Hủy
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
+
                             {{-- Nút tạo biến thể --}}
                             @if (!empty($variantAttributes))
                                 <div class="text-center my-4">
-                                    <button type="button" class="btn btn-primary btn-lg"
+                                    {{-- Nút tự động --}}
+                                    <button type="button" class="btn btn-primary btn-lg me-2"
                                         wire:click="generateVariants">
                                         <span wire:loading.remove wire:target="generateVariants">
-                                            <i class="fas fa-cogs me-2"></i>Tạo/Cập nhật các biến thể
+                                            <i class="fas fa-cogs me-2"></i> Tạo/Cập nhật các biến thể
                                         </span>
                                         <span wire:loading wire:target="generateVariants">
                                             <span class="spinner-border spinner-border-sm" role="status"
@@ -302,8 +413,16 @@
                                             Đang xử lý...
                                         </span>
                                     </button>
-                                    <p class="text-muted mt-2">Bấm vào đây để tạo các phiên bản món ăn từ các thuộc
-                                        tính trên.</p>
+
+                                    {{-- Nút thủ công --}}
+                                    <button type="button" class="btn btn-outline-warning btn-lg"
+                                        wire:click="$toggle('showManualVariant')">
+                                        <i class="fas fa-plus-circle me-2"></i> Thêm biến thể thủ công
+                                    </button>
+
+                                    {{-- Gợi ý --}}
+                                    <p class="text-muted mt-3">Bạn có thể tạo biến thể tự động từ các thuộc tính hoặc
+                                        thêm thủ công từng biến thể.</p>
                                 </div>
                             @endif
 
@@ -333,7 +452,7 @@
                                                             <div>
                                                                 @foreach ($variant['attribute_values'] as $attr)
                                                                     <span
-                                                                        class="badge bg-info me-1 mb-1">{{ $attr['attribute'] }}:
+                                                                        class="badge bg-primary me-1 mb-1">{{ $attr['attribute'] }}:
                                                                         {{ $attr['value'] }}</span>
                                                                 @endforeach
                                                             </div>
@@ -441,9 +560,8 @@
             </div>
 
             {{-- Nút submit chính --}}
-            <div class="mt-4 d-flex justify-content-end">
-                <a href="{{ route('admin.foods.index') }}" class="btn btn-outline-secondary me-3">Hủy bỏ</a>
-                <button type="submit" class="btn btn-lg btn-success">
+            <div class="d-flex justify-content-between gap-3 mt-4">
+                <button type="submit" class="btn btn-success btn-lg">
                     <span wire:loading.remove wire:target="save">
                         <i class="fas fa-save me-2"></i>Lưu tất cả thay đổi
                     </span>
@@ -452,6 +570,10 @@
                         Đang lưu...
                     </span>
                 </button>
+
+                <a href="{{ route('admin.foods.index') }}" class="btn btn-outline-danger btn-lg">
+                    <i class="fas fa-times me-2"></i>Hủy bỏ
+                </a>
             </div>
         </form>
     </div>

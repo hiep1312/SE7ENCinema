@@ -55,6 +55,7 @@ class FoodCreate extends Component
     public $selectedAttributeValueIds = [];
 
 
+    public bool $applyToAll = false;
 
 
     public function rules()
@@ -331,7 +332,6 @@ class FoodCreate extends Component
 
     public function applyBulkAction()
     {
-        // 1. Validate đầu vào
         if (empty($this->bulkAction)) {
             $this->addError('bulkAction', 'Vui lòng chọn một thao tác.');
             return;
@@ -349,7 +349,6 @@ class FoodCreate extends Component
             return;
         }
 
-        // 2. Ánh xạ action
         $fieldMap = [
             'price'          => 'price',
             'quantity'       => 'quantity',
@@ -359,33 +358,30 @@ class FoodCreate extends Component
         ];
 
         $fieldToUpdate = $fieldMap[$this->bulkAction] ?? null;
+        if (!$fieldToUpdate) return;
 
-        if (!$fieldToUpdate) {
-            return;
-        }
-
-        // 3. Lặp qua các biến thể và áp dụng logic
         foreach ($this->generatedVariants as $index => $variant) {
-            // SỬA LỖI ẢNH: Nếu là hành động ảnh, chỉ áp dụng cho biến thể đầu tiên tìm thấy
-            // và dừng lại ngay lập tức để tránh tái sử dụng file tạm.
+            // Trường hợp ảnh: chỉ gán cho biến thể đầu tiên nếu chưa có
             if ($this->bulkAction === 'image') {
                 if (is_null($variant[$fieldToUpdate])) {
                     $this->generatedVariants[$index][$fieldToUpdate] = $valueToApply;
-                    break; // Dừng vòng lặp ngay sau khi gán ảnh
+                    break;
                 }
-                continue; // Nếu biến thể này đã có ảnh, bỏ qua và xét biến thể tiếp theo
+                continue;
             }
 
-            // Logic cho các trường khác (status, price, quantity...)
-            if ($this->bulkAction === 'status' || is_null($variant[$fieldToUpdate])) {
+            // Nếu được chọn "áp dụng tất cả" => luôn gán
+            // Nếu không => chỉ gán khi chưa có giá trị
+            if ($this->applyToAll || is_null($variant[$fieldToUpdate])) {
                 $this->generatedVariants[$index][$fieldToUpdate] = $valueToApply;
             }
         }
 
-        // 4. Reset các input
-        $this->reset('bulkAction', 'bulkValue', 'bulkImage');
+        // Reset
+        $this->reset('bulkAction', 'bulkValue', 'bulkImage', 'applyToAll');
         $this->resetErrorBag(['bulkAction', 'bulkValue', 'bulkImage']);
     }
+
 
 
 
@@ -478,7 +474,7 @@ class FoodCreate extends Component
                 }
             }
         } else {
-            $sku = $this->generateUniqueSku($this->name);
+            $sku = $this->generateUniqueSku('default-sku');
 
             FoodVariant::create([
                 'food_item_id' => $food->id,

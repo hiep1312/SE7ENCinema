@@ -42,6 +42,81 @@ class FoodEdit extends Component
     public ?int $selectedAttributeId = null;
     public array $selectedAttributeValueIds = [];
 
+    public array $manualAttributeValues = [];
+    public bool $showManualVariant = false;
+
+
+
+    public string $bulkTarget = '';
+    public ?float $bulkPrice = null;
+    public ?int $bulkQuantity = null;
+    public ?int $bulkLimit = null;
+    public ?string $bulkStatus = null;
+    public bool $bulkReplace = false;
+
+
+    public function applyBulkValues(): void //áp dụng giá trị hàng loạt cho các biến thể
+    {
+        foreach ($this->variants as $index => &$variant) {
+            if ($this->bulkReplace || !$variant['price']) {
+                $variant['price'] = $this->bulkPrice;
+            }
+            if ($this->bulkReplace || !$variant['quantity_available']) {
+                $variant['quantity_available'] = $this->bulkQuantity;
+            }
+            if ($this->bulkReplace || !$variant['limit']) {
+                $variant['limit'] = $this->bulkLimit;
+            }
+            if ($this->bulkReplace || !$variant['status']) {
+                $variant['status'] = $this->bulkStatus ?? 'available';
+            }
+        }
+        session()->flash('success_general', 'Đã áp dụng giá trị cho các biến thể.');
+    }
+
+
+    public function addManualVariant(): void //thêm biên thể thủ công
+    {
+        // Validate input
+        foreach ($this->variantAttributes as $attr) {
+            if (empty($this->manualAttributeValues[$attr['name']])) {
+                $this->addError("manualAttributeValues.{$attr['name']}", "Vui lòng chọn {$attr['name']}");
+                return;
+            }
+        }
+
+        // Kiểm tra trùng biến thể
+        $newCombo = collect($this->manualAttributeValues)->sortKeys()->all();
+        foreach ($this->variants as $variant) {
+            $existingCombo = collect($variant['attribute_values'])->mapWithKeys(fn($item) => [
+                $item['attribute'] => $item['value']
+            ])->sortKeys()->all();
+
+            if ($newCombo == $existingCombo) {
+                session()->flash('attribute_error', 'Biến thể này đã tồn tại.');
+                return;
+            }
+        }
+
+        // Thêm biến thể mới
+        $this->variants[] = [
+            'price' => null,
+            'quantity_available' => null,
+            'limit' => null,
+            'status' => 'available',
+            'attribute_values' => collect($this->manualAttributeValues)
+                ->map(fn($val, $attr) => ['attribute' => $attr, 'value' => $val])
+                ->values()
+                ->toArray(),
+            'image' => null,
+        ];
+
+        $this->manualAttributeValues = [];
+        session()->flash('attribute_success', 'Thêm biến thể thủ công thành công.');
+    }
+
+
+
     protected function rules(): array
     {
         $rules = [

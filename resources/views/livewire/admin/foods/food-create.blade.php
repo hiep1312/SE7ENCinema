@@ -93,7 +93,7 @@
                                             <input class="form-check-input" type="checkbox" role="switch"
                                                 id="productVariants" wire:model.live.debounce.200ms="productVariants"
                                                 style="transform: scale(1.5);">
-                                            <label class="form-check-label text-light ms-4 fs-5" for="productVariants">
+                                            <label class="form-check-label text-light ms-1 fs-6" for="productVariants">
                                                 Sản phẩm có biến thể
                                             </label>
                                             @error('productVariants')
@@ -355,101 +355,131 @@
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h6 class="text-light mb-0">Quản lý các biến thể sản phẩm:</h6>
 
-                                    <div class="d-flex align-items-center gap-2">
+                                    <div class="d-flex align-items-center">
+                                        <button type="button" wire:click="generateVariantsFromAttributes"
+                                            class="btn btn-primary me-2"
+                                            @if (empty($variantAttributes)) disabled @endif>
+                                            <i class="fas fa-sync-alt me-1"></i> Tái tạo biến thể
+                                        </button>
 
-                                        <select class="form-select" wire:model.live="bulkAction"
-                                            style="width: auto;">
-                                            <option value="">-- Chọn thao tác --</option>
-                                            <option value="price">Giá</option>
-                                            <option value="quantity">Số lượng</option>
-                                            <option value="quantity_limit">Giới hạn số lượng</option>
-                                            <option value="image">Ảnh</option>
-                                            <option value="status">Trạng thái</option>
-                                        </select>
-
-                                        @if ($bulkAction)
-                                            <div style="min-width: 180px;">
-                                                @if ($bulkAction === 'price')
-                                                    <input type="number" wire:model="bulkValue" class="form-control"
-                                                        placeholder="Nhập giá">
-                                                @elseif ($bulkAction === 'quantity')
-                                                    <input type="number" wire:model="bulkValue" class="form-control"
-                                                        placeholder="Nhập số lượng">
-                                                @elseif ($bulkAction === 'quantity_limit')
-                                                    <input type="number" wire:model="bulkValue" class="form-control"
-                                                        placeholder="Nhập giới hạn số lượng">
-                                                @elseif ($bulkAction === 'image')
-                                                    <input type="file" wire:model="bulkImage"
-                                                        class="form-control">
-                                                @elseif ($bulkAction === 'status')
-                                                    <select wire:model="bulkValue" class="form-select">
-                                                        <option value="">-- Chọn trạng thái --</option>
-                                                        <option value="available">Có sẵn</option>
-                                                        <option value="out_of_stock">Hết hàng</option>
-                                                        <option value="hidden">Không hiển thị</option>
-                                                    </select>
-                                                @endif
-                                            </div>
-                                            <button type="button" wire:click="applyBulkAction"
-                                                class="btn btn-success flex-shrink-0">
-                                                Áp dụng
-                                            </button>
-                                        @endif
-
-                                        <div class="btn-group">
-                                            <button type="button" wire:click="generateVariantsFromAttributes"
-                                                class="btn btn-primary"
-                                                @if (empty($variantAttributes)) disabled @endif>
-                                                <i class="fas fa-sync-alt me-1"></i> Tái tạo biến thể
-                                            </button>
-                                            <button type="button" wire:click="$set('variantCreateMode', 'manual')"
-                                                class="btn btn-primary"
-                                                @if (empty($variantAttributes)) disabled @endif>
-                                                <i class="fas fa-plus me-1"></i> Tạo biến thể thủ công
-                                            </button>
-                                        </div>
-
+                                        <button type="button" wire:click="$set('variantCreateMode', 'manual')"
+                                            class="btn btn-primary"
+                                            @if (empty($variantAttributes)) disabled @endif>
+                                            <i class="fas fa-plus me-1"></i> Tạo biến thể thủ công
+                                        </button>
                                     </div>
                                 </div>
 
 
                                 @if ($variantCreateMode === 'manual')
-
                                     <div class="card bg-dark border-secondary mb-4">
                                         <div class="card-body">
                                             <h6 class="text-light mb-3">Tạo biến thể thủ công</h6>
 
-                                            @foreach ($variantAttributes as $attr)
-                                                <div class="mb-3">
-                                                    <label class="form-label text-light">{{ $attr['name'] }}</label>
-                                                    <select
-                                                        wire:model.defer="manualAttributeValues.{{ $attr['name'] }}"
-                                                        class="form-select bg-dark text-light border-secondary">
-                                                        <option value="">-- Chọn {{ $attr['name'] }} --</option>
-                                                        @foreach ($attr['values'] as $val)
-                                                            <option value="{{ $val }}">{{ $val }}
+                                            <div class="row">
+                                                @foreach ($variantAttributes as $attr)
+                                                    <div class="col-md-4 mb-3">
+                                                        <label class="form-label">{{ $attr['name'] }}</label>
+                                                        <select
+                                                            wire:model.defer="manualAttributeValues.{{ $attr['name'] }}"
+                                                            class="form-select bg-dark text-light border-secondary @error("manualAttributeValues.{$attr['name']}") is-invalid @enderror">
+                                                            <option value="">-- Chọn {{ $attr['name'] }} --
                                                             </option>
-                                                        @endforeach
-                                                    </select>
-                                                    @error("manualAttributeValues.{$attr['name']}")
-                                                        <small class="text-danger">{{ $message }}</small>
-                                                    @enderror
-                                                </div>
-                                            @endforeach
+                                                            @foreach ($attr['values'] as $val)
+                                                                <option value="{{ $val }}">
+                                                                    {{ $val }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        @error("manualAttributeValues.{$attr['name']}")
+                                                            <div class="invalid-feedback d-block mt-1">
+                                                                <i class="fas fa-exclamation-circle me-1"></i>
+                                                                {{ $message }}
+                                                            </div>
+                                                        @enderror
+                                                    </div>
+                                                @endforeach
+                                            </div>
 
-                                            <button class="btn btn-primary" type="button"
-                                                wire:click="addManualVariant">
-                                                Thêm biến thể
-                                            </button>
-                                            @if ($errors->has('manualAttributeValues'))
-                                                <div class="text-danger mt-2">
-                                                    {{ $errors->first('manualAttributeValues') }}
+                                            <div class="mt-3 d-flex justify-content-start gap-2">
+                                                <button type="button" class="btn btn-success"
+                                                    wire:click="addManualVariant">
+                                                    <i class="fas fa-plus me-1"></i> Thêm biến thể
+                                                </button>
+                                                <button type="button" class="btn btn-secondary"
+                                                    wire:click="$set('variantCreateMode', null)">
+                                                    <i class="fas fa-times me-1"></i> Huỷ
+                                                </button>
+                                            </div>
+                                            @error('manualAttributeValues')
+                                                <div class="alert alert-danger mt-2">
+                                                    <i class="fas fa-exclamation-circle me-1"></i> {{ $message }}
+                                                </div>
+                                            @enderror
+
+                                        </div>
+                                    </div>
+                                @endif
+
+                                <div class="card bg-dark text-light my-4">
+                                    <div class="card-header bg-gradient"
+                                        style="background: linear-gradient(to right, #3b82f6, #1e3a8a);">
+                                        <h5 class="my-1">Gán giá trị cho tất cả biến thể</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row g-3 align-items-end">
+                                            <div class="col-md-4">
+                                                <label class="form-label">Chọn mục muốn áp dụng</label>
+                                                <select wire:model.live="bulkAction"
+                                                    class="form-select bg-dark text-light border-secondary">
+                                                    <option value="">-- Chọn thao tác --</option>
+                                                    <option value="price">Giá</option>
+                                                    <option value="quantity">Số lượng</option>
+                                                    <option value="quantity_limit">Giới hạn</option>
+                                                    <option value="status">Trạng thái</option>
+                                                </select>
+                                            </div>
+
+                                            @if ($bulkAction === 'price' || $bulkAction === 'quantity' || $bulkAction === 'quantity_limit')
+                                                <div class="col-md-4">
+                                                    <label class="form-label">
+                                                        {{ $bulkAction === 'price' ? 'Giá' : ($bulkAction === 'quantity' ? 'Số lượng' : 'Giới hạn') }}
+                                                    </label>
+                                                    <input type="number" wire:model="bulkValue"
+                                                        class="form-control bg-dark text-light border-secondary">
+                                                </div>
+                                            @elseif ($bulkAction === 'status')
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Trạng thái</label>
+                                                    <select wire:model="bulkValue"
+                                                        class="form-select bg-dark text-light border-secondary">
+                                                        <option value="">-- Chọn trạng thái --</option>
+                                                        <option value="available">Còn hàng</option>
+                                                        <option value="out_of_stock">Hết hàng</option>
+                                                        <option value="hidden">Ẩn</option>
+                                                    </select>
+                                                </div>
+                                            @endif
+
+                                            @if ($bulkAction)
+                                                <div class="col-md-4">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            wire:model="applyToAll" id="applyToAllCheckbox">
+                                                        <label class="form-check-label" for="applyToAllCheckbox">
+                                                            Ghi đè cả những biến thể đã điền sẵn
+                                                        </label>
+                                                    </div>
+                                                    <button type="button" class="btn btn-info mt-2"
+                                                        wire:click="applyBulkAction">
+                                                        <i class="fas fa-magic me-1"></i> Áp dụng cho tất cả biến thể
+                                                    </button>
                                                 </div>
                                             @endif
                                         </div>
                                     </div>
+                                </div>
 
-                                @endif
+
                                 @if (count($generatedVariants))
                                     <div class="accordion" id="variantsAccordion" x-data="{ expandedVariants: @entangle('expandedVariants') }">
                                         @foreach ($generatedVariants as $index => $variant)
@@ -576,8 +606,9 @@
                         <button type="submit" class="btn btn-success">
                             <i class="fas fa-save"></i> Tạo món ăn
                         </button>
+
                         <a href="{{ route('admin.foods.index') }}" class="btn btn-outline-danger">
-                            <i class="fas fa-times-circle me-1"></i> Hủy bỏ
+                            Hủy bỏ
                         </a>
                     </div>
                 </form>

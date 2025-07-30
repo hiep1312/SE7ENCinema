@@ -114,6 +114,7 @@ class FoodVariantIndex extends Component
     public function render()
     {
         $query = FoodVariant::query()
+            ->whereHas('attributeValues') // <-- Chỉ lấy biến thể có attribute (không phải sản phẩm gốc)
             ->with(['foodItem', 'attributeValues.attribute'])
             ->when($this->showDeleted, fn($query) => $query->onlyTrashed())
             ->when($this->search, function ($query) {

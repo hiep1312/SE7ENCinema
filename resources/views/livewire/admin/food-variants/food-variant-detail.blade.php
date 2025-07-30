@@ -91,10 +91,10 @@
                                 <table class="table table-borderless text-light">
                                     <tr>
                                         <td><strong class="text-warning">Tên món ăn liên kết:</strong></td>
-                                        <td><strong class="badge bg-gradient text-light"
-                                                style="background: linear-gradient(to right, #642b73, #c642ab) !important; font-size: 0.875rem !important;">
+                                        <td><strong class="text-light"
+                                                style="font-size: 0.875rem !important;">
                                                 {{ $variantItem->FoodItem->name ?? 'N/A' }}
-                                            </strong><br>
+                                            </strong></td>
                                     </tr>
                                     <tr>
                                         <td><strong class="text-warning">Thuộc tính biến thể:</strong></td>
@@ -102,8 +102,8 @@
                                             @if ($variantItem->attributeValues->count())
                                                 <div class="d-flex flex-wrap gap-2">
                                                     @foreach ($variantItem->attributeValues as $value)
-                                                        <span class="badge rounded-pill text-dark"
-                                                            style="background: linear-gradient(to right, #00c3ff, #ffff1c); font-weight: 500;">
+                                                        <span class="badge rounded-pill bg-primary text-light"
+                                                            >
                                                             <strong>{{ $value->attribute->name }}:</strong>
                                                             {{ $value->value }}
                                                         </span>

@@ -153,8 +153,8 @@
                     <button type="submit" class="btn btn-success">
                         <i class="fas fa-save"></i> Lưu
                     </button>
-                    <a href="{{ route('admin.food_variants.index') }}" class="btn btn-outline-secondary">
-                        Quay lại
+                    <a href="{{ route('admin.food_variants.index') }}" class="btn btn-outline-danger">
+                        Hủy bỏ
                     </a>
                 </div>
             </div>
