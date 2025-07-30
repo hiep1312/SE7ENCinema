@@ -100,33 +100,6 @@
                             </div>
 
 
-                            <div class="d-flex justify-content-between">
-                                <button type="submit" class="btn btn-success">
-                                    <i class="fas fa-save"></i> Tạo bình luận
-                                    @if(count($childComments) > 0)
-                                        ({{ count($childComments) + 1 }} bình luận)
-                                    @endif
-                                </button>
-                                <a href="{{ route('admin.comments.index', ['movie_id' => $movieId]) }}" class="btn btn-outline-danger">
-                                    Hủy bỏ
-                                </a>
-                            </div>
-
-                            <!-- Input số lượng bình luận con -->
-                            <div class="mt-3">
-                                <button type="button" class="btn btn-info" wire:click="addChildComment">
-                                    <i class="fas fa-plus"></i> Thêm bình luận con
-                                </button>
-                            </div>
-
-
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Các form bình luận con -->
         @if(count($childComments) > 0)
             <hr class="border-light">
             <h5 class="text-light">Bình luận con</h5>
@@ -184,13 +157,46 @@
             </div>
         @endif
 
+        <div class="mb-3">
+            <button type="button" class="btn btn-primary" wire:click="addChildComment">
+                <i class="fas fa-plus"></i> Thêm bình luận con
+            </button>
+        </div>
+
+
+                            <div class="d-flex justify-content-between">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save"></i> Tạo bình luận
+                                    @if(count($childComments) > 0)
+                                        ({{ count($childComments) + 1 }} bình luận)
+                                    @endif
+                                </button>
+                                <a href="{{ route('admin.comments.index', ['movie_id' => $movieId]) }}" class="btn btn-outline-danger">
+                                    Hủy bỏ
+                                </a>
+                            </div>
+
+
+
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
         <!-- Sidebar Info -->
         @if($selectedMovie || $parentComment)
             <div class="row mt-4">
                 <div class="col-12">
                     <div class="card bg-dark border-light">
                         <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                            <h5 class="my-1">Thông tin liên quan</h5>
+                            <h5 class="my-1">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Thông tin liên quan
+                            </h5>
                         </div>
                         <div class="card-body bg-dark">
                             <div class="row">
@@ -231,8 +237,8 @@
                                                 </div>
                                             @endif
                                             <div>
-                                                <p class="text-light small mb-1">{{ $parentComment->user->name }}</p>
-                                                <p class="text-muted small">{{ Str::limit($parentComment->content, 100) }}</p>
+                                                <h6 class="text-light small">{{ $parentComment->user->name }}</h6>
+                                                <div class="text-muted small">{{ Str::limit($parentComment->content, 100) }}</div>
                                                 <small class="text-muted">{{ $parentComment->created_at->format('d/m/Y H:i') }}</small>
                                             </div>
                                         </div>

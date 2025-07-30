@@ -105,7 +105,8 @@ class CommentIndex extends Component
     {
         $commentsQuery = Comment::with([
             'user:id,name,avatar,email',
-            'movie:id,title,poster',
+            'movie:id,title,poster,duration',
+            'movie.genres:id,name',
             'parent.user:id,name',
             'reply.user:id,name'
         ])

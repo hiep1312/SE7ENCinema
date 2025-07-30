@@ -101,31 +101,25 @@
                                                 <div>
                                                     <div class="comment-movie-title mb-1">
                                                         <i class="fas fa-user me-1 text-primary"></i>
-                                                        <strong class="text-primary text-wrap">
+                                                        <strong class="text-wrap">
                                                             {{ $comment->user->name }}
                                                         </strong>
                                                     </div>
                                                     <div class="showtime-price mb-1">
-                                                        <i class="fas fa-envelope me-1 text-warning"></i>
-                                                        <span class="text-warning">
+                                                        <i class="fas fa-envelope me-1 text-muted mt-1"></i>
+                                                        <span class="text-muted">
                                                             {{ Str::limit($comment->user->email, 20, '...') }}
                                                         </span>
                                                     </div>
-                                                    {{-- <div class="time-until">
-                                                        <small class="text-info">
-                                                            <i class="fas fa-clock me-1"></i>
-                                                            Thành viên từ {{ $comment->user->created_at->format('Y/m/d H:i') }}
-                                                        </small>
-                                                    </div> --}}
                                                 </div>
                                             </div>
                                         </div>
                                     </td>
 
                                     <!-- NỘI DUNG BÌNH LUẬN -->
-                                    <td class="col-3 bg-opacity-10 border-start border-3">
+                                    <td class="col-2">
                                         @if ($comment->content)
-                                            <span class="text-light text-wrap">{{ Str::limit($comment->content, 35, '...') }}</span>
+                                            <span class="text-light text-wrap">{{ Str::limit($comment->content, 25, '...') }}</span>
                                             <div class="mt-1">
                                                 <small class="text-info">
                                                     <i class="fas fa-comments me-1"></i>
@@ -138,7 +132,7 @@
                                     </td>
 
                                     <!-- PHIM -->
-                                    <td class="col-2 bg-opacity-10 border-start border-3">
+                                    <td class="col-3 bg-opacity-10 border-start border-3">
                                         <div class="comment-showtime-info">
                                             <div class="d-flex align-items-center">
                                                 @if($comment->movie->poster && !str_contains($comment->movie->poster, 'placeholder.com'))
@@ -146,37 +140,37 @@
                                                         <img src="{{ $comment->movie->poster }}"
                                                              alt="{{ $comment->movie->title }}"
                                                              class="me-2 rounded"
-                                                             style="width: 40px; height: 60px; object-fit: cover;">
+                                                             style="width: 60px; height: 70px; object-fit: cover;">
                                                     @else
                                                         <img src="{{ asset('storage/' . $comment->movie->poster) }}"
                                                              alt="{{ $comment->movie->title }}"
                                                              class="me-2 rounded"
-                                                             style="width: 40px; height: 60px; object-fit: cover;">
+                                                             style="width: 60px; height: 70px; object-fit: cover;">
                                                     @endif
                                                 @else
                                                     <div class="bg-secondary me-2 rounded d-flex align-items-center justify-content-center"
-                                                         style="width: 40px; height: 60px;">
+                                                         style="width: 60px; height: 70px;">
                                                         <i class="fas fa-film text-white"></i>
                                                     </div>
                                                 @endif
                                                 <div>
                                                     <div class="comment-movie-title mb-1">
-                                                        <i class="fas fa-film me-1 text-primary"></i>
-                                                        <strong class="text-primary text-wrap">
-                                                            {{ Str::limit($comment->movie->title, 20, '...') }}
+                                                        <i class="fas fa-film me-1 "></i>
+                                                        <strong class=" text-wrap">
+                                                            {{ $comment->movie->title }}
                                                         </strong>
                                                     </div>
-                                                    <div class="showtime-price mb-1">
-                                                        <i class="fas fa-calendar me-1 text-warning"></i>
-                                                        <span class="text-warning">
-                                                            {{ $comment->movie->release_date ? $comment->movie->release_date->format('d/m/Y') : 'Chưa có' }}
+                                                    <div class="mb-1">
+                                                        <i class="fas fa-tags me-1 text-muted mt-1"></i>
+                                                        <span class="text-muted">
+                                                            @if($comment->movie->genres->count() > 0)
+                                                            {{ $comment->movie->genres->first()->name ?? 'Không có thể
+                                                            loại' }}
+                                                            @else
+                                                                Không có thể loại
+                                                            @endif
+                                                            • {{ $comment->movie->duration ?? 'N/A' }} phút
                                                         </span>
-                                                    </div>
-                                                    <div class="time-until">
-                                                        <small class="text-info">
-                                                            <i class="fas fa-star me-1"></i>
-                                                            {{ $comment->movie->rating ?? 'Chưa có' }} ⭐
-                                                        </small>
                                                     </div>
                                                 </div>
                                             </div>
@@ -223,14 +217,15 @@
                                             @php
                                                 $canDelete = $this->checkDelete($comment);
                                             @endphp
-                                            <button type="button"
-                                                    class="btn btn-sm @if($canDelete) btn-danger @else btn-secondary @endif"
-                                                    title="Xóa"
-                                                    wire:sc-model="deleteComment({{ $comment->id }})"
-                                                    wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa bình luận này? Hành động này KHÔNG THỂ HOÀN TÁC!"
-                                                    @if(!$canDelete) disabled @endif>
-                                                <i class="fas fa-trash" style="margin-right: 0"></i>
-                                            </button>
+                                            @if($canDelete)
+                                                <button type="button"
+                                                        class="btn btn-sm btn-danger"
+                                                        title="Xóa"
+                                                        wire:sc-model="deleteComment({{ $comment->id }})"
+                                                        wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa bình luận này? Hành động này KHÔNG THỂ HOÀN TÁC!">
+                                                    <i class="fas fa-trash" style="margin-right: 0"></i>
+                                                </button>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>

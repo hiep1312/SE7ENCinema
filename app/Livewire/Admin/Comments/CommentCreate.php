@@ -15,7 +15,7 @@ class CommentCreate extends Component
     public $content;
     public $status = 'active';
     public $movieId;
-    public $parentCommentId;
+    public $parentCommentId = null;
     public $selectedMovie;
     public $parentComment;
     public $childComments = [];

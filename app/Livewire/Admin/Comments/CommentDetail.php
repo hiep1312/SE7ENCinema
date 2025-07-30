@@ -25,6 +25,8 @@ class CommentDetail extends Component
         'deleted' => 'Đã xóa',
     ];
 
+
+
     public $totalReplies = 0;
     public $activeReplies = 0;
     public $showAllReplies = [];
@@ -43,7 +45,8 @@ class CommentDetail extends Component
     {
         $this->comment = $comment->load([
             'user:id,name,avatar,email',
-            'movie:id,title,poster',
+            'movie:id,title,poster,duration',
+            'movie.genres:id,name',
             'parent.user:id,name,avatar',
             'reply.user:id,name,avatar'
         ]);
@@ -105,11 +108,13 @@ class CommentDetail extends Component
         $this->validate();
 
         try {
-            $parentCommentId = $this->comment->parent_comment_id ?? $this->comment->id;
-            $replyCommentId = $this->replyToCommentId ?? $this->comment->id;
+            // Nếu comment hiện tại là comment cha, thì reply sẽ có parent_comment_id = comment hiện tại
+            // Nếu comment hiện tại là comment con, thì reply sẽ có parent_comment_id = parent của comment hiện tại
+            $parentCommentId = $this->comment->parent_comment_id ? $this->comment->parent_comment_id : $this->comment->id;
+            $replyCommentId = $this->replyToCommentId ? $this->replyToCommentId : $this->comment->id;
 
             Comment::create([
-                'user_id' => rand(1, 20),
+                'user_id' => Auth::id(),
                 'movie_id' => $this->comment->movie_id,
                 'parent_comment_id' => $parentCommentId,
                 'reply_comment_id' => $replyCommentId,
@@ -204,21 +209,9 @@ class CommentDetail extends Component
         return $tree;
     }
 
-    public function setTab($tab)
-    {
-        $this->tabCurrent = $tab;
-        $this->showAllReplies = [];
-        request()->merge(['tab' => $tab]);
-        if ($tab === 'replies') {
-            $this->loadRepliesAndStats();
-        } elseif ($tab === 'overview') {
-            $this->comment->refresh();
-        }
-    }
-
     public function deleteComment($commentId)
     {
-        $commentToDelete = \App\Models\Comment::findOrFail($commentId);
+        $commentToDelete = Comment::findOrFail($commentId);
         $commentToDelete->delete(); // chỉ xóa đúng reply này
         session()->flash('success', 'Đã xóa bình luận thành công!');
         if ($this->comment->id == $commentId) {

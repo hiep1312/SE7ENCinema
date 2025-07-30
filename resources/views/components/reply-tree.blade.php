@@ -31,11 +31,19 @@
                     <h6 class="mb-0 text-light">{{ $reply->user->name }}</h6>
                     <small class="text-muted">{{ $reply->created_at->diffForHumans() }}</small>
                 </div>
-                @php
-                    $statusClass = $statusClasses[$reply->status] ?? 'bg-secondary';
-                    $statusLabel = $statusOptions[$reply->status] ?? $reply->status;
-                @endphp
-                <span class="badge {{ $statusClass }} ms-2">{{ $statusLabel }}</span>
+                @switch($reply->status)
+                    @case('active')
+                        <span class="badge bg-success ms-2">Hoạt động</span>
+                        @break
+                    @case('hidden')
+                        <span class="badge bg-warning text-dark ms-2">Ẩn</span>
+                        @break
+                    @case('deleted')
+                        <span class="badge bg-danger ms-2">Đã xóa</span>
+                        @break
+                    @default
+                        <span class="badge bg-secondary ms-2">{{ $statusOptions[$reply->status] ?? $reply->status }}</span>
+                @endswitch
             </div>
             <p class="mb-1 mt-2">{{ $reply->content }}</p>
             <div class="mt-2 d-flex gap-2">
@@ -45,15 +53,14 @@
             @if($reply->children && $reply->children->count() > 0)
                 <div class="mt-2">
                     @component('components.reply-tree', [
-                        'replies' => $reply->children,
-                        'parentId' => $reply->id,
-                        'isRoot' => false,
-                        'level' => $level+1,
-                        'showAllReplies' => $showAllReplies,
-                        'maxRepliesToShow' => $maxRepliesToShow,
-                        'statusOptions' => $statusOptions,
-                        'statusClasses' => $statusClasses,
-                    ])
+    'replies' => $reply->children,
+    'parentId' => $reply->id,
+    'isRoot' => false,
+    'level' => $level+1,
+    'showAllReplies' => $showAllReplies,
+    'maxRepliesToShow' => $maxRepliesToShow,
+    'statusOptions' => $statusOptions,
+])
                     @endcomponent
                 </div>
             @endif

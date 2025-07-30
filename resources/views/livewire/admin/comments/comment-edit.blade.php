@@ -109,23 +109,81 @@
                                 <small class="text-muted">Tối đa 1000 ký tự</small>
                             </div>
 
+                            @if(count($childComments) > 0)
+                                    <hr class="border-light">
+                                    <div class="row g-3 p-3">
+                                        @foreach ($childComments as $index => $child)
+                                            <div class="col-12 mb-4">
+                                                <div class="card position-relative overflow-hidden" style="background-color: #1a1a1a; border: 1px solid #333;">
+                                                    <div class="position-absolute top-0 start-0 h-100" style="width: 4px; background: linear-gradient(to bottom, #6b7280, #374151);"></div>
+                                                    <button type="button"
+                                                            class="btn btn-sm position-absolute delete-btn"
+                                                            wire:click="removeChildComment({{ $index }})"
+                                                            style="top: 1rem; right: 1rem; color: #6b7280; background: transparent; border: none; border-radius: 50%; padding: 0.5rem; transition: all 0.2s ease;">
+                                                        <i class="fa-solid fa-x" style="margin-right: 0"></i></button>
+                                                    <div class="card-body p-4">
+                                                        <div class="mb-4">
+                                                            <h3 class="text-white fw-semibold d-flex align-items-center gap-2" style="font-size: 1.125rem;">
+                                                                <span class="d-flex align-items-center justify-content-center text-white fw-bold rounded-circle"
+                                                                    style="width: 2rem; height: 2rem; background: linear-gradient(to right, #6b7280, #374151); font-size: 0.875rem;">
+                                                                    {{ $index + 1 }}
+                                                                </span>
+                                                                Bình luận con {{ $index + 1 }}
+                                                            </h3>
+                                                        </div>
+                                                        <div class="row g-3">
+                                                            <div class="col-md-8">
+                                                                <div class="mb-3">
+                                                                    <label class="form-label text-light">Nội dung <span class="text-danger">*</span></label>
+                                                                    <textarea wire:model="childComments.{{ $index }}.content"
+                                                                              rows="3"
+                                                                              placeholder="Nhập nội dung bình luận con..."
+                                                                              class="form-control bg-dark text-light border-light @error('childComments.'.$index.'.content') is-invalid @enderror"></textarea>
+                                                                    @error('childComments.'.$index.'.content')
+                                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="mb-3">
+                                                                    <label class="form-label text-light">Trạng thái <span class="text-danger">*</span></label>
+                                                                    <select wire:model="childComments.{{ $index }}.status"
+                                                                            class="form-select bg-dark text-light border-light @error('childComments.'.$index.'.status') is-invalid @enderror">
+                                                                        <option value="active">Hoạt động</option>
+                                                                        <option value="hidden">Đã ẩn</option>
+                                                                    </select>
+                                                                    @error('childComments.'.$index.'.status')
+                                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
+
+                             <div class="mt-3">
+                                    <button type="button" class="btn btn-primary" wire:click="addChildComment">
+                                        <i class="fas fa-plus"></i> Thêm bình luận con
+                                    </button>
+                                </div>
+
                              <!-- Action Buttons -->
-                             <div class="d-flex justify-content-between py-3 border-top border-light">
-                                <button type="submit" class="btn btn-warning">
+                             <div class="d-flex justify-content-between py-3 ">
+                                <button type="submit" class="btn btn-success">
                                     <i class="fas fa-save me-1"></i>Cập nhật bình luận
                                 </button>
                                 <a href="{{ route('admin.comments.index') }}" class="btn btn-outline-danger">
-                                    <i class="fas fa-times me-1"></i>Hủy
+                                    Hủy bỏ
                                 </a>
                             </div>
 
                             <!-- Bình luận con (child comments) -->
                             @if(!$comment->parent_comment_id)
-                                <div class="mt-3">
-                                    <button type="button" class="btn btn-info" wire:click="addChildComment">
-                                        <i class="fas fa-plus"></i> Thêm bình luận con
-                                    </button>
-                                </div>
+
                                 <!-- Current Comment Info -->
                                 <div class="row mt-4">
                                     <div class="col-12">
@@ -200,61 +258,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                @if(count($childComments) > 0)
-                                    <hr class="border-light">
-                                    <div class="row g-3 p-3">
-                                        @foreach ($childComments as $index => $child)
-                                            <div class="col-12 mb-4">
-                                                <div class="card position-relative overflow-hidden" style="background-color: #1a1a1a; border: 1px solid #333;">
-                                                    <div class="position-absolute top-0 start-0 h-100" style="width: 4px; background: linear-gradient(to bottom, #6b7280, #374151);"></div>
-                                                    <button type="button"
-                                                            class="btn btn-sm position-absolute delete-btn"
-                                                            wire:click="removeChildComment({{ $index }})"
-                                                            style="top: 1rem; right: 1rem; color: #6b7280; background: transparent; border: none; border-radius: 50%; padding: 0.5rem; transition: all 0.2s ease;">
-                                                        <i class="fa-solid fa-x" style="margin-right: 0"></i></button>
-                                                    <div class="card-body p-4">
-                                                        <div class="mb-4">
-                                                            <h3 class="text-white fw-semibold d-flex align-items-center gap-2" style="font-size: 1.125rem;">
-                                                                <span class="d-flex align-items-center justify-content-center text-white fw-bold rounded-circle"
-                                                                    style="width: 2rem; height: 2rem; background: linear-gradient(to right, #6b7280, #374151); font-size: 0.875rem;">
-                                                                    {{ $index + 1 }}
-                                                                </span>
-                                                                Bình luận con {{ $index + 1 }}
-                                                            </h3>
-                                                        </div>
-                                                        <div class="row g-3">
-                                                            <div class="col-md-8">
-                                                                <div class="mb-3">
-                                                                    <label class="form-label text-light">Nội dung <span class="text-danger">*</span></label>
-                                                                    <textarea wire:model="childComments.{{ $index }}.content"
-                                                                              rows="3"
-                                                                              placeholder="Nhập nội dung bình luận con..."
-                                                                              class="form-control bg-dark text-light border-light @error('childComments.'.$index.'.content') is-invalid @enderror"></textarea>
-                                                                    @error('childComments.'.$index.'.content')
-                                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                                    @enderror
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="mb-3">
-                                                                    <label class="form-label text-light">Trạng thái <span class="text-danger">*</span></label>
-                                                                    <select wire:model="childComments.{{ $index }}.status"
-                                                                            class="form-select bg-dark text-light border-light @error('childComments.'.$index.'.status') is-invalid @enderror">
-                                                                        <option value="active">Hoạt động</option>
-                                                                        <option value="hidden">Đã ẩn</option>
-                                                                    </select>
-                                                                    @error('childComments.'.$index.'.status')
-                                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                                    @enderror
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                @endif
                             @endif
                         </form>
                     </div>
