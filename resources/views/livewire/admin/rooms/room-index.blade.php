@@ -1,4 +1,4 @@
-<div class="scRender">
+<div>
     @if (session()->has('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert" wire:ignore>
             {{ session('success') }}
@@ -32,7 +32,7 @@
             </div>
         </div>
 
-        <div class="card bg-dark" wire:poll.6s>
+        <div class="card bg-dark" wire:poll.5s>
             <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <div class="row g-3">
                     <!-- Tìm kiếm -->

@@ -36,6 +36,7 @@ use App\Livewire\Admin\Users\UserCreate;
 use App\Livewire\Admin\Users\UserDetail;
 use App\Livewire\Admin\Users\UserEdit;
 use App\Livewire\Admin\Users\UserIndex;
+use App\Livewire\Test;
 use App\Livewire\Admin\Ratings\RatingIndex;
 use App\Livewire\Admin\Scanner\Index as ScannerIndex;
 use App\Livewire\Admin\Showtimes\ShowtimeCreate;
@@ -43,7 +44,6 @@ use App\Livewire\Admin\Showtimes\ShowtimeEdit;
 use App\Livewire\Admin\Showtimes\ShowtimeIndex;
 use App\Livewire\Admin\Tickets\TicketIndex;
 use App\Livewire\Client\Ticket\Index as TicketIndexClient;
-use App\Livewire\Test;
 
 Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->group(function () {
     /* Banners */
@@ -185,4 +185,4 @@ Route::name('client.')->group(function () {
 
 Route::view('/', 'welcome')->name('welcome');
 Route::view('/clienttest', 'clienttest')->name('clienttest');
-Route::get('/test', Test::class)->name('test');
+Route::get('/test', Test::class);

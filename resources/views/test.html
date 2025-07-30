@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+        <ul id="test-list">
+
+            <li id="item-1">Item 1</li>
+            <li id="item-2">Item 2</li>
+            <li id="item-3">Item 3</li>
+            <li>New Item</li>
+        </ul>
+        <script>
+        const newItem = document.createElement('li');
+        newItem.textContent = `New Item`;
+
+        const container = document.querySelector('#test-list');
+        const item = document.getElementById('item-2');
+
+        console.log(container.insertBefore(newItem, null));
+    </script>
+    </body>
+</html>

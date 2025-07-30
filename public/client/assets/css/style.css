@@ -27,7 +27,7 @@
 /*--------------
 1.Theme default CSS
 --------------------------*/
-body,
+/* body,
 html {
 	font-family: 'Lato', sans-serif;
 	font-size: 16px;
@@ -106,7 +106,7 @@ ul {
 	list-style: none;
 	margin: 0;
 	padding: 0;
-}
+} */
 
 /*-- Preloader css start --*/
 #preloader {
