@@ -231,53 +231,87 @@
                                             Chiếu
                                         </h5>
                                         {{-- Room Stats Filter --}}
-<div class="dropdown mb-3">
-    <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="fas fa-filter me-1"></i>
-        @switch($roomStatsPeriod)
-            @case('3_days')
-                                                    3 ngày gần nhất
+                                        <div class="dropdown mb-3">
+                                            <button class="btn btn-outline-primary btn-sm dropdown-toggle"
+                                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fas fa-filter me-1"></i>
+                                                @switch($roomStatsPeriod)
+                                                    @case('3_days')
+                                                        3 ngày gần nhất
                                                     @break
-                                                @case('7_days')
-                                                    7 ngày gần nhất
+
+                                                    @case('7_days')
+                                                        7 ngày gần nhất
                                                     @break
-                                                @case('30_days')
-                                                    30 ngày gần nhất
+
+                                                    @case('30_days')
+                                                        30 ngày gần nhất
                                                     @break
-                                                @case('1_month')
-                                                    1 tháng gần nhất
+
+                                                    @case('1_month')
+                                                        1 tháng gần nhất
                                                     @break
-                                                @case('3_months')
-                                                    3 tháng gần nhất
+
+                                                    @case('3_months')
+                                                        3 tháng gần nhất
                                                     @break
-                                                @case('1_year')
-                                                    1 năm gần nhất
+
+                                                    @case('1_year')
+                                                        1 năm gần nhất
                                                     @break
-                                                @case('2_years')
-                                                    2 năm gần nhất
+
+                                                    @case('2_years')
+                                                        2 năm gần nhất
                                                     @break
-                                                @default
-                                                    7 ngày gần nhất
-        @endswitch
-    </button>
-    <ul class="dropdown-menu dropdown-menu-dark">
-        <li><h6 class="dropdown-header text-primary">Ngày</h6></li>
-        <li><a class="dropdown-item" href="#" wire:click.prevent="changeRoomStatsPeriod('3_days')">3 ngày gần nhất</a></li>
-        <li><a class="dropdown-item" href="#" wire:click.prevent="changeRoomStatsPeriod('7_days')">7 ngày gần nhất</a></li>
-        <li><a class="dropdown-item" href="#" wire:click.prevent="changeRoomStatsPeriod('30_days')">30 ngày gần nhất</a></li>
-                                                    <li><hr class="dropdown-divider"></li>
-                                            <li><h6 class="dropdown-header text-primary">Tháng</h6></li>
-        <li><a class="dropdown-item" href="#" wire:click.prevent="changeRoomStatsPeriod('1_month')">1 tháng</a></li>
-        <li><a class="dropdown-item" href="#" wire:click.prevent="changeRoomStatsPeriod('3_months')">3 tháng</a></li>
-                                                    <li><hr class="dropdown-divider"></li>
-                                            <li><h6 class="dropdown-header text-primary">Năm</h6></li>
-        <li><a class="dropdown-item" href="#" wire:click.prevent="changeRoomStatsPeriod('1_year')">1 năm</a></li>
-        <li><a class="dropdown-item" href="#" wire:click.prevent="changeRoomStatsPeriod('2_years')">2 năm</a></li>
-    </ul>
-</div>
+
+                                                    @default
+                                                        7 ngày gần nhất
+                                                @endswitch
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-dark">
+                                                <li>
+                                                    <h6 class="dropdown-header text-primary">Ngày</h6>
+                                                </li>
+                                                <li><a class="dropdown-item" href="#"
+                                                        wire:click.prevent="changeRoomStatsPeriod('3_days')">3 ngày gần
+                                                        nhất</a></li>
+                                                <li><a class="dropdown-item" href="#"
+                                                        wire:click.prevent="changeRoomStatsPeriod('7_days')">7 ngày gần
+                                                        nhất</a></li>
+                                                <li><a class="dropdown-item" href="#"
+                                                        wire:click.prevent="changeRoomStatsPeriod('30_days')">30 ngày
+                                                        gần nhất</a></li>
+                                                <li>
+                                                    <hr class="dropdown-divider">
+                                                </li>
+                                                <li>
+                                                    <h6 class="dropdown-header text-primary">Tháng</h6>
+                                                </li>
+                                                <li><a class="dropdown-item" href="#"
+                                                        wire:click.prevent="changeRoomStatsPeriod('1_month')">1
+                                                        tháng</a></li>
+                                                <li><a class="dropdown-item" href="#"
+                                                        wire:click.prevent="changeRoomStatsPeriod('3_months')">3
+                                                        tháng</a></li>
+                                                <li>
+                                                    <hr class="dropdown-divider">
+                                                </li>
+                                                <li>
+                                                    <h6 class="dropdown-header text-primary">Năm</h6>
+                                                </li>
+                                                <li><a class="dropdown-item" href="#"
+                                                        wire:click.prevent="changeRoomStatsPeriod('1_year')">1 năm</a>
+                                                </li>
+                                                <li><a class="dropdown-item" href="#"
+                                                        wire:click.prevent="changeRoomStatsPeriod('2_years')">2 năm</a>
+                                                </li>
+                                            </ul>
+                                        </div>
 
                                     </div>
+                                    <div wire:ignore>
                                     <div id="allRoomsStatsChart" style="height: 400px;"></div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -288,41 +322,57 @@
                                         <h5 class="text-white mb-0">
                                             <i class="fas fa-chart-pie me-2 text-success"></i>Tỷ Lệ Lấp Đầy (%)
                                         </h5>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <div class="btn-group shadow-sm" role="group">
-                                                <select wire:model="occupancyYear"
-                                                    wire:change="changeOccupancyYear($event.target.value)"
-                                                    class="form-select form-select-sm fw-bold text-white border-0 rounded-start"
-                                                    style="background: linear-gradient(45deg, #28a745, #1e7e34); min-width: 90px; cursor: pointer;">
-                                                    @foreach ($availableYears as $year)
-                                                        <option value="{{ $year }}"
-                                                            class="bg-success text-white">{{ $year }}</option>
-                                                    @endforeach
-                                                </select>
-                                                <select wire:model="occupancyMonth"
-                                                    wire:change="changeOccupancyMonth($event.target.value)"
-                                                    class="form-select form-select-sm fw-bold text-white border-0"
-                                                    style="background: linear-gradient(45deg, #28a745, #1e7e34); min-width: 100px; cursor: pointer;">
-                                                    @foreach ($availableMonths as $month)
-                                                        <option value="{{ $month }}"
-                                                            class="bg-success text-white">Tháng {{ $month }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                <select wire:model="occupancyDay"
-                                                    wire:change="changeOccupancyDay($event.target.value)"
-                                                    class="form-select form-select-sm fw-bold text-white border-0 rounded-end"
-                                                    style="background: linear-gradient(45deg, #28a745, #1e7e34); min-width: 90px; cursor: pointer;">
-                                                    @foreach ($availableDays as $day)
-                                                        <option value="{{ $day }}"
-                                                            class="bg-success text-white">Ngày {{ $day }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
+                                        <div class="dropdown">
+                                            <button class="btn btn-outline-primary btn-sm dropdown-toggle"
+                                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fas fa-filter me-1"></i>
+                                                @switch($occupancyPeriod)
+                                                    @case('3_days')
+                                                        3 ngày gần nhất
+                                                    @break
+
+                                                    @case('7_days')
+                                                        7 ngày gần nhất
+                                                    @break
+
+                                                    @case('30_days')
+                                                        30 ngày gần nhất
+                                                    @break
+
+                                                    @case('1_month')
+                                                        1 tháng gần nhất
+                                                    @break
+
+                                                    @case('3_months')
+                                                        3 tháng gần nhất
+                                                    @break
+
+                                                    @case('1_year')
+                                                        1 năm gần nhất
+                                                    @break
+
+                                                    @case('2_years')
+                                                        2 năm gần nhất
+                                                    @break
+
+                                                    @default
+                                                        7 ngày gần nhất
+                                                @endswitch
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-dark">
+                                                <li><a class="dropdown-item" href="#" wire:click.prevent="changeOccupancyPeriod('3_days')">3 ngày gần nhất</a></li>
+<li><a class="dropdown-item" href="#" wire:click.prevent="changeOccupancyPeriod('7_days')">7 ngày gần nhất</a></li>
+<li><a class="dropdown-item" href="#" wire:click.prevent="changeOccupancyPeriod('30_days')">30 ngày gần nhất</a></li>
+<li><a class="dropdown-item" href="#" wire:click.prevent="changeOccupancyPeriod('1_month')">1 tháng gần nhất</a></li>
+<li><a class="dropdown-item" href="#" wire:click.prevent="changeOccupancyPeriod('3_months')">3 tháng gần nhất</a></li>
+<li><a class="dropdown-item" href="#" wire:click.prevent="changeOccupancyPeriod('1_year')">1 năm gần nhất</a></li>
+<li><a class="dropdown-item" href="#" wire:click.prevent="changeOccupancyPeriod('2_years')">2 năm gần nhất</a></li>
+                                            </ul>
                                         </div>
                                     </div>
+                                     <div wire:ignore>
                                     <div id="occupancyChart" style="height: 400px;"></div>
+                                     </div>
                                 </div>
                             </div>
 
@@ -334,42 +384,57 @@
                                             <i class="fas fa-chair me-2 text-warning"></i>Tình Trạng Ghế Phòng
                                             {{ $room->name }}
                                         </h5>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <div class="btn-group shadow-sm" role="group">
-                                                <select wire:model="seatStatusYear"
-                                                    wire:change="changeSeatStatusYear($event.target.value)"
-                                                    class="form-select form-select-sm fw-bold text-dark border-0 rounded-start"
-                                                    style="background: linear-gradient(45deg, #ffc107, #e0a800); min-width: 90px; cursor: pointer;">
-                                                    @foreach ($availableYears as $year)
-                                                        <option value="{{ $year }}"
-                                                            class="bg-warning text-dark">{{ $year }}</option>
-                                                    @endforeach
-                                                </select>
-                                                <select wire:model="seatStatusMonth"
-                                                    wire:change="changeSeatStatusMonth($event.target.value)"
-                                                    class="form-select form-select-sm fw-bold text-dark border-0"
-                                                    style="background: linear-gradient(45deg, #ffc107, #e0a800); min-width: 100px; cursor: pointer;">
-                                                    @foreach ($availableMonths as $month)
-                                                        <option value="{{ $month }}"
-                                                            class="bg-warning text-dark">Tháng {{ $month }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                <select wire:model="seatStatusDay"
-                                                    wire:change="changeSeatStatusDay($event.target.value)"
-                                                    class="form-select form-select-sm fw-bold text-dark border-0 rounded-end"
-                                                    style="background: linear-gradient(45deg, #ffc107, #e0a800); min-width: 90px; cursor: pointer;">
-                                                    @foreach ($availableDays as $day)
-                                                        <option value="{{ $day }}"
-                                                            class="bg-warning text-dark">Ngày {{ $day }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
+                                        <div class="dropdown">
+                                            <button class="btn btn-outline-primary btn-sm dropdown-toggle"
+                                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fas fa-filter me-1"></i>
+                                                @switch($seatStatusPeriod)
+                                                    @case('3_days')
+                                                        3 ngày gần nhất
+                                                    @break
+
+                                                    @case('7_days')
+                                                        7 ngày gần nhất
+                                                    @break
+
+                                                    @case('30_days')
+                                                        30 ngày gần nhất
+                                                    @break
+
+                                                    @case('1_month')
+                                                        1 tháng gần nhất
+                                                    @break
+
+                                                    @case('3_months')
+                                                        3 tháng gần nhất
+                                                    @break
+
+                                                    @case('1_year')
+                                                        1 năm gần nhất
+                                                    @break
+
+                                                    @case('2_years')
+                                                        2 năm gần nhất
+                                                    @break
+
+                                                    @default
+                                                        7 ngày gần nhất
+                                                @endswitch
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-dark">
+                                                <li><a class="dropdown-item" href="#" wire:click.prevent="changeSeatStatusPeriod('3_days')">3 ngày gần nhất</a></li>
+<li><a class="dropdown-item" href="#" wire:click.prevent="changeSeatStatusPeriod('7_days')">7 ngày gần nhất</a></li>
+<li><a class="dropdown-item" href="#" wire:click.prevent="changeSeatStatusPeriod('30_days')">30 ngày gần nhất</a></li>
+<li><a class="dropdown-item" href="#" wire:click.prevent="changeSeatStatusPeriod('1_month')">1 tháng gần nhất</a></li>
+<li><a class="dropdown-item" href="#" wire:click.prevent="changeSeatStatusPeriod('3_months')">3 tháng gần nhất</a></li>
+<li><a class="dropdown-item" href="#" wire:click.prevent="changeSeatStatusPeriod('1_year')">1 năm gần nhất</a></li>
+<li><a class="dropdown-item" href="#" wire:click.prevent="changeSeatStatusPeriod('2_years')">2 năm gần nhất</a></li>
+                                            </ul>
                                         </div>
                                     </div>
+                                     <div wire:ignore>
                                     <div id="seatStatusChart" style="height: 300px;"></div>
-
+                                        </div>
                                     <!-- Seat Statistics Table -->
                                     <!-- Seat Statistics Table - FIX: Dynamic display for all seat types -->
                                     <div class="mt-3">
@@ -447,41 +512,57 @@
                                             <i class="fas fa-film me-2 text-info"></i>Phim Được Xem Nhiều Nhất Của
                                             Phòng {{ $room->name }}
                                         </h5>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <div class="btn-group shadow-sm" role="group">
-                                                <select wire:model="roomMoviesYear"
-                                                    wire:change="changeRoomMoviesYear($event.target.value)"
-                                                    class="form-select form-select-sm fw-bold text-white border-0 rounded-start"
-                                                    style="background: linear-gradient(45deg, #17a2b8, #138496); min-width: 90px; cursor: pointer;">
-                                                    @foreach ($availableYears as $year)
-                                                        <option value="{{ $year }}"
-                                                            class="bg-info text-white">{{ $year }}</option>
-                                                    @endforeach
-                                                </select>
-                                                <select wire:model="roomMoviesMonth"
-                                                    wire:change="changeRoomMoviesMonth($event.target.value)"
-                                                    class="form-select form-select-sm fw-bold text-white border-0"
-                                                    style="background: linear-gradient(45deg, #17a2b8, #138496); min-width: 100px; cursor: pointer;">
-                                                    @foreach ($availableMonths as $month)
-                                                        <option value="{{ $month }}"
-                                                            class="bg-info text-white">Tháng {{ $month }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                <select wire:model="roomMoviesDay"
-                                                    wire:change="changeRoomMoviesDay($event.target.value)"
-                                                    class="form-select form-select-sm fw-bold text-white border-0 rounded-end"
-                                                    style="background: linear-gradient(45deg, #17a2b8, #138496); min-width: 90px; cursor: pointer;">
-                                                    @foreach ($availableDays as $day)
-                                                        <option value="{{ $day }}"
-                                                            class="bg-info text-white">Ngày {{ $day }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
+                                        <div class="dropdown">
+                                            <button class="btn btn-outline-primary btn-sm dropdown-toggle"
+                                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fas fa-filter me-1"></i>
+                                                @switch($roomMoviesPeriod)
+                                                    @case('3_days')
+                                                        3 ngày gần nhất
+                                                    @break
+
+                                                    @case('7_days')
+                                                        7 ngày gần nhất
+                                                    @break
+
+                                                    @case('30_days')
+                                                        30 ngày gần nhất
+                                                    @break
+
+                                                    @case('1_month')
+                                                        1 tháng gần nhất
+                                                    @break
+
+                                                    @case('3_months')
+                                                        3 tháng gần nhất
+                                                    @break
+
+                                                    @case('1_year')
+                                                        1 năm gần nhất
+                                                    @break
+
+                                                    @case('2_years')
+                                                        2 năm gần nhất
+                                                    @break
+
+                                                    @default
+                                                        7 ngày gần nhất
+                                                @endswitch
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-dark">
+                                                <li><a class="dropdown-item" href="#" wire:click.prevent="changeRoomMoviesPeriod('3_days')">3 ngày gần nhất</a></li>
+<li><a class="dropdown-item" href="#" wire:click.prevent="changeRoomMoviesPeriod('7_days')">7 ngày gần nhất</a></li>
+<li><a class="dropdown-item" href="#" wire:click.prevent="changeRoomMoviesPeriod('30_days')">30 ngày gần nhất</a></li>
+<li><a class="dropdown-item" href="#" wire:click.prevent="changeRoomMoviesPeriod('1_month')">1 tháng gần nhất</a></li>
+<li><a class="dropdown-item" href="#" wire:click.prevent="changeRoomMoviesPeriod('3_months')">3 tháng gần nhất</a></li>
+<li><a class="dropdown-item" href="#" wire:click.prevent="changeRoomMoviesPeriod('1_year')">1 năm gần nhất</a></li>
+<li><a class="dropdown-item" href="#" wire:click.prevent="changeRoomMoviesPeriod('2_years')">2 năm gần nhất</a></li>
+                                            </ul>
                                         </div>
                                     </div>
+                                     <div wire:ignore>
                                     <div id="roomMoviesChart" style="height: 400px;"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -738,16 +819,16 @@
                                             const enhancedSeries = seatStatusData.series.map((serie, statusIndex) => {
                                                 const statusName = serie.name;
                                                 const statusOpacity = statusIndex === 0 ? 0.4 : (statusIndex === 1 ? 0.8 :
-                                                0.9); // Available, Booked, Maintenance
+                                                    0.9); // Available, Booked, Maintenance
                                                 const statusPattern = statusIndex === 2 ? 'diagonalLines' :
-                                                'solid'; // Maintenance gets pattern
+                                                    'solid'; // Maintenance gets pattern
 
                                                 return {
                                                     name: statusName,
                                                     data: serie.data.map((value, categoryIndex) => {
                                                         const seatType = seatStatusData.categories[categoryIndex];
                                                         const baseColor = seatTypeColors[seatType] ||
-                                                        '#6c757d'; // Fallback to gray
+                                                            '#6c757d'; // Fallback to gray
 
                                                         return {
                                                             x: seatType,
@@ -846,7 +927,8 @@
                                                     }
                                                 },
                                                 colors: ['rgba(255,255,255,0.4)', 'rgba(255,255,255,0.8)',
-                                                'rgba(255,255,255,0.9)'], // Fallback colors
+                                                    'rgba(255,255,255,0.9)'
+                                                ], // Fallback colors
                                                 fill: {
                                                     opacity: [0.4, 0.8, 0.9], // Different opacity for each status
                                                     type: ['solid', 'solid', 'pattern'],
@@ -957,7 +1039,7 @@
                                                                 const statusColor = statusColors[idx];
 
                                                                 const patternText = statusColor.pattern ? ' (////)' :
-                                                                '';
+                                                                    '';
                                                                 const colorStyle =
                                                                     `background: ${statusColor.color}; opacity: ${statusColor.opacity};`;
 
