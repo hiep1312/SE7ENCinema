@@ -27,15 +27,12 @@ class MovieDetail extends Component
     {
         $this->movie = Movie::with('genres', 'ratings')->findOrFail($movie);
     }
-    public function changeDailyChart($time)
+    /* public function updatedTabCurrent()
     {
-        $this->dailyChart = $time;
-    }
-    public function updatedTabCurrent(){
         $this->js(<<<JS
              setTimeout(renderAllCharts, 150);
         JS);
-    }
+    } */
     public function updateStatusMovieAndShowtimes()
     {
         $releaseDate = Carbon::parse($this->movie->release_date);
@@ -95,7 +92,7 @@ class MovieDetail extends Component
         if ($this->dailyChart == 'monthly') {
             for ($i = 6; $i >= 0; $i--) {
                 $date = Carbon::now()->subMonths($i);
-                $dates[] = $date; 
+                $dates[] = $date;
             }
         } elseif ($this->dailyChart == 'daily') {
             for ($i = 6; $i >= 0; $i--) {
@@ -110,7 +107,12 @@ class MovieDetail extends Component
                 $dateStr = $date->format('m-d');
             }
             $bookingsOnDate = $bookingChart->filter(function ($booking) use ($date) {
-                return Carbon::parse($booking->showtime->start_time)->isSameDay($date);
+                $bookingDate = Carbon::parse($booking->showtime->start_time);
+                if ($this->dailyChart == 'monthly') {
+                    return $bookingDate->year === $date->year && $bookingDate->month === $date->month;
+                } elseif ($this->dailyChart == 'daily') {
+                    return $bookingDate->isSameDay($date);
+                }
             });
             $paidCount = $bookingsOnDate->where('status', 'paid')->count();
             $cancelledCount = $bookingsOnDate->whereIn('status', ['failed', 'expired'])->count();
@@ -158,12 +160,14 @@ class MovieDetail extends Component
         $totalCount = (clone $bookings)->where('status', 'paid')->count();
         $room = (clone $bookingChart)->pluck('showtime.room');
         $caps = $room->sum('capacity');
-        //
+
+        $this->dispatch('updateData', $bookingCountFormatted, $bookingStatByDate);
+
         $totalOrdersIn30Days = (clone $bookings)->whereBetween('created_at', [now()->subDays(30), now()])->count();
         $bookings = $bookings->paginate(15);
         $ratings = $this->movie->ratings()->with('user')->orderBy('created_at', 'desc')->paginate(10, ['*'], 'ratings');
         $comments = $this->movie->comments()->with('user')->orderBy('created_at', 'desc')->paginate(10, ['*'], 'comments');
 
-        return view('livewire.admin.movies.movie-detail', compact('recentShowtimes', 'upcomingShowtimes', 'ratings', 'comments', 'bookings', 'totalOrdersIn30Days', 'bookingCountFormatted', 'todayCapacities', 'dates', 'bookingStatByDate', 'caps', 'totalCount','totalMax'));
+        return view('livewire.admin.movies.movie-detail', compact('recentShowtimes', 'upcomingShowtimes', 'ratings', 'comments', 'bookings', 'totalOrdersIn30Days', 'bookingCountFormatted', 'todayCapacities', 'dates', 'bookingStatByDate', 'caps', 'totalCount', 'totalMax'));
     }
 }
