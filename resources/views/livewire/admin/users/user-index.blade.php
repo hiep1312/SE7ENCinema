@@ -13,7 +13,7 @@
         </div>
     @endif
 
-    <div class="container-lg mb-4">
+    <div class="scRender container-lg mb-4">
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2 class="text-light">Quản lý người dùng</h2>
             <div>

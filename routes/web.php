@@ -43,7 +43,6 @@ use App\Livewire\Admin\Showtimes\ShowtimeEdit;
 use App\Livewire\Admin\Showtimes\ShowtimeIndex;
 use App\Livewire\Admin\Tickets\TicketIndex;
 use App\Livewire\Client\Ticket\Index as TicketIndexClient;
-use App\Livewire\Admin\Test\IndexChart;
 
 Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->group(function () {
     /* Banners */
@@ -142,11 +141,6 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->
         Route::get('/edit/{promotion}', PromotionEdit::class)->name('edit');
         Route::get('/detail/{promotion}', PromotionDetail::class)->name('detail');
     });
-
-    /* Test */
-     Route::prefix('/test')->name('test.')->group(function () {
-         Route::get('/', IndexChart::class)->name('index');
-     });
 
     /* Template */
     Route::view('/dashboard', 'livewire.admin.template.dashboard')->name('dashboard');

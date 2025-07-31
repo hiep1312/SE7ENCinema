@@ -39,6 +39,7 @@ class BookingDetail extends Component
     public $topMoviesPeriod = '7_days';
     public $seatsPeriod = '7_days';
     public $foodsPeriod = '7_days';
+    public $topFoodsPeriod = '7_days';
 
     // Filter options for charts - không cần nữa vì dùng khoảng thời gian cố định
     // public $availableYears = [], $availableMonths = [];
@@ -53,16 +54,6 @@ class BookingDetail extends Component
         $this->cleanupBookingsAndUpdateData(['isConfirmed' => true]);
         $this->loadChartData();
     }
-
-    public function updatedTabCurrent(){
-        $this->js(<<<JS
-        setTimeout(
-            renderAllCharts,
-            200
-        )
-     JS);
-    }
-
     public function changeRevenuePeriod($period)
     {
         $this->revenuePeriod = $period;
@@ -87,6 +78,12 @@ class BookingDetail extends Component
         $this->loadChartData();
     }
 
+    public function changeTopFoodsPeriod($period)
+    {
+        $this->topFoodsPeriod = $period;
+        $this->loadChartData();
+    }
+
     public function loadChartData()
     {
         // 1. Doanh thu theo thời gian
@@ -98,14 +95,11 @@ class BookingDetail extends Component
         // 3. Dữ liệu ghế theo thời gian
         $this->seatsData = $this->getSeatsData($this->seatsPeriod);
 
-        // 4. Top phim và phòng được đặt nhiều nhất
-        $this->topMoviesAndRooms = $this->getTopMoviesAndRoomsByPeriod($this->seatsPeriod);
-
-        // 5. Dữ liệu món ăn theo thời gian
+        // 4. Dữ liệu món ăn theo thời gian
         $this->foodsData = $this->getFoodsData($this->foodsPeriod);
 
-        // 6. Top món ăn được đặt nhiều nhất
-        $this->topFoods = $this->getTopFoodsByPeriod($this->foodsPeriod);
+        // 5. Top món ăn được đặt nhiều nhất
+        $this->topFoods = $this->getTopFoodsByPeriod($this->topFoodsPeriod);
     }
 
     private function getRevenueData($period)
@@ -185,6 +179,42 @@ class BookingDetail extends Component
                     'avgRevenue' => $avgRevenueData
                 ];
 
+            case '15_days':
+                // Lấy dữ liệu 15 ngày gần nhất (bao gồm hôm nay)
+                $startDate = now()->subDays(14)->startOfDay();
+                $endDate = now()->endOfDay();
+
+                $data = $query->selectRaw('DATE(created_at) as date, SUM(total_price) as revenue, COUNT(*) as bookings')
+                    ->whereBetween('created_at', [$startDate, $endDate])
+                    ->groupBy('date')
+                    ->orderBy('date')
+                    ->get();
+
+                // Tạo dữ liệu cho tất cả 15 ngày
+                $labels = [];
+                $revenueData = [];
+                $bookingsData = [];
+                $avgRevenueData = [];
+
+                for ($i = 0; $i < 15; $i++) {
+                    $currentDate = now()->subDays(14 - $i)->format('Y-m-d');
+                    $dateLabel = now()->subDays(14 - $i)->format('d/m');
+
+                    $dayData = $data->where('date', $currentDate)->first();
+
+                    $labels[] = $dateLabel;
+                    $revenueData[] = $dayData ? $dayData->revenue : 0;
+                    $bookingsData[] = $dayData ? $dayData->bookings : 0;
+                    $avgRevenueData[] = $dayData && $dayData->bookings > 0 ? round($dayData->revenue / $dayData->bookings) : 0;
+                }
+
+                return [
+                    'labels' => $labels,
+                    'revenue' => $revenueData,
+                    'bookings' => $bookingsData,
+                    'avgRevenue' => $avgRevenueData
+                ];
+
             case '30_days':
                 // Lấy dữ liệu 30 ngày gần nhất (bao gồm hôm nay)
                 $startDate = now()->subDays(29)->startOfDay();
@@ -221,9 +251,9 @@ class BookingDetail extends Component
                     'avgRevenue' => $avgRevenueData
                 ];
 
-            case '1_month':
-                // Lấy dữ liệu 1 tháng gần nhất (30 ngày)
-                $startDate = now()->subMonth()->startOfDay();
+            case '3_months':
+                // Lấy dữ liệu 3 tháng gần nhất
+                $startDate = now()->subMonths(2)->startOfDay();
                 $endDate = now()->endOfDay();
 
                 $data = $query->selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, SUM(total_price) as revenue, COUNT(*) as bookings')
@@ -252,9 +282,40 @@ class BookingDetail extends Component
                     'avgRevenue' => $avgRevenueData
                 ];
 
-            case '3_months':
-                // Lấy dữ liệu 3 tháng gần nhất
-                $startDate = now()->subMonths(2)->startOfDay();
+            case '6_months':
+                // Lấy dữ liệu 6 tháng gần nhất
+                $startDate = now()->subMonths(5)->startOfDay();
+                $endDate = now()->endOfDay();
+
+                $data = $query->selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, SUM(total_price) as revenue, COUNT(*) as bookings')
+                    ->whereBetween('created_at', [$startDate, $endDate])
+                    ->groupBy('year', 'month')
+                    ->orderBy('year')
+                    ->orderBy('month')
+                    ->get();
+
+                $labels = [];
+                $revenueData = [];
+                $bookingsData = [];
+                $avgRevenueData = [];
+
+                foreach ($data as $item) {
+                    $labels[] = 'T' . $item->month . '/' . $item->year;
+                    $revenueData[] = $item->revenue;
+                    $bookingsData[] = $item->bookings;
+                    $avgRevenueData[] = $item->bookings > 0 ? round($item->revenue / $item->bookings) : 0;
+                }
+
+                return [
+                    'labels' => $labels,
+                    'revenue' => $revenueData,
+                    'bookings' => $bookingsData,
+                    'avgRevenue' => $avgRevenueData
+                ];
+
+            case '9_months':
+                // Lấy dữ liệu 9 tháng gần nhất
+                $startDate = now()->subMonths(8)->startOfDay();
                 $endDate = now()->endOfDay();
 
                 $data = $query->selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, SUM(total_price) as revenue, COUNT(*) as bookings')
@@ -389,9 +450,9 @@ class BookingDetail extends Component
                     ->limit(5)
                     ->get();
                 break;
-            case '1_month':
-                // Lấy top phim 1 tháng gần nhất (30 ngày)
-                $startDate = now()->subMonth()->startOfDay();
+            case '3_months':
+                // Lấy top phim 3 tháng gần nhất
+                $startDate = now()->subMonths(2)->startOfDay();
                 $endDate = now()->endOfDay();
                 $data = $query->whereBetween('bookings.created_at', [$startDate, $endDate])
                     ->groupBy('movies.title')
@@ -399,9 +460,19 @@ class BookingDetail extends Component
                     ->limit(5)
                     ->get();
                 break;
-            case '3_months':
-                // Lấy top phim 3 tháng gần nhất
-                $startDate = now()->subMonths(2)->startOfDay();
+            case '6_months':
+                // Lấy top phim 6 tháng gần nhất
+                $startDate = now()->subMonths(5)->startOfDay();
+                $endDate = now()->endOfDay();
+                $data = $query->whereBetween('bookings.created_at', [$startDate, $endDate])
+                    ->groupBy('movies.title')
+                    ->orderByDesc('revenue')
+                    ->limit(5)
+                    ->get();
+                break;
+            case '9_months':
+                // Lấy top phim 9 tháng gần nhất
+                $startDate = now()->subMonths(8)->startOfDay();
                 $endDate = now()->endOfDay();
                 $data = $query->whereBetween('bookings.created_at', [$startDate, $endDate])
                     ->groupBy('movies.title')
@@ -422,6 +493,45 @@ class BookingDetail extends Component
             case '2_years':
                 // Lấy top phim 2 năm gần nhất
                 $startDate = now()->subYears(1)->startOfDay();
+                $endDate = now()->endOfDay();
+                $data = $query->whereBetween('bookings.created_at', [$startDate, $endDate])
+                    ->groupBy('movies.title')
+                    ->orderByDesc('revenue')
+                    ->limit(5)
+                    ->get();
+                break;
+            case '15_days':
+                // Lấy top phim 15 ngày gần nhất (bao gồm hôm nay)
+                $startDate = now()->subDays(14)->startOfDay();
+                $endDate = now()->endOfDay();
+                $data = $query->whereBetween('bookings.created_at', [$startDate, $endDate])
+                    ->groupBy('movies.title')
+                    ->orderByDesc('revenue')
+                    ->limit(5)
+                    ->get();
+                break;
+            case '3_years':
+                // Lấy top phim 3 năm gần nhất
+                $startDate = now()->subYears(2)->startOfDay();
+                $endDate = now()->endOfDay();
+                $data = $query->whereBetween('bookings.created_at', [$startDate, $endDate])
+                    ->groupBy('movies.title')
+                    ->orderByDesc('revenue')
+                    ->limit(5)
+                    ->get();
+                break;
+            case '6_years':
+                // Lấy top phim 6 năm gần nhất
+                $startDate = now()->subYears(5)->startOfDay();
+                $endDate = now()->endOfDay();
+                $data = $query->whereBetween('bookings.created_at', [$startDate, $endDate])
+                    ->groupBy('movies.title')
+                    ->orderByDesc('revenue')
+                    ->limit(5)
+                    ->get();
+                break;
+            default:
+                $startDate = now()->subDays(6)->startOfDay();
                 $endDate = now()->endOfDay();
                 $data = $query->whereBetween('bookings.created_at', [$startDate, $endDate])
                     ->groupBy('movies.title')
@@ -478,12 +588,16 @@ class BookingDetail extends Component
                 $startDate = now()->subDays(29)->startOfDay();
                 $endDate = now()->endOfDay();
                 break;
-            case '1_month':
-                $startDate = now()->subMonth()->startOfDay();
-                $endDate = now()->endOfDay();
-                break;
             case '3_months':
                 $startDate = now()->subMonths(2)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '6_months':
+                $startDate = now()->subMonths(5)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '9_months':
+                $startDate = now()->subMonths(8)->startOfDay();
                 $endDate = now()->endOfDay();
                 break;
             case '1_year':
@@ -492,6 +606,22 @@ class BookingDetail extends Component
                 break;
             case '2_years':
                 $startDate = now()->subYears(1)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '15_days':
+                $startDate = now()->subDays(14)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '3_years':
+                $startDate = now()->subYears(2)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '6_years':
+                $startDate = now()->subYears(5)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            default:
+                $startDate = now()->subDays(6)->startOfDay();
                 $endDate = now()->endOfDay();
                 break;
         }
@@ -555,12 +685,16 @@ class BookingDetail extends Component
                 $startDate = now()->subDays(29)->startOfDay();
                 $endDate = now()->endOfDay();
                 break;
-            case '1_month':
-                $startDate = now()->subMonth()->startOfDay();
-                $endDate = now()->endOfDay();
-                break;
             case '3_months':
                 $startDate = now()->subMonths(2)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '6_months':
+                $startDate = now()->subMonths(5)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '9_months':
+                $startDate = now()->subMonths(8)->startOfDay();
                 $endDate = now()->endOfDay();
                 break;
             case '1_year':
@@ -569,6 +703,22 @@ class BookingDetail extends Component
                 break;
             case '2_years':
                 $startDate = now()->subYears(1)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '15_days':
+                $startDate = now()->subDays(14)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '3_years':
+                $startDate = now()->subYears(2)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '6_years':
+                $startDate = now()->subYears(5)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            default:
+                $startDate = now()->subDays(6)->startOfDay();
                 $endDate = now()->endOfDay();
                 break;
         }
@@ -633,12 +783,16 @@ class BookingDetail extends Component
                 $startDate = now()->subDays(29)->startOfDay();
                 $endDate = now()->endOfDay();
                 break;
-            case '1_month':
-                $startDate = now()->subMonth()->startOfDay();
-                $endDate = now()->endOfDay();
-                break;
             case '3_months':
                 $startDate = now()->subMonths(2)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '6_months':
+                $startDate = now()->subMonths(5)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '9_months':
+                $startDate = now()->subMonths(8)->startOfDay();
                 $endDate = now()->endOfDay();
                 break;
             case '1_year':
@@ -647,6 +801,22 @@ class BookingDetail extends Component
                 break;
             case '2_years':
                 $startDate = now()->subYears(1)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '15_days':
+                $startDate = now()->subDays(14)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '3_years':
+                $startDate = now()->subYears(2)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '6_years':
+                $startDate = now()->subYears(5)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            default:
+                $startDate = now()->subDays(6)->startOfDay();
                 $endDate = now()->endOfDay();
                 break;
         }
@@ -713,6 +883,10 @@ class BookingDetail extends Component
                 $startDate = now()->subYears(1)->startOfDay();
                 $endDate = now()->endOfDay();
                 break;
+            default:
+                $startDate = now()->subDays(6)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
         }
 
         $topMovies = $topMovies->whereBetween('bookings.created_at', [$startDate, $endDate])
@@ -731,6 +905,36 @@ class BookingDetail extends Component
             'topMovies' => $topMovies,
             'topRooms' => $topRooms
         ];
+    }
+
+    private function getFilterText($period)
+    {
+        switch ($period) {
+            case '3_days':
+                return '3 ngày gần nhất';
+            case '7_days':
+                return '7 ngày gần nhất';
+            case '15_days':
+                return '15 ngày gần nhất';
+            case '30_days':
+                return '30 ngày gần nhất';
+            case '3_months':
+                return '3 tháng gần nhất';
+            case '6_months':
+                return '6 tháng gần nhất';
+            case '9_months':
+                return '9 tháng gần nhất';
+            case '1_year':
+                return '1 năm gần nhất';
+            case '2_years':
+                return '2 năm gần nhất';
+            case '3_years':
+                return '3 năm gần nhất';
+            case '6_years':
+                return '6 năm gần nhất';
+            default:
+                return '7 ngày gần nhất';
+        }
     }
 
     public function cleanupBookingsAndUpdateData(?array $status = null){
@@ -767,7 +971,25 @@ class BookingDetail extends Component
     public function render()
     {
         $tickets = BookingSeat::where('booking_id', $this->booking->id)->with('ticket')->get()->map(fn($bookingSeat) => $bookingSeat->ticket);
-        $this->dispatch('updateData',$this->revenueData,$this->topMovies ,$this->seatsData,$this->foodsData ,$this->topFoods ,$this->topMoviesAndRooms);
+
+        // Đảm bảo dữ liệu chart được load trước khi dispatch
+        $this->loadChartData();
+
+        ($this->tabCurrent === "information" || ($this->js('chartInstances = {}') || false)) && $this->dispatch('updateData',
+            $this->revenueData ?? [],
+            $this->topMovies ?? [],
+            $this->seatsData ?? [],
+            $this->foodsData ?? [],
+            $this->topFoods ?? [],
+            [
+                'revenueFilterText' => $this->getFilterText($this->revenuePeriod),
+                'topMoviesFilterText' => $this->getFilterText($this->topMoviesPeriod),
+                'seatsFilterText' => $this->getFilterText($this->seatsPeriod),
+                'foodsFilterText' => $this->getFilterText($this->foodsPeriod),
+                'topFoodsFilterText' => $this->getFilterText($this->topFoodsPeriod)
+            ]
+        );
+
         return view('livewire.admin.bookings.booking-detail', compact('tickets'));
     }
 }

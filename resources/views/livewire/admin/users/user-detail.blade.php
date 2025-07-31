@@ -1,5 +1,5 @@
 <div>
-    <div class="container-lg mb-4" wire:poll.1s="realTimeUserUpdate">
+    <div class="scRender container-lg mb-4" wire:poll.1s="realTimeUserUpdate">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2 class="text-light">Chi tiết người dùng: {{ $user->name }}</h2>
