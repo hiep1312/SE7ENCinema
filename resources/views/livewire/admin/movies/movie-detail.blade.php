@@ -625,16 +625,75 @@
                             <h5 class="text-white mb-0">
                                 <i class="fas fa-chart-pie me-2 text-warning"></i>Tỉ lệ vé đã bán so với vé chưa bán
                             </h5>
-                            <div class="btn-group" role="group">
-                                <button type="button"
-                                    class="btn btn-sm {{ $checkinChart === 'daily' ? 'btn-warning' : 'btn-outline-warning' }}"
-                                    wire:click="changecheckinChart('daily')">Ngày</button>
-                                <button type="button"
-                                    class="btn btn-sm {{ $checkinChart === 'monthly' ? 'btn-warning' : 'btn-outline-warning' }}"
-                                    wire:click="changecheckinChart('monthly')">Tháng</button>
-                                <button type="button"
-                                    class="btn btn-sm {{ $checkinChart === 'yearly' ? 'btn-warning' : 'btn-outline-warning' }}"
-                                    wire:click="changecheckinChart('yearly')">Năm</button>
+                            {{-- filter --}}
+                            <div class="dropdown">
+                                <button class="btn btn-outline-warning btn-sm dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-filter me-1"></i>
+                                    @switch('3_days')
+                                    @case('3_days')
+                                    3 ngày gần nhất
+                                    @break
+                                    @case('7_days')
+                                    7 ngày gần nhất
+                                    @break
+                                    @case('30_days')
+                                    30 ngày gần nhất
+                                    @break
+                                    @case('1_month')
+                                    1 tháng gần nhất
+                                    @break
+                                    @case('3_months')
+                                    3 tháng gần nhất
+                                    @break
+                                    @case('1_year')
+                                    1 năm gần nhất
+                                    @break
+                                    @case('2_years')
+                                    2 năm gần nhất
+                                    @break
+                                    @default
+                                    7 ngày gần nhất
+                                    @endswitch
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li>
+                                        <h6 class="dropdown-header text-primary">Ngày</h6>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#"
+                                            wire:click.prevent="changeRevenuePeriod('3_days')">3 ngày gần nhất</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#"
+                                            wire:click.prevent="changeRevenuePeriod('7_days')">7 ngày gần nhất</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#"
+                                            wire:click.prevent="changeRevenuePeriod('30_days')">30 ngày gần nhất</a>
+                                    </li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li>
+                                        <h6 class="dropdown-header text-primary">Tháng</h6>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#"
+                                            wire:click.prevent="changeRevenuePeriod('1_month')">1 tháng gần nhất</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#"
+                                            wire:click.prevent="changeRevenuePeriod('3_months')">3 tháng gần
+                                            nhất</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li>
+                                        <h6 class="dropdown-header text-primary">Năm</h6>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#"
+                                            wire:click.prevent="changeRevenuePeriod('1_year')">1 năm gần nhất</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#"
+                                            wire:click.prevent="changeRevenuePeriod('2_years')">2 năm gần nhất</a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                         <div>
@@ -649,19 +708,17 @@
                             <h5 class="text-white mb-0">
                                 <i class="fas fa-chart-line me-2 text-primary"></i>Vé đã bán theo ngày
                                 @php
-                                    var_dump($dailyChart);
+                                var_dump($dailyChart);
                                 @endphp
                             </h5>
                             <div class="btn-group" role="group">
                                 <button wire:click="$set('dailyChart', 'daily')" type="button"
-                                    class="btn btn-sm {{ $dailyChart === 'daily' ? 'btn-primary' : 'btn-outline-primary' }}">Ngày                             
+                                    class="btn btn-sm {{ $dailyChart === 'daily' ? 'btn-primary' : 'btn-outline-primary' }}">Ngày
                                 </button>
                                 <button wire:click="$set('dailyChart', 'monthly')" type="button"
-                                    class="btn btn-sm {{ $dailyChart === 'monthly' ? 'btn-primary' : 'btn-outline-primary' }}"
-                                    >Tháng</button>
+                                    class="btn btn-sm {{ $dailyChart === 'monthly' ? 'btn-primary' : 'btn-outline-primary' }}">Tháng</button>
                                 <button wire:click="$set('dailyChart', 'yearly')" type="button"
-                                    class="btn btn-sm {{ $dailyChart === 'yearly' ? 'btn-primary' : 'btn-outline-primary' }}"
-                                    >Năm</button>
+                                    class="btn btn-sm {{ $dailyChart === 'yearly' ? 'btn-primary' : 'btn-outline-primary' }}">Năm</button>
                             </div>
                         </div>
                         <div>
@@ -681,7 +738,7 @@
         const showtimeDate = $bookingCountFormatted;
         const failedCounts = Object.values(showtimeDate).map(count => count.failed);
         const paidCounts = Object.values(showtimeDate).map(count => count.paid);
-        
+           
         const stats = $bookingStatByDate;
         const labels = Object.keys(stats);
         const paid = labels.map(d => stats[d].paid);
