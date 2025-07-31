@@ -58,7 +58,7 @@ class BookingDetail extends Component
         $this->js(<<<JS
         setTimeout(
             renderAllCharts,
-            150
+            200
         )
      JS);
     }
@@ -106,11 +106,6 @@ class BookingDetail extends Component
 
         // 6. Top món ăn được đặt nhiều nhất
         $this->topFoods = $this->getTopFoodsByPeriod($this->foodsPeriod);
-
-        // Dispatch event to re-render charts when data changes (only if on information tab)
-        if ($this->tabCurrent === 'information') {
-            $this->dispatch('tabChanged', 'information');
-        }
     }
 
     private function getRevenueData($period)
@@ -772,7 +767,7 @@ class BookingDetail extends Component
     public function render()
     {
         $tickets = BookingSeat::where('booking_id', $this->booking->id)->with('ticket')->get()->map(fn($bookingSeat) => $bookingSeat->ticket);
-
+        $this->dispatch('updateData',$this->revenueData,$this->topMovies ,$this->seatsData,$this->foodsData ,$this->topFoods ,$this->topMoviesAndRooms);
         return view('livewire.admin.bookings.booking-detail', compact('tickets'));
     }
 }
