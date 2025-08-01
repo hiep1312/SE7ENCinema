@@ -3,13 +3,13 @@
         "globalCssFiles": [
                 "scanner.css",
                 "movieDetail.css",
-                "user-info.css",
+                "userInfo.css",
                 "confirm-access.css",
                 "termsOfService.css",
                 "privacyPolicy.css",
                 "notificationIndex.css",
                 "promotion.css",
-                "lichchieuIndex.css",
+                "showtimeIndex.css",
                 "badgeML.css"
         ],
         "scopedCssFiles": [

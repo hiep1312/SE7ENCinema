@@ -57,9 +57,9 @@ class UserInformation extends Component
         'name.regex' => 'Không được để số ở đầu.',
 
     ];
-    public function mount(int $user)
+    public function mount()
     {
-        $this->user = User::with('bookings.showtime.movie', 'bookings.seats')->findOrFail($user);
+        $this->user = User::with('bookings.showtime.movie', 'bookings.seats')->findOrFail(Auth::id());
         if (session('isConfirmed')) {
             $this->delete();
         }

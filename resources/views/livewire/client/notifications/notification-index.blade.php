@@ -1,35 +1,24 @@
+@assets
+<script>
+    function openNotification(link, event, notificationId) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (!link || link === '#' || !Url.canParse(link)) {
+            alert('Đường dẫn không hợp lệ hoặc đã bị xóa!');
+            return ;
+        }else{
+            window.open(link);
+        }
+        Livewire.first().markAsRead(notificationId);
+        console.log(notificationId);
+    }
+</script>
+@endassets
 @php
 $isAllNotifications = request()->routeIs('client.notifications.allnotification');
 @endphp
 
-<div class="scRender scNotificationIndex" wire:poll.30s="refreshNotifications"
-     x-data="{
-        openNotification(link, event, notificationId) {
-            if (!link || link === '#' || link === '' || link === null || link === undefined) {
-                event.preventDefault();
-                event.stopPropagation();
-                alert('Đường dẫn không hợp lệ hoặc đã bị xóa!');
-                return false;
-            }
-            try {
-                if (!link.startsWith('http') && !link.startsWith('/')) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    alert('Đường dẫn không hợp lệ hoặc đã bị xóa!');
-                    return false;
-                }
-            } catch (e) {
-                event.preventDefault();
-                event.stopPropagation();
-                alert('Đường dẫn không hợp lệ hoặc đã bị xóa!');
-                return false;
-            }
-            if (notificationId) {
-                $wire.markAsRead(notificationId);
-            }
-            window.open(link, '_blank');
-        }
-     }">
+<div class="scRender scNotificationIndex" wire:poll.6s="refreshNotifications">
 
   @if(!$isAllNotifications)
     <!-- Notification Bell Button -->
@@ -42,18 +31,7 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
 
     <!-- Offcanvas Notification Panel -->
     @if($isOpen)
-    <div class="notification-offcanvas full-notifications__container"
-         x-show="true"
-         x-cloak
-         x-transition:enter="transition ease-out duration-200"
-         x-transition:enter-start="opacity-0 translate-x-10"
-         x-transition:enter-end="opacity-100 translate-x-0"
-         x-transition:leave="transition ease-in duration-150"
-         x-transition:leave-start="opacity-100 translate-x-0"
-         x-transition:leave-end="opacity-0 translate-x-10"
-         style="overflow-y: hidden; max-height: 100vh; display: flex; flex-direction: column; position: fixed; top: 0; right: 0; z-index: 1050; width: 100%; max-width: 360px; min-width: 320px; background: #fff;"
-         @keydown.window.escape="$wire.closeOffcanvas()"
-         @click.away="$wire.closeOffcanvas()">
+    <div class="notification-offcanvas full-notifications__container" style="overflow-y: hidden; max-height: 100vh; display: flex; flex-direction: column; position: fixed; top: 0; right: 0; z-index: 1050; width: 100%; max-width: 360px; min-width: 320px; background: #fff;" @click.away="$wire.closeOffcanvas()">
 
       <!-- Header -->
       <div class="offcanvas-header full-notifications__header" style="display: flex; align-items: center; justify-content: space-between;">
@@ -104,19 +82,20 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
           @if($tab === 'all')
           <div class="full-notifications__tab-content">
             {{-- Section Mới --}}
-            @if($this->newNotifications->count() > 0)
+            @if($newNotifications->count() > 0)
             <div class="full-notifications__section">
                 <div class="full-notifications__section-header new-section">
                     <h2 class="full-notifications__section-title">Mới</h2>
                 </div>
                 <div class="full-notifications__list">
-                    @foreach($this->newNotifications as $notification)
+                    @foreach($newNotifications as $notification)
                         @php
-                            $isRead = $notification->pivot->is_read ?? true;
-                            $pivotId = $notification->pivot->id ?? 0;
+                            $isRead = $notification->users->keyBy('id')->get(1)->pivot->is_read ?? true;
+                            $pivotId = $notification->users->keyBy('id')->get(1)->pivot->id ?? 0;
+                            
                         @endphp
                         <a href="#" tabindex="0" class="notification__item {{ !$isRead ? 'notification__item--unread' : 'notification__item--read' }}"
-                           @click="openNotification('{{ $notification->link ?? '' }}', $event, {{ $pivotId }})">
+                           onclick="openNotification('{{ $notification->link ?? '' }}', event, {{ $pivotId }})">
                             <span class="notification__avatar">
                                 @if($notification->thumbnail)
                                     <img src="{{ asset('storage/' . $notification->thumbnail) }}" alt="Avatar" class="full-notifications__avatar-img">
@@ -141,19 +120,19 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
             </div>
             @endif
             {{-- Section Trước đó --}}
-            @if($this->oldNotifications->count() > 0)
+            @if($oldNotifications->count() > 0)
             <div class="full-notifications__section">
                 <div class="full-notifications__section-header old-section">
                     <h2 class="full-notifications__section-title">Trước đó</h2>
                 </div>
                 <div class="full-notifications__list">
-                    @foreach($this->oldNotifications as $notification)
+                    @foreach($oldNotifications as $notification)
                         @php
-                            $isRead = $notification->pivot->is_read ?? true;
-                            $pivotId = $notification->pivot->id ?? 0;
+                            $isRead = $notification->users->keyBy('id')->get(1)->pivot->is_read ?? true;
+                            $pivotId = $notification->users->keyBy('id')->get(1)->pivot->id ?? 0;
                         @endphp
                         <a href="#" tabindex="0" class="notification__item {{ !$isRead ? 'notification__item--unread' : 'notification__item--read' }}"
-                           @click="openNotification('{{ $notification->link ?? '' }}', $event, {{ $pivotId }})">
+                           onclick="openNotification('{{ $notification->link ?? '' }}', event, {{ $pivotId }})">
                             <span class="notification__avatar">
                                 @if($notification->thumbnail)
                                     <img src="{{ asset('storage/' . $notification->thumbnail) }}" alt="Avatar" class="full-notifications__avatar-img">
@@ -178,7 +157,7 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
             </div>
             @endif
             {{-- Empty state --}}
-            @if($this->newNotifications->count() == 0 && $this->oldNotifications->count() == 0)
+            @if($newNotifications->count() == 0 && $oldNotifications->count() == 0)
             <div class="full-notifications__empty">
                 <div class="full-notifications__empty-icon">
                     <i class="fa-solid fa-bell-slash"></i>
@@ -209,16 +188,16 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
           @if($tab === 'unread')
           <div class="full-notifications__tab-content">
             {{-- Section Mới --}}
-            @if($this->newUnreadNotifications->count() > 0)
+            @if($newUnreadNotifications->count() > 0)
             <div class="full-notifications__section">
                 <div class="full-notifications__section-header new-section">
                     <h2 class="full-notifications__section-title">Mới</h2>
                 </div>
                 <div class="full-notifications__list">
-                    @foreach($this->newUnreadNotifications as $notification)
-                        @php $pivotId = $notification->pivot->id ?? 0; @endphp
+                    @foreach($newUnreadNotifications as $notification)
+                        @php $pivotId = $notification->users->keyBy('id')->get(1)->pivot->id ?? 0; @endphp
                         <a href="#" tabindex="0" class="notification__item full-notifications__item--unread"
-                           @click="openNotification('{{ $notification->link ?? '' }}', $event, {{ $pivotId }})">
+                           onclick="openNotification('{{ $notification->link ?? '' }}', event, {{ $pivotId }})">
                             <span class="notification__avatar">
                                 @if($notification->thumbnail)
                                     <img src="{{ asset('storage/' . $notification->thumbnail) }}" alt="Avatar" class="full-notifications__avatar-img">
@@ -241,16 +220,16 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
             </div>
             @endif
             {{-- Section Trước đó --}}
-            @if($this->oldUnreadNotifications->count() > 0)
+            @if($oldUnreadNotifications->count() > 0)
             <div class="full-notifications__section">
                 <div class="full-notifications__section-header old-section">
                     <h2 class="full-notifications__section-title">Trước đó</h2>
                 </div>
                 <div class="full-notifications__list">
-                    @foreach($this->oldUnreadNotifications as $notification)
-                        @php $pivotId = $notification->pivot->id ?? 0; @endphp
+                    @foreach($oldUnreadNotifications as $notification)
+                        @php $pivotId = $notification->users->keyBy('id')->get(1)->pivot->id ?? 0; @endphp
                         <a href="#" tabindex="0" class="notification__item full-notifications__item--unread"
-                           @click="openNotification('{{ $notification->link ?? '' }}', $event, {{ $pivotId }})">
+                           onclick="openNotification('{{ $notification->link ?? '' }}', event, {{ $pivotId }})">
                             <span class="notification__avatar">
                                 @if($notification->thumbnail)
                                     <img src="{{ asset('storage/' . $notification->thumbnail) }}" alt="Avatar" class="full-notifications__avatar-img">
@@ -273,7 +252,7 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
             </div>
             @endif
             {{-- Empty state --}}
-            @if($this->newUnreadNotifications->count() == 0 && $this->oldUnreadNotifications->count() == 0)
+            @if($newUnreadNotifications->count() == 0 && $oldUnreadNotifications->count() == 0)
             <div class="full-notifications__empty">
                 <div class="full-notifications__empty-icon">
                     <i class="fa-solid fa-bell-slash"></i>
@@ -298,21 +277,3 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
   @endif
 </div>
 
-@script
-<script>
-    document.addEventListener('alpine:init', () => {
-        // Auto refresh notifications every 30 seconds
-        setInterval(function() {
-            if (window.Livewire) {
-                const element = document.querySelector('[wire\:poll]');
-                if (element) {
-                    const wireId = element.getAttribute('wire:id');
-                    if (wireId) {
-                        window.Livewire.find(wireId)?.call('refreshNotifications');
-                    }
-                }
-            }
-        }, 30000);
-    });
-</script>
-@endscript

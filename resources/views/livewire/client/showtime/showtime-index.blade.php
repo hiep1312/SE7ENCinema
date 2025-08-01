@@ -1,4 +1,4 @@
-<div class="scRender cinema-schedule container scLichchieuIndex" wire:poll="loadMoviesForDate">
+<div class="scRender cinema-schedule container scShowtimeIndex" wire:poll="loadMoviesForDate">
     <!-- Header -->
     <div class="cinema-schedule__header text-center mb-4">
         <h1 class="cinema-schedule__main-title">

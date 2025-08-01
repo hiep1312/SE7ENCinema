@@ -244,33 +244,6 @@
   background: linear-gradient(135deg, #c2185b 0%, #ad1457 100%);
   box-shadow: 0 4px 10px rgba(233, 30, 99, 0.5);
 }
-.cinema-schedule__badge-age--C {
-  background: linear-gradient(135deg, #9e9e9e 0%, #757575 100%);
-  box-shadow: 0 2px 6px rgba(158, 158, 158, 0.35);
-  color: #fff;
-  text-decoration: line-through;
-  position: relative;
-}
-.cinema-schedule__badge-age--C:hover {
-  background: linear-gradient(135deg, #757575 0%, #616161 100%);
-  box-shadow: 0 4px 10px rgba(158, 158, 158, 0.5);
-}
-.cinema-schedule__badge-age--C::after {
-  content: "⚠";
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  font-size: 0.6rem;
-  background: #ff5722;
-  border-radius: 50%;
-  width: 12px;
-  height: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 1px 3px rgba(255, 87, 34, 0.4);
-  text-decoration: none;
-}
 .cinema-schedule__badge-age::before {
   content: "";
   position: absolute;

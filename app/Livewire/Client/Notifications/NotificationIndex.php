@@ -184,9 +184,7 @@ class NotificationIndex extends Component
         $userNotification = UserNotification::find($userNotificationId);
         if ($userNotification && !$userNotification->is_read) {
             // Chỉ update is_read, không thay đổi updated_at
-            $userNotification->timestamps = false;
             $userNotification->update(['is_read' => 1]);
-            $userNotification->timestamps = true;
 
             $this->loadNotifications();
             $this->dispatch('notification-read');
