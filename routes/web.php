@@ -45,6 +45,8 @@ use App\Livewire\Client\Lichchieu\LichchieuIndex;
 use App\Livewire\Client\Promotions\PromotionIndex as PromotionIndexClient;
 use App\Livewire\Admin\Tickets\TicketIndex;
 use App\Livewire\Client\MovieList;
+use App\Livewire\Client\Notifications\Allnotifications;
+use App\Livewire\Client\Notifications\NotificationIndex as NotificationIndexClient;
 use App\Livewire\Client\Ticket\Index as TicketIndexClient;
 use App\Livewire\Client\ClientMovieDetail;
 use App\Livewire\Client\User\UserConfirm;
@@ -188,8 +190,11 @@ Route::name('client.')->group(function () {
     Route::view('/seat_booking', 'livewire.client.template.bookings.seat_booking')->name('seat_booking');
     Route::view('/contact', 'livewire.client.template.contact')->name('contact');
     Route::view('/confirmation_screen', 'livewire.client.template.confirmation_screen')->name('confirmation_screen');
-
-    /* Lichchieu */
+        Route::prefix('/notifications')->name('notifications.')->group(function () {
+        Route::get('/', NotificationIndexClient::class)->name('index');
+        Route::get('allnotification', Allnotifications::class)->name('allnotification');
+     });
+     /* Lichchieu */
      Route::prefix('/showtimes')->name('showtimes.')->group(function () {
         Route::get('/', LichchieuIndex::class)->name('index');
     });
