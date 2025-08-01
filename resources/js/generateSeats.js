@@ -58,7 +58,6 @@ document.addEventListener("livewire:init", () => {
         return false;
     }
 
-    // Function to handle total seats input change
     function handleTotalSeatsChange() {
         const totalSeatsInput = document.getElementById("total-seats-input");
         const seatsPerRowInput = document.getElementById("seats-per-row-input");
@@ -74,9 +73,8 @@ document.addEventListener("livewire:init", () => {
 
             if (totalSeats > 0 && seatsPerRow > 0) {
                 const calculatedRows = Math.ceil(totalSeats / seatsPerRow);
-                rowsInput.value = Math.min(calculatedRows, 26); // Max 26 rows (A-Z)
+                rowsInput.value = Math.min(calculatedRows, 26);
 
-                // Update display
                 const actualTotal = seatsPerRow * parseInt(rowsInput.value);
                 currentTotalDisplay.textContent = actualTotal;
             }
@@ -92,7 +90,6 @@ document.addEventListener("livewire:init", () => {
             currentTotalDisplay.textContent = calculatedTotal;
         }
 
-        // Event listeners
         totalSeatsInput.addEventListener("input", updateTotalSeats);
         seatsPerRowInput.addEventListener("input", () => {
             updateByRowsAndSeats();
@@ -100,7 +97,6 @@ document.addEventListener("livewire:init", () => {
         });
         rowsInput.addEventListener("input", updateByRowsAndSeats);
 
-        // Apply changes button
         const applyBtn = document.getElementById("apply-seat-changes");
         applyBtn.addEventListener("click", () => {
             const newRows = parseInt(rowsInput.value) || window.currentRows;
@@ -150,7 +146,6 @@ document.addEventListener("livewire:init", () => {
         notification.textContent = message;
         document.body.appendChild(notification);
 
-        // Add CSS animation
         if (!document.querySelector("#notification-styles")) {
             const style = document.createElement("style");
             style.id = "notification-styles";
@@ -169,7 +164,6 @@ document.addEventListener("livewire:init", () => {
         }, 3000);
     }
 
-    // Add column functionality
     function addColumn(clickedRow) {
         const rowElement = clickedRow.closest(".seat-row-layout");
         if (!rowElement) return;
@@ -189,22 +183,18 @@ document.addEventListener("livewire:init", () => {
         const isVip = vipArr.includes(rowChar);
         const isCouple = coupleArr.includes(rowChar);
 
-        // Get current number of seats in this row (excluding aisles and add button)
         const currentSeats = rowElement.querySelectorAll(
             'li[data-seat]:not([data-seat="aisle"]):not([data-seat="add-column"])'
         ).length;
         const newSeatCount = currentSeats + 1;
 
-        // Calculate new aisle positions for this row specifically
         const caculateColumnAsile = calculateSeatDistribution(newSeatCount);
 
-        // Remove the add button temporarily
         const addBtn = rowElement.querySelector('[data-seat="add-column"]');
         if (addBtn) {
             addBtn.remove();
         }
 
-        // Add new seat
         const newSeatNumber = newSeatCount;
         const seatCeil = document.createElement("li");
         const seatType = isCouple ? "double" : isVip ? "vip" : "standard";
@@ -251,14 +241,11 @@ document.addEventListener("livewire:init", () => {
 
         window.currentSeatsPerRow = maxSeatsInAnyRow;
 
-        // Update control panel values
         updateControlPanelValues();
 
-        // Re-attach event handlers for new elements
         attachEventHandlers();
     }
 
-    // Function to update control panel values
     function updateControlPanelValues() {
         const totalSeatsInput = document.getElementById("total-seats-input");
         const seatsPerRowInput = document.getElementById("seats-per-row-input");
@@ -281,7 +268,6 @@ document.addEventListener("livewire:init", () => {
         }
     }
 
-    // Delete seat functionality
     let selectedForDelete = null;
     let deleteClickCount = 0;
     let deleteTimeout = null;
@@ -337,7 +323,6 @@ document.addEventListener("livewire:init", () => {
             seatItem.appendChild(deleteConfirm);
             deleteClickCount = 0;
 
-            // Auto hide after 3 seconds
             setTimeout(() => {
                 if (selectedForDelete === seatItem) {
                     seatItem.classList.remove("selected-for-delete");
@@ -385,7 +370,6 @@ document.addEventListener("livewire:init", () => {
             rowElement.appendChild(deleteConfirm);
             deleteClickCount = 0;
 
-            // Auto hide after 3 seconds
             setTimeout(() => {
                 if (selectedForDelete === rowElement) {
                     rowElement.classList.remove("selected-for-delete");
@@ -462,23 +446,17 @@ document.addEventListener("livewire:init", () => {
             const newSeatsLayoutContent =
                 newSeatsLayout.querySelector("#seats-layout");
             seatsContainer.appendChild(...newSeatsLayoutContent.children);
-
-            // Re-attach event handlers
             attachEventHandlers();
         }
     }
 
     function attachEventHandlers() {
-        // Remove existing event handlers to prevent duplicates
         document.removeEventListener("click", handleDocumentClick);
-
-        // Add event handlers for seats and rows
         const seatsLayout = document.querySelector("#seats-layout");
         if (seatsLayout) {
             seatsLayout.addEventListener("click", handleSeatClick);
         }
 
-        // Add event handlers for add column buttons
         const addColumnBtns = document.querySelectorAll(".add-column-btn");
         addColumnBtns.forEach((btn) => {
             btn.addEventListener("click", (e) => {
@@ -487,12 +465,10 @@ document.addEventListener("livewire:init", () => {
             });
         });
 
-        // Document click handler to clear selections
         document.addEventListener("click", handleDocumentClick);
     }
 
     function handleDocumentClick(event) {
-        // Clear selection if clicking outside
         if (
             !event.target.closest(".seat-item") &&
             !event.target.closest(".seat-row-layout") &&
@@ -636,191 +612,199 @@ document.addEventListener("livewire:init", () => {
     };
 
 
-    function setCookie(name, value, minutes = 10) {
-        try {
-            const expires = new Date();
-            expires.setTime(expires.getTime() + (minutes * 60 * 1000));
-            document.cookie = `${name}=${encodeURIComponent(value)};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
-            if (!getCookie(name)) {
-                localStorage.setItem(name, value);
-            }
-        } catch (error) {
-            console.warn('Cookie not available, using localStorage:', error);
-            localStorage.setItem(name, value);
-        }
-    }
+    class SeatCountdownTimer {
+        constructor(expiresAt, onExpired, onUpdate) {
+            this.expiresAt = expiresAt ? new Date(expiresAt) : null;
+            this.onExpired = onExpired;
+            this.onUpdate = onUpdate;
+            this.interval = null;
+            this.isRunning = false;
 
-    function getCookie(name) {
-        try {
-            const nameEQ = name + "=";
-            const ca = document.cookie.split(';');
-            for (let i = 0; i < ca.length; i++) {
-                let c = ca[i];
-                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-                if (c.indexOf(nameEQ) === 0) {
-                    return decodeURIComponent(c.substring(nameEQ.length, c.length));
+            if (this.expiresAt) {
+                this.start();
+            }
+        }
+
+        start() {
+            if (this.isRunning || !this.expiresAt) return;
+            this.isRunning = true;
+            this.updateTime();
+            this.interval = setInterval(() => {
+                this.updateTime();
+            }, 1000);
+        }
+
+        updateTime() {
+            const now = new Date();
+            const remaining = Math.max(0, Math.floor((this.expiresAt - now) / 1000));
+
+            if (remaining <= 0) {
+                this.stop();
+                if (this.onExpired) {
+                    this.onExpired();
                 }
+            } else if (this.onUpdate) {
+                this.onUpdate(remaining);
             }
-            return localStorage.getItem(name);
-        } catch (error) {
-            console.warn('Cookie not available, using localStorage:', error);
-            return localStorage.getItem(name);
         }
-    }
 
-    function deleteCookie(name) {
-        try {
-            const pastDate = new Date();
-            pastDate.setTime(pastDate.getTime() - 1000);
-            document.cookie = `${name}=;expires=${pastDate.toUTCString()};path=/;`;
-            localStorage.removeItem(name);
-        } catch (error) {
-            localStorage.removeItem(name);
+        stop() {
+            if (this.interval) {
+                clearInterval(this.interval);
+                this.interval = null;
+            }
+            this.isRunning = false;
+        }
+
+        formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
         }
     }
 
     class SeatSynchronizer {
         constructor() {
-            this.lastSelectedSeats = getCookie("selectedSeats") || "[]";
             this.sessionId = Math.random().toString(36).substr(2, 9);
-            this.isIncognito = this.detectIncognitoMode();
+            this.countdownTimer = null;
             this.setupSynchronization();
         }
 
-        detectIncognitoMode() {
-            try {
-                const testName = '_test_cookie_' + Date.now();
-                document.cookie = `${testName}=test;path=/`;
-                const cookieWorks = document.cookie.includes(testName);
-
-                if (cookieWorks) {
-                    const pastDate = new Date();
-                    pastDate.setTime(pastDate.getTime() - 1000);
-                    document.cookie = `${testName}=;expires=${pastDate.toUTCString()};path=/;`;
-                    return false;
-                }
-                return true;
-            } catch (error) {
-                return true;
-            }
-        }
-
         setupSynchronization() {
-            window.addEventListener('storage', (e) => {
-                if (e.key === 'selectedSeats' && e.newValue !== e.oldValue) {
-                    this.handleSeatUpdate(e.newValue || "[]");
+            setInterval(() => {
+                if (typeof Livewire !== 'undefined') {
+                    Livewire.dispatch('checkHoldStatus');
                 }
-            });
-
-            if ('BroadcastChannel' in window) {
-                this.broadcastChannel = new BroadcastChannel('seat_updates');
-                this.broadcastChannel.addEventListener('message', (event) => {
-                    if (event.data.type === 'seat_update' && event.data.sessionId !== this.sessionId) {
-                        this.handleSeatUpdate(JSON.stringify(event.data.seats));
-                    }
-                });
-            }
-
-            this.setupPolling();
+            }, 5000);
 
             document.addEventListener('visibilitychange', () => {
                 if (!document.hidden) {
-                    this.checkForUpdates();
+                    if (typeof Livewire !== 'undefined') {
+                        Livewire.dispatch('checkHoldStatus');
+                    }
                 }
             });
         }
 
-        setupPolling() {
-            setInterval(() => {
-                this.checkForUpdates();
-            }, 2000);
-        }
-
-        checkForUpdates() {
-            const currentSelectedSeats = getCookie("selectedSeats") || "[]";
-
-            if (currentSelectedSeats !== this.lastSelectedSeats) {
-                this.handleSeatUpdate(currentSelectedSeats);
+        startCountdown(expiresAt, preventReset = false) {
+            if (this.countdownTimer && preventReset) {
+                return;
             }
-        }
 
-        handleSeatUpdate(newSelectedSeatsJson) {
-            this.lastSelectedSeats = newSelectedSeatsJson;
+            if (this.countdownTimer) {
+                this.countdownTimer.stop();
+            }
 
-            try {
-                const newSelected = JSON.parse(newSelectedSeatsJson);
-                const selectedOnThisTab = Array.from(document.querySelectorAll('input.seat:checked')).map(i => i.value);
+            const expireDate = new Date(expiresAt);
+            const now = new Date();
 
-                document.querySelectorAll('input.seat').forEach(input => {
-                    const seatCode = input.value;
-                    const isExternal = newSelected.includes(seatCode);
-                    const isMine = selectedOnThisTab.includes(seatCode);
-                    const isBooked = input.dataset.booked === 'true';
-                    const isHeld = input.dataset.held === 'true';
-                    const parentLi = input.closest('li.seat-item');
-
-                    if (!parentLi) return;
-
-                    parentLi.classList.remove("seat-held", "seat-selected", "seat-available", "seat-booked");
-
-                    if (isBooked) {
-                        parentLi.classList.add("seat-booked");
-                        input.disabled = true;
-                        input.checked = false;
-                    } else if (isHeld || (isExternal && !isMine)) {
-                        input.disabled = true;
-                        input.dataset.disabled = "true";
-                        input.checked = true;
-                        parentLi.classList.add("seat-held");
-                    } else {
-                        input.disabled = false;
-                        input.dataset.disabled = "false";
-                        input.checked = isMine;
-                        parentLi.classList.add(isMine ? "seat-selected" : "seat-available");
-                    }
-                });
-
-                if (typeof window.reloadSeatsFromBlade === 'function') {
-                    window.reloadSeatsFromBlade();
+            if (expireDate <= now) {
+                this.showTimeoutAlert();
+                if (typeof Livewire !== 'undefined') {
+                    Livewire.dispatch('checkHoldStatus');
                 }
-            } catch (error) {
-                console.error('Error handling seat update:', error);
+                return;
+            }
+
+            this.countdownTimer = new SeatCountdownTimer(
+                expireDate,
+                () => {
+                    this.showTimeoutAlert();
+                    if (typeof Livewire !== 'undefined') {
+                        Livewire.dispatch('checkHoldStatus');
+                    }
+                },
+                (remainingSeconds) => {
+                    this.updateCountdownDisplay(remainingSeconds);
+                    if (remainingSeconds === 120) {
+                        this.showWarningAlert('Còn 2 phút để hoàn tất việc chọn ghế!');
+                    } else if (remainingSeconds === 30) {
+                        this.showWarningAlert('Còn 30 giây! Vui lòng nhanh chóng hoàn tất!');
+                    }
+                }
+            );
+        }
+
+        updateCountdownDisplay(remainingSeconds) {
+            const countdownElement = document.getElementById('seat-countdown');
+            if (countdownElement) {
+                const timeString = this.countdownTimer.formatTime(remainingSeconds);
+                let alertClass = 'alert-dark';
+                let icon = 'fas fa-clock';
+
+                if (remainingSeconds <= 30) {
+                    icon = 'fas fa-exclamation-triangle';
+                } else if (remainingSeconds <= 120) {
+                    icon = 'fas fa-exclamation-circle';
+                }
+
+                countdownElement.innerHTML = `
+                <div class="d-flex align-items-center justify-content-center fs-1 text-light  ${alertClass} p-2 rounded">
+                        <i class="${icon} me-2"></i>
+                        <strong>Thời gian giữ ghế: ${timeString}</strong>
+                </div>
+            `;
             }
         }
 
-        broadcastUpdate(seats) {
-            const seatData = {
-                seats: seats,
-                sessionId: this.sessionId,
-                timestamp: Date.now()
-            };
+        showTimeoutAlert() {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Hết thời gian giữ ghế!',
+                    text: 'Thời gian giữ ghế đã hết. Vui lòng chọn lại ghế.',
+                    confirmButtonText: 'Đồng ý'
+                });
+            } else {
+                alert('Hết thời gian giữ ghế! Vui lòng chọn lại ghế.');
+            }
+        }
 
-            setCookie("selectedSeats", JSON.stringify(seats), 15);
-
-            if (this.broadcastChannel) {
-                this.broadcastChannel.postMessage({
-                    type: 'seat_update',
-                    ...seatData
+        showWarningAlert(message) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Cảnh báo!',
+                    text: message,
+                    timer: 3000,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end'
                 });
             }
+        }
 
-            localStorage.setItem('selectedSeats', JSON.stringify(seats));
-            localStorage.setItem('selectedSeats_timestamp', Date.now().toString());
-            localStorage.setItem('selectedSeats_sessionId', this.sessionId);
+        stopCountdown() {
+            if (this.countdownTimer) {
+                this.countdownTimer.stop();
+                this.countdownTimer = null;
+            }
+
+            const countdownElement = document.getElementById('seat-countdown');
+            if (countdownElement) {
+                countdownElement.innerHTML = '';
+            }
         }
     }
 
     const seatSynchronizer = new SeatSynchronizer();
 
-    window.reloadSeatsFromBlade = function () {
-        if (typeof Livewire !== 'undefined') {
-            Livewire.dispatch('reloadSeats');
-        }
-    };
-
-    window.generateClientDOMSeats = function ({ seats, selectedSeats = [], sessionId }, pathScreen, modelBinding = 'selectedSeats') {
+    window.generateClientDOMSeats = function ({ seats, selectedSeats = [], sessionId, holdExpiresAt = null, remainingSeconds = 0 }, pathScreen, modelBinding = 'selectedSeats') {
         window.currentSelectedSeats = selectedSeats;
         window.currentSessionId = sessionId;
+
+        if (holdExpiresAt && selectedSeats.length > 0) {
+            const expiresDate = new Date(holdExpiresAt);
+            const now = new Date();
+
+            if (expiresDate > now) {
+                seatSynchronizer.startCountdown(expiresDate);
+            } else {
+                seatSynchronizer.stopCountdown();
+            }
+        } else {
+            seatSynchronizer.stopCountdown();
+        }
 
         if (!seats || seats.length === 0) return;
 
@@ -860,6 +844,10 @@ document.addEventListener("livewire:init", () => {
             <div class="st_seat_lay_heading float_left">
                 <h3>SE7ENCINEMA SCREEN</h3>
             </div>
+
+            <!-- Countdown Timer Display -->
+            <div id="seat-countdown" class="seat-countdown-container text-center mb-3"></div>
+
             <div class="st_seat_full_container" style="float: none">
                 <div class="st_seat_lay_economy_wrapper float_left" style="width: 100% !important">
                     <div class="screen">
@@ -893,14 +881,11 @@ document.addEventListener("livewire:init", () => {
 
                 const seatType = isCouple ? "double" : isVip ? "vip" : "standard";
                 const seatClass = `seat seat-${seatType}`;
-                const seatLabel = `Chỗ ngồi ${seatId}`;
                 const isChecked = selectedSeats.includes(seatId) ? 'checked' : '';
-                const externalSelectedSeats = JSON.parse(getCookie("selectedSeats") || "[]");
-                const isExternalSelected = externalSelectedSeats.includes(seatId) && !selectedSeats.includes(seatId);
                 const isBooked = seat.is_booked === true || seat.is_booked === 1;
                 const isHeld = seat.is_held === true || seat.is_held === 1;
-                const isDisabled = isExternalSelected || isBooked || isHeld ? 'disabled' : '';
-                const dataDisabled = isExternalSelected || isBooked || isHeld ? 'true' : 'false';
+                const isDisabled = isBooked || isHeld ? 'disabled' : '';
+                const dataDisabled = isBooked || isHeld ? 'true' : 'false';
 
                 const seatCeil = document.createElement("li");
                 seatCeil.innerHTML = `
@@ -915,44 +900,13 @@ document.addEventListener("livewire:init", () => {
                     data-booked="${isBooked ? 'true' : 'false'}"
                     data-held="${isHeld ? 'true' : 'false'}"
                     ${isChecked}
+                    ${isDisabled}
                     wire:sc-model="noop"
                     >
             `;
 
-                if (isBooked || isHeld || isExternalSelected) {
-                    const wrapper = document.createElement("div");
-                    wrapper.className = "seat-wrapper";
-                    wrapper.style.position = "relative";
-                    wrapper.style.cursor = "not-allowed";
-
-                    const overlay = document.createElement("div");
-                    overlay.className = "seat-overlay";
-                    overlay.style.position = "absolute";
-                    overlay.style.top = "0";
-                    overlay.style.left = "0";
-                    overlay.style.width = "100%";
-                    overlay.style.height = "100%";
-                    overlay.style.zIndex = "10";
-                    overlay.style.cursor = "not-allowed";
-
-                    if (isBooked) {
-                        overlay.setAttribute('wire:sc-alert.error.icon.position.timer.3000', '');
-                        overlay.setAttribute('wire:sc-title', `Ghế ${seatId} đã được đặt!`);
-                        overlay.setAttribute('wire:sc-html', 'Ghế này đã được đặt trước đó và không thể chọn.');
-                    } else if (isHeld || isExternalSelected) {
-                        overlay.setAttribute('wire:sc-alert.warning.icon.position.timer.5000', '');
-                        overlay.setAttribute('wire:sc-title', `Ghế ${seatId} đang được giữ`);
-                        overlay.setAttribute('wire:sc-html', 'Ghế này đang được giữ bởi người khác.');
-                    }
-                    overlay.setAttribute('wire:sc-model', 'noop');
-
-                    const originalInput = seatCeil.querySelector('input');
-                    originalInput.disabled = true;
-
-                    wrapper.appendChild(originalInput);
-                    wrapper.appendChild(overlay);
-                    seatCeil.innerHTML = '';
-                    seatCeil.appendChild(wrapper);
+                if (isBooked || isHeld) {
+                    addSeatOverlay(seatCeil, seatId, isBooked ? 'booked' : 'held');
                 }
 
                 seatCeil.dataset.seat = seatType;
@@ -960,7 +914,7 @@ document.addEventListener("livewire:init", () => {
 
                 if (isBooked) {
                     seatCeil.classList.add("seat-booked");
-                } else if (isExternalSelected || isHeld) {
+                } else if (isHeld) {
                     seatCeil.classList.add("seat-held");
                 } else if (selectedSeats.includes(seatId)) {
                     seatCeil.classList.add("seat-selected");
@@ -995,61 +949,12 @@ document.addEventListener("livewire:init", () => {
             }
         }
 
-        function updateSeatVisualState(seatCode, isSelected, isHeld, isBooked) {
-            const input = frameSeats.querySelector(`input[value="${seatCode}"]`);
-            const parentLi = input?.closest('li.seat-item');
-            if (!parentLi) return;
-
-            parentLi.classList.remove("seat-held", "seat-selected", "seat-booked", "seat-available");
-
-            const existingWrapper = parentLi.querySelector('.seat-wrapper');
-            if (existingWrapper) {
-                const originalInput = existingWrapper.querySelector('input');
-                parentLi.innerHTML = '';
-                parentLi.appendChild(originalInput);
-            }
-
-            const currentInput = parentLi.querySelector('input');
-
-            if (isBooked) {
-                parentLi.classList.add("seat-booked");
-                currentInput.disabled = true;
-                currentInput.dataset.disabled = "true";
-                currentInput.dataset.booked = "true";
-                currentInput.checked = false;
-
-                addSeatOverlay(parentLi, currentInput, seatCode, 'booked');
-
-            } else if (isHeld) {
-                parentLi.classList.add("seat-held");
-                currentInput.disabled = true;
-                currentInput.dataset.disabled = "true";
-                currentInput.dataset.held = "true";
-                currentInput.checked = true;
-
-                addSeatOverlay(parentLi, currentInput, seatCode, 'held');
-
-            } else {
-                currentInput.disabled = false;
-                currentInput.dataset.disabled = "false";
-                currentInput.dataset.held = "false";
-                if (isSelected) {
-                    parentLi.classList.add("seat-selected");
-                    currentInput.checked = true;
-                } else {
-                    parentLi.classList.add("seat-available");
-                    currentInput.checked = false;
-                }
-            }
-        }
-
-        function addSeatOverlay(parentLi, input, seatCode, type) {
+        function addSeatOverlay(parentLi, seatCode, type) {
+            const input = parentLi.querySelector('input');
             const wrapper = document.createElement("div");
             wrapper.className = "seat-wrapper";
             wrapper.style.position = "relative";
             wrapper.style.cursor = "not-allowed";
-            wrapper.style.display = "inline-block";
-            wrapper.style.width = "100%";
 
             const overlay = document.createElement("div");
             overlay.className = "seat-overlay";
@@ -1060,7 +965,6 @@ document.addEventListener("livewire:init", () => {
             overlay.style.height = "100%";
             overlay.style.zIndex = "10";
             overlay.style.cursor = "not-allowed";
-            overlay.style.backgroundColor = "transparent";
 
             if (type === 'booked') {
                 overlay.setAttribute('wire:sc-alert.error.icon.position.timer.3000', '');
@@ -1069,7 +973,7 @@ document.addEventListener("livewire:init", () => {
             } else if (type === 'held') {
                 overlay.setAttribute('wire:sc-alert.warning.icon.position.timer.5000', '');
                 overlay.setAttribute('wire:sc-title', `Ghế ${seatCode} đang được giữ`);
-                overlay.setAttribute('wire:sc-html', 'Ghế này đang được giữ bởi người khác trong tab/trình duyệt khác.');
+                overlay.setAttribute('wire:sc-html', 'Ghế này đang được giữ bởi người khác.');
             }
             overlay.setAttribute('wire:sc-model', 'noop');
 
@@ -1100,7 +1004,6 @@ document.addEventListener("livewire:init", () => {
 
                     if (input && !input.disabled && input.dataset.booked !== 'true' && input.dataset.held !== 'true') {
                         const isSelected = selectedSeats.includes(currentSeatId);
-
                         if (!isSelected) {
                             return true;
                         }
@@ -1124,7 +1027,6 @@ document.addEventListener("livewire:init", () => {
 
             for (const row in grouped) {
                 const cols = grouped[row].sort((a, b) => a - b);
-
                 const groups = [];
                 let currentGroup = [cols[0]];
 
@@ -1212,39 +1114,30 @@ document.addEventListener("livewire:init", () => {
             input.addEventListener('change', (e) => {
                 const current = e.target;
                 const seatCode = current.value;
-
-                const externalHeld = JSON.parse(getCookie("selectedSeats") || "[]");
                 const isBooked = current.dataset.booked === 'true';
                 const isHeld = current.dataset.held === 'true';
-                const isDisabled = current.dataset.disabled === 'true' || current.disabled === true;
 
-                const checkedInputs = Array.from(frameSeats.querySelectorAll('input.seat:checked'));
-                const selectedSeatCodes = checkedInputs.map(i => i.value);
-
-                if (isBooked) {
+                if (isBooked || isHeld) {
                     e.preventDefault();
                     current.checked = false;
 
-                    current.setAttribute('wire:sc-alert.error.icon.position.timer.2500', '');
-                    current.setAttribute('wire:sc-title', `Ghế ${seatCode} đã được đặt!`);
-                    current.setAttribute('wire:sc-html', 'Ghế này đã được đặt trước đó Vui lòng chọn ghế khác.');
-                    return;
-                }
+                    const alertType = isBooked ? 'error' : 'warning';
+                    const title = isBooked ? `Ghế ${seatCode} đã được đặt!` : `Ghế ${seatCode} đang được giữ`;
+                    const message = isBooked ? 'Ghế này đã được đặt trước đó. Vui lòng chọn ghế khác.' : 'Ghế này đang được giữ bởi người khác.';
 
-                if (isHeld || externalHeld.includes(seatCode)) {
-                    e.preventDefault();
-                    current.checked = false;
-
-                    current.setAttribute('wire:sc-alert.warning.icon.position.timer.5000', '');
-                    current.setAttribute('wire:sc-title', `Ghế ${seatCode} đang được giữ bởi người khác`);
+                    current.setAttribute(`wire:sc-alert.${alertType}.icon.position.timer.3000`, '');
+                    current.setAttribute('wire:sc-title', title);
+                    current.setAttribute('wire:sc-html', message);
                     current.setAttribute('wire:sc-model', 'noop');
                     return;
                 }
 
+                const checkedInputs = Array.from(frameSeats.querySelectorAll('input.seat:checked'));
+                const selectedSeatCodes = checkedInputs.map(i => i.value);
+
                 if (hasLonelySeat(selectedSeatCodes)) {
                     e.preventDefault();
                     current.checked = false;
-
                     current.setAttribute('wire:sc-alert.error.icon.position.timer.5000', '');
                     current.setAttribute('wire:sc-title', 'Không được để ghế lẻ!');
                     current.setAttribute('wire:sc-html', 'Vui lòng chọn lại ghế, không để ghế lẻ giữa các ghế đã chọn.');
@@ -1254,7 +1147,6 @@ document.addEventListener("livewire:init", () => {
                 if (hasSole(selectedSeatCodes)) {
                     e.preventDefault();
                     current.checked = false;
-
                     current.setAttribute('wire:sc-alert.error.icon.position.timer.5000', '');
                     current.setAttribute('wire:sc-title', 'Không được để khoảng trống!');
                     current.setAttribute('wire:sc-html', 'Vui lòng chọn ghế liền kề, không để khoảng trống có thể chọn được.');
@@ -1264,7 +1156,6 @@ document.addEventListener("livewire:init", () => {
                 if (hasInvalidDiagonal(selectedSeatCodes)) {
                     e.preventDefault();
                     current.checked = false;
-
                     current.setAttribute('wire:sc-alert.error.icon.position.timer.5000', '');
                     current.setAttribute('wire:sc-title', 'Cách chọn ghế không hợp lệ!');
                     current.setAttribute('wire:sc-html', 'Vui lòng chọn ghế ở các hàng liền kề và gần nhau.');
@@ -1275,23 +1166,25 @@ document.addEventListener("livewire:init", () => {
                 const finalSelectedSeatCodes = finalSelectedInputs.map(i => i.value);
 
                 window.currentSelectedSeats = finalSelectedSeatCodes;
-                seatSynchronizer.broadcastUpdate(finalSelectedSeatCodes);
 
                 frameSeats.querySelectorAll('input.seat').forEach(seatInput => {
                     const code = seatInput.value;
                     const isSelected = finalSelectedSeatCodes.includes(code);
-                    const isHeldSeat = seatInput.dataset.held === 'true' ||
-                        (externalHeld.includes(code) && !finalSelectedSeatCodes.includes(code));
-                    const isBookedSeat = seatInput.dataset.booked === 'true';
-                    updateSeatVisualState(code, isSelected, isHeldSeat, isBookedSeat);
-                });
+                    const parentLi = seatInput.closest('li.seat-item');
+                    if (!parentLi) return;
 
-                setTimeout(() => {
-                    if (typeof Livewire !== 'undefined') {
-                        Livewire.hook('morph.updated', ({ el, component }) => {
-                        });
+                    parentLi.classList.remove("seat-held", "seat-selected", "seat-booked", "seat-available");
+
+                    if (seatInput.dataset.booked === 'true') {
+                        parentLi.classList.add("seat-booked");
+                    } else if (seatInput.dataset.held === 'true') {
+                        parentLi.classList.add("seat-held");
+                    } else if (isSelected) {
+                        parentLi.classList.add("seat-selected");
+                    } else {
+                        parentLi.classList.add("seat-available");
                     }
-                }, 100);
+                });
 
                 Livewire.dispatch('updateSelectedSeats', [finalSelectedSeatCodes]);
             });
@@ -1300,10 +1193,21 @@ document.addEventListener("livewire:init", () => {
         return frameSeats;
     };
 
+    // Helper function
+    function calculateSeatDistribution(total) {
+        if (total <= 6) return [];
+        if (total <= 12) return [Math.ceil(total / 2)];
+        if (total <= 18) return [Math.ceil(total / 3), Math.ceil(2 * total / 3)];
+        return [Math.ceil(total / 4), Math.ceil(total / 2), Math.ceil(3 * total / 4)];
+    }
+
     window.addEventListener('beforeunload', () => {
-        if (seatSynchronizer.broadcastChannel) {
-            seatSynchronizer.broadcastChannel.close();
+        if (seatSynchronizer.countdownTimer) {
+            seatSynchronizer.countdownTimer.stop();
+        }
+
+        if (typeof Livewire !== 'undefined') {
+            Livewire.dispatch('checkHoldStatus');
         }
     });
-
 });

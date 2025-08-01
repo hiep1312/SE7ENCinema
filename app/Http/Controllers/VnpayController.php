@@ -41,7 +41,7 @@ class VnpayController extends Controller
                 $booking = Booking::find($booking_id);
 
                 if ($booking) {
-                    $booking->status = 'confirmed';
+                    $booking->status = 'paid';
                     $booking->transaction_code = strtoupper(Str::random(10));
                     $booking->end_transaction = now();
                     $booking->payment_method = 'bank_transfer';

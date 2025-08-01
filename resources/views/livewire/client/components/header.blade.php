@@ -58,7 +58,8 @@
                             <li class="parent"><a href="{{ route('client.index') }}">Trang Chủ</a></li>
                             <li class="parent megamenu"><a href="{{ route('client.movies.index') }}">Danh Sách Phim</a>
                             </li>
-                            <li class="parent"><a href="#">Khuyến Mãi Trong tuần</a></li>
+                            <li class="parent"><a href="#">Lịch chiếu</a></li>
+                            <li class="parent"><a href="#">Khuyến Mãi</a></li>
                             <li class="parent"><a href="#">Thành Viên</a></li>
                             <li class="parent"><a href="{{ route('client.contact') }}">Chính sách & Bảo mật</a>
                             </li>
@@ -109,7 +110,9 @@
                     </li>
                     <li><a href="{{ route('client.movies.index') }}">DANH SÁCH PHIM</a>
                     </li>
-                    <li><a href="{{ route('client.event_single') }}">KHUYẾN MÃI TRONG TUẦN</a>
+                    <li><a href="{{ route('client.event_single') }}">LỊCH CHIẾU</a>
+                    </li>
+                    <li><a href="{{ route('client.event_single') }}">KHUYẾN MÃI</a>
                     </li>
                     <li><a href="{{ route('client.gallery') }}">THÀNH VIÊN</a>
                     </li>

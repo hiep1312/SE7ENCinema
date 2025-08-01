@@ -5,13 +5,17 @@ namespace App\Livewire\Client;
 use Livewire\Component;
 use App\Models\Showtime;
 use App\Models\Seat;
+use App\Models\SeatHold;
+use App\Models\User;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use App\Models\Booking;
 use App\Models\BookingSeat;
+use App\Services\SeatHoldService;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class SelectSeats extends Component
 {
@@ -20,96 +24,168 @@ class SelectSeats extends Component
     public $room;
     public $seats;
     public $selectedSeats = [];
-    public $lastBookedSeatsHash = '';
     public $sessionId;
+    public $userIp;
+    public $userId = null;
+    public $holdExpiresAt = null;
+    public $remainingSeconds = 0;
+    public $isBanned = false;
+    public $banInfo = null;
+
+    protected $seatHoldService;
 
     public $listeners = [
         'updateSelectedSeats' => 'updateSelectedSeats',
-        'reloadSeats' => 'refreshSeats'
+        'reloadSeats' => 'refreshSeats',
+        'checkHoldStatus' => 'checkHoldStatus'
     ];
 
     public function mount($showtime_id)
     {
         $this->showtime_id = $showtime_id;
         $this->sessionId = session()->getId();
+        $this->userIp = request()->ip();
+        $this->userId = Auth::id();
+
         $this->showtime = Showtime::with('room')->findOrFail($showtime_id);
         $this->room = $this->showtime->room;
         $this->loadSeats();
+        $this->checkCurrentHoldStatus();
         $this->generateSeatsLayout();
+    }
+
+    public function boot(SeatHoldService $seatHoldService)
+    {
+        $this->seatHoldService = $seatHoldService;
+        if ($this->seatHoldService->checkUserBan($this->sessionId, $this->userIp, $this->userId)) {
+            $this->isBanned = true;
+            $this->banInfo = $this->seatHoldService->getBanInfo($this->sessionId, $this->userIp, $this->userId);
+        }
+    }
+
+    public function checkCurrentHoldStatus()
+    {
+        if ($this->isBanned) return;
+
+        $holdStatus = $this->seatHoldService->getUserHoldStatus($this->showtime_id, $this->sessionId);
+
+        if ($holdStatus) {
+            if ($this->seatHoldService->isHoldExpired($holdStatus['expires_at'])) {
+                $this->handleExpiredHold();
+                return;
+            }
+
+            $this->selectedSeats = $holdStatus['seat_codes'];
+            $this->holdExpiresAt = $holdStatus['expires_at'];
+            $this->remainingSeconds = max(0, $holdStatus['remaining_seconds']);
+        } else {
+            $this->clearHoldData();
+        }
+    }
+
+    private function handleExpiredHold()
+    {
+        $result = $this->seatHoldService->handleExpiredHolds($this->sessionId, $this->userIp, $this->userId);
+
+        if ($result['banned']) {
+            $this->isBanned = true;
+            $this->banInfo = $this->seatHoldService->getBanInfo($this->sessionId, $this->userIp, $this->userId);
+            $this->dispatch('sc-alert.error', $this->banInfo['reason'], $this->banInfo['details']);
+        } else if ($result['warning']) {
+            $this->dispatch('sc-alert.warning', 'Cảnh báo vi phạm!', 'Bạn đã vi phạm ' . $result['violation_count'] . ' lần. Lần vi phạm tiếp theo sẽ bị khóa tài khoản.');
+        }
+
+        $this->clearHoldData();
+    }
+
+    private function clearHoldData()
+    {
+        $this->selectedSeats = [];
+        $this->holdExpiresAt = null;
+        $this->remainingSeconds = 0;
     }
 
     public function updateSelectedSeats($seats)
     {
+        if ($this->isBanned) {
+            $this->dispatch('sc-alert.error', $this->banInfo['reason'], $this->banInfo['details']);
+            return;
+        }
+
         if (is_string($seats)) {
             $seats = explode(',', $seats);
         }
         $this->selectedSeats = array_filter((array) $seats);
 
-        $this->updateTemporaryHold();
-
-        if ($this->hasBookedSeatsChanged()) {
-            $this->loadSeats();
+        if (!empty($this->selectedSeats)) {
+            $this->updateSeatHolds();
+        } else {
+            $this->seatHoldService->releaseHolds($this->sessionId);
+            $this->clearHoldData();
         }
+
+        $this->loadSeats();
         $this->generateSeatsLayout();
     }
 
-    private function updateTemporaryHold()
+    private function updateSeatHolds()
     {
-        $holdKey = "temp_hold_showtime_{$this->showtime_id}";
-        $currentHolds = Cache::get($holdKey, []);
-
-        $now = now();
-        $currentHolds = array_filter($currentHolds, function ($hold) use ($now) {
-            return $now->diffInMinutes($hold['created_at']) < 15;
-        });
-
-        $currentHolds = array_filter($currentHolds, function ($hold) {
-            return $hold['session_id'] !== $this->sessionId;
-        });
-
-        if (!empty($this->selectedSeats)) {
+        try {
             $seatIds = $this->getSeatIdsFromCodes($this->selectedSeats);
-            foreach ($seatIds as $seatId) {
-                $currentHolds[$seatId] = [
-                    'session_id' => $this->sessionId,
-                    'created_at' => $now,
-                    'seat_codes' => $this->selectedSeats
-                ];
+            $expiresAt = $this->seatHoldService->holdSeats(
+                $this->showtime_id,
+                $seatIds,
+                $this->sessionId,
+                $this->userIp,
+                $this->userId
+            );
+
+            $this->holdExpiresAt = $expiresAt;
+            $this->remainingSeconds = max(0, $expiresAt->diffInSeconds(now()));
+        } catch (\Exception $e) {
+            if (str_contains($e->getMessage(), 'khóa')) {
+                $this->isBanned = true;
+                $this->banInfo = $this->seatHoldService->getBanInfo($this->sessionId, $this->userIp, $this->userId);
+                $this->dispatch('sc-alert.error', $this->banInfo['reason'], $this->banInfo['details']);
+            } else {
+                $this->dispatch('sc-alert.error', 'Lỗi chọn ghế', $e->getMessage());
             }
+            $this->clearHoldData();
+            $this->selectedSeats = [];
+        }
+    }
+
+    public function checkHoldStatus()
+    {
+        if ($this->seatHoldService->checkUserBan($this->sessionId, $this->userIp, $this->userId)) {
+            $this->isBanned = true;
+            $this->banInfo = $this->seatHoldService->getBanInfo($this->sessionId, $this->userIp, $this->userId);
+            return;
         }
 
-        Cache::put($holdKey, $currentHolds, 20);
+        if ($this->holdExpiresAt) {
+            $expiresAt = Carbon::parse($this->holdExpiresAt);
+            if ($expiresAt <= now()) {
+                $this->handleExpiredHold();
+                $this->loadSeats();
+                $this->generateSeatsLayout();
+                return;
+            }
+            $this->remainingSeconds = max(0, $expiresAt->diffInSeconds(now()));
+        }
     }
 
     public function loadSeats()
     {
-        $cacheKey = "seats_room_{$this->showtime->room_id}";
-        $this->seats = Cache::remember($cacheKey, 30, function () {
-            return Seat::where('room_id', $this->showtime->room_id)->get();
-        });
+        $this->seats = Seat::where('room_id', $this->showtime->room_id)->get();
 
         $bookedSeatIds = BookingSeat::whereHas('booking', function ($q) {
             $q->where('showtime_id', $this->showtime_id)
-                ->whereIn('status', ['pending', 'paid']);
+                ->where('status', 'paid');
         })->pluck('seat_id')->toArray();
 
-        $this->lastBookedSeatsHash = md5(serialize($bookedSeatIds));
-
-        $holdKey = "temp_hold_showtime_{$this->showtime_id}";
-        $currentHolds = Cache::get($holdKey, []);
-
-        $now = now();
-        $currentHolds = array_filter($currentHolds, function ($hold) use ($now) {
-            return $now->diffInMinutes($hold['created_at']) < 15;
-        });
-        Cache::put($holdKey, $currentHolds, 20);
-
-        $heldSeatIds = [];
-        foreach ($currentHolds as $seatId => $hold) {
-            if ($hold['session_id'] !== $this->sessionId) {
-                $heldSeatIds[] = $seatId;
-            }
-        }
+        $heldSeats = $this->seatHoldService->getHeldSeats($this->showtime_id, $this->sessionId);
+        $heldSeatIds = $heldSeats->pluck('seat_id')->toArray();
 
         foreach ($this->seats as $seat) {
             $seat->is_booked = in_array($seat->id, $bookedSeatIds);
@@ -117,63 +193,10 @@ class SelectSeats extends Component
         }
     }
 
-    private function hasBookedSeatsChanged()
-    {
-        $bookedSeatIds = BookingSeat::whereHas('booking', function ($q) {
-            $q->where('showtime_id', $this->showtime_id)
-                ->whereIn('status', ['pending', 'paid']);
-        })->pluck('seat_id')->toArray();
-
-        $currentHash = md5(serialize($bookedSeatIds));
-        return $currentHash !== $this->lastBookedSeatsHash;
-    }
-
     public function refreshSeats()
     {
-        Cache::forget("temp_hold_showtime_{$this->showtime_id}");
         $this->loadSeats();
-        $this->generateSeatsLayout();
-    }
-
-    public function toggleSeat($seatCode)
-    {
-        if (in_array($seatCode, $this->selectedSeats)) {
-            $this->selectedSeats = array_values(array_diff($this->selectedSeats, [$seatCode]));
-        } else {
-            $row = substr($seatCode, 0, 1);
-            $number = substr($seatCode, 1);
-            $seat = $this->seats->first(fn($s) => $s->seat_row === $row && $s->seat_number == $number);
-
-            if (!$seat) return;
-
-            $alreadyBooked = BookingSeat::where('seat_id', $seat->id)
-                ->whereHas('booking', function ($q) {
-                    $q->where('showtime_id', $this->showtime_id)
-                        ->whereIn('status', ['pending', 'paid']);
-                })->exists();
-
-            if ($alreadyBooked) {
-                session()->flash('error', 'Ghế đã được đặt.');
-                $this->loadSeats();
-                $this->generateSeatsLayout();
-                return;
-            }
-
-            $holdKey = "temp_hold_showtime_{$this->showtime_id}";
-            $currentHolds = Cache::get($holdKey, []);
-
-            if (
-                isset($currentHolds[$seat->id]) &&
-                $currentHolds[$seat->id]['session_id'] !== $this->sessionId
-            ) {
-                session()->flash('error', 'Ghế đang được giữ bởi người khác.');
-                return;
-            }
-
-            $this->selectedSeats[] = $seatCode;
-        }
-
-        $this->updateTemporaryHold();
+        $this->checkCurrentHoldStatus();
         $this->generateSeatsLayout();
     }
 
@@ -192,16 +215,13 @@ class SelectSeats extends Component
             ->toArray();
     }
 
-    public function generateSeatCodes($seatIds)
+    public function refreshSeatStatus()
     {
-        return collect($seatIds)
-            ->map(function ($id) {
-                $seat = $this->seats->firstWhere('id', $id);
-                return $seat ? ($seat->seat_row . $seat->seat_number) : null;
-            })
-            ->filter()
-            ->values()
-            ->toArray();
+        if ($this->isBanned) return;
+
+        $this->checkCurrentHoldStatus();
+        $this->loadSeats();
+        $this->generateSeatsLayout();
     }
 
     public function generateSeatsLayout()
@@ -221,6 +241,10 @@ class SelectSeats extends Component
         $seats = json_encode($seatsData);
         $selectedSeats = json_encode($this->selectedSeats);
         $sessionId = json_encode($this->sessionId);
+        $holdExpiresAt = $this->holdExpiresAt ? json_encode(Carbon::parse($this->holdExpiresAt)->toIso8601String()) : 'null';
+        $remainingSeconds = max(0, $this->remainingSeconds);
+        $isBanned = $this->isBanned ? 'true' : 'false';
+        $banInfo = $this->banInfo ? json_encode($this->banInfo) : 'null';
 
         $this->js(<<<JS
             const wrapper = document.getElementById('user-seat-wrapper');
@@ -229,7 +253,11 @@ class SelectSeats extends Component
                 const dom = window.generateClientDOMSeats({
                     seats: {$seats},
                     selectedSeats: {$selectedSeats},
-                    sessionId: {$sessionId}
+                    sessionId: {$sessionId},
+                    holdExpiresAt: {$holdExpiresAt},
+                    remainingSeconds: {$remainingSeconds},
+                    isBanned: {$isBanned},
+                    banInfo: {$banInfo}
                 });
                 wrapper.appendChild(dom);
                 console.log('Seats generated successfully');
@@ -239,14 +267,23 @@ class SelectSeats extends Component
         JS);
     }
 
-    public function noop()
-    {
-    }
-
     public function goToSelectFood()
     {
+        if ($this->isBanned) {
+            $this->dispatch('sc-alert.error', $this->banInfo['reason'], $this->banInfo['details']);
+            return;
+        }
+
         if (empty($this->selectedSeats)) {
-            session()->flash('error', 'Vui lòng chọn ít nhất một ghế.');
+            $this->dispatch('sc-alert.error', 'Chưa chọn ghế', 'Vui lòng chọn ít nhất một ghế.');
+            return;
+        }
+
+        if (!$this->holdExpiresAt || $this->seatHoldService->isHoldExpired($this->holdExpiresAt)) {
+            $this->dispatch('sc-alert.error', 'Hết thời gian giữ ghế', 'Thời gian giữ ghế đã hết. Vui lòng chọn lại ghế.');
+            $this->handleExpiredHold();
+            $this->loadSeats();
+            $this->generateSeatsLayout();
             return;
         }
 
@@ -257,11 +294,11 @@ class SelectSeats extends Component
             $conflict = BookingSeat::whereIn('seat_id', $seatIds)
                 ->whereHas('booking', function ($q) {
                     $q->where('showtime_id', $this->showtime_id)
-                        ->whereIn('status', ['pending', 'paid']);
+                        ->where('status', 'paid');
                 })->exists();
 
             if ($conflict) {
-                session()->flash('error', 'Một số ghế đã bị đặt bởi người khác.');
+                $this->dispatch('sc-alert.error', 'Ghế đã được đặt', 'Một số ghế đã bị đặt bởi người khác.');
                 DB::rollBack();
                 $this->loadSeats();
                 $this->generateSeatsLayout();
@@ -269,7 +306,7 @@ class SelectSeats extends Component
             }
 
             $booking = Booking::create([
-                'user_id' => 1,
+                'user_id' => $this->userId,
                 'showtime_id' => $this->showtime_id,
                 'booking_code' => strtoupper(Str::random(8)),
                 'total_price' => 0,
@@ -290,13 +327,7 @@ class SelectSeats extends Component
                 ->sum(fn($item) => $item->seat->price ?? 0);
 
             $booking->update(['total_price' => $totalPrice]);
-
-            $holdKey = "temp_hold_showtime_{$this->showtime_id}";
-            $currentHolds = Cache::get($holdKey, []);
-            foreach ($seatIds as $seatId) {
-                unset($currentHolds[$seatId]);
-            }
-            Cache::put($holdKey, $currentHolds, 20);
+            $this->seatHoldService->releaseHolds($this->sessionId);
 
             DB::commit();
 
@@ -306,23 +337,31 @@ class SelectSeats extends Component
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            session()->flash('error', 'Lỗi khi tạo booking: ' . $e->getMessage());
+            $this->dispatch('sc-alert.error', 'Lỗi tạo đặt chỗ', 'Lỗi khi tạo booking: ' . $e->getMessage());
             $this->loadSeats();
             $this->generateSeatsLayout();
         }
     }
+
+    public function noop() {}
 
     #[Title('Chọn ghế - SE7ENCinema')]
     #[Layout('components.layouts.client')]
 
     public function render()
     {
-        if ($this->hasBookedSeatsChanged()) {
-            $this->loadSeats();
+        $this->checkCurrentHoldStatus();
+
+        if ($this->isBanned) {
+            return view('livewire.client.select-seats', [
+                'banInfo' => $this->banInfo
+            ]);
         }
 
         return view('livewire.client.select-seats', [
-            'room' => $this->room
+            'room' => $this->room,
+            'holdExpiresAt' => $this->holdExpiresAt,
+            'remainingSeconds' => $this->remainingSeconds
         ]);
     }
 }

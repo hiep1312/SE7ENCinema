@@ -193,7 +193,7 @@
                                                                 Mua Vé Ngay
                                                             </a>
                                                             @else
-                                                            <a href="{{ route('login') }}" onclick="alert('Vui lòng đăng nhập để mua vé')" class="btn btn-primary"
+                                                            <a href="{{ route('login') }}" wire:click='noop()' wire:sc-alert.warning.icon.position.timer.5000 wire:sc-title="Vui lòng đăng nhập để mua vé" class="btn btn-primary"
                                                                 style="background-color: #e50914; border: none; padding: 10px 20px; font-size: 16px; color: white; text-transform: uppercase;">
                                                                 Mua Vé Ngay
                                                             </a>

@@ -17,7 +17,7 @@ class MovieList extends Component
     public $tabCurrent = 'showing';
     public $genreFilter = '';
     public $search = '';
-    public $perPage = 9; 
+    public $perPage = 9;
 
     public function updateStatusMovies(){
         Movie::all()->each(function($movie){
@@ -28,6 +28,9 @@ class MovieList extends Component
             else $movie->status = 'showing';
             $movie->save();
         });
+    }
+    public function noop(){
+        redirect()->route('login');
     }
 
     public function render(){
