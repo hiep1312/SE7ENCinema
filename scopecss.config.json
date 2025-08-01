@@ -3,7 +3,8 @@
     "globalCssFiles": [
         "scanner.css",
         "termsOfService.css",
-        "privacyPolicy.css"
+        "privacyPolicy.css",
+        "faq.css"
     ],
     "scopedCssFiles": [
 

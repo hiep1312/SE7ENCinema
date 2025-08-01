@@ -168,6 +168,7 @@ Route::name('client.')->group(function () {
     Route::view('/confirmation_screen', 'livewire.client.template.confirmation_screen')->name('confirmation_screen');
     Route::view('/privacy_policy', 'livewire.client.template.abouts.privacy_policy')->name('privacy_policy');
     Route::view('/terms_of_service', 'livewire.client.template.abouts.terms_of_service')->name('terms_of_service');
+    Route::view('/faq', 'livewire.client.template.abouts.faq')->name('faq');
 });
 
 Route::view('/', 'welcome')->name('welcome');
