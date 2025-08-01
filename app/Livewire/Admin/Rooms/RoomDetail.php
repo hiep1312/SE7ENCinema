@@ -18,10 +18,9 @@ class RoomDetail extends Component
 {
     use WithPagination;
     public $room;
-    // Đặt tab mặc định là 'analytics' (charts)
     public $tabCurrent = 'analytics';
 
-    // Biến tính toán thống kê tống quan
+    // Biến tính toán thống kê tổng quan
     public $totalShowtimes = 0;
     public $averageUtilization = 0;
     public $maintenanceScore = 0;
@@ -36,10 +35,10 @@ class RoomDetail extends Component
     public $realTimeCountdown = [];
 
     // Chart data properties
-    public $allRoomsStatsData = [];  // Gộp vé bán và doanh thu theo phòng
-    public $occupancyRateData = [];
-    public $seatStatusData = [];     // Tình trạng ghế
-    public $roomMoviesData = [];     // Phim được xem nhiều nhất của phòng
+    public $roomStatsData = [];
+    public $occupancyData = [];
+    public $seatStatusData = [];
+    public $roomMoviesData = [];
 
     // Chart periods
     public $roomStatsPeriod = '7_days';
@@ -72,25 +71,6 @@ class RoomDetail extends Component
         $this->loadChartData();
     }
 
-    // Test method để debug tab switching
-    public function testTabChange()
-    {
-        $this->tabCurrent = $this->tabCurrent === 'analytics' ? 'overview' : 'analytics';
-        $this->dispatch('tabChanged', $this->tabCurrent);
-    }
-
-    // Method to handle tab changes
-    public function changeTab($tab)
-    {
-        $this->tabCurrent = $tab;
-
-        // Dispatch custom event when switching to analytics tab to re-render charts
-        if ($tab === 'analytics') {
-            $this->dispatch('tabChanged', 'analytics');
-        }
-    }
-
-    // Chart period change methods
     public function changeRoomStatsPeriod($period)
     {
         $this->roomStatsPeriod = $period;
@@ -117,54 +97,64 @@ class RoomDetail extends Component
 
     public function loadChartData()
     {
-        // 1. Thống kê tất cả phòng (vé bán + doanh thu)
-        $this->allRoomsStatsData = $this->getAllRoomsStatsData($this->roomStatsPeriod);
+        // 1. Thống kê tất cả phòng chiếu
+        $this->roomStatsData = $this->getRoomStatsData($this->roomStatsPeriod);
 
-        // 2. Tỷ lệ lấp đầy phòng hiện tại
-        $this->occupancyRateData = $this->getOccupancyData($this->occupancyPeriod);
+        // 2. Tỷ lệ lấp đầy
+        $this->occupancyData = $this->getOccupancyData($this->occupancyPeriod);
 
-        // 3. Tình trạng ghế
+        // 3. Dữ liệu trạng thái ghế
         $this->seatStatusData = $this->getSeatStatusData($this->seatStatusPeriod);
 
-        // 4. Phim được xem nhiều nhất của phòng này
+        // 4. Dữ liệu phim được xem nhiều nhất
         $this->roomMoviesData = $this->getRoomMoviesData($this->roomMoviesPeriod);
-
-        // Dispatch event to re-render charts when data changes
-        if ($this->tabCurrent === 'analytics') {
-            $this->dispatch('tabChanged', 'analytics');
-        }
     }
 
-    // Get date range based on period
-    private function getDateRange($period)
+    private function getRoomStatsData($period)
     {
-        $now = now();
-
-        return match($period) {
-            '3_days' => [$now->copy()->subDays(3), $now],
-            '7_days' => [$now->copy()->subDays(7), $now],
-            '30_days' => [$now->copy()->subDays(30), $now],
-            '1_month' => [$now->copy()->subMonth(), $now],
-            '3_months' => [$now->copy()->subMonths(3), $now],
-            '1_year' => [$now->copy()->subYear(), $now],
-            '2_years' => [$now->copy()->subYears(2), $now],
-            default => [$now->copy()->subDays(7), $now]
-        };
-    }
-
-    private function getAllRoomsStatsData($period)
-    {
-        [$startDate, $endDate] = $this->getDateRange($period);
-
-        // Lấy thống kê tất cả phòng
-        $roomStats = Room::select('rooms.id', 'rooms.name')
+        $query = Room::select('rooms.id', 'rooms.name')
             ->leftJoin('showtimes', 'rooms.id', '=', 'showtimes.room_id')
-            ->leftJoin('bookings', function ($join) use ($startDate, $endDate) {
+            ->leftJoin('bookings', function ($join) {
                 $join->on('showtimes.id', '=', 'bookings.showtime_id')
-                    ->where('bookings.status', '=', 'paid')
-                    ->whereBetween('bookings.created_at', [$startDate, $endDate]);
+                    ->where('bookings.status', '=', 'paid');
             })
-            ->leftJoin('booking_seats', 'bookings.id', '=', 'booking_seats.booking_id')
+            ->leftJoin('booking_seats', 'bookings.id', '=', 'booking_seats.booking_id');
+
+        switch ($period) {
+            case '3_days':
+                $startDate = now()->subDays(2)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '7_days':
+                $startDate = now()->subDays(6)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '30_days':
+                $startDate = now()->subDays(29)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '1_month':
+                $startDate = now()->subMonth()->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '3_months':
+                $startDate = now()->subMonths(3)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '1_year':
+                $startDate = now()->subYear()->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '2_years':
+                $startDate = now()->subYears(2)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            default:
+                $startDate = now()->subDays(6)->startOfDay();
+                $endDate = now()->endOfDay();
+        }
+
+        $roomStats = $query->whereBetween('bookings.created_at', [$startDate, $endDate])
             ->groupBy('rooms.id', 'rooms.name')
             ->selectRaw('COUNT(booking_seats.id) as tickets_sold, COALESCE(SUM(bookings.total_price), 0) as revenue')
             ->get();
@@ -197,7 +187,39 @@ class RoomDetail extends Component
 
     private function getOccupancyData($period)
     {
-        [$startDate, $endDate] = $this->getDateRange($period);
+        switch ($period) {
+            case '3_days':
+                $startDate = now()->subDays(2)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '7_days':
+                $startDate = now()->subDays(6)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '30_days':
+                $startDate = now()->subDays(29)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '1_month':
+                $startDate = now()->subMonth()->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '3_months':
+                $startDate = now()->subMonths(3)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '1_year':
+                $startDate = now()->subYear()->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '2_years':
+                $startDate = now()->subYears(2)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            default:
+                $startDate = now()->subDays(6)->startOfDay();
+                $endDate = now()->endOfDay();
+        }
 
         $totalBooked = BookingSeat::join('bookings', 'booking_seats.booking_id', '=', 'bookings.id')
             ->join('showtimes', 'bookings.showtime_id', '=', 'showtimes.id')
@@ -223,7 +245,39 @@ class RoomDetail extends Component
 
     private function getSeatStatusData($period)
     {
-        [$startDate, $endDate] = $this->getDateRange($period);
+        switch ($period) {
+            case '3_days':
+                $startDate = now()->subDays(2)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '7_days':
+                $startDate = now()->subDays(6)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '30_days':
+                $startDate = now()->subDays(29)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '1_month':
+                $startDate = now()->subMonth()->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '3_months':
+                $startDate = now()->subMonths(3)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '1_year':
+                $startDate = now()->subYear()->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '2_years':
+                $startDate = now()->subYears(2)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            default:
+                $startDate = now()->subDays(6)->startOfDay();
+                $endDate = now()->endOfDay();
+        }
 
         // Tổng số ghế trong phòng theo loại
         $seatsByType = $this->room->seats->groupBy('seat_type');
@@ -340,10 +394,41 @@ class RoomDetail extends Component
         ];
     }
 
-    // Get room movies data - Phim được xem nhiều nhất của phòng
     private function getRoomMoviesData($period)
     {
-        [$startDate, $endDate] = $this->getDateRange($period);
+        switch ($period) {
+            case '3_days':
+                $startDate = now()->subDays(2)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '7_days':
+                $startDate = now()->subDays(6)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '30_days':
+                $startDate = now()->subDays(29)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '1_month':
+                $startDate = now()->subMonth()->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '3_months':
+                $startDate = now()->subMonths(3)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '1_year':
+                $startDate = now()->subYear()->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '2_years':
+                $startDate = now()->subYears(2)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            default:
+                $startDate = now()->subDays(6)->startOfDay();
+                $endDate = now()->endOfDay();
+        }
 
         $data = Booking::select('movies.title', DB::raw('COUNT(booking_seats.id) as tickets_sold'), DB::raw('SUM(bookings.total_price) as revenue'))
             ->join('showtimes', 'bookings.showtime_id', '=', 'showtimes.id')
@@ -381,6 +466,28 @@ class RoomDetail extends Component
             'tickets' => $ticketsData,
             'revenue' => $revenueData
         ];
+    }
+
+    private function getFilterText($period)
+    {
+        switch ($period) {
+            case '3_days':
+                return '3 ngày gần nhất';
+            case '7_days':
+                return '7 ngày gần nhất';
+            case '30_days':
+                return '30 ngày gần nhất';
+            case '1_month':
+                return '1 tháng gần nhất';
+            case '3_months':
+                return '3 tháng gần nhất';
+            case '1_year':
+                return '1 năm gần nhất';
+            case '2_years':
+                return '2 năm gần nhất';
+            default:
+                return '7 ngày gần nhất';
+        }
     }
 
     public function calculateMaintenanceInfo()
@@ -451,6 +558,25 @@ class RoomDetail extends Component
             ->orderBy('start_time', 'asc')
             ->paginate(10, ['*'], 'upcoming_showtimes');
 
-        return view('livewire.admin.rooms.room-detail', compact('recentShowtimes', 'upcomingShowtimes'));
+        // Đảm bảo dữ liệu chart được load trước khi dispatch
+        $this->loadChartData();
+
+        ($this->tabCurrent === "analytics" || ($this->js('chartInstances = {}') || false)) && $this->dispatch('updateData',
+            $this->occupancyData ?? [],
+            $this->seatStatusData ?? [],
+            $this->roomStatsData ?? [],
+            $this->roomMoviesData ?? [],
+            [
+                'roomStatsFilterText' => $this->getFilterText($this->roomStatsPeriod),
+                'occupancyFilterText' => $this->getFilterText($this->occupancyPeriod),
+                'seatStatusFilterText' => $this->getFilterText($this->seatStatusPeriod),
+                'roomMoviesFilterText' => $this->getFilterText($this->roomMoviesPeriod)
+            ]
+        );
+
+        return view('livewire.admin.rooms.room-detail', compact(
+            'recentShowtimes',
+            'upcomingShowtimes'
+        ));
     }
 }
