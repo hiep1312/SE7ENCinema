@@ -120,15 +120,4 @@ document.addEventListener('livewire:init', () => {
     }
 
     window.callMethodScChart = scChart.callMethod;
-
-    window.liveScChart = function (...charts){
-        charts.forEach(chart => {
-            if(!Array.isArray(chart)) chart = [chart];
-
-            !(chart[0] instanceof scChart) && (chart[0] = $sc_manageChart[chart[0]]);
-            chart[0] && Livewire.hook('morph.updated', () => chart[0].updateOptions(chart[1] ?? chart
-
-            ));
-        })
-    }
 });
