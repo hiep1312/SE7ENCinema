@@ -291,7 +291,7 @@
                 <h2>TOP MOVIES IN THEATRES</h2>
             </div>
             <div class="wrap-album-slider">
-                <ul class="album-slider raw scApp" style="width: 915%; position: relative;">
+                <ul class="album-slider" style="width: 915%; position: relative;">
                     @for ($loopCount = 0; $loopCount < 3; $loopCount++)
                         @foreach ($topMovies as $movie)
                             <li class="album-slider__item"
@@ -642,5 +642,16 @@
             }
             .sc-pagination { gap: 6px; }
         }
+        .album-slider {
+    left: 0;
+    width: 5754px; /* 7 items * 274px * 3 (3 vòng lặp) */
+    white-space: nowrap;
+    animation: slideInShake 70s linear infinite;
+}
+
+@keyframes slideInShake {
+    0% { left: 0; }
+    100% { left: -3836px; } /* 2 vòng lặp (7*274*2) */
+}
     </style>
 </div>
