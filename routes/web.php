@@ -28,6 +28,10 @@ use App\Livewire\Admin\Movies\MovieIndex;
 use App\Livewire\Admin\Notifications\NotificationCreate;
 use App\Livewire\Admin\Notifications\NotificationDetail;
 use App\Livewire\Admin\Notifications\NotificationIndex;
+use App\Livewire\Admin\Promotions\PromotionCreate;
+use App\Livewire\Admin\Promotions\PromotionDetail;
+use App\Livewire\Admin\Promotions\PromotionEdit;
+use App\Livewire\Admin\Promotions\PromotionIndex;
 use App\Livewire\Admin\Users\UserCreate;
 use App\Livewire\Admin\Users\UserDetail;
 use App\Livewire\Admin\Users\UserEdit;
@@ -38,8 +42,9 @@ use App\Livewire\Admin\Showtimes\ShowtimeCreate;
 use App\Livewire\Admin\Showtimes\ShowtimeEdit;
 use App\Livewire\Admin\Showtimes\ShowtimeIndex;
 use App\Livewire\Client\Lichchieu\LichchieuIndex;
-use App\Livewire\Client\Promotions\PromotionIndex;
+use App\Livewire\Client\Promotions\PromotionIndex as PromotionIndexClient;
 use App\Livewire\Admin\Tickets\TicketIndex;
+use App\Livewire\Client\MovieList;
 use App\Livewire\Client\Ticket\Index as TicketIndexClient;
 use App\Livewire\Client\ClientMovieDetail;
 use App\Livewire\Client\User\UserConfirm;
@@ -135,6 +140,16 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->
         ->whereIn('type', ['bookings', 'tickets'])
         ->name('scanner');
 
+    /* Promotions */
+    Route::prefix('/promotions')->name('promotions.')->group(function () {
+        Route::get('/', PromotionIndex::class)->name('index');
+        Route::get('/create', PromotionCreate::class)->name('create');
+        Route::get('/edit/{promotion}', PromotionEdit::class)->name('edit');
+        Route::get('/detail/{promotion}', PromotionDetail::class)->name('detail');
+    });
+
+
+
     /* Template */
     Route::view('/dashboard', 'livewire.admin.template.dashboard')->name('dashboard');
     Route::view('/buttons', 'livewire.admin.template.ui-features.buttons')->name('buttons');
@@ -155,6 +170,8 @@ Route::name('client.')->group(function () {
     Route::get('/ticket/{bookingCode}/{index?}', TicketIndexClient::class)->name('ticket')
         ->whereAlphaNumeric('bookingCode')->whereNumber('index')
         ->middleware('auth', 'role:user,staff,admin');
+
+    Route::get('/movie_list', MovieList::class)->name('movieList');
 
     Route::view('/home', 'livewire.client.template.index')->name('index');
     Route::view('/blog_category', 'livewire.client.template.blogs.blog_category')->name('blog_category');
@@ -181,7 +198,7 @@ Route::name('client.')->group(function () {
     Route::get('/movies/{movie}', ClientMovieDetail::class)->name('movie_detail');
     /* Promotions */
     Route::prefix('/promotions')->name('promotions.')->group(function () {
-        Route::get('/', PromotionIndex::class)->name('index');
+        Route::get('/', PromotionIndexClient::class)->name('index');
     });
 });
 Route::get('/user-info/{user}', UserInformation::class)->name('userInfo')->middleware('role:user');

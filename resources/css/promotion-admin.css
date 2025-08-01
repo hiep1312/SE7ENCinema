@@ -1,0 +1,123 @@
+/* Voucher Card Modern Styles for Admin Promotion Detail */
+/* .respon {
+  border-top: #1976d2 5px solid;
+  max-width: 80% !important;
+  margin: 0 auto;
+} */
+@media (max-width: 768px) {
+  .respon {
+    max-width: 100% !important;
+  }
+}
+.voucher-card-modern {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 50%, #fecaca 100%);
+  border-radius: 1.2rem;
+  min-width: 380px;
+  min-height: 340px;
+  max-width: 100%;
+  width: 100%;
+  box-shadow: 0 4px 16px 0 rgba(239, 68, 68, 0.12);
+  position: relative;
+  overflow: visible;
+  border: 1px solid #fecaca;
+  padding: 2rem 2rem 1.5rem 2rem;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.voucher-card-modern:hover {
+  box-shadow: 0 8px 32px 0 rgba(239, 68, 68, 0.2);
+  transform: translateY(-2px);
+  border-color: #f87171;
+}
+.voucher-ribbon {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f97316 100%);
+  border-bottom-right-radius: 1rem;
+  border-top-left-radius: 1rem;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+  z-index: 2;
+  padding: 0.3rem 1.2rem;
+  color: #fff;
+  position: absolute;
+  left: 12px;
+  top: 12px;
+}
+.voucher-hole {
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border: 2px solid #fecaca;
+  box-shadow: 0 1px 4px rgba(239, 68, 68, 0.15);
+  z-index: 2;
+}
+.voucher-main-modern {
+  margin-top: 1.5rem;
+  margin-bottom: 0.7rem;
+}
+.voucher-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f97316 100%);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25);
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.voucher-code-modern {
+  background: linear-gradient(135deg, #dc2626, #ef4444) !important;
+  letter-spacing: 1px;
+  border-radius: 0.7rem;
+  font-size: 1rem;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.2);
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  white-space: normal !important;
+  text-align: center !important;
+  font-size: 1.15rem !important;
+  margin-bottom: 0.5rem;
+}
+.text-gradient-orange {
+  background: linear-gradient(135deg, #dc2626, #ef4444, #f97316);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  font-weight: 800;
+}
+.voucher-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.2rem;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+}
+.voucher-fake-btn {
+  border: none;
+  outline: none;
+  padding: 0.45rem 1.2rem;
+  border-radius: 2rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f97316 100%);
+  color: #fff;
+  box-shadow: 0 3px 12px rgba(239, 68, 68, 0.18);
+  cursor: default;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+.voucher-fake-btn.detail {
+  background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);
+}

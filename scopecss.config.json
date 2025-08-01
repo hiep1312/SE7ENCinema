@@ -8,7 +8,10 @@
                 "termsOfService.css",
                 "privacyPolicy.css",
                 "promotion.css",
-                "lichchieuIndex.css"
+                "lichchieuIndex.css",
+                "badgeML.css"
         ],
-        "scopedCssFiles": []
+        "scopedCssFiles": [
+            "app.css"
+        ]
 }
