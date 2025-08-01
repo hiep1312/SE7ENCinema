@@ -1,15 +1,13 @@
 <?php
 
-namespace App\Livewire\Client\Lichchieu;
+namespace App\Livewire\Client\Showtime;
 
 use Livewire\Component;
 use App\Models\Movie;
-use App\Models\Showtime;
 use App\Models\Booking;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 
-class LichchieuIndex extends Component
+class ShowtimeIndex extends Component
 {
     public $selectedDate;
     public $dates = [];
@@ -18,12 +16,10 @@ class LichchieuIndex extends Component
 
     public function mount()
     {
-        // Tạo danh sách 4 ngày từ hôm nay
         $this->dates = collect(range(0, 3))->map(function ($day) {
             return Carbon::now()->addDays($day);
         });
 
-        // Chọn ngày đầu tiên làm mặc định
         $this->selectedDate = $this->dates[0]->format('Y-m-d');
         $this->activeDateTab = 0;
 
@@ -40,64 +36,52 @@ class LichchieuIndex extends Component
     public function loadMoviesForDate()
     {
         $selectedDate = Carbon::parse($this->selectedDate);
-
-        // Lấy các phim có suất chiếu trong ngày được chọn
         $movies = Movie::with(['showtimes' => function ($query) use ($selectedDate) {
             $query->whereDate('start_time', $selectedDate)
-                  ->where('status', 'active')
-                  ->orderBy('start_time');
+                ->where('status', 'active')
+                ->orderBy('start_time');
         }, 'showtimes.room', 'genres'])
-        ->whereHas('showtimes', function ($query) use ($selectedDate) {
-            $query->whereDate('start_time', $selectedDate)
-                  ->where('status', 'active');
-        })
-        ->where('status', 'showing')
-        ->orderBy('title')
-        ->get();
+            ->whereHas('showtimes', function ($query) use ($selectedDate) {
+                $query->whereDate('start_time', $selectedDate)
+                    ->where('status', 'active');
+            })
+            ->where('status', 'showing')
+            ->where('age_restriction', '!=', 'C')
+            ->orderBy('title')
+            ->get();
 
-        // Tính toán số ghế trống cho mỗi showtime
         $this->calculateAvailableSeatsForCollection($movies);
 
-        // Chỉ lọc các phim có ít nhất 1 showtime hợp lệ (chưa chiếu và còn ghế)
-        $this->moviesWithShowtimes = $movies->filter(function($movie) {
-            // Lọc showtimes hợp lệ cho mỗi movie
-            $validShowtimes = $movie->showtimes->filter(function($showtime) {
-                // Kiểm tra showtime chưa bắt đầu và còn ghế
+        $this->moviesWithShowtimes = $movies->filter(function ($movie) {
+            $validShowtimes = $movie->showtimes->filter(function ($showtime) {
                 return $showtime->start_time->gt(now()) &&
-                       isset($showtime->available_seats) &&
-                       $showtime->available_seats > 0;
+                    isset($showtime->available_seats) &&
+                    $showtime->available_seats > 0;
             });
 
-            // Cập nhật lại showtimes của movie chỉ với những showtime hợp lệ
             $movie->showtimes = $validShowtimes->values();
-
-            // Chỉ giữ movie nếu có ít nhất 1 showtime hợp lệ
             return $validShowtimes->count() > 0;
         })->values();
     }
 
-    // Tính ghế trống cho collection Movie
     private function calculateAvailableSeatsForCollection($movies)
     {
         foreach ($movies as $movie) {
             foreach ($movie->showtimes as $showtime) {
-                // Tính số ghế đã book (chỉ tính những booking đã thanh toán)
                 $bookedSeatsCount = Booking::where('showtime_id', $showtime->id)
                     ->where('status', 'paid')
                     ->withCount('seats')
                     ->get()
                     ->sum('seats_count');
 
-                // Tính số ghế còn trống
                 $totalSeats = $showtime->room->capacity ?? 0;
                 $availableSeats = $totalSeats - $bookedSeatsCount;
 
-                // Gán vào showtime object
                 $showtime->available_seats = max(0, $availableSeats);
             }
         }
     }
-/*
+    /*
     public function bookShowtime($showtimeId)
     {
         // Kiểm tra showtime còn hợp lệ không trước khi booking
@@ -133,6 +117,6 @@ class LichchieuIndex extends Component
 
     public function render()
     {
-        return view('livewire.client.lichchieu.lichchieuindex');
+        return view('livewire.client.showtime.showtime-index');
     }
 }

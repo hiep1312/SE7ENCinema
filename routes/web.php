@@ -41,7 +41,7 @@ use App\Livewire\Admin\Scanner\Index as ScannerIndex;
 use App\Livewire\Admin\Showtimes\ShowtimeCreate;
 use App\Livewire\Admin\Showtimes\ShowtimeEdit;
 use App\Livewire\Admin\Showtimes\ShowtimeIndex;
-use App\Livewire\Client\Lichchieu\LichchieuIndex;
+use App\Livewire\Client\Showtime\ShowtimeIndex as ShowtimeIndexClient;
 use App\Livewire\Client\Promotions\PromotionIndex as PromotionIndexClient;
 use App\Livewire\Admin\Tickets\TicketIndex;
 use App\Livewire\Client\MovieList;
@@ -190,23 +190,23 @@ Route::name('client.')->group(function () {
     Route::view('/seat_booking', 'livewire.client.template.bookings.seat_booking')->name('seat_booking');
     Route::view('/contact', 'livewire.client.template.contact')->name('contact');
     Route::view('/confirmation_screen', 'livewire.client.template.confirmation_screen')->name('confirmation_screen');
-        Route::prefix('/notifications')->name('notifications.')->group(function () {
+    Route::prefix('/notifications')->name('notifications.')->group(function () {
         Route::get('/', NotificationIndexClient::class)->name('index');
         Route::get('allnotification', Allnotifications::class)->name('allnotification');
-     });
-     /* Lichchieu */
-     Route::prefix('/showtimes')->name('showtimes.')->group(function () {
-        Route::get('/', LichchieuIndex::class)->name('index');
     });
-    Route::view('/privacy_policy', 'livewire.client.template.abouts.privacy_policy')->name('privacy_policy');
-    Route::view('/terms_of_service', 'livewire.client.template.abouts.terms_of_service')->name('terms_of_service');
+    /* Lichchieu */
+    Route::prefix('/showtimes')->name('showtimes.')->group(function () {
+        Route::get('/', ShowtimeIndexClient::class)->name('index');
+    });
+    Route::view('/privacy-policy', 'livewire.client.template.abouts.privacy_policy')->name('privacy_policy');
+    Route::view('/terms-of-service', 'livewire.client.template.abouts.terms_of_service')->name('terms_of_service');
     Route::get('/movies/{movie}', ClientMovieDetail::class)->name('movie_detail');
     /* Promotions */
     Route::prefix('/promotions')->name('promotions.')->group(function () {
         Route::get('/', PromotionIndexClient::class)->name('index');
     });
 });
-Route::get('/user-info/{user}', UserInformation::class)->name('userInfo')->middleware('role:user');
+Route::get('/user-info', UserInformation::class)->name('userInfo')->middleware('role:user,admin,staff');
 Route::get('/user-confirm', UserConfirm::class)->name('userConfirm')->middleware('role:user,admin,staff');
 Route::view('/', 'welcome')->name('welcome');
 Route::view('/clienttest', 'clienttest')->name('clienttest');

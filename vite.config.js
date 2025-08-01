@@ -12,13 +12,13 @@ export default defineConfig({
                 "resources/css/ticket.css",
                 "resources/css/scanner.css",
                 "resources/js/scannerQR.js",
-                "resources/css/user-info.css",
+                "resources/css/userInfo.css",
                 "resources/css/confirm-access.css",
                 "resources/css/movieDetail.css",
                 "resources/css/privacyPolicy.css",
                 "resources/css/termsOfService.css",
                 "resources/css/promotion.css",
-                'resources/css/lichchieuIndex.css'
+                'resources/css/showtimeIndex.css'
             ],
             refresh: true,
         }),
