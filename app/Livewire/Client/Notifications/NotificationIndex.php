@@ -28,11 +28,6 @@ class NotificationIndex extends Component
         $this->loadNotifications(true);
     }
 
-    public function hydrate()
-    {
-        $this->loadNotifications();
-    }
-
     public function loadNotifications($reset = false)
     {
         $userId = Auth::id();
@@ -53,66 +48,76 @@ class NotificationIndex extends Component
         $this->hasMore = $userNotifications->count() > $take;
         $userNotifications = $userNotifications->take($take);
 
-        $this->notifications = $userNotifications->map(function($userNotification) {
+        // Cache current time for better performance
+        $now = now();
+
+        $this->notifications = $userNotifications->map(function($userNotification) use ($now) {
             $notification = $userNotification->notification;
-            $notification->pivot = $userNotification;
 
-            // Sử dụng created_at thay vì updated_at để tránh bị reset khi markAllAsRead
-            $timeReference = $userNotification->created_at ?? $userNotification->updated_at;
+            // Tạo object mới thay vì thay đổi trực tiếp
+            $notificationData = (object) [
+                'id' => $notification->id,
+                'title' => $notification->title,
+                'content' => $notification->content,
+                'link' => $notification->link,
+                'thumbnail' => $notification->thumbnail,
+                'created_at' => $notification->created_at,
+                'updated_at' => $notification->updated_at,
+                'pivot' => (object) [
+                    'id' => $userNotification->id,
+                    'user_id' => $userNotification->user_id,
+                    'notification_id' => $userNotification->notification_id,
+                    'is_read' => (int)$userNotification->is_read, // Đảm bảo là number
+                    'created_at' => $userNotification->created_at,
+                    'updated_at' => $userNotification->updated_at
+                ],
+                'timeReference' => $userNotification->created_at ?? $userNotification->updated_at,
+                'timeText' => $this->getTimeText($userNotification->created_at ?? $userNotification->updated_at)
+            ];
 
-            if ($timeReference) {
-                $diffInHours = $timeReference->diffInHours(now());
-                if ($diffInHours < 2) {
-                    // Thông báo mới: hiển thị diffForHumans
-                    $notification->timeText = $timeReference->diffForHumans();
-                } else {
-                    // Thông báo cũ: làm tròn
-                    $notification->timeText = $this->formatTimeText($timeReference);
-                }
-            } else {
-                $notification->timeText = 'Vừa xong';
-            }
-
-            return $notification;
+            return $notificationData;
         });
 
         $this->unreadNotifications = $this->notifications->filter(function($notification) {
-            return !$notification->pivot->is_read;
+            return $notification->pivot->is_read === 0; // So sánh với number 0
         });
 
         $this->unreadCount = $this->unreadNotifications->count();
 
         // Phân loại thông báo mới/cũ cho tất cả (sử dụng created_at)
-        $this->newNotifications = $this->notifications->filter(function($notification) {
+        $this->newNotifications = $this->notifications->filter(function($notification) use ($now) {
             $createdAt = $notification->pivot->created_at ?? null;
-            return $createdAt && $createdAt->diffInHours(now()) < 2;
+            return $createdAt && $createdAt->diffInHours($now) < 2;
         })->values();
 
-        $this->oldNotifications = $this->notifications->filter(function($notification) {
+        $this->oldNotifications = $this->notifications->filter(function($notification) use ($now) {
             $createdAt = $notification->pivot->created_at ?? null;
-            return !$createdAt || $createdAt->diffInHours(now()) >= 2;
+            return !$createdAt || $createdAt->diffInHours($now) >= 2;
         })->values();
 
         // Phân loại thông báo chưa đọc mới/cũ (sử dụng created_at)
-        $this->newUnreadNotifications = $this->unreadNotifications->filter(function($notification) {
+        $this->newUnreadNotifications = $this->unreadNotifications->filter(function($notification) use ($now) {
             $createdAt = $notification->pivot->created_at ?? null;
-            return $createdAt && $createdAt->diffInHours(now()) < 2;
+            return $createdAt && $createdAt->diffInHours($now) < 2;
         })->values();
 
-        $this->oldUnreadNotifications = $this->unreadNotifications->filter(function($notification) {
+        $this->oldUnreadNotifications = $this->unreadNotifications->filter(function($notification) use ($now) {
             $createdAt = $notification->pivot->created_at ?? null;
-            return !$createdAt || $createdAt->diffInHours(now()) >= 2;
+            return !$createdAt || $createdAt->diffInHours($now) >= 2;
         })->values();
     }
 
-    // Hàm formatTimeText được cải thiện với logic làm tròn chính xác
-    private function formatTimeText($datetime)
+    // Hàm tính toán thời gian - tối ưu hơn
+    public function getTimeText($timeReference)
     {
-        $diffInMinutes = $datetime->diffInMinutes(now());
-        $diffInHours = $datetime->diffInHours(now());
-        $diffInDays = $datetime->diffInDays(now());
-        $diffInMonths = floor($diffInDays / 30);
-        $diffInYears = floor($diffInDays / 365);
+        if (!$timeReference) {
+            return 'Vừa xong';
+        }
+
+        $now = now();
+        $diffInMinutes = $timeReference->diffInMinutes($now);
+        $diffInHours = $timeReference->diffInHours($now);
+        $diffInDays = $timeReference->diffInDays($now);
 
         // Dưới 1 giờ
         if ($diffInMinutes < 60) {
@@ -155,11 +160,33 @@ class NotificationIndex extends Component
 
         // Dưới 1 năm
         if ($diffInDays < 365) {
-            return (int)$diffInMonths . ' tháng trước';
+            $months = floor($diffInDays / 30);
+            return (int)$months . ' tháng trước';
         }
 
         // Trên 1 năm - hiển thị ngày cụ thể
-        return $datetime->format('d/m/Y');
+        return $timeReference->format('d/m/Y');
+    }
+
+    // Bỏ các computed properties không cần thiết
+    public function getNewNotificationsProperty()
+    {
+        return $this->newNotifications;
+    }
+
+    public function getOldNotificationsProperty()
+    {
+        return $this->oldNotifications;
+    }
+
+    public function getNewUnreadNotificationsProperty()
+    {
+        return $this->newUnreadNotifications;
+    }
+
+    public function getOldUnreadNotificationsProperty()
+    {
+        return $this->oldUnreadNotifications;
     }
 
     public function toggleOffcanvas()
@@ -175,21 +202,76 @@ class NotificationIndex extends Component
     public function switchTab($tab)
     {
         $this->tab = $tab;
-        // Refresh notifications when switching tabs to ensure timeText is updated
-        $this->loadNotifications();
+        // Không load lại notifications khi switch tab, chỉ thay đổi tab
+    }
+
+    public function handleNotificationClick($link, $userNotificationId)
+    {
+        // Kiểm tra userNotificationId hợp lệ
+        if (!$userNotificationId || $userNotificationId <= 0) {
+            $this->dispatch('_scAlert', [
+                'title' => 'Lỗi',
+                'html' => 'Không thể xác định thông báo!',
+                'icon' => 'error',
+                'timer' => 2000
+            ], '');
+            return;
+        }
+
+        // Luôn đánh dấu đã đọc trước, bất kể link có hợp lệ hay không
+        $this->markAsRead($userNotificationId);
+
+        // Kiểm tra và xử lý link
+        if (empty($link) || $link === '#' || $link === '' || $link === null) {
+            $this->dispatch('_scAlert', [
+                'title' => 'Thông báo',
+                'html' => 'Đường dẫn không hợp lệ hoặc đã bị xóa!',
+                'icon' => 'warning',
+                'timer' => 3000
+            ], '');
+            return;
+        }
+
+        // Kiểm tra format link - cho phép cả URL tuyệt đối và relative path
+        $isValidUrl = filter_var($link, FILTER_VALIDATE_URL);
+        $isValidRelativePath = str_starts_with($link, '/');
+
+        if (!$isValidUrl && !$isValidRelativePath) {
+            $this->dispatch('_scAlert', [
+                'title' => 'Thông báo',
+                'html' => 'Đường dẫn không hợp lệ hoặc đã bị xóa!',
+                'icon' => 'warning',
+                'timer' => 3000
+            ], '');
+            return;
+        }
+
+        // Nếu là relative path, thêm domain
+        if ($isValidRelativePath) {
+            $link = url($link);
+        }
+
+        // Chuyển hướng trực tiếp
+        return redirect()->away($link);
     }
 
     public function markAsRead($userNotificationId)
     {
-        $userNotification = UserNotification::find($userNotificationId);
-        if ($userNotification && !$userNotification->is_read) {
-            // Chỉ update is_read, không thay đổi updated_at
+        $userId = Auth::id();
+
+        // Kiểm tra xem userNotification có thuộc về user hiện tại không
+        $userNotification = UserNotification::where('id', $userNotificationId)
+            ->where('user_id', $userId)
+            ->first();
+
+        if ($userNotification) {
+            // Luôn luôn update is_read thành 1 khi click vào thông báo
             $userNotification->timestamps = false;
-            $userNotification->update(['is_read' => 1]);
+            $userNotification->update(['is_read' => 1]); // Set thành number 1
             $userNotification->timestamps = true;
 
-            $this->loadNotifications();
-            $this->dispatch('notification-read');
+            // Cập nhật trạng thái local mà không load lại toàn bộ
+            $this->updateNotificationStatus($userNotificationId);
         }
     }
 
@@ -199,14 +281,57 @@ class NotificationIndex extends Component
 
         // Tắt timestamps để không thay đổi updated_at
         UserNotification::where('user_id', $userId)
-            ->where('is_read', false)
+            ->where('is_read', 0) // So sánh với number 0
             ->update([
-                'is_read' => 1,
+                'is_read' => 1, // Set thành number 1
                 'updated_at' => DB::raw('updated_at') // Giữ nguyên updated_at
             ]);
 
-        $this->loadNotifications();
-        $this->dispatch('all-notifications-read');
+        // Cập nhật trạng thái local mà không load lại toàn bộ
+        $this->updateAllNotificationsStatus();
+    }
+
+    // Cập nhật trạng thái local cho một notification
+    private function updateNotificationStatus($userNotificationId)
+    {
+        foreach ($this->notifications as $notification) {
+            if ($notification->pivot && $notification->pivot->id == $userNotificationId) {
+                $notification->pivot->is_read = 1; // Đảm bảo là number 1
+                break;
+            }
+        }
+
+        // Cập nhật lại các collections
+        $this->unreadNotifications = $this->notifications->filter(function($notification) {
+            return $notification->pivot && $notification->pivot->is_read === 0; // So sánh với number 0
+        });
+
+        $this->unreadCount = $this->unreadNotifications->count();
+
+        // Cập nhật lại các collections phân loại
+        $now = now();
+        $this->newUnreadNotifications = $this->unreadNotifications->filter(function($notification) use ($now) {
+            $createdAt = $notification->pivot ? $notification->pivot->created_at : null;
+            return $createdAt && $createdAt->diffInHours($now) < 2;
+        })->values();
+
+        $this->oldUnreadNotifications = $this->unreadNotifications->filter(function($notification) use ($now) {
+            $createdAt = $notification->pivot ? $notification->pivot->created_at : null;
+            return !$createdAt || $createdAt->diffInHours($now) >= 2;
+        })->values();
+    }
+
+    // Cập nhật trạng thái local cho tất cả notifications
+    private function updateAllNotificationsStatus()
+    {
+        foreach ($this->notifications as $notification) {
+            $notification->pivot->is_read = 1; // Đảm bảo là number 1
+        }
+
+        $this->unreadNotifications = collect();
+        $this->unreadCount = 0;
+        $this->newUnreadNotifications = collect();
+        $this->oldUnreadNotifications = collect();
     }
 
     public function loadMore()

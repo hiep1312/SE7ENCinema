@@ -2,34 +2,7 @@
 $isAllNotifications = request()->routeIs('client.notifications.allnotification');
 @endphp
 
-<div class="scRender scAllNotifications full-notifications" wire:poll.15s="refreshNotifications"
-     x-data="{
-        openNotification(link, event, notificationId) {
-            if (!link || link === '#' || link === '' || link === null || link === undefined) {
-                event.preventDefault();
-                event.stopPropagation();
-                alert('Đường dẫn không hợp lệ hoặc đã bị xóa!');
-                return false;
-            }
-            try {
-                if (!link.startsWith('http') && !link.startsWith('/')) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    alert('Đường dẫn không hợp lệ hoặc đã bị xóa!');
-                    return false;
-                }
-            } catch (e) {
-                event.preventDefault();
-                event.stopPropagation();
-                alert('Đường dẫn không hợp lệ hoặc đã bị xóa!');
-                return false;
-            }
-            if (notificationId) {
-                $wire.markAsRead(notificationId);
-            }
-            window.open(link, '_blank');
-        }
-     }">
+<div class="scRender scAllNotifications full-notifications" wire:poll.15s="refreshNotifications">
      <div class="tbt "
      style="clear: both;
      " >
@@ -77,16 +50,12 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
 
         <!-- Navigation Tabs -->
         <div class="full-notifications__nav">
-            <div class="full-notifications__tabs" x-data="{ activeTab: @entangle('tab') }">
-                <button class="full-notifications__tab"
-                        :class="{ 'full-notifications__tab--active': activeTab === 'all' }"
-                        @click="activeTab = 'all'"
+            <div class="full-notifications__tabs">
+                <button class="full-notifications__tab {{ $tab === 'all' ? 'full-notifications__tab--active' : '' }}"
                         wire:click="switchTab('all')">
                     <span class="full-notifications__tab-text">Tất cả</span>
                 </button>
-                <button class="full-notifications__tab"
-                        :class="{ 'full-notifications__tab--active': activeTab === 'unread' }"
-                        @click="activeTab = 'unread'"
+                <button class="full-notifications__tab {{ $tab === 'unread' ? 'full-notifications__tab--active' : '' }}"
                         wire:click="switchTab('unread')">
                     <span class="full-notifications__tab-text">Chưa đọc</span>
                     @if($unreadCount > 0)
@@ -110,11 +79,12 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
                     <div class="full-notifications__list">
                         @foreach($newNotifications as $notification)
                             @php
-                                $isRead = $notification->pivot->is_read ?? true;
+                                $isRead = ($notification->pivot->is_read ?? 1) === 1;
                                 $pivotId = $notification->pivot->id ?? 0;
                             @endphp
                             <div class="full-notifications__item {{ !$isRead ? 'full-notifications__item--unread' : '' }}"
-                                 @click="openNotification('{{ $notification->link ?? '' }}', $event, {{ $pivotId }})">
+                                 wire:click="handleNotificationClick('{{ $notification->link ?? '' }}', {{ $pivotId }})"
+                                 style="cursor: pointer;">
                                 <div class="full-notifications__avatar">
                                     @if($notification->thumbnail)
                                         <img src="{{ asset('storage/' . $notification->thumbnail) }}"
@@ -139,15 +109,6 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
                                         <span class="full-notifications__time">{{ $notification->timeText }}</span>
                                     </div>
                                 </div>
-                                @if(!$isRead)
-                                <div class="full-notifications__actions">
-                                    <button wire:click.stop="markAsRead({{ $pivotId }})"
-                                            class="mark-read-btn"
-                                            title="Đánh dấu đã đọc">
-                                        <i class="fa-solid fa-circle"></i>
-                                    </button>
-                                </div>
-                                @endif
                             </div>
                         @endforeach
                     </div>
@@ -163,11 +124,12 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
                     <div class="full-notifications__list">
                         @foreach($oldNotifications as $notification)
                             @php
-                                $isRead = $notification->pivot->is_read ?? true;
+                                $isRead = ($notification->pivot->is_read ?? 1) === 1;
                                 $pivotId = $notification->pivot->id ?? 0;
                             @endphp
                             <div class="full-notifications__item {{ !$isRead ? 'full-notifications__item--unread' : '' }}"
-                                 @click="openNotification('{{ $notification->link ?? '' }}', $event, {{ $pivotId }})">
+                                 wire:click="handleNotificationClick('{{ $notification->link ?? '' }}', {{ $pivotId }})"
+                                 style="cursor: pointer;">
                                 <div class="full-notifications__avatar">
                                     @if($notification->thumbnail)
                                         <img src="{{ asset('storage/' . $notification->thumbnail) }}"
@@ -192,15 +154,6 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
                                         <span class="full-notifications__time">{{ $notification->timeText }}</span>
                                     </div>
                                 </div>
-                                @if(!$isRead)
-                                <div class="full-notifications__actions">
-                                    <button wire:click.stop="markAsRead({{ $pivotId }})"
-                                            class="mark-read-btn"
-                                            title="Đánh dấu đã đọc">
-                                        <i class="fa-solid fa-circle"></i>
-                                    </button>
-                                </div>
-                                @endif
                             </div>
                         @endforeach
                     </div>
@@ -233,7 +186,8 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
                         @foreach($newUnreadNotifications as $notification)
                             @php $pivotId = $notification->pivot->id ?? 0; @endphp
                             <div class="full-notifications__item full-notifications__item--unread"
-                                 @click="openNotification('{{ $notification->link ?? '' }}', $event, {{ $pivotId }})">
+                                 wire:click="handleNotificationClick('{{ $notification->link ?? '' }}', {{ $pivotId }})"
+                                 style="cursor: pointer;">
                                 <div class="full-notifications__avatar">
                                     @if($notification->thumbnail)
                                         <img src="{{ asset('storage/' . $notification->thumbnail) }}"
@@ -255,13 +209,6 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
                                     <div class="full-notifications__meta">
                                         <span class="full-notifications__time">{{ $notification->timeText }}</span>
                                     </div>
-                                </div>
-                                <div class="full-notifications__actions">
-                                    <button wire:click.stop="markAsRead({{ $pivotId }})"
-                                            class="mark-read-btn"
-                                            title="Đánh dấu đã đọc">
-                                        <i class="fa-solid fa-circle"></i>
-                                    </button>
                                 </div>
                             </div>
                         @endforeach
@@ -279,7 +226,8 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
                         @foreach($oldUnreadNotifications as $notification)
                             @php $pivotId = $notification->pivot->id ?? 0; @endphp
                             <div class="full-notifications__item full-notifications__item--unread"
-                                 @click="openNotification('{{ $notification->link ?? '' }}', $event, {{ $pivotId }})">
+                                 wire:click="handleNotificationClick('{{ $notification->link ?? '' }}', {{ $pivotId }})"
+                                 style="cursor: pointer;">
                                 <div class="full-notifications__avatar">
                                     @if($notification->thumbnail)
                                         <img src="{{ asset('storage/' . $notification->thumbnail) }}"
@@ -301,13 +249,6 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
                                     <div class="full-notifications__meta">
                                         <span class="full-notifications__time">{{ $notification->timeText }}</span>
                                     </div>
-                                </div>
-                                <div class="full-notifications__actions">
-                                    <button wire:click.stop="markAsRead({{ $pivotId }})"
-                                            class="mark-read-btn"
-                                            title="Đánh dấu đã đọc">
-                                        <i class="fa-solid fa-circle"></i>
-                                    </button>
                                 </div>
                             </div>
                         @endforeach
@@ -330,21 +271,3 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
         </div>
     </div>
 </div>
-
-@script
-<script>
-    document.addEventListener('alpine:init', () => {
-        setInterval(function() {
-            if (window.Livewire) {
-                const element = document.querySelector('[wire\\:poll]');
-                if (element) {
-                    const wireId = element.getAttribute('wire:id');
-                    if (wireId) {
-                        window.Livewire.find(wireId)?.call('refreshNotifications');
-                    }
-                }
-            }
-        }, 30000);
-    });
-</script>
-@endscript

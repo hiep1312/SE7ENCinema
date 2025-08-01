@@ -2,34 +2,7 @@
 $isAllNotifications = request()->routeIs('client.notifications.allnotification');
 @endphp
 
-<div class="scRender scNotificationIndex" wire:poll.30s="refreshNotifications"
-     x-data="{
-        openNotification(link, event, notificationId) {
-            if (!link || link === '#' || link === '' || link === null || link === undefined) {
-                event.preventDefault();
-                event.stopPropagation();
-                alert('Đường dẫn không hợp lệ hoặc đã bị xóa!');
-                return false;
-            }
-            try {
-                if (!link.startsWith('http') && !link.startsWith('/')) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    alert('Đường dẫn không hợp lệ hoặc đã bị xóa!');
-                    return false;
-                }
-            } catch (e) {
-                event.preventDefault();
-                event.stopPropagation();
-                alert('Đường dẫn không hợp lệ hoặc đã bị xóa!');
-                return false;
-            }
-            if (notificationId) {
-                $wire.markAsRead(notificationId);
-            }
-            window.open(link, '_blank');
-        }
-     }">
+<div class="scRender scNotificationIndex" wire:poll.6s="refreshNotifications">
 
   @if(!$isAllNotifications)
     <!-- Notification Bell Button -->
@@ -42,18 +15,8 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
 
     <!-- Offcanvas Notification Panel -->
     @if($isOpen)
-    <div class="notification-offcanvas full-notifications__container"
-         x-show="true"
-         x-cloak
-         x-transition:enter="transition ease-out duration-200"
-         x-transition:enter-start="opacity-0 translate-x-10"
-         x-transition:enter-end="opacity-100 translate-x-0"
-         x-transition:leave="transition ease-in duration-150"
-         x-transition:leave-start="opacity-100 translate-x-0"
-         x-transition:leave-end="opacity-0 translate-x-10"
-         style="overflow-y: hidden; max-height: 100vh; display: flex; flex-direction: column; position: fixed; top: 0; right: 0; z-index: 1050; width: 100%; max-width: 360px; min-width: 320px; background: #fff;"
-         @keydown.window.escape="$wire.closeOffcanvas()"
-         @click.away="$wire.closeOffcanvas()">
+    <div class="notification-offcanvas full-notifications__container show"
+         style="overflow-y: hidden; max-height: 100vh; display: flex; flex-direction: column; position: fixed; top: 0; right: 0; z-index: 1050; width: 100%; max-width: 360px; min-width: 320px; background: #fff;">
 
       <!-- Header -->
       <div class="offcanvas-header full-notifications__header" style="display: flex; align-items: center; justify-content: space-between;">
@@ -104,19 +67,20 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
           @if($tab === 'all')
           <div class="full-notifications__tab-content">
             {{-- Section Mới --}}
-            @if($this->newNotifications->count() > 0)
+            @if($newNotifications->count() > 0)
             <div class="full-notifications__section">
                 <div class="full-notifications__section-header new-section">
                     <h2 class="full-notifications__section-title">Mới</h2>
                 </div>
                 <div class="full-notifications__list">
-                    @foreach($this->newNotifications as $notification)
+                    @foreach($newNotifications as $notification)
                         @php
-                            $isRead = $notification->pivot->is_read ?? true;
+                            $isRead = ($notification->pivot->is_read ?? 1) === 1;
                             $pivotId = $notification->pivot->id ?? 0;
                         @endphp
-                        <a href="#" tabindex="0" class="notification__item {{ !$isRead ? 'notification__item--unread' : 'notification__item--read' }}"
-                           @click="openNotification('{{ $notification->link ?? '' }}', $event, {{ $pivotId }})">
+                        <div class="notification__item {{ !$isRead ? 'notification__item--unread' : 'notification__item--read' }}"
+                             wire:click="handleNotificationClick('{{ $notification->link ?? '' }}', {{ $pivotId }})"
+                             style="cursor: pointer;">
                             <span class="notification__avatar">
                                 @if($notification->thumbnail)
                                     <img src="{{ asset('storage/' . $notification->thumbnail) }}" alt="Avatar" class="full-notifications__avatar-img">
@@ -125,9 +89,6 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
                                         <i class="fa-solid fa-bell"></i>
                                     </div>
                                 @endif
-                                {{-- @if(!$isRead)
-                                    <div class="full-notifications__unread-indicator"></div>
-                                @endif --}}
                             </span>
                             <span class="notification__body">
                                 <span class="notification__content">
@@ -135,25 +96,26 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
                                 </span>
                                 <span class="notification__time">{{ $notification->timeText }}</span>
                             </span>
-                        </a>
+                        </div>
                     @endforeach
                 </div>
             </div>
             @endif
             {{-- Section Trước đó --}}
-            @if($this->oldNotifications->count() > 0)
+            @if($oldNotifications->count() > 0)
             <div class="full-notifications__section">
                 <div class="full-notifications__section-header old-section">
                     <h2 class="full-notifications__section-title">Trước đó</h2>
                 </div>
                 <div class="full-notifications__list">
-                    @foreach($this->oldNotifications as $notification)
+                    @foreach($oldNotifications as $notification)
                         @php
-                            $isRead = $notification->pivot->is_read ?? true;
+                            $isRead = ($notification->pivot->is_read ?? 1) === 1;
                             $pivotId = $notification->pivot->id ?? 0;
                         @endphp
-                        <a href="#" tabindex="0" class="notification__item {{ !$isRead ? 'notification__item--unread' : 'notification__item--read' }}"
-                           @click="openNotification('{{ $notification->link ?? '' }}', $event, {{ $pivotId }})">
+                        <div class="notification__item {{ !$isRead ? 'notification__item--unread' : 'notification__item--read' }}"
+                             wire:click="handleNotificationClick('{{ $notification->link ?? '' }}', {{ $pivotId }})"
+                             style="cursor: pointer;">
                             <span class="notification__avatar">
                                 @if($notification->thumbnail)
                                     <img src="{{ asset('storage/' . $notification->thumbnail) }}" alt="Avatar" class="full-notifications__avatar-img">
@@ -172,13 +134,13 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
                                 </span>
                                 <span class="notification__time">{{ $notification->timeText }}</span>
                             </span>
-                        </a>
+                        </div>
                     @endforeach
                 </div>
             </div>
             @endif
             {{-- Empty state --}}
-            @if($this->newNotifications->count() == 0 && $this->oldNotifications->count() == 0)
+            @if($newNotifications->count() == 0 && $oldNotifications->count() == 0)
             <div class="full-notifications__empty">
                 <div class="full-notifications__empty-icon">
                     <i class="fa-solid fa-bell-slash"></i>
@@ -209,16 +171,17 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
           @if($tab === 'unread')
           <div class="full-notifications__tab-content">
             {{-- Section Mới --}}
-            @if($this->newUnreadNotifications->count() > 0)
+            @if($newUnreadNotifications->count() > 0)
             <div class="full-notifications__section">
                 <div class="full-notifications__section-header new-section">
                     <h2 class="full-notifications__section-title">Mới</h2>
                 </div>
                 <div class="full-notifications__list">
-                    @foreach($this->newUnreadNotifications as $notification)
+                    @foreach($newUnreadNotifications as $notification)
                         @php $pivotId = $notification->pivot->id ?? 0; @endphp
-                        <a href="#" tabindex="0" class="notification__item full-notifications__item--unread"
-                           @click="openNotification('{{ $notification->link ?? '' }}', $event, {{ $pivotId }})">
+                        <div class="notification__item full-notifications__item--unread"
+                             wire:click="handleNotificationClick('{{ $notification->link ?? '' }}', {{ $pivotId }})"
+                             style="cursor: pointer;">
                             <span class="notification__avatar">
                                 @if($notification->thumbnail)
                                     <img src="{{ asset('storage/' . $notification->thumbnail) }}" alt="Avatar" class="full-notifications__avatar-img">
@@ -235,22 +198,23 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
                                 </span>
                                 <span class="notification__time">{{ $notification->timeText }}</span>
                             </span>
-                        </a>
+                        </div>
                     @endforeach
                 </div>
             </div>
             @endif
             {{-- Section Trước đó --}}
-            @if($this->oldUnreadNotifications->count() > 0)
+            @if($oldUnreadNotifications->count() > 0)
             <div class="full-notifications__section">
                 <div class="full-notifications__section-header old-section">
                     <h2 class="full-notifications__section-title">Trước đó</h2>
                 </div>
                 <div class="full-notifications__list">
-                    @foreach($this->oldUnreadNotifications as $notification)
+                    @foreach($oldUnreadNotifications as $notification)
                         @php $pivotId = $notification->pivot->id ?? 0; @endphp
-                        <a href="#" tabindex="0" class="notification__item full-notifications__item--unread"
-                           @click="openNotification('{{ $notification->link ?? '' }}', $event, {{ $pivotId }})">
+                        <div class="notification__item full-notifications__item--unread"
+                             wire:click="handleNotificationClick('{{ $notification->link ?? '' }}', {{ $pivotId }})"
+                             style="cursor: pointer;">
                             <span class="notification__avatar">
                                 @if($notification->thumbnail)
                                     <img src="{{ asset('storage/' . $notification->thumbnail) }}" alt="Avatar" class="full-notifications__avatar-img">
@@ -267,13 +231,13 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
                                 </span>
                                 <span class="notification__time">{{ $notification->timeText }}</span>
                             </span>
-                        </a>
+                        </div>
                     @endforeach
                 </div>
             </div>
             @endif
             {{-- Empty state --}}
-            @if($this->newUnreadNotifications->count() == 0 && $this->oldUnreadNotifications->count() == 0)
+            @if($newUnreadNotifications->count() == 0 && $oldUnreadNotifications->count() == 0)
             <div class="full-notifications__empty">
                 <div class="full-notifications__empty-icon">
                     <i class="fa-solid fa-bell-slash"></i>
@@ -300,19 +264,35 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
 
 @script
 <script>
-    document.addEventListener('alpine:init', () => {
-        // Auto refresh notifications every 30 seconds
-        setInterval(function() {
-            if (window.Livewire) {
-                const element = document.querySelector('[wire\:poll]');
-                if (element) {
-                    const wireId = element.getAttribute('wire:id');
+    document.addEventListener('livewire:init', () => {
+        // Add keyboard support for closing offcanvas
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const notificationComponent = document.querySelector('[wire\\:id]');
+                if (notificationComponent) {
+                    const wireId = notificationComponent.getAttribute('wire:id');
                     if (wireId) {
-                        window.Livewire.find(wireId)?.call('refreshNotifications');
+                        Livewire.find(wireId)?.call('closeOffcanvas');
                     }
                 }
             }
-        }, 30000);
+        });
+
+        // Add click outside to close offcanvas
+        document.addEventListener('click', function(event) {
+            const offcanvas = document.querySelector('.notification-offcanvas');
+            const bellButton = document.querySelector('.notification-bell');
+
+            if (offcanvas && !offcanvas.contains(event.target) && !bellButton.contains(event.target)) {
+                const notificationComponent = document.querySelector('[wire\\:id]');
+                if (notificationComponent) {
+                    const wireId = notificationComponent.getAttribute('wire:id');
+                    if (wireId) {
+                        Livewire.find(wireId)?.call('closeOffcanvas');
+                    }
+                }
+            }
+        });
     });
 </script>
 @endscript
