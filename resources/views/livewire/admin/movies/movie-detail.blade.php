@@ -598,18 +598,103 @@
                     <div class="bg-dark rounded-3 p-3">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="text-white mb-0">
-                                <i class="fas fa-ticket me-2 text-success"></i>Vé đã bán theo suất chiếu
+                                <i class="fas fa-ticket me-2 text-success"></i>Vé đã bán theo suất chiếu 
                             </h5>
-                            <div class="btn-group" role="group">
-                                <button type="button"
-                                    class="btn btn-sm {{ $showtimeChart === 'daily' ? 'btn-success' : 'btn-outline-success' }}"
-                                    wire:click="changeshowtimeChart('daily')">Ngày</button>
-                                <button type="button"
-                                    class="btn btn-sm {{ $showtimeChart === 'monthly' ? 'btn-success' : 'btn-outline-success' }}"
-                                    wire:click="changeshowtimeChart('monthly')">Tháng</button>
-                                <button type="button"
-                                    class="btn btn-sm {{ $showtimeChart === 'yearly' ? 'btn-success' : 'btn-outline-success' }}"
-                                    wire:click="changeshowtimeChart('yearly')">Năm</button>
+                            <div wire:ignore class="dropdown">
+                                <button class="btn btn-outline-success btn-sm dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown">
+                                    <i class="fas fa-filter me-1"></i>
+                                    <span id="filterShowtimeChart">
+                                        @switch('3_days')
+                                        @case('3_days')
+                                        3 ngày gần nhất
+                                        @break
+                                        @case('7_days')
+                                        7 ngày gần nhất
+                                        @break
+                                        @case('15_days')
+                                        15 ngày gần nhất
+                                        @break
+                                        @case('30_days')
+                                        30 ngày gần nhất
+                                        @break
+                                        @case('3_months')
+                                        3 tháng gần nhất
+                                        @break
+                                        @case('6_months')
+                                        6 tháng gần nhất
+                                        @break
+                                        @case('9_months')
+                                        9 tháng gần nhất
+                                        @break
+                                        @case('1_year')
+                                        1 năm gần nhất
+                                        @break
+                                        @case('2_years')
+                                        2 năm gần nhất
+                                        @break
+                                        @case('3_years')
+                                        3 năm gần nhất
+                                        @break
+                                        @case('6_years')
+                                        6 năm gần nhất
+                                        @break
+                                        @default
+                                        @endswitch
+                                    </span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li>
+                                        <h6 class="dropdown-header text-success">Ngày</h6>
+                                    </li>
+                                    <li><a class="dropdown-item"
+                                            wire:click.prevent="$set('showtimeChart','3_days')">3 ngày gần nhất</a>
+                                    </li>
+                                    <li><a class="dropdown-item"
+                                            wire:click.prevent="$set('showtimeChart','7_days')">7 ngày gần nhất</a>
+                                    </li>
+                                    <li><a class="dropdown-item"
+                                            wire:click.prevent="$set('showtimeChart','15_days')">15 ngày gần nhất</a>
+                                    </li>
+                                    <li><a class="dropdown-item"
+                                            wire:click.prevent="$set('showtimeChart','30_days')">30 ngày gần nhất</a>
+                                    </li>                                  
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li>
+                                        <h6 class="dropdown-header text-success">Tháng</h6>
+                                    </li>
+                                    <li><a class="dropdown-item"
+                                            wire:click.prevent="$set('showtimeChart','3_months')">3 tháng gần
+                                            nhất</a></li>
+                                    <li>
+                                    <li><a class="dropdown-item"
+                                            wire:click.prevent="$set('showtimeChart','6_months')">6 tháng gần
+                                            nhất</a></li>
+                                    <li>
+                                    <li><a class="dropdown-item"
+                                            wire:click.prevent="$set('showtimeChart','9_months')">9 tháng gần
+                                            nhất</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li>
+                                        <h6 class="dropdown-header text-success">Năm</h6>
+                                    </li>
+                                    <li><a class="dropdown-item"
+                                            wire:click.prevent="$set('showtimeChart','1_years')">1 năm gần nhất</a>
+                                    </li>
+                                    <li><a class="dropdown-item"
+                                            wire:click.prevent="$set('showtimeChart','2_years')">2 năm gần nhất</a>
+                                    </li>
+                                    <li><a class="dropdown-item"
+                                            wire:click.prevent="$set('showtimeChart','3_years')">3 năm gần nhất</a>
+                                    </li>
+                                    <li><a class="dropdown-item"
+                                            wire:click.prevent="$set('showtimeChart','6_years')">6 năm gần nhất</a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                         <div>
@@ -626,72 +711,99 @@
                                 <i class="fas fa-chart-pie me-2 text-warning"></i>Tỉ lệ vé đã bán so với vé chưa bán
                             </h5>
                             {{-- filter --}}
-                            <div class="dropdown">
+                            <div wire:ignore class="dropdown">
                                 <button class="btn btn-outline-warning btn-sm dropdown-toggle" type="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    data-bs-toggle="dropdown">
                                     <i class="fas fa-filter me-1"></i>
-                                    @switch('3_days')
-                                    @case('3_days')
-                                    3 ngày gần nhất
-                                    @break
-                                    @case('7_days')
-                                    7 ngày gần nhất
-                                    @break
-                                    @case('30_days')
-                                    30 ngày gần nhất
-                                    @break
-                                    @case('1_month')
-                                    1 tháng gần nhất
-                                    @break
-                                    @case('3_months')
-                                    3 tháng gần nhất
-                                    @break
-                                    @case('1_year')
-                                    1 năm gần nhất
-                                    @break
-                                    @case('2_years')
-                                    2 năm gần nhất
-                                    @break
-                                    @default
-                                    7 ngày gần nhất
-                                    @endswitch
+                                    <span id="checkinFilter">
+                                        @switch($checkinChart)
+                                        @case('3_days')
+                                        3 ngày gần nhất
+                                        @break
+                                        @case('7_days')
+                                        7 ngày gần nhất
+                                        @break
+                                        @case('15_days')
+                                        15 ngày gần nhất
+                                        @break
+                                        @case('30_days')
+                                        30 ngày gần nhất
+                                        @break
+                                        @case('3_months')
+                                        3 tháng gần nhất
+                                        @break
+                                        @case('6_months')
+                                        6 tháng gần nhất
+                                        @break
+                                        @case('9_months')
+                                        9 tháng gần nhất
+                                        @break
+                                        @case('1_year')
+                                        1 năm gần nhất
+                                        @break
+                                        @case('2_years')
+                                        2 năm gần nhất
+                                        @break
+                                        @case('3_years')
+                                        3 năm gần nhất
+                                        @break
+                                        @case('6_years')
+                                        6 năm gần nhất
+                                        @break
+                                        @default
+                                        @endswitch
+                                    </span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-dark">
                                     <li>
-                                        <h6 class="dropdown-header text-primary">Ngày</h6>
+                                        <h6 class="dropdown-header text-warning">Ngày</h6>
                                     </li>
-                                    <li><a class="dropdown-item" href="#"
-                                            wire:click.prevent="changeRevenuePeriod('3_days')">3 ngày gần nhất</a>
+                                    <li><a class="dropdown-item"
+                                            wire:click.prevent="$set('checkinChart','3_days')">3 ngày gần nhất</a>
                                     </li>
-                                    <li><a class="dropdown-item" href="#"
-                                            wire:click.prevent="changeRevenuePeriod('7_days')">7 ngày gần nhất</a>
+                                    <li><a class="dropdown-item"
+                                            wire:click.prevent="$set('checkinChart','7_days')">7 ngày gần nhất</a>
                                     </li>
-                                    <li><a class="dropdown-item" href="#"
-                                            wire:click.prevent="changeRevenuePeriod('30_days')">30 ngày gần nhất</a>
+                                    <li><a class="dropdown-item"
+                                            wire:click.prevent="$set('checkinChart','15_days')">15 ngày gần nhất</a>
                                     </li>
+                                    <li><a class="dropdown-item"
+                                            wire:click.prevent="$set('checkinChart','30_days')">30 ngày gần nhất</a>
+                                    </li>                                  
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
                                     <li>
-                                        <h6 class="dropdown-header text-primary">Tháng</h6>
+                                        <h6 class="dropdown-header text-warning">Tháng</h6>
                                     </li>
-                                    <li><a class="dropdown-item" href="#"
-                                            wire:click.prevent="changeRevenuePeriod('1_month')">1 tháng gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item" href="#"
-                                            wire:click.prevent="changeRevenuePeriod('3_months')">3 tháng gần
+                                    <li><a class="dropdown-item"
+                                            wire:click.prevent="$set('checkinChart','3_months')">3 tháng gần
+                                            nhất</a></li>
+                                    <li>
+                                    <li><a class="dropdown-item"
+                                            wire:click.prevent="$set('checkinChart','6_months')">6 tháng gần
+                                            nhất</a></li>
+                                    <li>
+                                    <li><a class="dropdown-item"
+                                            wire:click.prevent="$set('checkinChart','9_months')">9 tháng gần
                                             nhất</a></li>
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
                                     <li>
-                                        <h6 class="dropdown-header text-primary">Năm</h6>
+                                        <h6 class="dropdown-header text-warning">Năm</h6>
                                     </li>
-                                    <li><a class="dropdown-item" href="#"
-                                            wire:click.prevent="changeRevenuePeriod('1_year')">1 năm gần nhất</a>
+                                    <li><a class="dropdown-item"
+                                            wire:click.prevent="$set('checkinChart','1_years')">1 năm gần nhất</a>
                                     </li>
-                                    <li><a class="dropdown-item" href="#"
-                                            wire:click.prevent="changeRevenuePeriod('2_years')">2 năm gần nhất</a>
+                                    <li><a class="dropdown-item"
+                                            wire:click.prevent="$set('checkinChart','2_years')">2 năm gần nhất</a>
+                                    </li>
+                                    <li><a class="dropdown-item"
+                                            wire:click.prevent="$set('checkinChart','3_years')">3 năm gần nhất</a>
+                                    </li>
+                                    <li><a class="dropdown-item"
+                                            wire:click.prevent="$set('checkinChart','6_years')">6 năm gần nhất</a>
                                     </li>
                                 </ul>
                             </div>
@@ -707,9 +819,6 @@
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="text-white mb-0">
                                 <i class="fas fa-chart-line me-2 text-primary"></i>Vé đã bán theo ngày
-                                @php
-                                var_dump($dailyChart);
-                                @endphp
                             </h5>
                             <div class="btn-group" role="group">
                                 <button wire:click="$set('dailyChart', 'daily')" type="button"
@@ -733,12 +842,25 @@
 </div>
 @script
 <script>
-    const chartInstances = {};
-    Livewire.on('updateData', function([$bookingCountFormatted, $bookingStatByDate]) {
+    globalThis.chartInstances = {};
+    function updateFilterText(elementId, text) {
+        const element = document.getElementById(elementId);      
+        element.textContent = text;
+    }
+    Livewire.on('updateData', function([$bookingCountFormatted, $bookingStatByDate, $result, $totalMax,filterTexts]) {
+        
+        filterShowtimeChart = document.getElementById('filterShowtimeChart');
+        checkinFilter = document.getElementById('checkinFilter');
+        updateFilterText('filterShowtimeChart', filterTexts.filterShowtimeChart);
+        updateFilterText('checkinFilter', filterTexts.checkinFilter);
+        
+        // showtime chart
         const showtimeDate = $bookingCountFormatted;
         const failedCounts = Object.values(showtimeDate).map(count => count.failed);
         const paidCounts = Object.values(showtimeDate).map(count => count.paid);
-           
+        const capacityCounts = Object.values(showtimeDate).map(count => count.capacity);     
+        const revenueShowtime = Object.values(showtimeDate).map(count => count.revenue);     
+        // dayli chart 
         const stats = $bookingStatByDate;
         const labels = Object.keys(stats);
         const paid = labels.map(d => stats[d].paid);
@@ -814,7 +936,7 @@
             },
             yaxis: {
                 min: 0,
-                max: @json($totalMax),
+                max: $totalMax,
                 tickAmount: 5,
                 labels: {
                     style: {
@@ -862,11 +984,11 @@
             series: [
                 {
                     name: 'Vé đã bán',
-                    data: Object.values(showtimeDate)
+                    data: paidCounts
                 },
                 {
                     name: 'Sức chứa',
-                    data: Object.values(@json($todayCapacities))
+                    data: capacityCounts
                 }
             ],
             chart: {
@@ -905,7 +1027,7 @@
             },
             yaxis: {
                 min: 0,
-                max: 140,
+                max: Math.max(...capacityCounts),
                 tickAmount: 7,
                 labels: {
                     style: {
@@ -941,8 +1063,9 @@
                     const time = Object.keys(showtimeDate)[dataPointIndex];
                     const sold = paidCounts[dataPointIndex];
                     const failed = failedCounts[dataPointIndex];
-                    const capacity = Object.values(@json($todayCapacities))[dataPointIndex];
+                    const capacity = capacityCounts[dataPointIndex];
                     const percentage = ((sold / capacity) * 100).toFixed(1);
+                    const revenue = revenueShowtime.map(n => n.toLocaleString('vi'))[dataPointIndex];
                     return `
                         <div style="
                             background: #2c3034; /* Card background color */
@@ -968,6 +1091,9 @@
                             <div style="margin-bottom: 6px;">
                                 ❌ Đã hủy: <strong>${failed}</strong>
                             </div>
+                            <div style="margin-bottom: 6px;">
+                                💵 Doanh thu: <strong>${revenue}</strong>
+                            </div>
                         </div>
                     `;
                 }
@@ -975,7 +1101,7 @@
         };
 
         const optionsCheckinChart = {
-            series: [@json($totalCount),@json($caps)],
+            series: [$result.totalCount,$result.caps],
             chart: {
                 type: 'pie',
                 height: 400,
@@ -1022,7 +1148,7 @@
                 theme: 'dark',
                 y: {
                     formatter: function (val) {
-                        const percentage = ((val / (@json($totalCount)+@json($caps))) * 100).toFixed(1);
+                        const percentage = ((val / ($result.totalCount+$result.caps)) * 100).toFixed(1);
                         return `${val.toLocaleString()} vé (${percentage}%)`;
                     }
                 }
@@ -1033,12 +1159,11 @@
             if(Object.values(chartInstances).length > 0){
                 chartInstances.dailyChart.updateOptions(optionsDailyChart);
                 chartInstances.showtimeChart.updateOptions(optionsShowtimeChart);
-                chartInstances.checkinChart.updateOptions(optionsCheckinChart);
+                chartInstances.checkinChart.updateOptions(optionsCheckinChart);  
             }else{
                 const dailyChartEl = document.querySelector("#dailyChart");
                 const showtimeChartEl = document.querySelector("#showtimeChart");
-                const checkinChartEl = document.querySelector("#checkinChart");                          
-                
+                const checkinChartEl = document.querySelector("#checkinChart");
                 if (dailyChartEl) chartInstances.dailyChart = createScChart(dailyChartEl, optionsDailyChart);
                 if (showtimeChartEl) chartInstances.showtimeChart = createScChart(showtimeChartEl, optionsShowtimeChart);
                 if (checkinChartEl) chartInstances.checkinChart = createScChart(checkinChartEl, optionsCheckinChart);
