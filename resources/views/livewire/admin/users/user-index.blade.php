@@ -1,13 +1,13 @@
-<div>
+<div class="scRender">
     @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert" wire:ignore>
+        <div class="alert alert-success alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
             {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
     @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert" wire:ignore>
+        <div class="alert alert-danger alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
             {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -87,7 +87,6 @@
                                 <th class="text-center text-light">Email / SĐT</th>
                                 <th class="text-center text-light">Địa chỉ</th>
                                 <th class="text-center text-light">Vai trò</th>
-                                <th class="text-center text-light">Trạng thái</th>
                                 @if ($showDeleted)
                                     <th class="text-center text-light">Ngày xóa</th>
                                 @else
@@ -101,60 +100,67 @@
                                 <tr wire:key="{{ $user->id }}">
                                     <td class="text-center fw-bold">{{ $loop->iteration }}</td>
                                     <td>
-                                        <div class="mt-1 overflow-auto d-block text-center"
-                                            style="max-height: 75px; width: 75px;">
-                                            <img src="{{ asset('storage/' . ($user->avatar ?? '404.webp')) }}"
-                                                alt="Ảnh đại diện của {{ $user->name }}" style="width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+                                        <div class="d-flex justify-content-center">
+                                            <div class="user-avatar position-relative">
+                                                @if($user->avatar)
+                                                    <img src="{{ asset('storage/' . $user->avatar) }}"
+                                                        alt="Ảnh đại diện của {{ $user->name }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
+                                                @else
+                                                    <i class="fa-solid fa-user" style="font-size: 22px;"></i>
+                                                @endif
+                                            </div>
                                         </div>
                                     </td>
-                                    <td>
-                                        <strong class="text-light">{{ $user->name }}</strong>
+                                    <td style="max-width: 200px;">
+                                        <strong class="text-light text-wrap d-block mb-2">{{ $user->name }}</strong>
                                         @if ($user->trashed())
-                                            <span class="badge bg-danger ms-1">Đã xóa</span>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="badge bg-gradient text-light" style="background: linear-gradient(to right, #642b73, #c6426e) !important;">
-                                            {{ $user->email }} @if($user->phone) / {{ $user->phone }} @endif
-                                        </span>
-                                    </td>
-                                    <td class="text-center">
-                                        @if ($user->address)
-                                            <span
-                                                class="text-light text-wrap lh-base">{{ Str::limit($user->address, 50, '...') }}</span>
+                                            <span class="badge bg-danger"><i class="fa-solid fa-trash me-1"></i>Đã xóa</span>
                                         @else
-                                            <span class="text-muted">Không có mô tả</span>
+                                            @switch($user->status)
+                                                @case('active')
+                                                    <span class="badge bg-success"><i class="fas fa-play me-1"></i>Đang hoạt động</span>
+                                                    @break
+                                                @case('inactive')
+                                                    <span class="badge bg-warning text-dark"><i class="fa-solid fa-user-slash me-1"></i>Không hoạt động</span>
+                                                    @break
+                                                @case('banned')
+                                                    <span class="badge bg-danger"><i class="fa-solid fa-ban me-1"></i>Bị cấm</span>
+                                                    @break
+                                            @endswitch
                                         @endif
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-center text-light">{{ $user->email }}</span>
+                                        @if ($user->phone)
+                                            <small class="text-muted d-block mt-2" style="font-size: 12px">
+                                                SĐT: {{ $user->phone }}
+                                            </small>
+                                        @endif
+                                    </td>
+                                    <td class="text-center" style="max-width: 300px;">
+                                        <p class="text-wrap text-muted lh-base" style="margin-bottom: 0;">{{ Str::limit($user->address ?? 'Không tìm thấy địa chỉ', 100, '...') }}</p>
                                     </td>
                                     <td class="text-center">
                                         @switch($user->role)
-                                            @case('user')
-                                                <span class="badge bg-info text-dark">Người dùng</span>
-                                            @break
-                                            @case('staff')
-                                                <span class="badge bg-primary">Nhân viên</span>
-                                            @break
                                             @case('admin')
-                                                <span class="badge bg-success">Quản trị viên</span>
+                                                <span class="badge-clean-base badge-clean-yellow">
+                                                    <i class="fa-solid fa-crown me-1"></i>
+                                                    Quản trị viên
+                                                </span>
+                                                @break
+                                            @case('staff')
+                                                <span class="badge-clean-base badge-clean-rose">
+                                                    <i class="fa-solid fa-user-tie me-1"></i>
+                                                    Nhân viên
+                                                </span>
+                                                @break
+                                            @case('user')
+                                                <span class="badge-clean-base badge-clean-purple">
+                                                    <i class="fa-solid fa-user me-1"></i>
+                                                    Người dùng
+                                                </span>
                                                 @break
                                         @endswitch
-                                    </td>
-                                    <td class="text-center">
-                                        @if (!$showDeleted && !$user->trashed())
-                                            @switch($user->status)
-                                                @case('active')
-                                                    <span class="badge bg-success">Đang hoạt động</span>
-                                                @break
-                                                @case('inactive')
-                                                    <span class="badge bg-warning text-dark">Ngừng hoạt động</span>
-                                                @break
-                                                @case('banned')
-                                                    <span class="badge bg-danger">Bị cấm</span>
-                                                    @break
-                                            @endswitch
-                                        @else
-                                            <span class="badge bg-secondary">Đã xóa</span>
-                                        @endif
                                     </td>
                                     <td class="text-center">
                                         @if ($showDeleted)

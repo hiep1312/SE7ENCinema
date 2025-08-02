@@ -514,11 +514,12 @@
                                                         @endswitch
                                                     </td>
                                                     <td class="text-center">
-                                                        <span class="text-light">{{ $booking?->user->email ?? 'N/A' }}
-                                                            @if ($booking?->user->phone)
-                                                                / {{ $booking->user->phone }}
-                                                            @endif
-                                                        </span>
+                                                        <span class="text-light">{{ $booking?->user->email ?? 'N/A' }}</span>
+                                                        @if ($booking?->user->phone)
+                                                            <small class="text-muted d-block mt-2" style="font-size: 12px">
+                                                                SĐT: {{ $booking->user->phone }}
+                                                            </small>
+                                                        @endif
                                                     </td>
                                                     <td class="text-center text-warning fw-bold">
                                                         {{ number_format($booking->total_price, 0, ',', '.') }}đ</td>

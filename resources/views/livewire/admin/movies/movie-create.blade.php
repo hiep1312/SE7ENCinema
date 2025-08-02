@@ -21,7 +21,7 @@
 @endassets
 <div class="scRender">
     @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="alert alert-danger alert-dismissible fade show mt-2 mx-2" role="alert">
             {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -108,7 +108,9 @@
                                 <div class="col-12">
                                     <div class="mb-3">
                                         <label for="description" class="form-label text-light">Mô tả </label>
-                                        <textarea id="description" wire:model="description" class="form-control bg-dark text-light border-light @error('description') is-invalid @enderror" placeholder="VD: Một nhóm siêu anh hùng tập hợp lại để cứu thế giới khỏi mối đe dọa từ Thanos..."></textarea>
+                                        <textarea id="description" wire:model="description"
+                                            class="form-control bg-dark text-light border-light @error('description') is-invalid @enderror"
+                                            placeholder="VD: Một nhóm siêu anh hùng tập hợp lại để cứu thế giới khỏi mối đe dọa từ Thanos..."></textarea>
                                         @error('description')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror

@@ -9,6 +9,7 @@ use App\Livewire\Admin\Banners\BannerEdit;
 use App\Livewire\Admin\Banners\BannerIndex;
 use App\Livewire\Admin\Bookings\BookingDetail;
 use App\Livewire\Admin\Bookings\BookingIndex;
+use App\Livewire\Admin\FoodAttributes\FoodAttributeIndex;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\Rooms\RoomCreate;
 use App\Livewire\Admin\Rooms\RoomDetail;
@@ -68,12 +69,17 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->
         Route::get('/detail/{food}', FoodDetail::class)->name('detail');
     });
 
-    /* Foods Variants */
+    /* Food Variants */
     Route::prefix('/food-variants')->name('food_variants.')->group(function () {
         Route::get('/', FoodVariantIndex::class)->name('index');
         Route::get('/create', FoodVariantCreate::class)->name('create');
         Route::get('/edit/{variant}', FoodVariantEdit::class)->name('edit');
         Route::get('/detail/{variant}', FoodVariantDetail::class)->name('detail');
+    });
+
+    /* Food Attributes */
+    Route::prefix('/food-attributes')->name('food_attributes.')->group(function () {
+        Route::get('/', FoodAttributeIndex::class)->name('index');
     });
 
     /* Users */
@@ -161,7 +167,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->
 Route::name('client.')->group(function () {
     Route::get('/ticket/{bookingCode}/{index?}', TicketIndexClient::class)->name('ticket')
         ->whereAlphaNumeric('bookingCode')->whereNumber('index')
-        ->middleware('auth', 'role:user,staff,admin');
+        ->middleware('auth', 'role:staff,admin');
 
     Route::view('/home', 'livewire.client.template.index')->name('index');
     Route::view('/blog_category', 'livewire.client.template.blogs.blog_category')->name('blog_category');

@@ -494,7 +494,7 @@
                                                                     <img src="{{ asset('storage/' . $foodImage) }}"
                                                                         alt="Ảnh món ăn {{ $foodOrder->variant->foodItem->name }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
                                                                 @else
-                                                                    <i class="fas fa-film"></i>
+                                                                    <i class="fa-solid fa-burger-soda"></i>
                                                                 @endif
                                                             </div>
                                                         </div>
