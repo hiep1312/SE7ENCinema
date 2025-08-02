@@ -2,13 +2,13 @@
     <link rel="stylesheet" href="{{ asset('client/assets/css/style.css') }}">
 @endassets
 
-<div class="scRender" wire:poll.5s="refreshSeatStatus">
+<div class="scRender" wire:poll.6s="refreshSeatStatus">
     @if ($isBanned && $banInfo)
         <div class="container mt-5">
             <div class="row justify-content-center mt-5">
                 <div class="col-md-12">
                     <div class="alert alert-danger shadow rounded-4 p-4 text-center mt-5 pt-5" role="alert"
-                        style="background: url('https://static.vecteezy.com/system/resources/previews/048/724/727/non_2x/cyber-security-hacking-concept-attention-warning-attacker-alert-sign-and-computer-security-protection-notify-danger-technology-background-free-vector.jpg');  background-size: cover; color: white; height: 30vh;">
+                        style="background: url('https://static.vecteezy.com/system/resources/previews/048/724/727/non_2x/cyber-security-hacking-concept-attention-warning-attacker-alert-sign-and-computer-security-protection-notify-danger-technology-background-free-vector.jpg');  background-size: cover; color: white; height: 50vh;">
                         <div class="mb-3 fs-3 pt-4">
                             <i class="fa-solid fa-circle-exclamation fa-3x mb-2"></i>
                         </div>
@@ -73,7 +73,7 @@
                 <!-- Cột phải: Nút tiếp tục -->
                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                     <div class="st_seatlay_btn float_left">
-                        <a wire:click="goToSelectFood" class="{{ empty($selectedSeats) ? 'disabled' : '' }}">
+                        <a wire:click="goToSelectFood" class="text-decoration-none w-100 {{ empty($selectedSeats) ? 'disabled' : '' }}">
                             Tiếp tục đặt đồ ăn
                         </a>
                     </div>

@@ -83,7 +83,7 @@
                                 @endphp
                                 <div class="cinema-schedule__showtime-item">
                                     <button
-                                        {{-- wire:click="bookShowtime({{ $showtime->id }})" --}}
+                                        wire:click="bookShowtime({{ $showtime->id }})"
                                         class="cinema-schedule__showtime-btn @if($isDisabled) cinema-schedule__showtime-btn--disabled @endif"
                                         @if($isDisabled) disabled @endif
                                         title="@if($isPassed) Suất chiếu đã qua @elseif($hasNoSeats) Hết vé @else Còn {{ $showtime->available_seats }} ghế @endif"

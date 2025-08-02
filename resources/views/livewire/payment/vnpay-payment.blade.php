@@ -1,333 +1,284 @@
 <div class="scRender container py-5">
-    <style>
-        :root {
-            --primary-red: #FF4757;
-            --primary-dark: #2C3E50;
-            --secondary-dark: #34495E;
-            --accent-blue: #3742FA;
-            --success-green: #2ED573;
-            --warning-orange: #FFA502;
-            --text-light: #BDC3C7;
-            --text-dark: #2C3E50;
-            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --card-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            --border-radius: 20px;
-        }
+   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
 
-        body {
-            background: var(--bg-gradient);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+    :root {
+        --primary-red: #ff4d4f;
+        --primary-dark: #1e272e;
+        --secondary-dark: #353b48;
+        --accent-blue: #4b7bec;
+        --success-green: #2ed573;
+        --warning-orange: #ffa502;
+        --text-light: #dcdde1;
+        --text-dark: #2f3542;
+        --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+        --border-radius: 24px;
+    }
 
-        /* Cinema Header */
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(to bottom right, #f5f6fa, #dcdde1);
+    }
+
+   .cinema-header {
+    background: linear-gradient(135deg, #1e1e2f, #2f3542);
+    color: white;
+    padding: 40px 30px;
+    border-radius: 24px 24px 0 0;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    margin-top: 9rem;
+}
+
+    .cinema-logo {
+        font-size: 2.8rem;
+        font-weight: 900;
+        text-shadow: 2px 2px 6px rgba(0,0,0,0.15);
+    }
+
+    .cinema-tagline {
+        font-size: 1.1rem;
+        font-weight: 400;
+        opacity: 0.9;
+    }
+
+    .countdown-alert {
+         background: linear-gradient(135deg, #1e1e2f, #2f3542);
+        color: white;
+        padding: 20px;
+        border-radius: 0 0 24px 24px !important;
+        animation: pulse 2s infinite;
+        box-shadow: 0 10px 20px rgba(255, 71, 87, 0.25);
+    }
+
+    .countdown-timer {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: white !important;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+    }
+
+    .card-checkout {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 40px;
+        box-shadow: var(--card-shadow);
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 25px;
+        border-bottom: 2px solid #f1f2f6;
+        padding-bottom: 12px;
+    }
+
+    .section-icon {
+        font-size: 2rem;
+        margin-right: 15px;
+        padding: 12px;
+        border-radius: 12px;
+        color: white;
+    }
+
+    .seats-icon { background: var(--accent-blue); }
+    .food-icon { background: var(--warning-orange); }
+    .total-icon { background: var(--success-green); }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-dark);
+    }
+
+    .booking-info {
+        background: linear-gradient(135deg, #f1f2f6, #dcdde1);
+        padding: 25px;
+        border-radius: 18px;
+        border-left: 6px solid var(--primary-red);
+        margin-bottom: 30px;
+    }
+
+    .booking-id {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-red);
+    }
+
+    .seats-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .badge-seat {
+        background: linear-gradient(to right, #4b7bec, #3867d6);
+        color: white;
+        padding: 10px 18px;
+        border-radius: 24px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: 0.2s;
+        cursor: pointer;
+    }
+
+    .badge-seat:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(75, 123, 236, 0.4);
+    }
+
+    .food-table {
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    .food-table thead {
+        background: linear-gradient(to right, #2f3542, #57606f);
+        color: white;
+    }
+
+    .food-table th, .food-table td {
+        padding: 15px;
+    }
+
+    .attribute-badge {
+        background: #ced6e0;
+        color: #2f3542;
+        font-size: 0.8rem;
+        padding: 5px 10px;
+        border-radius: 12px;
+    }
+
+    .highlight-price {
+        color: var(--success-green);
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .total-section {
+        background: #f1f2f6;
+        padding: 30px;
+        border-radius: 20px;
+        border: 2px dashed var(--success-green);
+        text-align: center;
+    }
+
+    .total-final {
+        font-size: 2.5rem;
+        font-weight: 900;
+        color: var(--success-green);
+    }
+
+    .btn-checkout {
+        background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+        color: white;
+        border: none;
+        padding: 15px 35px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 30px;
+        transition: 0.3s;
+        min-width: 240px;
+    }
+
+    .btn-checkout:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(0, 210, 255, 0.4);
+    }
+
+    .btn-clear {
+        background: linear-gradient(135deg, #ff6b6b, #ff4757);
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        transition: 0.3s;
+    }
+
+    .btn-clear:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(255, 75, 87, 0.3);
+    }
+
+    .empty-state {
+        padding: 40px;
+        border-radius: 20px;
+        text-align: center;
+        background: #f1f2f6;
+        color: #a4b0be;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        opacity: 0.5;
+    }
+
+    /* Fade-in Animation */
+    .fade-in {
+        animation: fadeInUp 0.6s ease-in-out both;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
         .cinema-header {
-            background: linear-gradient(135deg, #FF4757 0%, #FF3742 100%);
-            color: white;
-            padding: 30px;
-            border-radius: var(--border-radius) var(--border-radius) 0 0;
-            text-align: center;
-            box-shadow: var(--card-shadow);
-            margin-bottom: -5px;
+            padding: 25px 15px;
         }
 
         .cinema-logo {
-            font-size: 2.5rem;
-            font-weight: 900;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .cinema-tagline {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            font-weight: 300;
-        }
-
-        /* Countdown Alert */
-        .countdown-alert {
-            background: linear-gradient(135deg, #FF6B6B, #FF4757);
-            border: none;
-            border-radius: 15px;
-            color: white;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 25px rgba(255, 71, 87, 0.3);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
-
-        .countdown-timer {
-            font-size: 1.3rem;
-            font-weight: 700;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-        }
-
-        /* Main Card */
-        .card-checkout {
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--card-shadow);
-            padding: 40px;
-            margin-bottom: 30px;
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 3px solid #F8F9FA;
-        }
-
-        .section-icon {
             font-size: 2rem;
-            margin-right: 15px;
-            padding: 12px;
-            border-radius: 12px;
-            color: white;
         }
 
-        .seats-icon { background: var(--accent-blue); }
-        .food-icon { background: var(--warning-orange); }
-        .total-icon { background: var(--success-green); }
-
-        .section-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin: 0;
+        .card-checkout {
+            padding: 25px 20px;
         }
 
-        /* Booking Info */
-        .booking-info {
-            background: linear-gradient(135deg, #F8F9FA, #E9ECEF);
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            border-left: 5px solid var(--primary-red);
-        }
-
-        .booking-id {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-red);
-            margin: 0;
-        }
-
-        /* Seats Display */
-        .seats-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .badge-seat {
-            background: linear-gradient(135deg, var(--accent-blue), #5352ED) !important;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 25px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            box-shadow: 0 5px 15px rgba(55, 66, 250, 0.3);
-            transition: all 0.3s ease;
-            border: none;
-        }
-
-        .badge-seat:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(55, 66, 250, 0.4);
-        }
-
-        /* Food Table */
-        .food-table {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-        }
-
-        .food-table table {
-            margin: 0;
-        }
-
-        .food-table thead {
-            background: linear-gradient(135deg, var(--secondary-dark), var(--primary-dark));
-            color: white;
-        }
-
-        .food-table th {
-            padding: 15px;
-            font-weight: 600;
-            border: none;
-            color: white;
-        }
-
-        .food-table td {
-            padding: 15px;
-            border-top: 1px solid #E9ECEF;
-            vertical-align: middle;
-        }
-
-        .food-table tbody tr:hover {
-            background-color: #F8F9FA;
-            transition: all 0.3s ease;
-        }
-
-        .attribute-badge {
-            background: var(--text-light) !important;
-            color: var(--text-dark) !important;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            margin-right: 5px;
-        }
-
-        /* Price Highlights */
-        .highlight-price {
-            color: var(--success-green) !important;
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        /* Total Section */
-        .total-section {
-            background: linear-gradient(135deg, #F8F9FA, #E9ECEF);
-            padding: 30px;
-            border-radius: 15px;
-            margin: 30px 0;
-            text-align: center;
-            border: 2px dashed var(--success-green);
+        .btn-checkout {
+            width: 100%;
         }
 
         .total-final {
-            font-size: 2.5rem;
-            font-weight: 900;
-            color: var(--success-green) !important;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-            margin: 0;
+            font-size: 2rem;
         }
+    }
+</style>
 
-        /* Payment Buttons */
-        .btn-checkout {
-            background: linear-gradient(135deg, #00D4FF, #0099CC) !important;
-            color: white !important;
-            border: none !important;
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            border-radius: 25px;
-            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
-            transition: all 0.3s ease;
-            min-width: 250px;
-        }
-
-        .btn-checkout:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(0, 212, 255, 0.4);
-            color: white !important;
-        }
-
-        .btn-clear {
-            background: linear-gradient(135deg, #FF6B6B, #FF4757) !important;
-            color: white !important;
-            border: none !important;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-
-        .btn-clear:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(255, 75, 87, 0.3);
-            color: white !important;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: var(--text-light);
-            background: #F8F9FA;
-            border-radius: 15px;
-            margin-bottom: 20px;
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .card-checkout {
-                padding: 25px;
-            }
-            
-            .cinema-header {
-                padding: 20px;
-            }
-            
-            .cinema-logo {
-                font-size: 2rem;
-            }
-            
-            .total-final {
-                font-size: 2rem;
-            }
-            
-            .btn-checkout {
-                width: 100%;
-            }
-        }
-
-        /* Animations */
-        .fade-in {
-            animation: fadeIn 0.8s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
 
     <!-- Cinema Header -->
-    <div class="cinema-header fade-in">
-        <div class="cinema-logo">SE7EN CINEMA</div>
-        <div class="cinema-tagline">Trải nghiệm điện ảnh đỉnh cao</div>
-    </div>
+   <div class="cinema-header fade-in">
+    <div class="cinema-logo">SE7EN CINEMA</div>
+    <div class="cinema-tagline">Trải nghiệm điện ảnh đỉnh cao</div>
+</div>
 
-    <!-- Countdown Alert -->
-    <div class="alert countdown-alert fade-in" role="alert">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <i class="bi bi-clock-fill me-2"></i>
-                <strong>Vui lòng hoàn tất thanh toán trong:</strong>
-                <div id="countdown" class="countdown-timer mt-1"></div>
-            </div>
-            <button wire:click="testdeletesession" class="btn btn-clear">
-                <i class="bi bi-trash3-fill me-1"></i> Xóa phiên
-            </button>
+<div class="alert countdown-alert fade-in" role="alert">
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="text-light">
+            <i class="bi bi-clock-fill me-2"></i>
+            <strong>Vui lòng hoàn tất thanh toán trong:</strong>
+            <div id="countdown" class="countdown-timer mt-1"></div>
         </div>
+        <button wire:click="testdeletesession" class="btn btn-clear text-light">
+            <i class="bi bi-trash3-fill me-1"></i> Xóa phiên
+        </button>
     </div>
-
+</div>
     <!-- Main Checkout Card -->
-    <div class="card-checkout fade-in">
+    <div class="card-checkout fade-in mb-5">
         <!-- Booking Information -->
         <div class="booking-info">
             <div class="d-flex align-items-center">

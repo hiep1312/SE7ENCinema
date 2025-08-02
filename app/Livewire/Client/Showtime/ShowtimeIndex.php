@@ -6,7 +6,7 @@ use Livewire\Component;
 use App\Models\Movie;
 use App\Models\Booking;
 use Carbon\Carbon;
-
+use App\Models\Showtime;
 class ShowtimeIndex extends Component
 {
     public $selectedDate;
@@ -81,7 +81,7 @@ class ShowtimeIndex extends Component
             }
         }
     }
-    /*
+
     public function bookShowtime($showtimeId)
     {
         // Kiểm tra showtime còn hợp lệ không trước khi booking
@@ -111,9 +111,9 @@ class ShowtimeIndex extends Component
         ]);
 
         // Redirect logic here
-        // return redirect()->route('booking.create', ['showtime' => $showtimeId]);
+        return redirect()->route('client.booking.select_showtime', ['showtime' => $showtimeId]);
     }
-*/
+
 
     public function render()
     {

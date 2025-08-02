@@ -1,15 +1,16 @@
 @assets
     @vite(['resources/css/selectfood.css'])
 @endassets
-<div class=" scRender scSelectfood container py-5">
-    <div class="main-header">
-        <h1 class="main-title">
-            <i class="bi bi-camera-reels me-2"></i>Chọn đồ ăn kèm
-        </h1>
-        <p class="main-subtitle">Thưởng thức những món ăn ngon nhất cùng bộ phim của bạn</p>
-    </div>
+<div class="scRender scSelectfood container py-5 mt-5" style="width:85%; height:auto; padding-top:9rem">
+    <div class="main-header text-center py-4">
+    <h1 class="main-header__title d-inline-flex align-items-center justify-content-center gap-2 fs-2 fw-bold text-primary-emphasis mt-5">
+        <i class="bi bi-camera-reels fs-3 text-warning"></i>
+        Chọn đồ ăn kèm
+    </h1>
+    <p class="main-header__subtitle mt-2 text-secondary-emphasis lh-sm">Thưởng thức những món ăn ngon nhất cùng bộ phim của bạn</p>
+</div>
 
-    <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4">
+    <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4 mb-5">
         @foreach ($this->foodItems() as $food)
             @php
                 $prices = $food->variants->pluck('price')->sort()->values();
@@ -92,7 +93,7 @@
     </div>
 
     @if (count($cart) > 0)
-        <div class="cart-section">
+        <div class="cart-section mb-5">
             <h3 class="cart-title">
                 <i class="bi bi-cart3 me-2"></i>Giỏ hàng của bạn
             </h3>
@@ -146,7 +147,7 @@
                     <i class="bi bi-credit-card me-1"></i> Thanh toán
                 </button>
                 <button wire:click="skipFood" class="btn btn-skip">
-                    <i class="bi bi-skip-forward me-1"></i> Bỏ qua
+                    <i class="fa-solid fa-arrow-left mx-2"></i> Bỏ qua
                 </button>
             </div>
         </div>
@@ -154,7 +155,7 @@
     @if (count($cart) === 0)
     <div class="action-buttons mb-3">
         <button wire:click="skipFood" class="btn btn-skip">
-            <i class="bi bi-skip-forward me-1"></i> Bỏ qua
+            <i class="fa-solid fa-arrow-left mx-2"></i> Bỏ qua
         </button>
     </div>
     @endif

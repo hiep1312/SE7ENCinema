@@ -327,7 +327,6 @@ class SelectSeats extends Component
                 ->sum(fn($item) => $item->seat->price ?? 0);
 
             $booking->update(['total_price' => $totalPrice]);
-            $this->seatHoldService->releaseHolds($this->sessionId);
 
             DB::commit();
 
