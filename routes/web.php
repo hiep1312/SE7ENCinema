@@ -194,7 +194,7 @@ Route::name('client.')->group(function () {
     Route::get('/booking/food/{booking_id}', SelectFood::class)->name('booking.select_food');
     Route::get('/booking/confirm/{booking_id}', ConfirmBooking::class)->name('booking.confirm');
     Route::get('/booking-food', BookingFood::class);
-    Route::view('/home', 'livewire.client.template.index')->name('index');
+    Route::view('/', 'livewire.client.template.index')->name('index');
     Route::view('/blog_category', 'livewire.client.template.blogs.blog_category')->name('blog_category');
     Route::view('/blog_single', 'livewire.client.template.blogs.blog_single')->name('blog_single');
     Route::view('/movie_booking', 'livewire.client.template.movies.movie_booking')->name('movie_booking');
@@ -229,5 +229,5 @@ Route::name('client.')->group(function () {
     Route::get('/booking-food', BookingFood::class);
     Route::view('/faq', 'livewire.client.template.abouts.faq')->name('faq');
 });
-Route::view('/', 'clienttest')->name('welcome');
+// Route::view('/', 'clienttest')->name('welcome');
 Route::view('/clienttest', 'clienttest')->name('clienttest');
