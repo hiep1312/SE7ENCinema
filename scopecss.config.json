@@ -10,7 +10,8 @@
                 "notificationIndex.css",
                 "promotion.css",
                 "showtimeIndex.css",
-                "badgeML.css"
+                "badgeML.css",
+                "selectfood.css"
         ],
         "scopedCssFiles": [
         ]
