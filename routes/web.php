@@ -223,6 +223,7 @@ Route::name('client.')->group(function () {
     Route::get('/thanh-toan/{booking_id}', VnpayPayment::class)->name('thanh-toan');
     Route::get('/vnpay-return', [VnpayController::class, 'vnpayReturn'])->name('vnpay.return');
     Route::get('/booking-food', BookingFood::class);
+    Route::view('/faq', 'livewire.client.template.abouts.faq')->name('faq');
 });
 Route::view('/', 'welcome')->name('welcome');
 Route::view('/clienttest', 'clienttest')->name('clienttest');

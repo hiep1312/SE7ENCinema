@@ -19,7 +19,8 @@ export default defineConfig({
                 "resources/css/termsOfService.css",
                 "resources/css/promotion.css",
                 'resources/css/showtimeIndex.css',
-                'resources/css/"selectfood.css"'
+                'resources/css/selectfood.css',
+                'resources/css/faq.css'
             ],
             refresh: true,
         }),
