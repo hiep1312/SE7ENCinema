@@ -7,6 +7,7 @@
 @import './notificationIndex.css';
 @import './promotion.css';
 @import './showtimeIndex.css';
+@import './seat.css';
 
 /* Vite */
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';

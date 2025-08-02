@@ -51,6 +51,15 @@ use App\Livewire\Client\Ticket\Index as TicketIndexClient;
 use App\Livewire\Client\ClientMovieDetail;
 use App\Livewire\Client\User\UserConfirm;
 use App\Livewire\Client\User\UserInformation;
+use App\Http\Controllers\VnpayController;
+use App\Http\Livewire\Admin\BookingManager;
+use App\Http\Livewire\Client\BookingTicket;
+use App\Livewire\Client\SelectMovieShowtime;
+use App\Livewire\Client\SelectSeats;
+use App\Livewire\Client\SelectFood;
+use App\Livewire\Client\ConfirmBooking;
+use App\Livewire\Payment\VnpayPayment;
+use App\Livewire\Booking\BookingFood;
 
 Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->group(function () {
     /* Banners */
@@ -173,8 +182,12 @@ Route::name('client.')->group(function () {
         ->whereAlphaNumeric('bookingCode')->whereNumber('index')
         ->middleware('auth', 'role:user,staff,admin');
 
-    Route::get('/movie_list', MovieList::class)->name('movieList');
-
+    Route::get('/movie-list', MovieList::class)->name('movies.index');
+    Route::get('/booking', SelectMovieShowtime::class)->name('booking.select_showtime');
+    Route::get('/booking/seats/{showtime_id}', SelectSeats::class)->name('booking.select_seats');
+    Route::get('/booking/food/{booking_id}', SelectFood::class)->name('booking.select_food');
+    Route::get('/booking/confirm/{booking_id}', ConfirmBooking::class)->name('booking.confirm');
+    Route::get('/booking-food', BookingFood::class);
     Route::view('/home', 'livewire.client.template.index')->name('index');
     Route::view('/blog_category', 'livewire.client.template.blogs.blog_category')->name('blog_category');
     Route::view('/blog_single', 'livewire.client.template.blogs.blog_single')->name('blog_single');
@@ -205,8 +218,11 @@ Route::name('client.')->group(function () {
     Route::prefix('/promotions')->name('promotions.')->group(function () {
         Route::get('/', PromotionIndexClient::class)->name('index');
     });
+    Route::get('/user-info', UserInformation::class)->name('userInfo')->middleware('role:user,admin,staff');
+    Route::get('/user-confirm', UserConfirm::class)->name('userConfirm')->middleware('role:user,admin,staff');
+    Route::get('/thanh-toan/{booking_id}', VnpayPayment::class)->name('thanh-toan');
+    Route::get('/vnpay-return', [VnpayController::class, 'vnpayReturn'])->name('vnpay.return');
+    Route::get('/booking-food', BookingFood::class);
 });
-Route::get('/user-info', UserInformation::class)->name('userInfo')->middleware('role:user,admin,staff');
-Route::get('/user-confirm', UserConfirm::class)->name('userConfirm')->middleware('role:user,admin,staff');
 Route::view('/', 'welcome')->name('welcome');
 Route::view('/clienttest', 'clienttest')->name('clienttest');

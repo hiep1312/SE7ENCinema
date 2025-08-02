@@ -197,7 +197,7 @@
                                                             <div class="booking-button-container"
                                                                 style="text-align: center; margin-top: 20px;">
                                                                 @auth
-                                                                    <a href="{{ route('client.movie_booking', $movie->id) }}"
+                                                                    <a href="{{ route('client.booking.select_showtime', $movie->id) }}"
                                                                         class="btn btn-primary"
                                                                         style="background-color: #e50914; border: none; padding: 10px 20px; font-size: 14px; color: white; text-transform: uppercase; width: 100%; border-radius: 5px; font-weight: bold; margin-top: 10px;">
                                                                         Mua Vé Ngay
