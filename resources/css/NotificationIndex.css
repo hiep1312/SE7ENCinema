@@ -40,7 +40,7 @@
     box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
   }
 
-  /* Facebook-style Offcanvas Panel - Red & White Theme */
+  /* Facebook-style Offcanvas Panel - Red & White Theme with Smooth Animation */
   .notification-offcanvas.offcanvas {
     width: 100%;
     max-width: 360px;
@@ -51,6 +51,12 @@
     border: none;
     box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
     overflow: hidden;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .notification-offcanvas.offcanvas.show {
+    transform: translateX(0);
   }
 
   @media (max-width: 500px) {
@@ -1740,3 +1746,92 @@ a.notification-list__load-more-btn:disabled {
     box-shadow: 0 2px 8px rgba(24,119,242,0.08);
     border-radius: 18px;
 }
+
+  /* Smooth fade-in animation for notification items */
+  .notification__item {
+    animation: fadeInUp 0.3s ease-out;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Loading skeleton for better UX */
+  .notification-skeleton {
+    display: flex;
+    align-items: flex-start;
+    padding: 16px 20px;
+    gap: 12px;
+    background: #fff;
+    border-bottom: 1px solid #e4e6ea;
+  }
+
+  .notification-skeleton__avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+  }
+
+  .notification-skeleton__content {
+    flex: 1;
+  }
+
+  .notification-skeleton__title {
+    height: 16px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    margin-bottom: 8px;
+    border-radius: 4px;
+  }
+
+  .notification-skeleton__text {
+    height: 14px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    margin-bottom: 6px;
+    border-radius: 4px;
+    width: 80%;
+  }
+
+  .notification-skeleton__time {
+    height: 12px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 4px;
+    width: 60%;
+  }
+
+  @keyframes loading {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  /* Optimize transitions for better performance */
+  .notification__item,
+  .notification__avatar img,
+  .notification__content,
+  .notification__time {
+    will-change: transform, opacity;
+  }
+
+  /* Reduce layout shift during loading */
+  .notification-content {
+    min-height: 200px;
+  }

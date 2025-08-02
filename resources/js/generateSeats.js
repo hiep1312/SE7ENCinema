@@ -739,7 +739,7 @@ document.addEventListener("livewire:init", () => {
                 }
 
                 countdownElement.innerHTML = `
-                <div class="d-flex align-items-center justify-content-center fs-1 text-light  ${alertClass} p-2 rounded">
+                <div class="d-flex align-items-center justify-content-center fs-3 text-light  ${alertClass} p-2 rounded">
                         <i class="${icon} me-2"></i>
                         <strong>Thời gian giữ ghế: ${timeString}</strong>
                 </div>

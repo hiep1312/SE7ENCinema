@@ -215,9 +215,7 @@ Route::name('client.')->group(function () {
     Route::view('/terms-of-service', 'livewire.client.template.abouts.terms_of_service')->name('terms_of_service');
     Route::get('/movies/{movie}', ClientMovieDetail::class)->name('movie_detail');
     /* Promotions */
-    Route::prefix('/promotions')->name('promotions.')->group(function () {
-        Route::get('/', PromotionIndexClient::class)->name('index');
-    });
+    Route::get('/promotions', PromotionIndexClient::class)->name('promotions.index');
     Route::get('/user-info', UserInformation::class)->name('userInfo')->middleware('role:user,admin,staff');
     Route::get('/user-confirm', UserConfirm::class)->name('userConfirm')->middleware('role:user,admin,staff');
     Route::get('/thanh-toan/{booking_id}', VnpayPayment::class)->name('thanh-toan');

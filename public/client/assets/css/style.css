@@ -10177,17 +10177,9 @@ i:before {
 	-ms-transition: all 0.5s;
 	-moz-transition: all 0.5s;
 	transition: all 0.5s;
+    text-decoration: none !important;
 }
 
-.st_bt_top_back_btn a:hover {
-	background: #ff4444;
-	color: #fff;
-	-webkit-transition: all 0.5s;
-	-o-transition: all 0.5s;
-	-ms-transition: all 0.5s;
-	-moz-transition: all 0.5s;
-	transition: all 0.5s;
-}
 
 .st_bt_top_center_heading {
 	text-align: center;

@@ -30,9 +30,9 @@
                             <li class="parent"><a href="{{ route('client.index') }}">Trang Chủ</a></li>
                             <li class="parent megamenu"><a href="{{ route('client.movies.index') }}">Danh Sách Phim</a>
                             </li>
-                            <li class="parent"><a href="#">Lịch chiếu</a></li>
-                            <li class="parent"><a href="#">Khuyến Mãi</a></li>
-                            <li class="parent"><a href="route('client.userInfo')">Thành Viên</a></li>
+                            <li class="parent"><a href="{{ route('client.showtimes.index') }}">Lịch chiếu</a></li>
+                            <li class="parent"><a href="{{ route('client.promotions.index') }}">Khuyến Mãi</a></li>
+                            <li class="parent"><a href="{{ route('client.userInfo') }}">Thành Viên</a></li>
                             <li class="parent"><a href="{{ route('client.faq') }}">Chính sách & Bảo mật</a>
                             </li>
                         </ul>
@@ -84,13 +84,13 @@
                     </li>
                     <li><a href="{{ route('client.movies.index') }}">DANH SÁCH PHIM</a>
                     </li>
-                    <li><a href="{{ route('client.event_single') }}">LỊCH CHIẾU</a>
+                    <li><a href="{{ route('client.showtimes.index') }}">LỊCH CHIẾU</a>
                     </li>
-                    <li><a href="{{ route('client.event_single') }}">KHUYẾN MÃI</a>
+                    <li><a href="{{ route('client.promotions.index') }}">KHUYẾN MÃI</a>
                     </li>
                     <li><a href="{{ route('client.userInfo') }}">THÀNH VIÊN</a>
                     </li>
-                    <li><a href="{{ route('client.contact') }}">CHÍNH SÁCH VÀ BẢO MẬT</a>
+                    <li><a href="{{ route('client.faq') }}">CHÍNH SÁCH VÀ BẢO MẬT</a>
                     </li>
                 </ul>
 
@@ -139,6 +139,12 @@
                                         ký</span></a>
                             </li>
                             @endauth
+                            <li>
+                                 {{-- Notification Bell --}}
+                                <div style="display: inline-block; position: relative; margin-left: 18px; vertical-align: middle; background: rgb(255, 109, 109); border-radius: 50%;">
+                                    @livewire('client.notifications.notification-index')
+                                </div>
+                            </li>
                         </ul>
                     </div>
                 </div>

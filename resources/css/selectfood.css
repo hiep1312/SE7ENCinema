@@ -19,55 +19,29 @@
         body {
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
         }
 
         /* Header Styling */
         .main-header {
-            text-align: center;
-            margin-bottom: 3rem;
-            padding: 2rem 0;
-            background: linear-gradient(135deg, var(--cinema-primary) 0%, var(--cinema-secondary) 100%);
-            border-radius: 20px;
-            color: white;
-            box-shadow: 0 10px 30px rgba(26, 35, 126, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
+    background: linear-gradient(to right, #f9fafb, #ffffff);
+    border-radius: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    margin-bottom: 2rem;
+    margin-top: auto;
+}
 
-        .main-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="1" fill="rgba(255,255,255,0.08)"/><circle cx="40" cy="60" r="1.5" fill="rgba(255,255,255,0.06)"/></svg>');
-            animation: float 20s linear infinite;
-            pointer-events: none;
-        }
+.main-header__title {
+    font-family: 'Segoe UI', sans-serif;
+    letter-spacing: -0.5px;
+    color: #1a1a1a;
+}
 
-        @keyframes float {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+.main-header__subtitle {
+    font-size: 1rem;
+    color: #6c757d;
+    font-weight: 500;
+}
 
-        .main-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            position: relative;
-            z-index: 2;
-        }
-
-        .main-subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            font-weight: 300;
-            position: relative;
-            z-index: 2;
-        }
 
         /* Food Card Styling */
         .food-card {
@@ -118,6 +92,7 @@
             padding: 1.5rem;
             position: relative;
             z-index: 2;
+            height: auto;
         }
 
         .food-card .card-title {
@@ -420,54 +395,32 @@
             color: white;
         }
 
-        /* Total Section */
         .total-section {
-            background: white;
-            border: 3px solid transparent;
-            background-image: 
-                linear-gradient(white, white),
-                linear-gradient(135deg, var(--cinema-primary) 0%, var(--cinema-secondary) 50%, var(--cinema-accent) 100%);
-            background-origin: border-box;
-            background-clip: content-box, border-box;
-            border-radius: 25px;
-            padding: 2rem;
-            text-align: center;
-            margin-top: 2rem;
-            box-shadow: 0 10px 30px rgba(26, 35, 126, 0.15);
-            position: relative;
-            overflow: hidden;
-        }
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    margin: 4rem auto 0 auto;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+    position: relative;
+    z-index: 10;
+    transition: all 0.3s ease-in-out;
+    text-align: end;
+}
 
-        .total-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(26, 35, 126, 0.03) 0%, rgba(63, 81, 181, 0.02) 100%);
-            pointer-events: none;
-        }
+.total-label {
+    font-size: 1.2rem;
+    color: #555;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
 
-        .total-label {
-            font-size: 1.1rem;
-            color: var(--cinema-gray-600);
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            position: relative;
-            z-index: 1;
-        }
-
-        .total-amount {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--cinema-primary) 0%, var(--cinema-accent) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            position: relative;
-            z-index: 1;
-        }
+.total-amount {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #111;
+    letter-spacing: -1px;
+}
 
         /* Action Buttons */
         .action-buttons {
@@ -517,21 +470,21 @@
             .main-title {
                 font-size: 2rem;
             }
-            
+
             .action-buttons {
                 flex-direction: column;
                 align-items: center;
             }
-            
+
             .btn-checkout, .btn-skip {
                 width: 100%;
                 max-width: 300px;
             }
-            
+
             .cart-section {
                 padding: 1.5rem;
             }
-            
+
             .main-header {
                 padding: 1.5rem 1rem;
             }
@@ -542,11 +495,12 @@
                 padding-left: 15px;
                 padding-right: 15px;
             }
-            
+
             .food-card .card-body {
                 padding: 1rem;
+                height: auto;
             }
-            
+
             .cart-table th,
             .cart-table td {
                 padding: 0.75rem 0.5rem;
