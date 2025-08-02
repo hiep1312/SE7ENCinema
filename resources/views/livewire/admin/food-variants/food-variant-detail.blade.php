@@ -1,10 +1,10 @@
-<div>
+<div class="scRender">
     <div class="container-lg mb-4" wire:poll="realTimeVariantUpdate">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center my-3">
-            <h2 class="text-light">Chi tiết Biến thể: {{ $variantItem->name }}</h2>
+            <h2 class="text-light">Chi tiết biến thể: {{ $variantItem->name }}</h2>
             <div>
-                <a href="{{ route('admin.food_variants.edit',$variantItem->id) }}" class="btn btn-warning me-2">
+                <a href="{{ route('admin.food_variants.edit', $variantItem->id) }}" class="btn btn-warning me-2">
                     <i class="fas fa-edit me-1"></i>Chỉnh sửa
                 </a>
                 <a href="{{ route('admin.food_variants.index') }}" class="btn btn-outline-secondary">
@@ -52,24 +52,23 @@
         <!-- Tabs Navigation -->
         <ul class="nav nav-tabs bg-dark" role="tablist">
             <li class="nav-item">
-                <button
-                    class="nav-link @if ($tabCurrent === 'overview') active bg-light text-dark @else text-light @endif"
-                    wire:click="$set('tabCurrent', 'overview')">
+                <button class="nav-link @if ($tabCurrent === 'overview') active bg-light text-dark @else text-light @endif"
+                    wire:click="$set('tabCurrent', 'overview')"
+                    style="border-top-right-radius: 0;">
                     <i class="fas fa-chart-pie me-1"></i>Tổng quan
                 </button>
             </li>
             <li class="nav-item">
-                <button
-                    class="nav-link @if ($tabCurrent === 'variants') active bg-light text-dark @else text-light @endif"
+                <button class="nav-link @if ($tabCurrent === 'variants') active bg-light text-dark @else text-light @endif"
                     wire:click="$set('tabCurrent', 'variants')"
                     style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <i class="fas fa-layer-group me-1"></i> Biến thể cùng loại
                 </button>
             </li>
             <li class="nav-item">
-                <button
-                    class="nav-link @if ($tabCurrent === 'orders') active bg-light text-dark @else text-light @endif"
-                    wire:click="$set('tabCurrent', 'orders')">
+                <button class="nav-link @if ($tabCurrent === 'orders') active bg-light text-dark @else text-light @endif"
+                    wire:click="$set('tabCurrent', 'orders')"
+                    style="border-top-left-radius: 0;">
                     <i class="fas fa-shopping-cart me-1"></i> Đơn hàng
                 </button>
             </li>
@@ -91,17 +90,35 @@
                                 <table class="table table-borderless text-light">
                                     <tr>
                                         <td><strong class="text-warning">Tên món ăn liên kết:</strong></td>
-                                        <td><strong class="badge bg-gradient text-light" style="background: linear-gradient(to right, #642b73, #c642ab) !important; font-size: 0.875rem !important;">
-                                            {{ $variantItem->FoodItem->name ?? 'N/A' }}
-                                        </strong><br>
+                                        <td><strong class="text-light"
+                                                style="font-size: 0.875rem !important;">
+                                                {{ $variantItem->FoodItem->name ?? 'N/A' }}
+                                            </strong></td>
                                     </tr>
                                     <tr>
-                                        <td><strong class="text-warning">Tên biến thể:</strong></td>
-                                        <td>{{ $variantItem->name }}</td>
+                                        <td><strong class="text-warning">Thuộc tính biến thể:</strong></td>
+                                        <td>
+                                            @if ($variantItem->attributeValues->count())
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    @foreach ($variantItem->attributeValues as $value)
+                                                        <span class="badge rounded-pill bg-primary text-light"
+                                                            >
+                                                            <strong>{{ $value->attribute->name }}:</strong>
+                                                            {{ $value->value }}
+                                                        </span>
+                                                    @endforeach
+                                                </div>
+                                            @else
+                                                <span class="text-muted">Chưa có thuộc tính</span>
+                                            @endif
+                                        </td>
                                     </tr>
+
                                     <tr>
                                         <td><strong class="text-warning">Giá</strong></td>
-                                        <td><span class="text-warning">{{ number_format($variantItem->price, 0, ',', '.') }}đ</span></td>
+                                        <td><span
+                                                class="text-warning">{{ number_format($variantItem->price, 0, ',', '.') }}đ</span>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td><strong class="text-warning">Số lượng còn lại</strong></td>
@@ -110,7 +127,7 @@
                                     <tr>
                                         <td><strong class="text-warning">Giới hạn số lượng nhập</strong></td>
                                         <td>
-                                            @if($variantItem->limit > 0)
+                                            @if ($variantItem->limit > 0)
                                                 <span>{{ number_format($variantItem->limit, 0, ',', '.') }}</span>
                                             @else
                                                 <span class="text-muted">Không có giới hạn</span>
@@ -185,8 +202,23 @@
                                         <tbody>
                                             @forelse ($relatedVariants as $variant)
                                                 <tr wire:key="{{ $variant->id }}">
-                                                    <td class="text-center"><strong
-                                                            class="text-light">{{ $variant->name }}</strong></td>
+                                                    <td class="text-center">
+                                                        <strong class="text-light">
+                                                            {{ $variant->foodItem->name ?? '' }}
+                                                        </strong>
+                                                        @if ($variant->attributeValues->count())
+                                                            –
+                                                            @foreach ($variant->attributeValues as $attr)
+                                                                {{ $attr->attribute->name }} {{ $attr->value }}
+                                                                @if (!$loop->last)
+                                                                    ,
+                                                                @endif
+                                                            @endforeach
+                                                        @else
+                                                            <span class="text-muted">(Chưa có thuộc tính)</span>
+                                                        @endif
+                                                    </td>
+
                                                     <td class="d-flex justify-content-center">
                                                         <div class="mt-1 overflow-auto d-block"
                                                             style="max-height: 70px; width: 100px;">
@@ -236,107 +268,135 @@
                                                         </div>
                                                     </td>
                                                 </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="7" class="text-center py-4">
-                                                            <div class="text-muted">
-                                                                <i class="fas fa-inbox fa-3x mb-3"></i>
-                                                                <p>Không có biến thể nào</p>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @elseif($tabCurrent === 'orders')
-                    <div class="row ml-3 mr-3">
-                        <div class="col-12">
-                            <div class="card bg-dark border-light">
-                                <div class="card-header bg-gradient text-light"
-                                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                    <h5><i class="fas fa-receipt me-2"></i>Chi tiết các đơn hàng đã đặt</h5>
-                                </div>
-                                <div class="card-body bg-dark"
-                                    style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
-                                    <div class="table-responsive">
-                                        <table class="table table-dark table-striped table-hover text-light border">
-                                            <thead>
+                                            @empty
                                                 <tr>
-                                                    <th class="text-center text-light">Mã đơn hàng</th>
-                                                    <th class="text-center text-light">Tên món ăn / Biến thể</th>
-                                                    <th class="text-center text-light">Số lượng</th>
-                                                    <th class="text-center text-light">Tổng giá</th>
-                                                    <th class="text-center text-light">Tên khách hàng</th>
-                                                    <th class="text-center text-light">Email/SĐT</th>
-                                                    <th class="text-center text-light">Địa chỉ</th>
-                                                    <th class="text-center text-light">Ngày mua</th>
-                                                    <th class="text-center text-light">Hành động</th>
+                                                    <td colspan="7" class="text-center py-4">
+                                                        <div class="text-muted">
+                                                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                                                            <p>Không có biến thể nào</p>
+                                                        </div>
+                                                    </td>
                                                 </tr>
-                                            </thead>
-                                            <tbody>
-                                                @forelse ($foodOrderItems as $foodOrder)
-                                                    <tr wire:key="{{ $foodOrder->id }}">
-                                                        <td class="text-center">
-                                                            {{ $foodOrder->booking?->booking_code ?? 'N/A' }}</td>
-                                                        <td class="text-center"><strong class="badge bg-gradient text-light" style="background: linear-gradient(to right, #642b73, #c6426e) !important;">
-                                                            {{ $foodOrder->variant->FoodItem->name }} / {{ $foodOrder->variant->name }}
-                                                        </strong>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            {{ number_format($foodOrder->quantity, 0, ',', '.') }}</td>
-                                                        <td class="text-center">
-                                                            {{ number_format($foodOrder->price, 0, ',', '.') }}đ</td>
-                                                        <td class="text-center"><strong
-                                                                class="text-light">{{ $foodOrder->booking?->user->name ?? 'N/A' }}</strong>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <span
-                                                                class="badge bg-success">{{ $foodOrder->booking?->user->email ?? 'N/A' }}
-                                                                @if ($foodOrder->booking?->user->phone)
-                                                                    / {{ $foodOrder->booking->user->phone }}
-                                                                @endif
-                                                            </span>
-                                                        </td>
-                                                        <td class="text-center"><span
-                                                                class="text-light text-wrap">{{ Str::limit($foodOrder->booking?->user->address ?? 'N/A', 20, '...') }}</span>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            {{ $foodOrder->created_at->format('d/m/Y H:i') }}đ</td>
-                                                        <td>
-                                                            <div class="d-flex justify-content-center">
-                                                                <a href="{{ /* route('admin.bookings.detail', $foodOrder->booking->id) */ '#' }}"
-                                                                    class="btn btn-sm btn-info" title="Xem chi tiết">
-                                                                    <i class="fas fa-eye" style="margin-right: 0"></i>
-                                                                </a>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="9" class="text-center py-4">
-                                                            <div class="text-muted">
-                                                                <i class="fas fa-inbox fa-3x mb-3"></i>
-                                                                <p>Không có đơn hàng nào đã đặt</p>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="mt-3">
-                                        {{ $foodOrderItems->links() }}
-                                    </div>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
-                @endif
-            </div>
+                </div>
+            @elseif($tabCurrent === 'orders')
+                <div class="row ml-3 mr-3">
+                    <div class="col-12">
+                        <div class="card bg-dark border-light">
+                            <div class="card-header bg-gradient text-light"
+                                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <h5><i class="fas fa-receipt me-2"></i>Chi tiết các đơn hàng đã đặt</h5>
+                            </div>
+                            <div class="card-body bg-dark"
+                                style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
+                                <div class="table-responsive">
+                                    <table class="table table-dark table-striped table-hover text-light border">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center text-light">Mã đơn hàng</th>
+                                                <th class="text-center text-light">Tên món ăn</th>
+                                                <th class="text-center text-light">Số lượng</th>
+                                                <th class="text-center text-light">Tổng giá</th>
+                                                <th class="text-center text-light">Tên khách hàng</th>
+                                                <th class="text-center text-light">Email/SĐT</th>
+                                                <th class="text-center text-light">Trạng thái</th>
+                                                <th class="text-center text-light">Ngày mua</th>
+                                                <th class="text-center text-light">Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse ($foodOrderItems as $foodOrder)
+                                                <tr wire:key="{{ $foodOrder->id }}">
+                                                    <td class="text-center">
+                                                        {{ $foodOrder->booking?->booking_code ?? 'N/A' }}</td>
+                                                    <td class="text-center"><strong
+                                                            class="badge bg-gradient text-light"
+                                                            style="background: linear-gradient(to right, #642b73, #c6426e) !important;">
+                                                            {{ $foodOrder->variant->FoodItem->name }}
+                                                        </strong>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        {{ number_format($foodOrder->quantity, 0, ',', '.') }}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        {{ number_format($foodOrder->price, 0, ',', '.') }}đ
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <strong class="text-light">
+                                                            {{ $foodOrder->booking?->user->name ?? 'N/A' }}
+                                                        </strong>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <span class="text-light">{{ $foodOrder->booking?->user->email ?? 'N/A' }}</span>
+                                                        @if ($foodOrder->booking?->user->phone)
+                                                            <small class="text-muted d-block mt-2" style="font-size: 12px">
+                                                                SĐT: {{ $foodOrder->booking->user->phone }}
+                                                            </small>
+                                                        @endif
+                                                    </td>
+                                                    <td class="text-center">
+                                                        @switch($foodOrder->booking->status)
+                                                            @case('pending')
+                                                                <span class="badge bg-primary">Đang chờ xử lý</span>
+                                                                @break
+                                                            @case('expired')
+                                                                <span class="badge bg-warning text-dark">Đã hết hạn xử lý</span>
+                                                                @break
+                                                            @case('paid')
+                                                                <span class="badge bg-success">Đã thanh toán</span>
+                                                                @break
+                                                            @case('failed')
+                                                                <span class="badge bg-danger">Lỗi thanh toán</span>
+                                                                @break
+                                                        @endswitch
+                                                        <small class="text-muted d-block mt-1" style="font-size: 12px">
+                                                            PTTT:
+                                                            @switch($foodOrder->booking->payment_method)
+                                                                @case('credit_card') Thẻ tín dụng @break
+                                                                @case('bank_transfer') Chuyển khoản @break
+                                                                @case('e_wallet') Ví điện tử @break
+                                                                @case('cash') Tiền mặt @break
+                                                            @endswitch
+                                                        </small>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        {{ $foodOrder->created_at->format('d/m/Y H:i') }}đ</td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <a href="{{ route('admin.bookings.detail', $foodOrder->booking->id) }}"
+                                                                class="btn btn-sm btn-info" title="Xem chi tiết">
+                                                                <i class="fas fa-eye" style="margin-right: 0"></i>
+                                                            </a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="9" class="text-center py-4">
+                                                        <div class="text-muted">
+                                                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                                                            <p>Không có đơn hàng nào đã đặt</p>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="mt-3">
+                                    {{ $foodOrderItems->links() }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
+</div>

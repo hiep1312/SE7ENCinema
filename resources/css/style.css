@@ -1772,8 +1772,8 @@
 }
 
 .food-image {
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
     aspect-ratio: 1 / 1;
     background: linear-gradient(135deg, #374151, #4b5563);
     display: flex;
@@ -1782,6 +1782,20 @@
     border: 2px solid #30363d;
     position: relative;
     overflow: hidden;
+}
+
+.user-avatar {
+    width: 70px;
+    height: 70px;
+    aspect-ratio: 1 / 1;
+    background: linear-gradient(135deg, #374151, #4b5563);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #30363d;
+    position: relative;
+    overflow: hidden;
+    border-radius: 50%;
 }
 
 .banner-image{
@@ -1813,7 +1827,7 @@
     color: #58a6ff;
 }
 
-.food-image>i, .banner-image>i, .notification-image>i{
+.food-image>i, .banner-image>i, .notification-image>i, .user-avatar > i{
     font-size: 22px;
     color: #58a6ff;
 }
