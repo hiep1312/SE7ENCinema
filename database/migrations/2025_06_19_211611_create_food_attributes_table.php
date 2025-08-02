@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('food_attributes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('food_item_id')->constrained()->onDelete('cascade');
+            $table->foreignId('food_item_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('name');
             $table->text('description')->nullable();
             $table->timestamps();

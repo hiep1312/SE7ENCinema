@@ -1,16 +1,15 @@
 <div class="scRender">
     @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+    <div class="alert alert-success alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
     @endif
-
     @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
-            {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" wire:ignore>
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
     @endif
 
     <div class="container-lg mb-4">
@@ -36,7 +35,6 @@
                             </span>
                         </div>
                     </div>
-
                     <div class="col-md-3 col-lg-2">
                         <select wire:model.live="statusFilter" class="form-select bg-dark text-light">
                             <option value="">Tất cả trạng thái</option>
@@ -51,8 +49,10 @@
                         <div class="dual-range">
                             <div class="range-track"></div>
                             <div class="range-fill" id="rangeFill" wire:ignore.self></div>
-                            <input type="range" class="range-input lower" id="lowerRange" min="0" max="100" value="{{ $priorityFilter[0] }}" wire:input="$js.updateSlider">
-                            <input type="range" class="range-input upper" id="upperRange" min="0" max="100" value="{{ $priorityFilter[1] }}" wire:input="$js.updateSlider">
+                            <input type="range" class="range-input lower" id="lowerRange" min="0" max="100"
+                                value="{{ $priorityFilter[0] }}" wire:input="$js.updateSlider">
+                            <input type="range" class="range-input upper" id="upperRange" min="0" max="100"
+                                value="{{ $priorityFilter[1] }}" wire:input="$js.updateSlider">
                         </div>
                         <span id="upperValue" x-text="$wire.priorityFilter[1]" style="width: 56px;"></span>
                     </div>
@@ -177,31 +177,31 @@
                                                 <i class="fas {{ $banner->status === 'active' ? 'fa-pause' : 'fa-play' }}" style="margin-right: 0"></i>
                                             </button>
 
-                                            <a href="{{ route('admin.banners.edit', $banner->id) }}"
-                                                class="btn btn-sm btn-warning" title="Chỉnh sửa">
-                                                <i class="fas fa-edit" style="margin-right: 0"></i>
-                                            </a>
+                                        <a href="{{ route('admin.banners.edit', $banner->id) }}"
+                                            class="btn btn-sm btn-warning" title="Chỉnh sửa">
+                                            <i class="fas fa-edit" style="margin-right: 0"></i>
+                                        </a>
 
-                                            <button type="button" class="btn btn-sm btn-danger"
-                                                wire:sc-model="deleteBanner({{ $banner->id }})"
-                                                wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa banner '{{ $banner->title }}'? Hành động này không thể hoàn tác!"
-                                                title="Xóa">
-                                                <i class="fas fa-trash" style="margin-right: 0"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                        <button type="button" class="btn btn-sm btn-danger"
+                                            wire:sc-model="deleteBanner({{ $banner->id }})"
+                                            wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa banner '{{ $banner->title }}'? Hành động này không thể hoàn tác!"
+                                            title="Xóa">
+                                            <i class="fas fa-trash" style="margin-right: 0"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
                             @empty
-                                <tr>
-                                    <td colspan="9" class="text-center py-4">
-                                        <div class="text-muted">
-                                            <i class="fas fa-inbox fa-3x mb-3"></i>
-                                            <p>
-                                                Không có banner nào
-                                            </p>
-                                        </div>
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td colspan="9" class="text-center py-4">
+                                    <div class="text-muted">
+                                        <i class="fas fa-inbox fa-3x mb-3"></i>
+                                        <p>
+                                            Không có banner nào
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -224,19 +224,23 @@
                         <div id="slideshowBanner" class="carousel slide">
                             <div class="carousel-inner">
                                 @foreach($banners as $banner)
-                                    <div class="carousel-item" data-banner-id="{{ $banner->id }}" wire:ignore.self>
-                                        <img src="{{ asset('storage/' . ($banner->image ?? '404.webp')) }}" class="d-block w-100" alt="Ảnh banner {{ $banner->title }}" style="object-fit: cover; aspect-ratio: 16 / 8;">
-                                        <div class="carousel-caption d-none d-md-block text-light">
-                                            <h5>{{ $banner->title }}</h5>
-                                        </div>
+                                <div class="carousel-item" data-banner-id="{{ $banner->id }}">
+                                    <img src="{{ asset('storage/' . ($banner->image ?? '404.webp')) }}"
+                                        class="d-block w-100" alt="Ảnh banner {{ $banner->title }}"
+                                        style="object-fit: cover; aspect-ratio: 16 / 8;">
+                                    <div class="carousel-caption d-none d-md-block text-light">
+                                        <h5>{{ $banner->title }}</h5>
                                     </div>
+                                </div>
                                 @endforeach
                             </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#slideshowBanner" data-bs-slide="prev">
+                            <button class="carousel-control-prev" type="button" data-bs-target="#slideshowBanner"
+                                data-bs-slide="prev">
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Trước đó</span>
                             </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#slideshowBanner" data-bs-slide="next">
+                            <button class="carousel-control-next" type="button" data-bs-target="#slideshowBanner"
+                                data-bs-slide="next">
                                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Tiếp theo</span>
                             </button>
@@ -250,7 +254,7 @@
 @script
 <script>
     const bannerPreview = document.querySelector('#bannerPreview');
-    bannerPreview.addEventListener('show.bs.modal', function (event) {
+    bannerPreview.addEventListener('show.bs.modal', function(event) {
         const idActive = event.relatedTarget.getAttribute('data-banner-id');
         const framePreview = event.target;
 
@@ -258,7 +262,7 @@
         itemActive.classList.add('active');
     });
 
-    bannerPreview.addEventListener('hidden.bs.modal', function (event) {
+    bannerPreview.addEventListener('hidden.bs.modal', function(event) {
         const framePreview = event.target;
 
         const itemActive = framePreview.querySelector('.active');

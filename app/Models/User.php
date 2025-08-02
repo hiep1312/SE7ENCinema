@@ -30,6 +30,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'gender',
         'role',
         'status',
+        'banned_at',
+        'ban_reason',
     ];
 
     /**
@@ -39,6 +41,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $hidden = [
         'password',
+        'remember_token',
     ];
 
     /**
@@ -85,5 +88,64 @@ class User extends Authenticatable implements MustVerifyEmail
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ScResetPassword($token, $this));
+    }
+    public function isBanned(): bool
+    {
+        return $this->status === 'banned';
+    }
+
+    /**
+     * Ban user
+     */
+    public function ban(string $reason = null): void
+    {
+        $this->update([
+            'status' => 'banned',
+            'banned_at' => now(),
+            'ban_reason' => $reason
+        ]);
+    }
+
+    /**
+     * Unban user
+     */
+    public function unban(): void
+    {
+        $this->update([
+            'status' => 'active',
+            'banned_at' => null,
+            'ban_reason' => null
+        ]);
+    }
+
+    /**
+     * Scope cho user bị ban
+     */
+    public function scopeBanned($query)
+    {
+        return $query->where('status', 'banned');
+    }
+
+    /**
+     * Scope cho user active
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
+
+    /**
+     * Get ban info
+     */
+    public function getBanInfo(): ?array
+    {
+        if (!$this->isBanned()) {
+            return null;
+        }
+
+        return [
+            'banned_at' => $this->banned_at,
+            'ban_reason' => $this->ban_reason ?: 'Vi phạm quy định hệ thống'
+        ];
     }
 }

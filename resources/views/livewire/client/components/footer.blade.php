@@ -81,28 +81,27 @@
                             </a>
                         </li>
                     </ul>
-                    <h5><span>$50</span> Payback on App Download</h5>
+                    <h5>Tải app để trải nghiệm ngay</h5>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<div class="prs_bottom_footer_wrapper">
-     <a href="javascript:" id="return-to-top"><i
+<div class="prs_bottom_footer_wrapper"> <a href="javascript:" id="return-to-top"><i
             class="flaticon-play-button"></i></a>
     <div class="container">
         <div class="row">
             <div class="col-lg-6 col-md-6 col-sm-8 col-xs-12">
                 <div class="prs_bottom_footer_cont_wrapper">
-                    <p>Copyright 2025-26 <a href="#">Movie Pro</a> . All rights reserved - Design by <a
-                            href="#">Webstrot</a>
+                    <p>Bản Quyền Thuộc về nhóm <a href="#">SE7VEN CINEMA</a> Thiết kế , Sáng Tạo và Bảo Trì Hỗ trợ kĩ thuật bởi <a
+                            href="#">SE7VEN CINEMA</a>
                     </p>
                 </div>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-4 col-xs-12">
                 <div class="prs_footer_social_wrapper">
                     <ul>
-                        <li><a href="#" class="scRender"><i class="fa-brands fa-facebook"></i></a>
+                        <li><a href="#"><i class="fa fa-facebook"></i></a>
                         </li>
                         <li>
                             <a href="#">
@@ -112,9 +111,9 @@
                                 </svg>
                             </a>
                         </li>
-                        <li><a href="#"><i class="fa-brands fa-linkedin"></i></a>
+                        <li><a href="#"><i class="fa fa-linkedin"></i></a>
                         </li>
-                        <li><a href="#"><i class="fa-brands fa-youtube"></i></a>
+                        <li><a href="#"><i class="fa fa-youtube-play"></i></a>
                         </li>
                     </ul>
                 </div>
