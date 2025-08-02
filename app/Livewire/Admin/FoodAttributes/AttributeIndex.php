@@ -31,8 +31,35 @@ class AttributeIndex extends Component
     protected $rules = [
         'newName' => 'required|string|max:255',
         'newDescription' => 'nullable|string',
-        'newValues' => 'nullable|string',
+        'newValues' => 'required|string|max:255',
+
+        'editingAttributeName' => 'required|string|max:255',
+        'editingAttributeDescription' => 'nullable|string',
+        'editingValue' => 'required|string|max:255',
     ];
+
+    protected $messages = [
+        'newName.required' => 'Vui lòng nhập tên thuộc tính.',
+        'newName.string' => 'Tên thuộc tính phải là chuỗi.',
+        'newName.max' => 'Tên thuộc tính không được vượt quá 255 ký tự.',
+
+        'newDescription.string' => 'Mô tả phải là chuỗi.',
+
+        'newValues.string' => 'Giá trị phải là chuỗi.',
+        'newValues.required' => 'Vui lòng nhập giá trị.',
+        'newValues.max' => 'Giá trị không được vượt quá 255 ký tự.',
+
+        'editingAttributeName.required' => 'Vui lòng nhập tên thuộc tính khi chỉnh sửa.',
+        'editingAttributeName.string' => 'Tên thuộc tính phải là chuỗi.',
+        'editingAttributeName.max' => 'Tên thuộc tính không được vượt quá 255 ký tự.',
+
+        'editingAttributeDescription.string' => 'Mô tả phải là chuỗi.',
+
+        'editingValue.required' => 'Vui lòng nhập giá trị.',
+        'editingValue.string' => 'Giá trị phải là chuỗi.',
+        'editingValue.max' => 'Giá trị không được vượt quá 255 ký tự.',
+    ];
+
 
     public function create()
     {

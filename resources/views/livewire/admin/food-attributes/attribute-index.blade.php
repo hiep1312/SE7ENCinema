@@ -175,14 +175,13 @@
                                                 <h6 class="mb-3 text-light">Quản lý Giá trị</h6>
                                                 @forelse ($attribute->values as $value)
                                                     <div
-                                                        class="d-flex justify-content-between align-items-center mb-2">
+                                                        class="p-2 mb-2 border border-secondary rounded d-flex justify-content-between align-items-center bg-secondary bg-opacity-10">
                                                         <span class="badge bg-primary">{{ $value->value }}</span>
                                                         <div class="d-flex gap-2">
                                                             <button wire:click="editValue({{ $value->id }})"
                                                                 class="btn btn-sm btn-warning">
                                                                 <i class="fas fa-edit"></i>
                                                             </button>
-
                                                             <button wire:click="deleteValue({{ $value->id }})"
                                                                 onclick="return confirm('Bạn có chắc chắn muốn xoá giá trị này?')"
                                                                 class="btn btn-sm btn-danger">
@@ -193,6 +192,7 @@
                                                 @empty
                                                     <div class="text-muted fst-italic">Chưa có giá trị.</div>
                                                 @endforelse
+
 
                                                 <div class="form-floating mt-3">
                                                     <input wire:model.defer="editingValue" id="editingValueInput"
