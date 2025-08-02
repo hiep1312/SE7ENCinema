@@ -69,7 +69,7 @@
     <li class="nav-item menu-items">
       <a class="nav-link" data-toggle="collapse" href="#manage-banner">
         <span class="menu-icon">
-          <i class="mdi mdi-laptop"></i>
+          <i class="fa-solid fa-display"></i>
         </span>
         <span class="menu-title">Quản lý banner</span>
         <i class="menu-arrow"></i>
@@ -84,7 +84,7 @@
     <li class="nav-item menu-items">
       <a class="nav-link" data-toggle="collapse" href="#manage-booking">
         <span class="menu-icon">
-          <i class="mdi mdi-laptop"></i>
+          <i class="fas fa-shopping-cart"></i>
         </span>
         <span class="menu-title">Quản lý đơn hàng</span>
         <i class="menu-arrow"></i>
@@ -98,7 +98,7 @@
     <li class="nav-item menu-items">
       <a class="nav-link" data-toggle="collapse" href="#manage-genres">
         <span class="menu-icon">
-          <i class="mdi mdi-laptop"></i>
+          <i class="fas fa-folder-tree"></i>
         </span>
         <span class="menu-title">Quản lý thể loại</span>
         <i class="menu-arrow"></i>
@@ -113,7 +113,7 @@
     <li class="nav-item menu-items">
       <a class="nav-link" data-toggle="collapse" href="#manage-movies">
         <span class="menu-icon">
-          <i class="mdi mdi-laptop"></i>
+          <i class="fas fa-film"></i>
         </span>
         <span class="menu-title">Quản lý phim</span>
         <i class="menu-arrow"></i>
@@ -128,7 +128,7 @@
     <li class="nav-item menu-items">
       <a class="nav-link" data-toggle="collapse" href="#manage-notifications">
         <span class="menu-icon">
-          <i class="mdi mdi-laptop"></i>
+          <i class="fa-solid fa-bell"></i>
         </span>
         <span class="menu-title">Quản lý thông báo</span>
         <i class="menu-arrow"></i>
@@ -143,7 +143,7 @@
     <li class="nav-item menu-items">
       <a class="nav-link" data-toggle="collapse" href="#manage-ratings">
         <span class="menu-icon">
-          <i class="mdi mdi-laptop"></i>
+          <i class="fa-classic fa-solid fa-star-sharp fa-fw"></i>
         </span>
         <span class="menu-title">Quản lý đánh giá</span>
         <i class="menu-arrow"></i>
@@ -157,7 +157,7 @@
     <li class="nav-item menu-items">
       <a class="nav-link" data-toggle="collapse" href="#manage-rooms">
         <span class="menu-icon">
-          <i class="mdi mdi-laptop"></i>
+          <i class="mdi mdi-theater"></i>
         </span>
         <span class="menu-title">Quản lý phòng chiếu</span>
         <i class="menu-arrow"></i>
@@ -172,7 +172,7 @@
     <li class="nav-item menu-items">
       <a class="nav-link" data-toggle="collapse" href="#manage-showtimes">
         <span class="menu-icon">
-          <i class="mdi mdi-laptop"></i>
+          <i class="mdi mdi-timetable"></i>
         </span>
         <span class="menu-title">Quản lý suất chiếu</span>
         <i class="menu-arrow"></i>
@@ -187,7 +187,7 @@
     <li class="nav-item menu-items">
       <a class="nav-link" data-toggle="collapse" href="#manage-tickets">
         <span class="menu-icon">
-          <i class="mdi mdi-laptop"></i>
+          <i class="fa-solid fa-ticket"></i>
         </span>
         <span class="menu-title">Quản lý vé</span>
         <i class="menu-arrow"></i>
