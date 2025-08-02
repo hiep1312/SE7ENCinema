@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('seat_row', 1);
             $table->integer('seat_number');
             $table->bigInteger('price')->default(0);
-            $table->enum('seat_type', ['standard', 'vip', 'couple', 'aisle'])->default('standard');
+            $table->enum('seat_type', ['standard', 'vip', 'couple', 'disabled'])->default('standard');
             $table->enum('status', ['active', 'maintenance', 'selected'])->default('active');
             $table->timestamps();
         });

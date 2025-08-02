@@ -1,11 +1,19 @@
 {
-    "prefixRoot": ".scRender",
-    "globalCssFiles": [
-        "scanner.css",
-        "termsOfService.css",
-        "privacyPolicy.css"
-    ],
-    "scopedCssFiles": [
-
-    ]
+        "prefixRoot": ".scRender",
+        "globalCssFiles": [
+                "scanner.css",
+                "movieDetail.css",
+                "userInfo.css",
+                "confirm-access.css",
+                "termsOfService.css",
+                "privacyPolicy.css",
+                "notificationIndex.css",
+                "promotion.css",
+                "showtimeIndex.css",
+                "badgeML.css",
+                "selectfood.css",
+                 "faq.css"
+        ],
+        "scopedCssFiles": [
+        ]
 }

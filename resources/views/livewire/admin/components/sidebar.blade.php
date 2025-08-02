@@ -91,7 +91,8 @@
       </a>
       <div class="collapse" id="manage-booking">
         <ul class="nav flex-column sub-menu">
-          <li class="nav-item"><a class="nav-link" href="{{ route('admin.bookings.index') }}">Danh sách đơn hàng</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.bookings.index') }}">Danh sách đơn hàng</a>
+          </li>
         </ul>
       </div>
     </li>
@@ -179,8 +180,10 @@
       </a>
       <div class="collapse" id="manage-notifications">
         <ul class="nav flex-column sub-menu">
-          <li class="nav-item"><a class="nav-link" href="{{ route('admin.notifications.create') }}">Tạo thông báo mới</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ route('admin.notifications.index') }}">Danh sách thông báo</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.notifications.create') }}">Tạo thông báo
+              mới</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.notifications.index') }}">Danh sách thông
+              báo</a></li>
         </ul>
       </div>
     </li>
@@ -209,7 +212,8 @@
       <div class="collapse" id="manage-rooms">
         <ul class="nav flex-column sub-menu">
           <li class="nav-item"><a class="nav-link" href="{{ route('admin.rooms.create') }}">Tạo phòng chiếu mới</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ route('admin.rooms.index') }}">Danh sách phòng chiếu</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.rooms.index') }}">Danh sách phòng chiếu</a>
+          </li>
         </ul>
       </div>
     </li>
@@ -223,8 +227,10 @@
       </a>
       <div class="collapse" id="manage-showtimes">
         <ul class="nav flex-column sub-menu">
-          <li class="nav-item"><a class="nav-link" href="{{ route('admin.showtimes.create') }}">Tạo suất chiếu mới</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ route('admin.showtimes.index') }}">Danh sách suất chiếu</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.showtimes.create') }}">Tạo suất chiếu mới</a>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.showtimes.index') }}">Danh sách suất chiếu</a>
+          </li>
         </ul>
       </div>
     </li>
