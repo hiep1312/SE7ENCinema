@@ -173,7 +173,7 @@ function openResultPopup(typeQR, data, options = {}) {
             resultModal.innerHTML = `
                 <div class="result-header">
                     <i class="fas fa-check-circle"></i>
-                    <span class="resultTitle">Quét thành công!</span>
+                    <span id="resultTitle">Quét thành công!</span>
                 </div>
                 <div class="result-content" id="resultContent"></div>
                 <div class="result-actions">
@@ -194,8 +194,6 @@ function openResultPopup(typeQR, data, options = {}) {
 
     if(typeQR === "bookings"){
         const { urlPrint, taken } = options;
-
-        console.log("run", urlPrint);
 
         if(taken) toggleModalResult(true, 'warning', 'Đơn hàng đã lấy vé!') || (success = false);
         else toggleModalResult(true, 'success', 'Quét đơn hàng thành công!');
