@@ -32,8 +32,8 @@
                             </li>
                             <li class="parent"><a href="#">Lịch chiếu</a></li>
                             <li class="parent"><a href="#">Khuyến Mãi</a></li>
-                            <li class="parent"><a href="#">Thành Viên</a></li>
-                            <li class="parent"><a href="{{ route('client.contact') }}">Chính sách & Bảo mật</a>
+                            <li class="parent"><a href="route('client.userInfo')">Thành Viên</a></li>
+                            <li class="parent"><a href="{{ route('client.faq') }}">Chính sách & Bảo mật</a>
                             </li>
                         </ul>
                     </div>
@@ -88,7 +88,7 @@
                     </li>
                     <li><a href="{{ route('client.event_single') }}">KHUYẾN MÃI</a>
                     </li>
-                    <li><a href="{{ route('client.gallery') }}">THÀNH VIÊN</a>
+                    <li><a href="{{ route('client.userInfo') }}">THÀNH VIÊN</a>
                     </li>
                     <li><a href="{{ route('client.contact') }}">CHÍNH SÁCH VÀ BẢO MẬT</a>
                     </li>

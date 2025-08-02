@@ -11,7 +11,8 @@
                 "promotion.css",
                 "showtimeIndex.css",
                 "badgeML.css",
-                "selectfood.css"
+                "selectfood.css",
+                 "faq.css"
         ],
         "scopedCssFiles": [
         ]
