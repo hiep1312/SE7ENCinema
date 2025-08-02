@@ -1,7 +1,9 @@
 {
     "prefixRoot": ".scRender",
     "globalCssFiles": [
-        "scanner.css"
+        "scanner.css",
+        "termsOfService.css",
+        "privacyPolicy.css"
     ],
     "scopedCssFiles": [
 
