@@ -16,11 +16,11 @@
     <div class="container-lg mb-4">
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2 class="text-light">Quản lý đơn hàng</h2>
-            {{-- <div>
-                <a href="{{ route('admin.bookings.create') }}" class="btn btn-success me-2">
-                    <i class="fas fa-plus me-1"></i>Thêm suất chiếu
+            <div>
+                <a href="{{ route('admin.scanner', 'bookings') }}" class="btn btn-primary me-2">
+                    <i class="fa-light fa-qrcode me-1"></i>Quét đơn hàng
                 </a>
-            </div> --}}
+            </div>
         </div>
 
         <div class="card bg-dark" wire:poll.6s>

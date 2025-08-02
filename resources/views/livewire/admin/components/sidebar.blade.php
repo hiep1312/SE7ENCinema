@@ -14,8 +14,8 @@
             <span class="count bg-success"></span>
           </div>
           <div class="profile-name">
-            <h5 class="mb-0 font-weight-normal">Henry Klein</h5>
-            <span>Gold Member</span>
+            <h5 class="mb-0 font-weight-normal">Admin Cinema</h5>
+            <span>Quản trị viên</span>
           </div>
         </div>
         <a href="#" id="profile-dropdown" data-toggle="dropdown"><i class="mdi mdi-dots-vertical"></i></a>
@@ -92,6 +92,50 @@
       <div class="collapse" id="manage-booking">
         <ul class="nav flex-column sub-menu">
           <li class="nav-item"><a class="nav-link" href="{{ route('admin.bookings.index') }}">Danh sách đơn hàng</a></li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item menu-items">
+      <a class="nav-link" data-toggle="collapse" href="#manage-foods">
+        <span class="menu-icon">
+          <i class="fas fa-folder-tree"></i>
+        </span>
+        <span class="menu-title">Quản lý món ăn</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="manage-foods">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.foods.create') }}">Tạo món ăn mới</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.foods.index') }}">Danh sách món ăn</a></li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item menu-items">
+      <a class="nav-link" data-toggle="collapse" href="#manage-food_variants">
+        <span class="menu-icon">
+          <i class="fas fa-folder-tree"></i>
+        </span>
+        <span class="menu-title">Quản lý biến thể</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="manage-food_variants">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.food_variants.create') }}">Tạo biến thể mới</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.food_variants.index') }}">Danh sách biến thể</a></li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item menu-items">
+      <a class="nav-link" data-toggle="collapse" href="#manage-food_attributes">
+        <span class="menu-icon">
+          <i class="fas fa-shopping-cart"></i>
+        </span>
+        <span class="menu-title">Quản lý thuộc tính</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="manage-food_attributes">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.food_attributes.index') }}">Danh sách thuộc tính</a></li>
         </ul>
       </div>
     </li>
@@ -198,71 +242,20 @@
         </ul>
       </div>
     </li>
-    {{-- <li class="nav-item menu-items">
-      <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+    <li class="nav-item menu-items">
+      <a class="nav-link" data-toggle="collapse" href="#manage-users">
         <span class="menu-icon">
-          <i class="mdi mdi-laptop"></i>
+          <i class="mdi mdi-timetable"></i>
         </span>
-        <span class="menu-title">Basic UI Elements</span>
+        <span class="menu-title">Quản lý người dùng</span>
         <i class="menu-arrow"></i>
       </a>
-      <div class="collapse" id="ui-basic">
+      <div class="collapse" id="manage-users">
         <ul class="nav flex-column sub-menu">
-          <li class="nav-item"> <a class="nav-link" href="{{ route('admin.buttons') }}">Buttons</a></li>
-          <li class="nav-item"> <a class="nav-link" href="{{ route('admin.dropdowns') }}">Dropdowns</a></li>
-          <li class="nav-item"> <a class="nav-link" href="{{ route('admin.typography') }}">Typography</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.users.create') }}">Thêm người dùng mới</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.users.index') }}">Danh sách người dùng</a></li>
         </ul>
       </div>
     </li>
-    <li class="nav-item menu-items">
-      <a class="nav-link" href="{{ route('admin.basic_elements') }}">
-        <span class="menu-icon">
-          <i class="mdi mdi-playlist-play"></i>
-        </span>
-        <span class="menu-title">Form Elements</span>
-      </a>
-    </li>
-    <li class="nav-item menu-items">
-      <a class="nav-link" href="{{ route('admin.table') }}">
-        <span class="menu-icon">
-          <i class="mdi mdi-table"></i>
-        </span>
-        <span class="menu-title">Tables</span>
-      </a>
-    </li>
-    <li class="nav-item menu-items">
-      <a class="nav-link" href="{{ route('admin.chartjs') }}">
-        <span class="menu-icon">
-          <i class="mdi mdi-chart-bar"></i>
-        </span>
-        <span class="menu-title">Charts</span>
-      </a>
-    </li>
-    <li class="nav-item menu-items">
-      <a class="nav-link" href="{{ route('admin.mdi') }}">
-        <span class="menu-icon">
-          <i class="mdi mdi-contacts"></i>
-        </span>
-        <span class="menu-title">Icons</span>
-      </a>
-    </li>
-    <li class="nav-item menu-items">
-      <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
-        <span class="menu-icon">
-          <i class="mdi mdi-security"></i>
-        </span>
-        <span class="menu-title">User Pages</span>
-        <i class="menu-arrow"></i>
-      </a>
-      <div class="collapse" id="auth">
-        <ul class="nav flex-column sub-menu">
-          <li class="nav-item"> <a class="nav-link" href="{{ route('admin.blank-page') }}"> Blank Page </a></li>
-          <li class="nav-item"> <a class="nav-link" href="{{ route('admin.error-404') }}"> 404 </a></li>
-          <li class="nav-item"> <a class="nav-link" href="{{ route('admin.error-500') }}"> 500 </a></li>
-          <li class="nav-item"> <a class="nav-link" href="{{ route('admin.login') }}"> Login </a></li>
-          <li class="nav-item"> <a class="nav-link" href="{{ route('admin.register') }}"> Register </a></li>
-        </ul>
-      </div>
-    </li> --}}
   </ul>
 </nav>
