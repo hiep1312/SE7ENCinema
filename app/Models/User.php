@@ -3,6 +3,7 @@
 namespace App\Models;
 use App\Notifications\ScResetPassword;
 use App\Notifications\ScVerifyEmail;
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -30,8 +31,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'gender',
         'role',
         'status',
-        'banned_at',
-        'ban_reason',
     ];
 
     /**
@@ -41,7 +40,6 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $hidden = [
         'password',
-        'remember_token',
     ];
 
     /**
@@ -89,63 +87,24 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $this->notify(new ScResetPassword($token, $this));
     }
+
     public function isBanned(): bool
     {
         return $this->status === 'banned';
     }
 
-    /**
-     * Ban user
-     */
-    public function ban(string $reason = null): void
+    public function releaseHolds(): bool
     {
-        $this->update([
-            'status' => 'banned',
-            'banned_at' => now(),
-            'ban_reason' => $reason
-        ]);
+        return SeatHold::releaseHoldsByUser($this);
     }
 
-    /**
-     * Unban user
-     */
-    public function unban(): void
+    public function countViolations(string|null $type = null, Carbon|int|string $start = 1, Carbon|string|null $end = null): int
     {
-        $this->update([
-            'status' => 'active',
-            'banned_at' => null,
-            'ban_reason' => null
-        ]);
+        return UserViolation::countViolations($this, $type, $start, $end);
     }
 
-    /**
-     * Scope cho user bị ban
-     */
-    public function scopeBanned($query)
+    public function addViolation(string $type, ?string $details = null): bool
     {
-        return $query->where('status', 'banned');
-    }
-
-    /**
-     * Scope cho user active
-     */
-    public function scopeActive($query)
-    {
-        return $query->where('status', 'active');
-    }
-
-    /**
-     * Get ban info
-     */
-    public function getBanInfo(): ?array
-    {
-        if (!$this->isBanned()) {
-            return null;
-        }
-
-        return [
-            'banned_at' => $this->banned_at,
-            'ban_reason' => $this->ban_reason ?: 'Vi phạm quy định hệ thống'
-        ];
+        return UserViolation::addViolation($this, $type, $details);
     }
 }

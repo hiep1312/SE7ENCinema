@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 class Showtime extends Model
 {
@@ -38,5 +39,10 @@ class Showtime extends Model
 
     public function isLockedForDeletion(){
         return ($this->start_time->lt(now()->addHour()) || $this->booking()->exists()) && $this->status !== "completed";
+    }
+
+    public function getActiveHolds(User|Collection|int|array|null $excludeUser = null): Collection
+    {
+        return SeatHold::getActiveHolds($this, $excludeUser);
     }
 }

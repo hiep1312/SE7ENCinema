@@ -11,10 +11,10 @@ use Carbon\Carbon;
 
 class SeatHoldService
 {
-    const HOLD_DURATION_MINUTES = 10;
+    const HOLD_DURATION_MINUTES = 0.2;
     const MAX_TEMP_BANS = 3;
     const MAX_PERM_BANS = 5;
-    const BAN_DURATION_HOURS = 24;
+    const BAN_DURATION_HOURS = 0.01;
 
     public function checkUserBan($sessionId, $userIp, $userId = null)
     {

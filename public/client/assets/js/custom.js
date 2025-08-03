@@ -542,7 +542,8 @@ nice Select active
                 }
               })
             })
-    if(!$(".album-slider").hasClass("raw")) {
+
+
 	$(".album-slider").bxSlider({
 		minSlides: 1,
 		maxSlides: 10,
@@ -555,7 +556,6 @@ nice Select active
 		infiniteLoop: false
 
 		});
-    }
 
 		$(".movie-cast-slider").bxSlider({
 		minSlides: 1,

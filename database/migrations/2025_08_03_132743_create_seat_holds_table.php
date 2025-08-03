@@ -15,16 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('showtime_id')->constrained()->onDelete('cascade');
             $table->foreignId('seat_id')->constrained()->onDelete('cascade');
-            $table->string('session_id');
-            $table->string('user_ip');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamp('held_at');
             $table->timestamp('expires_at');
             $table->enum('status', ['holding', 'expired', 'released'])->default('holding');
-            $table->timestamps();
-
-            $table->index(['showtime_id', 'seat_id']);
-            $table->index(['session_id', 'status']);
-            $table->index(['expires_at', 'status']);
         });
     }
 
