@@ -27,86 +27,9 @@
 /*--------------
 1.Theme default CSS
 --------------------------*/
-/* body,
-html {
-	font-family: 'Lato', sans-serif;
-	font-size: 16px;
-	line-height: 23px;
-	color: #707070;
-	padding-right: 0 !important;
-	overflow-x: hidden;
+.prs_navigation_main_wrapper a, .prs_bottom_footer_wrapper a {
+    text-decoration: none;
 }
-
-body::-webkit-scrollbar-track {
-	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-	background-color: #ffffff;
-}
-
-body::-webkit-scrollbar {
-	width: 4px;
-	background-color: #ffffff;
-}
-
-body::-webkit-scrollbar-thumb {
-	background-color: #000000;
-}
-
-a {
-	color: #797979;
-	text-decoration: none;
-}
-
-a:hover,
-a:focus {
-	color: #707070;
-	text-decoration: none;
-	outline: none;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.h1,
-.h2,
-.h3,
-.h4,
-.h5,
-.h6 {
-	font-family: 'Poppins', sans-serif;
-	line-height: 1.1;
-	font-weight: 400;
-	color: #222222;
-	margin: 0;
-	padding: 0;
-}
-
-p {
-	margin: 0;
-}
-
-input,
-select,
-button,
-textarea {
-	outline: none;
-}
-
-input:focus,
-select:focus,
-button:focus,
-textarea:focus {
-	outline: none;
-	box-shadow: none;
-}
-
-ul {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-} */
 
 /*-- Preloader css start --*/
 #preloader {
