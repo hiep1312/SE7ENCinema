@@ -23,8 +23,6 @@ return new class extends Migration
             $table->enum('gender', ['man', 'woman', 'other'])->default('other');
             $table->enum('role', ['user', 'staff', 'admin'])->default('user');
             $table->enum('status', ['active', 'inactive', 'banned'])->default('active');
-            $table->timestamp('banned_at')->nullable();
-            $table->text('ban_reason')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -35,8 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['status', 'banned_at', 'ban_reason']);
-        });
+        Schema::dropIfExists('users');
     }
 };

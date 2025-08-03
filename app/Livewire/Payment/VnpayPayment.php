@@ -13,7 +13,6 @@ class VnpayPayment extends Component
         return view('livewire.payment.vnpay-payment');
     }
 
-
     public $cart = [];
     public $seats = [];
     public $food_total = 0;
@@ -50,9 +49,6 @@ class VnpayPayment extends Component
         session()->forget('payment_deadline_' . $this->booking_id);
     }
 
-
-
-
     public function redirectToVnpay()
     {
         $deadlineKey = 'payment_deadline_' . $this->booking_id;
@@ -80,9 +76,6 @@ class VnpayPayment extends Component
             session()->flash('error', 'Đơn hàng không tồn tại hoặc không còn khả dụng.');
             return redirect()->route('client.index');
         }
-
-
-
 
         $vnp_TmnCode = 'P8QX0KGT'; // Mã website VNPay
         $vnp_HashSecret = 'ITBJ2BGWRYTN5J2Z2QMXMXVAEEK5WBVA'; // Secret key

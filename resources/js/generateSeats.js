@@ -1,20 +1,10 @@
 document.addEventListener("livewire:init", () => {
-    window.currentSeatsPerRow = 17;
-    window.currentRows = 10;
-    window.currentVipRows = "A";
-    window.currentCoupleRows = "B";
-
     window.getRowSeat = function (row) {
-        if (
-            (typeof row === "number" && (row < 1 || row > 26)) ||
+        if ((typeof row === "number" && (row < 1 || row > 26)) ||
             (typeof row === "string" && row.length !== 1) ||
-            (typeof row !== "number" && typeof row !== "string")
-        )
-            return null;
+            (typeof row !== "number" && typeof row !== "string")) return null;
 
-        return typeof row === "number"
-            ? String.fromCharCode(row + 64)
-            : row.toUpperCase().charCodeAt(0) - 64;
+        return typeof row === "number" ? String.fromCharCode(row + 64) : row.toUpperCase().charCodeAt(0) - 64;
     };
 
     function calculateSeatDistribution(totalSeats) {
@@ -36,132 +26,6 @@ document.addEventListener("livewire:init", () => {
         }
 
         return aislePositions;
-    }
-
-    function checkAsileForSeatCouple(positionCurrent, positionAsile) {
-        if (typeof positionCurrent !== "number") return void 0;
-        if (typeof positionAsile !== "number" && !Array.isArray(positionAsile))
-            return void 0;
-
-        const aisleArray = Array.isArray(positionAsile)
-            ? positionAsile
-            : [positionAsile];
-
-        if (aisleArray.includes(positionCurrent)) {
-            return true;
-        }
-
-        if (aisleArray.includes(positionCurrent + 1)) {
-            return "nexting";
-        }
-
-        return false;
-    }
-
-    function handleTotalSeatsChange() {
-        const totalSeatsInput = document.getElementById("total-seats-input");
-        const seatsPerRowInput = document.getElementById("seats-per-row-input");
-        const rowsInput = document.getElementById("rows-input");
-        const currentTotalDisplay = document.getElementById(
-            "current-total-seats"
-        );
-
-        function updateTotalSeats() {
-            const totalSeats = parseInt(totalSeatsInput.value) || 0;
-            const seatsPerRow =
-                parseInt(seatsPerRowInput.value) || window.currentSeatsPerRow;
-
-            if (totalSeats > 0 && seatsPerRow > 0) {
-                const calculatedRows = Math.ceil(totalSeats / seatsPerRow);
-                rowsInput.value = Math.min(calculatedRows, 26);
-
-                const actualTotal = seatsPerRow * parseInt(rowsInput.value);
-                currentTotalDisplay.textContent = actualTotal;
-            }
-        }
-
-        function updateByRowsAndSeats() {
-            const rows = parseInt(rowsInput.value) || window.currentRows;
-            const seatsPerRow =
-                parseInt(seatsPerRowInput.value) || window.currentSeatsPerRow;
-
-            const calculatedTotal = rows * seatsPerRow;
-            totalSeatsInput.value = calculatedTotal;
-            currentTotalDisplay.textContent = calculatedTotal;
-        }
-
-        totalSeatsInput.addEventListener("input", updateTotalSeats);
-        seatsPerRowInput.addEventListener("input", () => {
-            updateByRowsAndSeats();
-            updateTotalSeats();
-        });
-        rowsInput.addEventListener("input", updateByRowsAndSeats);
-
-        const applyBtn = document.getElementById("apply-seat-changes");
-        applyBtn.addEventListener("click", () => {
-            const newRows = parseInt(rowsInput.value) || window.currentRows;
-            const newSeatsPerRow =
-                parseInt(seatsPerRowInput.value) || window.currentSeatsPerRow;
-
-            if (newRows < 1 || newRows > 26) {
-                alert("Số hàng phải từ 1 đến 26");
-                return;
-            }
-
-            if (newSeatsPerRow < 1 || newSeatsPerRow > 50) {
-                alert("Số ghế mỗi hàng phải từ 1 đến 50");
-                return;
-            }
-
-            window.currentRows = newRows;
-            window.currentSeatsPerRow = newSeatsPerRow;
-
-            regenerateSeats();
-
-            currentTotalDisplay.textContent = newRows * newSeatsPerRow;
-
-            showNotification("Đã cập nhật bố cục ghế thành công!", "success");
-        });
-    }
-
-    // Function to show notifications
-    function showNotification(message, type = "info") {
-        const notification = document.createElement("div");
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 12px 20px;
-            border-radius: 4px;
-            color: white;
-            font-weight: 600;
-            z-index: 1000;
-            animation: slideIn 0.3s ease-out;
-            ${type === "success"
-                ? "background: #28a745;"
-                : "background: #17a2b8;"
-            }
-        `;
-
-        notification.textContent = message;
-        document.body.appendChild(notification);
-
-        if (!document.querySelector("#notification-styles")) {
-            const style = document.createElement("style");
-            style.id = "notification-styles";
-            style.textContent = `
-                @keyframes slideIn {
-                    from { transform: translateX(100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-            `;
-            document.head.appendChild(style);
-        }
-
-        setTimeout(() => {
-            notification.style.animation = "slideIn 0.3s ease-out reverse";
-            setTimeout(() => notification.remove(), 300);
-        }, 3000);
     }
 
     function addColumn(clickedRow) {
@@ -429,27 +293,6 @@ document.addEventListener("livewire:init", () => {
         selectedForDelete = null;
     }
 
-    function regenerateSeats() {
-        const seatsContainer = document.querySelector(
-            ".st_seat_lay_economy_wrapperexicutive"
-        );
-        if (seatsContainer) {
-            seatsContainer.innerHTML = "";
-
-            const newSeatsLayout = window.generateDOMSeats({
-                rows: window.currentRows,
-                seatsPerRow: window.currentSeatsPerRow,
-                vipRows: window.currentVipRows,
-                coupleRows: window.currentCoupleRows,
-            });
-
-            const newSeatsLayoutContent =
-                newSeatsLayout.querySelector("#seats-layout");
-            seatsContainer.appendChild(...newSeatsLayoutContent.children);
-            attachEventHandlers();
-        }
-    }
-
     function attachEventHandlers() {
         document.removeEventListener("click", handleDocumentClick);
         const seatsLayout = document.querySelector("#seats-layout");
@@ -488,41 +331,68 @@ document.addEventListener("livewire:init", () => {
         }
     }
 
-    window.generateDOMSeats = function (
-        { rows, seatsPerRow, vipRows, coupleRows },
-        pathScreen
-    ) {
-        rows = parseInt(rows);
-        seatsPerRow = parseInt(seatsPerRow);
-        const vipArr = vipRows
-            ? vipRows.split(",").map((r) => r.trim().toUpperCase())
-            : [];
-        const coupleArr = coupleRows
-            ? coupleRows.split(",").map((r) => r.trim().toUpperCase())
-            : [];
-
+    function generateDOMFrameSeats(pathScreen) {
         const frameSeats = document.createElement("div");
         frameSeats.setAttribute("wire:ignore", "");
         frameSeats.classList = "st_seatlayout_main_wrapper w-100 mt-2";
         frameSeats.innerHTML = `
-        <div class="container">
-            <div class="st_seat_lay_heading float_left">
-                <h3>SE7ENCINEMA SCREEN</h3>
-            </div>
-            <div class="st_seat_full_container" style="float: none">
-                <div class="st_seat_lay_economy_wrapper float_left" style="width: 100% !important">
-                    <div class="screen">
-                        <img src="${pathScreen ||
-            location.origin +
-            "/client/assets/images/content/screen.png"
-            }">
-                    </div>
+            <div class="container">
+                <div class="st_seat_lay_heading float_left">
+                    <h3>SE7ENCINEMA SCREEN</h3>
                 </div>
-                <div class="st_seat_lay_economy_wrapper st_seat_lay_economy_wrapperexicutive float_left" style="width: auto !important" id="seats-layout"></div>
+                <div class="st_seat_full_container" style="float: none">
+                    <div class="st_seat_lay_economy_wrapper float_left" style="width: 100% !important">
+                        <div class="screen">
+                            <img src="${pathScreen || location.origin + "/client/assets/images/content/screen.png"}">
+                        </div>
+                    </div>
+                    <div class="st_seat_lay_economy_wrapper st_seat_lay_economy_wrapperexicutive float_left" style="width: auto !important" id="seats-layout"></div>
+                </div>
             </div>
-        </div>
-    `;
+        `;
+        return frameSeats.cloneNode(true);
+    }
 
+    function generateDOMFrameRow(rowChar, model, isAdmin = true){
+        const frameRow = document.createElement("ul");
+        frameRow.id = `row-${rowChar}`;
+        frameRow.className = "seat-row-layout list-unstyled float_left d-flex flex-nowrap gap-2 justify-content-start align-items-center";
+        frameRow.setAttribute("data-row", rowChar);
+        isAdmin && frameRow.setAttribute("wire:sc-sortable.onMove.updateseatid", "sc-row");
+        isAdmin && frameRow.setAttribute("wire:sc-model.live", model);
+        isAdmin && frameRow.setAttribute('sc-group', "seat-row");
+        frameRow.style.position = "relative";
+
+        return frameRow.cloneNode(true);
+    }
+
+    function generateDOMSeatCeil(seatType, rowChar, currentCeil) {
+        const seatCeil = document.createElement("li");
+        seatCeil.dataset.seat = seatType;
+        if(seatType !== "aisle"){
+            const seatClass = `seat seat-${seatType}`;
+            const seatId = `${rowChar}${currentCeil}`;
+            const seatLabel = `Chỗ ngồi ${seatId}`;
+            seatCeil.innerHTML = `
+                <span class="seat-helper">${seatLabel}</span>
+                <input type="checkbox" class="${seatClass}" id="${seatId}" data-number="${currentCeil}">
+                <label for="${seatId}" class="visually-hidden">${seatLabel}</label>
+            `;
+            seatCeil.className = "seat-item";
+            seatCeil.setAttribute('sc-id', `[${seatId}, ${seatType}]`);
+        }else {
+            seatCeil.innerHTML = `
+                <span class="seat-helper">Lối đi</span>
+                <div class="aisle"></div>
+            `;
+            seatCeil.setAttribute('sc-id', 'asile');
+        }
+
+        return seatCeil.cloneNode(true);
+    }
+
+    window.generateDOMSeats = function ({ rows, seatsPerRow, vipRows, coupleRows }, pathScreen) {
+        const frameSeats = generateDOMFrameSeats(pathScreen);
         const seatsLayout = frameSeats.querySelector("#seats-layout");
 
         const caculateColumnAsile = calculateSeatDistribution(seatsPerRow);
@@ -532,54 +402,16 @@ document.addEventListener("livewire:init", () => {
             const rowChar = window.getRowSeat(i);
             if (rowChar === null) break;
 
-            const isVip = vipArr.includes(rowChar);
-            const isCouple = coupleArr.includes(rowChar);
-
-            const frameRow = document.createElement("ul");
-            frameRow.id = `row-${rowChar}`;
-            frameRow.className =
-                "seat-row-layout list-unstyled float_left d-flex flex-nowrap gap-2 justify-content-start align-items-center";
-            frameRow.setAttribute("data-row", rowChar);
-            frameRow.setAttribute(
-                "wire:sc-sortable.onMove.updateseatid",
-                "seat-row"
-            );
-            frameRow.setAttribute("wire:sc-model.live", "temp");
-            frameRow.setAttribute('sc-group', "seat-row");
-            frameRow.style.position = "relative";
+            const isVip = vipRows.includes(rowChar);
+            const isCouple = coupleRows.includes(rowChar);
+            const frameRow = generateDOMFrameRow(rowChar, "temp");
 
             for (let j = 1; j <= seatsPerRow; j++) {
-                const seatCeil = document.createElement("li");
-                const seatType = isCouple
-                    ? "double"
-                    : isVip
-                        ? "vip"
-                        : "standard";
-                const seatClass = `seat seat-${seatType}`;
-                const seatId = `${rowChar}${j}`;
-                const seatLabel = `Chỗ ngồi ${seatId}`;
+                frameRow.appendChild(generateDOMSeatCeil((isCouple ? "double" : (isVip ? "vip" : "standard")), rowChar, j));
 
-                seatCeil.innerHTML = `
-                <span class="seat-helper">${seatLabel}</span>
-                <input type="checkbox" class="${seatClass}" id="${seatId}" data-number="${j}">
-                <label for="${seatId}" class="visually-hidden">${seatLabel}</label>
-            `;
-                seatCeil.dataset.seat = seatType;
-                seatCeil.className = "seat-item";
-                seatCeil.setAttribute('sc-id', `[${seatId}, ]`)
-                frameRow.appendChild(seatCeil);
+                if (caculateColumnAsile.includes(j + 1) && j < seatsPerRow) frameRow.appendChild(generateDOMSeatCeil("aisle"));
 
-                if (caculateColumnAsile.includes(j + 1) && j < seatsPerRow) {
-                    const aisleCeil = document.createElement("li");
-                    aisleCeil.innerHTML = `
-                    <span class="seat-helper">Lối đi</span>
-                    <div class="aisle"></div>
-                `;
-                    aisleCeil.dataset.seat = "aisle";
-                    aisleCeil.setAttribute('sc-id', 'asile');
-                    frameRow.appendChild(aisleCeil);
-                }
-
+                /* Support */
                 if (isCouple && j < seatsPerRow) {
                     j++;
                 }
@@ -610,7 +442,6 @@ document.addEventListener("livewire:init", () => {
 
         return frameSeats.cloneNode(true);
     };
-
 
     class SeatCountdownTimer {
         constructor(expiresAt, onExpired, onUpdate) {
@@ -868,11 +699,7 @@ document.addEventListener("livewire:init", () => {
             const isVip = vipArr.includes(rowChar);
             const isCouple = coupleArr.includes(rowChar);
 
-            const frameRow = document.createElement("ul");
-            frameRow.id = `row-${rowChar}`;
-            frameRow.className = "seat-row-layout list-unstyled float_left d-flex flex-nowrap gap-2 justify-content-start align-items-center";
-            frameRow.setAttribute("data-row", rowChar);
-            frameRow.style.position = "relative";
+            const frameRow = generateDOMFrameRow(rowChar, undefined, false);
 
             for (let j = 1; j <= seatsPerRow; j++) {
                 const seatId = `${rowChar}${j}`;
@@ -1192,14 +1019,6 @@ document.addEventListener("livewire:init", () => {
 
         return frameSeats;
     };
-
-    // Helper function
-    function calculateSeatDistribution(total) {
-        if (total <= 6) return [];
-        if (total <= 12) return [Math.ceil(total / 2)];
-        if (total <= 18) return [Math.ceil(total / 3), Math.ceil(2 * total / 3)];
-        return [Math.ceil(total / 4), Math.ceil(total / 2), Math.ceil(3 * total / 4)];
-    }
 
     window.addEventListener('beforeunload', () => {
         if (seatSynchronizer.countdownTimer) {

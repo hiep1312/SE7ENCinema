@@ -2,20 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
-
+use Illuminate\Support\Collection;
 
 class SeatHold extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'showtime_id',
         'seat_id',
-        'session_id',
-        'user_ip',
+        'user_id',
         'held_at',
         'expires_at',
         'status'
@@ -23,8 +18,10 @@ class SeatHold extends Model
 
     protected $casts = [
         'held_at' => 'datetime',
-        'expires_at' => 'datetime',
+        'expires_at' => 'datetime'
     ];
+
+    public $timestamps = false;
 
     public function showtime()
     {
@@ -36,43 +33,30 @@ class SeatHold extends Model
         return $this->belongsTo(Seat::class);
     }
 
-    public function isExpired()
+    public function user()
     {
-        return $this->expires_at <= now();
+        return $this->belongsTo(User::class);
     }
 
-    public function getRemainingTimeAttribute()
-    {
-        if ($this->isExpired()) {
-            return 0;
-        }
-
-        return $this->expires_at->diffInSeconds(now());
-    }
-
-    public static function cleanupExpired()
+    public static function cleanupExpired(): bool
     {
         return self::where('expires_at', '<', now())->delete();
     }
 
-    public static function getActiveHolds($showtimeId, $excludeSessionId = null)
+    public static function getActiveHolds(Showtime|int $showtime, User|Collection|int|array|null $excludeUser = null): Collection
     {
-        $query = self::where('showtime_id', $showtimeId)
+        $query = self::where('showtime_id', is_int($showtime) ? $showtime : $showtime->id)
             ->where('status', 'holding')
             ->where('expires_at', '>', now());
 
-        if ($excludeSessionId) {
-            $query->where('session_id', '!=', $excludeSessionId);
-        }
+        if(is_int($excludeUser) || is_a($excludeUser, User::class)) $query->where('user_id', '!=', $excludeUser);
+        elseif(is_array($excludeUser) || is_a($excludeUser, Collection::class)) $query->whereNotIn('user_id', $excludeUser);
 
         return $query->get();
     }
 
-    public static function releaseHoldsBySession($sessionId)
+    public static function releaseHoldsByUser(User|int $user): bool
     {
-        return self::where('session_id', $sessionId)
-            ->where('status', 'holding')
-            ->update(['status' => 'released']);
+        return self::where('user_id', is_int($user) ? $user : $user->id)->update(['status' => 'released']);
     }
-
 }

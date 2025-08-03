@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('supports', function (Blueprint $table) {
+        Schema::create('user_violations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('staff_id')->nullable()->constrained('users')->onDelete('set null');
-            $table->string('subject');
-            $table->enum('status', ['open', 'resolved', 'closed'])->default('open');
-            $table->dateTime('resolved_at');
-            $table->timestamps();
+            $table->enum('violation_type', ['seat_timeout', 'payment_timeout'])->default('seat_timeout');
+            $table->text('violation_details')->nullable();
+            $table->timestamp('occurred_at');
         });
     }
 
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('supports');
+        Schema::dropIfExists('user_violations');
     }
 };

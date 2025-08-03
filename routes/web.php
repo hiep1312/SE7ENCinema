@@ -165,8 +165,6 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->
         Route::get('/detail/{promotion}', PromotionDetail::class)->name('detail');
     });
 
-
-
     /* Template */
     Route::view('/dashboard', 'livewire.admin.template.dashboard')->name('dashboard');
     Route::view('/buttons', 'livewire.admin.template.ui-features.buttons')->name('buttons');
@@ -222,12 +220,13 @@ Route::name('client.')->group(function () {
     Route::get('/movies/{movie}', ClientMovieDetail::class)->name('movie_detail');
     /* Promotions */
     Route::get('/promotions', PromotionIndexClient::class)->name('promotions.index');
-    Route::get('/user-info', UserInformation::class)->name('userInfo')->middleware('role:user,admin,staff');
-    Route::get('/user-confirm', UserConfirm::class)->name('userConfirm')->middleware('role:user,admin,staff');
+    Route::get('/user-info', UserInformation::class)->name('userInfo')->middleware('auth');
+    Route::get('/user-confirm', UserConfirm::class)->name('userConfirm')->middleware('auth');
     Route::get('/thanh-toan/{booking_id}', VnpayPayment::class)->name('thanh-toan');
     Route::get('/vnpay-return', [VnpayController::class, 'vnpayReturn'])->name('vnpay.return');
     Route::get('/booking-food', BookingFood::class);
     Route::view('/faq', 'livewire.client.template.abouts.faq')->name('faq');
 });
-// Route::view('/', 'clienttest')->name('welcome');
+
+// Route::view('/admintest', 'clienttest')->name('welcome');
 Route::view('/clienttest', 'clienttest')->name('clienttest');
