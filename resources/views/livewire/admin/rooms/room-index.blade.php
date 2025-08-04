@@ -141,10 +141,10 @@
                                     </td>
 
                                     <!-- CỘT SUẤT CHIẾU TIẾP THEO -->
-                                    <td class=" bg-opacity-10 border-start border-3">
+                                    <td class="bg-opacity-10 border-start border-3">
                                         @if(!$showDeleted && $room->showtimes->count() > 0)
                                             @php $nextShowtime = $room->showtimes->first(); @endphp
-                                            <div class="showtime-info">
+                                            <div>
                                                 <!-- Tên phim -->
                                                 <div class="movie-title mb-1">
                                                     <i class="fas fa-film me-1 text-primary"></i>

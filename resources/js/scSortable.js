@@ -194,7 +194,6 @@ document.addEventListener('livewire:init', () => {
                     return sortable.toArray();
                 }), live) : $wire.$set(model, sortable.toArray(), live));
             }, debounce ?? 0);
-            console.log($sc_configSortable._manage[el.getAttribute('sc-group')]);
         };
         const onMove = function(evt){
             let callback = $sc_configSortable._validators.onMove_directive(directive);
