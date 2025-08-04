@@ -32,8 +32,7 @@
                             </li>
                             <li class="parent"><a href="{{ route('client.showtimes.index') }}">Lịch chiếu</a></li>
                             <li class="parent"><a href="{{ route('client.promotions.index') }}">Khuyến Mãi</a></li>
-                            <li class="parent"><a href="{{ route('client.userInfo') }}">Thành Viên</a></li>
-                            <li class="parent"><a href="{{ route('client.faq') }}">Chính sách & Bảo mật</a>
+                            <li class="parent"><a href="{{ route('client.faq') }}">Chính sách</a>
                             </li>
                         </ul>
                     </div>
@@ -47,25 +46,19 @@
                     <img src="{{ asset('client/assets/images/header/bars.png') }}" alt="bar_png">
                 </button>
             </div>
-            <div class="prs_top_login_btn_wrapper">
-                <div class="prs_animate_btn1">
-                    <ul>
-                        @auth
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="button button--tamaya" data-text="Đăng xuất">Đăng
-                                xuất</button>
-                        </form>
-                        @else
-                        <li>
-                            <a href="{{ route('login') }}" class="button button--tamaya"
-                                data-text="Đăng nhập"><span>Đăng
-                                    nhập</span></a>
-                        </li>
-                        @endauth
-                    </ul>
+            @guest
+                <div class="prs_top_login_btn_wrapper">
+                    <div class="prs_animate_btn1">
+                        <ul>
+                            <li>
+                                <a href="{{ route('login') }}" class="button button--tamaya"
+                                    data-text="Đăng nhập"><span>Đăng
+                                        nhập</span></a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
+            @endguest
             <livewire:client.content-page />
         </div>
         <div id="mobile-nav" data-prevent-default="true" data-mouse-events="true">
@@ -87,8 +80,6 @@
                     <li><a href="{{ route('client.showtimes.index') }}">LỊCH CHIẾU</a>
                     </li>
                     <li><a href="{{ route('client.promotions.index') }}">KHUYẾN MÃI</a>
-                    </li>
-                    <li><a href="{{ route('client.userInfo') }}">THÀNH VIÊN</a>
                     </li>
                     <li><a href="{{ route('client.faq') }}">CHÍNH SÁCH VÀ BẢO MẬT</a>
                     </li>
@@ -140,8 +131,9 @@
                             </li>
                             @endauth
                             <li>
-                                 {{-- Notification Bell --}}
-                                <div style="display: inline-block; position: relative; margin-left: 18px; vertical-align: middle; background: rgb(255, 109, 109); border-radius: 50%;">
+                                {{-- Notification Bell --}}
+                                <div
+                                    style="display: inline-block; position: relative; margin-left: 18px; vertical-align: middle; background: rgb(255, 109, 109); border-radius: 50%;">
                                     @livewire('client.notifications.notification-index')
                                 </div>
                             </li>
