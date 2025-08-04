@@ -19,34 +19,11 @@ class BookingDetail extends Component
     use WithFileUploads, WithPagination;
     public $user;
     public $bookingInfo;
-    public $name = '';
-    public $tabCurrent = 'booking-info';
-    public $email = '';
-    public $phone = '';
-    public $birthday = null;
-    public $gender = '';
     public $avatar = null;
-    public $address = '';
-    public $dateFilter = '';
-    public $statusFilter = '';
-    public $nameFilter = '';
-    public $currentPassword = '';
-    public $newPassword = '';
-    public $confirmPassword = '';
     public function mount(int $booking)
     {
         $this->bookingInfo = Booking::with('showtime.movie.ratings', 'showtime.movie.genres', 'showtime.room', 'user', 'seats', 'promotionUsage', 'foodOrderItems.variant.foodItem', 'foodOrderItems.variant.attributeValues.attribute',)->findOrFail($booking);
         $this->user = User::with('bookings.showtime.movie', 'bookings.seats')->findOrFail(Auth::id());
-        $this->fill($this->user->only([
-            'name',
-            'email',
-            'phone',
-            'birthday',
-            'gender',
-            'address',
-            'avatar',
-        ]));
-        $this->birthday = !$this->birthday ?: $this->birthday->format('Y-m-d');
     }
     #[Layout('components.layouts.client')]
     public function render()
