@@ -17,12 +17,10 @@
                 <div wire:poll.2s class="profile-sidebar">
                     <div class="profile-avatar">
                         <div class="avatar-circle">
-                            @if (is_object($avatar) && $avatar instanceof \Livewire\TemporaryUploadedFile)
+                            @if ($avatar != null)
                             <img src="{{ $avatar->temporaryUrl() }}">
                             @elseif (!empty($user->avatar))
-                            <img src="{{ asset('storage/' . $user->avatar) }}">
-                            @else
-                            <img src="{{ asset('images/404.webp') }}"> {{-- fallback ảnh mặc định --}}
+                            <img src="{{ asset('storage/' . ($user->avatar ?? '404.webp')) }}">
                             @endif
                         </div>
                         <div class="profile-name">{{$user->name}}</div>
@@ -83,7 +81,6 @@
                             Lịch sử xem phim
                         </a>
                     </div>
-                    @if ($tabCurrent === 'booking-info')
                     <div class="booking-info">
                         <div class="ticket-detail-container">
                             <div class="ticket-header">
@@ -332,7 +329,6 @@
                             </div>
                         </div>
                     </div>
-                    @endif
                 </div>
             </div>
         </div>
