@@ -17,6 +17,8 @@
             </a>
         </div>
 
+
+
         <!-- Form thông tin phòng chiếu -->
         <div class="row">
             <div class="col-12">
@@ -150,7 +152,6 @@
                                 </button>
                             </div>
 
-                            {{-- @php var_dump($temp) @endphp --}}
                             <div wire:ignore id="generate-seats"></div>
                             @script
                             <script>
