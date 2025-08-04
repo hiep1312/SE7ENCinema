@@ -1,19 +1,98 @@
 @assets
     @vite('resources/css/movieDetail.css')
+    <style>
+        .booking-info {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .movie-title-booking {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #0d47a1;
+            margin-bottom: 20px;
+        }
+
+        .showtime-details {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 500;
+            color: #666;
+        }
+
+        .detail-value {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        .btn-primary {
+            display: flex;
+            align-items: center;
+            background: #0d47a1;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #0a3d8a;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #666;
+            border: 1px solid #ddd;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+    </style>
 @endassets
-<div class="scRender scMovieDetail">
+<div class="scRender scMovieDetail" wire:poll.6s>
 <div class="movie-detail-page ">
     <div class="movie-container">
         <!-- Movie Header -->
         <div class="movie-header-block">
-            <div class="movie-header-bg" style="background-image: url('{{ $movie->poster }}');"></div>
+            <div class="movie-header-bg" style="background-image: url('{{ asset('storage/' . $movie->poster) }}');"></div>
             <div class="movie-header">
                 <div class="movie-poster">
-                    <div style="position:relative;">
+                    <div style="position:relative; width: 100%; height: 100%;">
                         @if($movie->age_restriction)
-                            <div class="age-restriction age-restriction-{{ strtoupper($movie->age_restriction) ?? 'DEFAULT' }}">{{ $movie->age_restriction }}</div>
+                            <div class="age-restriction age-restriction-{{ strtoupper($movie->age_restriction) }}">{{ $movie->age_restriction }}</div>
                         @endif
-                        <img src="{{ $movie->poster }}" alt="{{ $movie->title }}">
+                    <img src="{{ asset('storage/' . $movie->poster) }}" alt="Ảnh poster hiện tại">
                     </div>
                 </div>
 
@@ -26,7 +105,7 @@
                             </svg>
                             Đánh giá
                         </button>
-                        <button class="btn btn-buy">
+                        <button class="btn btn-buy" wire:click="setTab('showtimes')">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M3 7V17C3 18.1046 3.89543 19 5 19H19C20.1046 19 21 18.1046 21 17V7C21 5.89543 20.1046 5 19 5H5C3.89543 5 3 5.89543 3 7Z" stroke="currentColor" stroke-width="2"/>
                                 <path d="M8 5V3C8 2.44772 8.44772 2 9 2H15C15.5523 2 16 2.44772 16 3V5" stroke="currentColor" stroke-width="2"/>
@@ -213,12 +292,14 @@
                                     @endif
                                     <div class="comment-footer">
                                                 <span class="comment-date">{{ $comment->created_at->format('d/m/Y') }}</span>
-                                        <button class="btn-reply" wire:click="startReply({{ $comment->id }})">Trả lời</button>
-                                        @if(Auth::check() && Auth::user()->id == $comment->user_id)
-                                            <button class="btn-edit" wire:click="startEditComment({{ $comment->id }})">Sửa</button>
-                                        @endif
-                                        @if(Auth::check() && (Auth::user()->id == $comment->user_id || Auth::user()->role == 'admin'))
-                                            <button class="btn-delete" wire:click="confirmDelete({{ $comment->id }}, 'comment')">Xóa</button>
+                                        @if($editingComment !== $comment->id && $replyingTo !== $comment->id)
+                                            <button class="btn-reply" wire:click="startReply({{ $comment->id }})">Trả lời</button>
+                                            @if(Auth::check() && Auth::user()->id == $comment->user_id)
+                                                <button class="btn-edit" wire:click="startEditComment({{ $comment->id }})">Sửa</button>
+                                            @endif
+                                            @if(Auth::check() && (Auth::user()->id == $comment->user_id || Auth::user()->role == 'admin'))
+                                                <button class="btn-delete" wire:click="confirmDelete({{ $comment->id }}, 'comment')">Xóa</button>
+                                            @endif
                                         @endif
                                     </div>
                                     @if($replyingTo === $comment->id)
@@ -270,12 +351,14 @@
                                                     @endif
                                                     <div class="comment-footer">
                                                                         <span class="comment-date">{{ $reply->created_at->format('d/m/Y') }}</span>
-                                                        <button class="btn-reply" wire:click="startReply({{ $comment->id }})">Trả lời</button>
-                                                        @if(Auth::check() && Auth::user()->id == $reply->user_id)
-                                                            <button class="btn-edit" wire:click="startEditComment({{ $reply->id }})">Sửa</button>
-                                                        @endif
-                                                        @if(Auth::check() && (Auth::user()->id == $reply->user_id || Auth::user()->role == 'admin'))
-                                                            <button class="btn-delete" wire:click="confirmDelete({{ $reply->id }}, 'comment')">Xóa</button>
+                                                        @if($editingComment !== $reply->id && $replyingTo !== $comment->id)
+                                                            <button class="btn-reply" wire:click="startReply({{ $comment->id }})">Trả lời</button>
+                                                            @if(Auth::check() && Auth::user()->id == $reply->user_id)
+                                                                <button class="btn-edit" wire:click="startEditComment({{ $reply->id }})">Sửa</button>
+                                                            @endif
+                                                            @if(Auth::check() && (Auth::user()->id == $reply->user_id || Auth::user()->role == 'admin'))
+                                                                <button class="btn-delete" wire:click="confirmDelete({{ $reply->id }}, 'comment')">Xóa</button>
+                                                            @endif
                                                         @endif
                                                                     </div>
                                                                 </div>
@@ -333,25 +416,31 @@
 
                         <!-- Date Selection -->
                         <div class="date-selector" wire:loading.class="loading">
-                            <div class="d-flex flex-row gap-4 justify-content-start align-items-center" style="margin-bottom: 24px;">
-                            @foreach($showtimesByDay as $date => $showtimes)
-                                @php
-                                    $carbonDate = \Carbon\Carbon::parse($date);
-                                    $isToday = $carbonDate->isToday();
-                                    $weekday = $isToday ? 'Hôm Nay' : $carbonDate->isoFormat('dddd');
-                                    $dayMonth = $carbonDate->format('d/m');
-                                @endphp
-                                <button
-                                    wire:click="selectDate('{{ $date }}')"
-                                    class="date-btn-custom btn d-flex flex-column justify-content-center align-items-center px-4 py-3 @if($selectedDate == $date) active @endif @if($isToday) today @endif"
-                                    style="min-width: 110px; border-radius: 10px; border: none; font-weight: 500; font-size: 1.1rem;"
-                                    wire:loading.attr="disabled"
-                                >
-                                    <span class="date-btn-weekday" style="font-size:1.1rem; font-weight:600; @if($selectedDate == $date) color:#fff; @elseif($isToday) color:#0d47a1; @else color:#444; @endif">{{ $weekday }}</span>
-                                    <span class="date-btn-day" style="font-size:1.1rem; font-weight:400; @if($selectedDate == $date) color:#fff; @elseif($isToday) color:#0d47a1; @else color:#888; @endif">{{ $dayMonth }}</span>
-                                </button>
-                            @endforeach
-                            </div>
+                            @if($showtimesByDay->count() > 0)
+                                <div class="d-flex flex-row gap-4 justify-content-start align-items-center" style="margin-bottom: 24px;">
+                                @foreach($showtimesByDay as $date => $showtimes)
+                                    @php
+                                        $carbonDate = \Carbon\Carbon::parse($date);
+                                        $isToday = $carbonDate->isToday();
+                                        $weekday = $isToday ? 'Hôm Nay' : $carbonDate->isoFormat('dddd');
+                                        $dayMonth = $carbonDate->format('d/m');
+                                    @endphp
+                                    <button
+                                        wire:click="selectDate('{{ $date }}')"
+                                        class="date-btn-custom btn d-flex flex-column justify-content-center align-items-center px-4 py-3 @if($selectedDate == $date) active @endif @if($isToday) today @endif"
+                                        style="min-width: 110px; border-radius: 10px; border: none; font-weight: 500; font-size: 1.1rem;"
+                                        wire:loading.attr="disabled"
+                                    >
+                                        <span class="date-btn-weekday" style="font-size:1.1rem; font-weight:600; @if($selectedDate == $date) color:#fff; @elseif($isToday) color:#0d47a1; @else color:#444; @endif">{{ $weekday }}</span>
+                                        <span class="date-btn-day" style="font-size:1.1rem; font-weight:400; @if($selectedDate == $date) color:#fff; @elseif($isToday) color:#0d47a1; @else color:#888; @endif">{{ $dayMonth }}</span>
+                                    </button>
+                                @endforeach
+                                </div>
+                            @else
+                                <div class="text-center py-4">
+                                    <p class="text-muted">Không có suất chiếu nào trong tương lai</p>
+                                </div>
+                            @endif
                         </div>
 
                         <!-- Loading indicator -->
@@ -362,34 +451,61 @@
 
                         <!-- Cinema List -->
                         <div wire:loading.remove wire:target="selectDate" class="cinema-list">
-                            @php
-                                $showtimesForDate = $showtimesByDay[$selectedDate] ?? collect();
-                                $formatGroups = $showtimesForDate->groupBy(function($showtime) {
-                                    return $showtime->format ?? '2D Phụ Đề Anh';
-                                });
-                            @endphp
+                            @if($showtimesByDay->count() > 0)
+                                @php
+                                    $showtimesForDate = $showtimesByDay[$selectedDate] ?? collect();
+                                    $formatGroups = $showtimesForDate->groupBy(function($showtime) {
+                                        return $showtime->format ?? '2D Phụ Đề Anh';
+                                    });
+                                @endphp
 
-                            @forelse($formatGroups as $formatName => $formatShowtimes)
-                                <div class="cinema-chain">
-                                    <div class="cinema-chain-title">{{ $formatName }}</div>
-                                    <div class="showtime-grid">
-                                        @foreach($formatShowtimes as $showtime)
-                                            <div class="showtime-card text-center">
-                                                <a style="width:100%;display:block;background: #e4e4e4;" onclick="bookingSeat('{{ $showtime->cinema_name ?? '' }}', '{{ $showtime->id }}', '{{ $showtime->start_time->format('H:i') }}', '{{ $showtime->date }}', '{{ $movie->title }}', '{{ $showtime->format ?? '' }}', '', 'False', '');" class="btn default">
-                                                    {{ $showtime->start_time->format('H:i') }}
-                                                </a>
-                                                <div class="font-smaller padding-top-5">{{ $showtime->available_seats }} ghế trống</div>
-                                            </div>
-                                        @endforeach
+                                @forelse($formatGroups as $formatName => $formatShowtimes)
+                                    <div class="cinema-chain">
+                                        <div class="cinema-chain-title">{{ $formatName }}</div>
+                                        <div class="showtime-grid">
+                                            @foreach($formatShowtimes as $showtime)
+                                                @php
+                                                    $isPassed = $showtime->start_time->lte(now());
+                                                    $hasNoSeats = !isset($showtime->available_seats) || $showtime->available_seats <= 0;
+                                                    $isDisabled = $isPassed || $hasNoSeats;
+                                                @endphp
+                                                <div class="showtime-card text-center">
+                                                    @if($isDisabled)
+                                                        <button style="width:100%;display:block;background: #f8f9fa; color: #6c757d; cursor: not-allowed;" class="btn default" disabled>
+                                                            {{ $showtime->start_time->format('H:i') }}
+                                                        </button>
+                                                    @else
+                                                        <button style="width:100%;display:block;background: #e4e4e4;" wire:click="bookShowtime({{ $showtime->id }})" class="btn default">
+                                                            {{ $showtime->start_time->format('H:i') }}
+                                                        </button>
+                                                    @endif
+                                                    <div class="font-smaller padding-top-5">
+                                                        @if($isPassed)
+                                                            <span class="text-danger">Đã chiếu</span>
+                                                        @elseif($hasNoSeats)
+                                                            <span class="text-danger">Hết vé</span>
+                                                        @else
+                                                            <span class="text-success">{{ $showtime->available_seats }} ghế trống</span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
                                     </div>
-                                </div>
-                            @empty
+                                @empty
+                                    <div class="no-showtimes">
+                                        <div class="no-showtimes-icon">🎬</div>
+                                        <h3>Không có suất chiếu nào</h3>
+                                        <p>Không có suất chiếu nào cho ngày này. Vui lòng chọn ngày khác.</p>
+                                    </div>
+                                @endforelse
+                            @else
                                 <div class="no-showtimes">
                                     <div class="no-showtimes-icon">🎬</div>
                                     <h3>Không có suất chiếu nào</h3>
-                                    <p>Không có suất chiếu nào cho ngày này. Vui lòng chọn ngày khác.</p>
+                                    <p>Không có suất chiếu nào trong tương lai cho phim này.</p>
                                 </div>
-                            @endforelse
+                            @endif
                         </div>
                     </div>
 
@@ -519,7 +635,6 @@
                         @endif
                     </div>
                 @endif
-            </div>
         </div>
     </div>
 
@@ -654,6 +769,55 @@
             </div>
         </div>
     @endif
+
+    {{-- Modal xác nhận đặt vé --}}
+    @if($showBookingConfirmModal && $selectedShowtime)
+        <div class="modal-overlay" wire:click="closeBookingConfirmModal">
+            <div class="modal-content" style="max-width: 500px;" wire:click.stop>
+                <div class="modal-header">
+                    <h3>BẠN ĐANG ĐẶT VÉ XEM PHIM</h3>
+                    <button class="modal-close" wire:click="closeBookingConfirmModal">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="booking-info">
+                        <div class="movie-title-booking">{{ $movie->title }}</div>
+
+                        <div class="showtime-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Rạp chiếu</div>
+                                <div class="detail-value">{{ $selectedShowtime->room->cinema->name ?? 'Beta Thái Nguyên' }}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Ngày chiếu</div>
+                                <div class="detail-value">{{ $selectedShowtime->start_time->format('d/m/Y') }}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Giờ chiếu</div>
+                                <div class="detail-value">{{ $selectedShowtime->start_time->format('H:i') }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" wire:click="closeBookingConfirmModal">Hủy</button>
+                        <button type="button" class="btn btn-primary" wire:click="confirmBooking">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px;">
+                                <path d="M3 7V17C3 18.1046 3.89543 19 5 19H19C20.1046 19 21 18.1046 21 17V7C21 5.89543 20.1046 5 19 5H5C3.89543 5 3 5.89543 3 7Z" stroke="currentColor" stroke-width="2"/>
+                                <path d="M8 5V3C8 2.44772 8.44772 2 9 2H15C15.5523 2 16 2.44772 16 3V5" stroke="currentColor" stroke-width="2"/>
+                                <path d="M8 12H16" stroke="currentColor" stroke-width="2"/>
+                                <path d="M8 15H12" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            ĐỒNG Ý
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
 </div>
 <script>
@@ -665,5 +829,16 @@ document.addEventListener('DOMContentLoaded', function() {
       this.style.height = (this.scrollHeight) + 'px';
     });
   }
+});
+document.addEventListener('livewire:init', () => {
+    Livewire.on('scrollToTabContent', () => {
+        const tabContent = document.querySelector('.tab-content-moveek');
+        if (tabContent) {
+            tabContent.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
 });
 </script>

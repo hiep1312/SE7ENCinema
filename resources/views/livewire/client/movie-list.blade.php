@@ -164,7 +164,7 @@
                                                     @if ($movie->trailer_url)
                                                         <li><a href="{{ $movie->trailer_url }}" target="_blank">Xem trailer</a></li>
                                                     @endif
-                                                    <li><a href="{{ route('client.movie_booking', $movie->id) }}">Xem chi tiết</a></li>
+                                                    <li><a href="{{ route('client.movie_detail', $movie->id) }}">Xem chi tiết</a></li>
                                                 </ul>
                                                             </div>
                                                         </div>
@@ -314,7 +314,7 @@
                                                     @if ($movie->trailer_url)
                                                         <li><a href="{{ $movie->trailer_url }}" target="_blank">Xem trailer</a></li>
                                                     @endif
-                                                    <li><a href="{{ route('client.movie_booking', $movie->id) }}">Xem chi tiết</a></li>
+                                                    <li><a href="{{ route('client.movie_detail', $movie->id) }}">Xem chi tiết</a></li>
                                                 </ul>
                                             </div>
                                         </div>
