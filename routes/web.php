@@ -61,6 +61,7 @@ use App\Livewire\Client\SelectFood;
 use App\Livewire\Client\ConfirmBooking;
 use App\Livewire\Payment\VnpayPayment;
 use App\Livewire\Booking\BookingFood;
+use App\Livewire\Client\User\BookingDetail as UserBookingDetail;
 
 Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->group(function () {
     /* Banners */
@@ -220,8 +221,9 @@ Route::name('client.')->group(function () {
     Route::get('/movies/{movie}', ClientMovieDetail::class)->name('movie_detail');
     /* Promotions */
     Route::get('/promotions', PromotionIndexClient::class)->name('promotions.index');
-    Route::get('/user-info', UserInformation::class)->name('userInfo')->middleware('auth');
+    Route::get('/user-info/{tab?}', UserInformation::class)->name('userInfo')->middleware('auth');
     Route::get('/user-confirm', UserConfirm::class)->name('userConfirm')->middleware('auth');
+    Route::get('/booking-detail/{booking}', UserBookingDetail::class)->name('userBooking')->middleware('auth');
     Route::get('/thanh-toan/{booking_id}', VnpayPayment::class)->name('thanh-toan');
     Route::get('/vnpay-return', [VnpayController::class, 'vnpayReturn'])->name('vnpay.return');
     Route::get('/booking-food', BookingFood::class);
