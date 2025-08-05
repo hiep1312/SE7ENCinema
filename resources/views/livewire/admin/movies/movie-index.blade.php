@@ -1,16 +1,16 @@
 <div class="scRender">
     @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+    <div class="alert alert-success alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
     @endif
 
     @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
-            {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+    <div class="alert alert-danger alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
     @endif
 
     <div class="container-lg mb-4">
@@ -18,15 +18,15 @@
             <h2 class="text-light">Quản lý phim</h2>
             <div>
                 @if(!$showDeleted)
-                    <a href="{{ route('admin.movies.create') }}" class="btn btn-success me-2">
-                        <i class="fas fa-plus me-1"></i>Thêm phim
-                    </a>
+                <a href="{{ route('admin.movies.create') }}" class="btn btn-success me-2">
+                    <i class="fas fa-plus me-1"></i>Thêm phim
+                </a>
                 @endif
                 <button wire:click="$toggle('showDeleted')" class="btn btn-outline-danger">
                     @if($showDeleted)
-                        <i class="fas fa-eye me-1"></i>Xem phim hoạt động
+                    <i class="fas fa-eye me-1"></i>Xem phim hoạt động
                     @else
-                        <i class="fas fa-trash me-1"></i>Xem phim đã xóa
+                    <i class="fas fa-trash me-1"></i>Xem phim đã xóa
                     @endif
                 </button>
             </div>
@@ -39,8 +39,7 @@
                     <div class="col-md-4 col-lg-3">
                         <div class="input-group">
                             <input type="text" wire:model.live.debounce.300ms="search"
-                                   class="form-control bg-dark text-light"
-                                   placeholder="Tìm kiếm phim...">
+                                class="form-control bg-dark text-light" placeholder="Tìm kiếm phim...">
                             <span class="input-group-text">
                                 <i class="fas fa-search"></i>
                             </span>
@@ -49,30 +48,40 @@
 
                     <!-- Lọc theo trạng thái -->
                     @if(!$showDeleted)
-                        <div class="col-md-3 col-lg-2">
-                            <select wire:model.live="statusFilter" class="form-select bg-dark text-light">
-                                <option value="">Tất cả trạng thái</option>
-                                <option value="coming_soon">Sắp ra mắt</option>
-                                <option value="showing">Đang chiếu</option>
-                                <option value="ended">Đã kết thúc</option>
-                            </select>
-                        </div>
+                    <div class="col-md-3 col-lg-2">
+                        <select wire:model.live="statusFilter" class="form-select bg-dark text-light">
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="coming_soon">Sắp ra mắt</option>
+                            <option value="showing">Đang chiếu</option>
+                            <option value="ended">Đã kết thúc</option>
+                        </select>
+                    </div>
 
-                        <!-- Lọc theo suất chiếu -->
-                        <div class="col-md-3 col-lg-2">
-                            <select wire:model.live="showtimeFilter" class="form-select bg-dark text-light">
-                                <option value="">Tất cả suất chiếu</option>
-                                <option value="has_showtimes">Có suất chiếu</option>
-                                <option value="no_showtimes">Không có suất chiếu</option>
-                            </select>
-                        </div>
-
-                        <!-- Reset filters -->
-                        <div class="col-md-2">
-                            <button wire:click="resetFilters" class="btn btn-outline-warning">
-                                <i class="fas fa-refresh me-1"></i>Reset
-                            </button>
-                        </div>
+                    <!-- Lọc theo suất chiếu -->
+                    <div class="col-md-3 col-lg-2">
+                        <select wire:model.live="showtimeFilter" class="form-select bg-dark text-light">
+                            <option value="">Tất cả suất chiếu</option>
+                            <option value="has_showtimes">Có suất chiếu</option>
+                            <option value="no_showtimes">Không có suất chiếu</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 col-lg-2">
+                        <button class="btn btn-outline-secondary bg-dark text-light w-100" type="button"
+                            data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-funnel" viewBox="0 0 16 16">
+                                <path
+                                    d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z" />
+                            </svg>
+                            Bộ lọc nâng cao
+                        </button>
+                    </div>
+                    <!-- Reset filters -->
+                    <div class="col-md-2">
+                        <button wire:click="resetFilters" class="btn btn-outline-warning">
+                            <i class="fas fa-refresh me-1"></i>Reset
+                        </button>
+                    </div>
                     @endif
                 </div>
             </div>
@@ -93,215 +102,216 @@
                                     Suất chiếu tiếp theo
                                 </th>
                                 @if($showDeleted)
-                                    <th class="text-center text-light">Ngày xóa</th>
+                                <th class="text-center text-light">Ngày xóa</th>
                                 @else
-                                    <th class="text-center text-light">Ngày tạo</th>
+                                <th class="text-center text-light">Ngày tạo</th>
                                 @endif
                                 <th class="text-center text-light">Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($movies as $movie)
-                                <tr>
-                                    <td class="text-center fw-bold">{{ $loop->iteration }}</td>
-                                    <td>
-                                        <div class="d-flex justify-content-center">
-                                            <div class="movie-poster position-relative" style="width: 80px; height: 100px; margin: 0;">
-                                                @if($movie->poster)
-                                                    <img src="{{ asset('storage/' . $movie->poster) }}"
-                                                        alt="Ảnh phim {{ $movie->title }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
-                                                @else
-                                                    <i class="fas fa-film" style="font-size: 22px;"></i>
-                                                @endif
-                                                <span class="position-absolute opacity-75 top-0 start-0 mt-1 ms-1 badge bg-success" style="border-radius: 50%; cursor: pointer;"
-                                                    data-bs-toggle="modal" data-bs-target="#trailerPreview"
-                                                    data-trailer-url="{{ getYoutubeEmbedUrl((string)$movie->trailer_url) ?: asset('storage/404.webp') }}" data-trailer-title="{{ $movie->title }}">
-                                                    <i class="fas fa-play me-1" style="margin-right: 0 !important;"></i>
-                                                </span>
-                                            </div>
+                            <tr>
+                                <td class="text-center fw-bold">{{ $loop->iteration }}</td>
+                                <td>
+                                    <div class="d-flex justify-content-center">
+                                        <div class="movie-poster position-relative"
+                                            style="width: 80px; height: 100px; margin: 0;">
+                                            @if($movie->poster)
+                                            <img src="{{ asset('storage/' . $movie->poster) }}"
+                                                alt="Ảnh phim {{ $movie->title }}"
+                                                style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
+                                            @else
+                                            <i class="fas fa-film" style="font-size: 22px;"></i>
+                                            @endif
+                                            <span
+                                                class="position-absolute opacity-75 top-0 start-0 mt-1 ms-1 badge bg-success"
+                                                style="border-radius: 50%; cursor: pointer;" data-bs-toggle="modal"
+                                                data-bs-target="#trailerPreview"
+                                                data-trailer-url="{{ getYoutubeEmbedUrl((string)$movie->trailer_url) ?: asset('storage/404.webp') }}"
+                                                data-trailer-title="{{ $movie->title }}">
+                                                <i class="fas fa-play me-1" style="margin-right: 0 !important;"></i>
+                                            </span>
                                         </div>
-                                    </td>
-                                    <td style="max-width: 200px;">
-                                        <strong class="text-light text-wrap lh-base">{{ $movie->title }}</strong>
-                                        @if($movie->trashed())
-                                            <span class="badge bg-danger ms-1">Đã xóa</span>
-                                        @endif
-                                        <div class="movie-genre text-wrap lh-base" style="margin-bottom: 0; margin-top: 3px;">
-                                            <i class="fas fa-tags me-1"></i>
-                                            {{ $movie->genres->take(3)->implode('name', ', ') ?: 'Không có thể loại' }} • {{ $movie->duration }} phút
-                                        </div>
-                                    </td>
-                                    <td class="text-center">
+                                    </div>
+                                </td>
+                                <td style="max-width: 200px;">
+                                    <strong class="text-light text-wrap lh-base">{{ $movie->title }}</strong>
+                                    @if($movie->trashed())
+                                    <span class="badge bg-danger ms-1">Đã xóa</span>
+                                    @endif
+                                    <div class="movie-genre text-wrap lh-base"
+                                        style="margin-bottom: 0; margin-top: 3px;">
+                                        <i class="fas fa-tags me-1"></i>
+                                        {{ $movie->genres->take(3)->implode('name', ', ') ?: 'Không có thể loại' }} • {{
+                                        $movie->duration }} phút
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="mb-1">
+                                        <small style="color: #34c759;">
+                                            <i class="fas fa-play me-1"></i>
+                                            {{ $movie->release_date->format('d/m/Y') }}
+                                        </small>
+                                    </div>
+                                    <div>
+                                        <small style="color: #ff4d4f;">
+                                            <i class="fas fa-stop me-1"></i>
+                                            {!! $movie->end_date?->format('d/m/Y') ?? "Vĩnh viễn &nbsp;&nbsp;&nbsp;" !!}
+                                        </small>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    @if(!$showDeleted && !$movie->trashed())
+                                    @switch($movie->status)
+                                    @case('showing')
+                                    <span class="badge bg-success"><i class="fas fa-play me-1"></i>Đang chiếu</span>
+                                    @break
+                                    @case('coming_soon')
+                                    <span class="badge" style="background-color: #2bbafc; color: #ffffff;"><i
+                                            class="fa-solid fa-calendar-clock me-1"></i>Sắp ra mắt</span>
+                                    @break
+                                    @case('ended')
+                                    <span class="badge bg-danger"><i class="fa-solid fa-calendar-xmark me-1"></i>Đã kết
+                                        thúc</span>
+                                    @break
+                                    @endswitch
+                                    @else
+                                    <span class="badge bg-secondary">Đã xóa</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-gradient fs-6">
+                                        {{ number_format($movie->price, 0, '.', '.') }}đ
+                                    </span>
+                                </td>
+
+                                <!-- CỘT SUẤT CHIẾU TIẾP THEO -->
+                                <td class="bg-opacity-10 border-start border-3">
+                                    @if(!$showDeleted && $movie->showtimes->count() > 0)
+                                    @php $nextShowtime = $movie->showtimes->first(); @endphp
+                                    <div>
                                         <div class="mb-1">
-                                            <small style="color: #34c759;">
-                                                <i class="fas fa-play me-1"></i>
-                                                {{ $movie->release_date->format('d/m/Y') }}
+                                            <i class="fa-solid fa-person-booth text-primary me-1"></i>
+                                            <strong class="text-primary">
+                                                {{ $nextShowtime->room->name ?? 'Không tìm thấy phòng chiếu' }}
+                                            </strong>
+                                        </div>
+
+                                        <!-- Thời gian chiếu -->
+                                        <div class="mb-1">
+                                            <i class="fas fa-clock me-1 text-success"></i>
+                                            <span class="text-success">
+                                                {{ $nextShowtime->start_time->format('d/m/Y') }}
+                                            </span>
+                                            <br>
+                                            <small class="text-muted ms-3">
+                                                {{ $nextShowtime->start_time->format('H:i') }} -
+                                                {{ $nextShowtime->end_time->format('H:i') }}
                                             </small>
                                         </div>
-                                        <div>
-                                            <small style="color: #ff4d4f;">
-                                                <i class="fas fa-stop me-1"></i>
-                                                {!! $movie->end_date?->format('d/m/Y') ?? "Vĩnh viễn &nbsp;&nbsp;&nbsp;" !!}
-                                            </small>
+
+                                        <div class="mb-1">
+                                            <i class="fas fa-money-bill me-1 text-warning"></i>
+                                            <span class="text-warning">
+                                                {{ number_format($nextShowtime->price, 0, '.', '.') }}đ
+                                            </span>
                                         </div>
-                                    </td>
-                                    <td class="text-center">
-                                        @if(!$showDeleted && !$movie->trashed())
-                                            @switch($movie->status)
-                                                @case('showing')
-                                                    <span class="badge bg-success"><i class="fas fa-play me-1"></i>Đang chiếu</span>
-                                                    @break
-                                                @case('coming_soon')
-                                                    <span class="badge" style="background-color: #2bbafc; color: #ffffff;"><i class="fa-solid fa-calendar-clock me-1"></i>Sắp ra mắt</span>
-                                                    @break
-                                                @case('ended')
-                                                    <span class="badge bg-danger"><i class="fa-solid fa-calendar-xmark me-1"></i>Đã kết thúc</span>
-                                                    @break
-                                            @endswitch
-                                        @else
-                                            <span class="badge bg-secondary">Đã xóa</span>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="badge bg-gradient fs-6">
-                                            {{ number_format($movie->price, 0, '.', '.') }}đ
+
+                                        <!-- Badge trạng thái -->
+                                        @if($movie->hasActiveShowtimes())
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-play me-1"></i>Có suất chiếu
                                         </span>
-                                    </td>
-
-                                    <!-- CỘT SUẤT CHIẾU TIẾP THEO -->
-                                    <td class="bg-opacity-10 border-start border-3">
-                                        @if(!$showDeleted && $movie->showtimes->count() > 0)
-                                            @php $nextShowtime = $movie->showtimes->first(); @endphp
-                                            <div>
-                                                <div class="mb-1">
-                                                    <i class="fa-solid fa-person-booth text-primary me-1"></i>
-                                                    <strong class="text-primary">
-                                                        {{ $nextShowtime->room->name ?? 'Không tìm thấy phòng chiếu' }}
-                                                    </strong>
-                                                </div>
-
-                                                <!-- Thời gian chiếu -->
-                                                <div class="mb-1">
-                                                    <i class="fas fa-clock me-1 text-success"></i>
-                                                    <span class="text-success">
-                                                        {{ $nextShowtime->start_time->format('d/m/Y') }}
-                                                    </span>
-                                                    <br>
-                                                    <small class="text-muted ms-3">
-                                                        {{ $nextShowtime->start_time->format('H:i') }} -
-                                                        {{ $nextShowtime->end_time->format('H:i') }}
-                                                    </small>
-                                                </div>
-
-                                                <div class="mb-1">
-                                                    <i class="fas fa-money-bill me-1 text-warning"></i>
-                                                    <span class="text-warning">
-                                                        {{ number_format($nextShowtime->price, 0, '.', '.') }}đ
-                                                    </span>
-                                                </div>
-
-                                                <!-- Badge trạng thái -->
-                                                @if($movie->hasActiveShowtimes())
-                                                    <span class="badge bg-success">
-                                                        <i class="fas fa-play me-1"></i>Có suất chiếu
-                                                    </span>
-                                                @endif
-
-                                                <!-- Thời gian còn lại -->
-                                                <div class="mt-1">
-                                                    <small class="text-info">
-                                                        <i class="fas fa-hourglass-half me-1"></i>
-                                                        {{ $nextShowtime->start_time->diffForHumans() }}
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        @else
-                                            <!-- Khi không có suất chiếu -->
-                                            <div class="text-center py-2" style="margin: auto 0;">
-                                                <i class="fas fa-calendar-times fa-2x text-muted mb-2"></i>
-                                                <div class="text-muted">
-                                                    <strong>Không có suất chiếu</strong>
-                                                </div>
-                                                <small class="text-muted">Chưa lên lịch chiếu</small>
-                                            </div>
                                         @endif
-                                    </td>
-                                    <td class="text-center">
-                                        @if($showDeleted)
-                                            <span class="text-light">
-                                                {{ $movie->deleted_at ? $movie->deleted_at->format('d/m/Y H:i') : 'N/A' }}
-                                            </span>
-                                        @else
-                                            <span class="text-light">
-                                                {{ $movie->created_at ? $movie->created_at->format('d/m/Y H:i') : 'N/A' }}
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($showDeleted)
-                                            <div class="d-flex gap-2 justify-content-center">
-                                                <button type="button"
-                                                        wire:click.once="restoreMovie({{ $movie->id }})"
-                                                        class="btn btn-sm btn-success"
-                                                        title="Khôi phục">
-                                                    <i class="fas fa-undo" style="margin-right: 0"></i>
-                                                </button>
-                                                <button type="button"
-                                                        class="btn btn-sm btn-danger"
-                                                        wire:sc-model="forceDeleteMovie({{ $movie->id }})"
-                                                        wire:sc-confirm.warning="Bạn có chắc chắn muốn XÓA VĨNH VIỄN phim '{{ $movie->title }}'? Hành động này KHÔNG THỂ HOÀN TÁC!"
-                                                        title="Xóa vĩnh viễn">
-                                                    <i class="fas fa-trash-alt" style="margin-right: 0"></i>
-                                                </button>
-                                            </div>
-                                        @else
-                                            <div class="d-flex gap-2 justify-content-center">
-                                                <a href="{{ route('admin.movies.detail', $movie->id) }}"
-                                                   class="btn btn-sm btn-info"
-                                                   title="Xem chi tiết">
-                                                    <i class="fas fa-eye" style="margin-right: 0"></i>
-                                                </a>
-                                                <a href="{{ route('admin.movies.edit', $movie->id) }}"
-                                                    class="btn btn-sm btn-warning"
-                                                    title="Chỉnh sửa">
-                                                    <i class="fas fa-edit" style="margin-right: 0"></i>
-                                                </a>
-                                                @if(!$movie->hasActiveShowtimes())
-                                                    <button type="button"
-                                                            class="btn btn-sm btn-danger"
-                                                            wire:sc-model="deleteMovie({{ $movie->id }})"
-                                                            wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa phim '{{ $movie->title }}'?"
-                                                            title="Xóa">
-                                                        <i class="fas fa-trash" style="margin-right: 0"></i>
-                                                    </button>
-                                                @else
-                                                    <button type="button"
-                                                            class="btn btn-sm btn-danger"
-                                                            wire:sc-alert.error="Không thể xóa phim có suất chiếu trong tương lai"
-                                                            wire:sc-model
-                                                            title="Xóa">
-                                                        <i class="fas fa-trash" style="margin-right: 0"></i>
-                                                    </button>
-                                                @endif
-                                            </div>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="9" class="text-center py-4">
-                                        <div class="text-muted">
-                                            <i class="fas fa-inbox fa-3x mb-3"></i>
-                                            <p>
-                                                @if($showDeleted)
-                                                    Không có phim nào đã xóa
-                                                @else
-                                                    Không có phim nào
-                                                @endif
-                                            </p>
+
+                                        <!-- Thời gian còn lại -->
+                                        <div class="mt-1">
+                                            <small class="text-info">
+                                                <i class="fas fa-hourglass-half me-1"></i>
+                                                {{ $nextShowtime->start_time->diffForHumans() }}
+                                            </small>
                                         </div>
-                                    </td>
-                                </tr>
+                                    </div>
+                                    @else
+                                    <!-- Khi không có suất chiếu -->
+                                    <div class="text-center py-2" style="margin: auto 0;">
+                                        <i class="fas fa-calendar-times fa-2x text-muted mb-2"></i>
+                                        <div class="text-muted">
+                                            <strong>Không có suất chiếu</strong>
+                                        </div>
+                                        <small class="text-muted">Chưa lên lịch chiếu</small>
+                                    </div>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    @if($showDeleted)
+                                    <span class="text-light">
+                                        {{ $movie->deleted_at ? $movie->deleted_at->format('d/m/Y H:i') : 'N/A' }}
+                                    </span>
+                                    @else
+                                    <span class="text-light">
+                                        {{ $movie->created_at ? $movie->created_at->format('d/m/Y H:i') : 'N/A' }}
+                                    </span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($showDeleted)
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        <button type="button" wire:click.once="restoreMovie({{ $movie->id }})"
+                                            class="btn btn-sm btn-success" title="Khôi phục">
+                                            <i class="fas fa-undo" style="margin-right: 0"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-danger"
+                                            wire:sc-model="forceDeleteMovie({{ $movie->id }})"
+                                            wire:sc-confirm.warning="Bạn có chắc chắn muốn XÓA VĨNH VIỄN phim '{{ $movie->title }}'? Hành động này KHÔNG THỂ HOÀN TÁC!"
+                                            title="Xóa vĩnh viễn">
+                                            <i class="fas fa-trash-alt" style="margin-right: 0"></i>
+                                        </button>
+                                    </div>
+                                    @else
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        <a href="{{ route('admin.movies.detail', $movie->id) }}"
+                                            class="btn btn-sm btn-info" title="Xem chi tiết">
+                                            <i class="fas fa-eye" style="margin-right: 0"></i>
+                                        </a>
+                                        <a href="{{ route('admin.movies.edit', $movie->id) }}"
+                                            class="btn btn-sm btn-warning" title="Chỉnh sửa">
+                                            <i class="fas fa-edit" style="margin-right: 0"></i>
+                                        </a>
+                                        @if(!$movie->hasActiveShowtimes())
+                                        <button type="button" class="btn btn-sm btn-danger"
+                                            wire:sc-model="deleteMovie({{ $movie->id }})"
+                                            wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa phim '{{ $movie->title }}'?"
+                                            title="Xóa">
+                                            <i class="fas fa-trash" style="margin-right: 0"></i>
+                                        </button>
+                                        @else
+                                        <button type="button" class="btn btn-sm btn-danger"
+                                            wire:sc-alert.error="Không thể xóa phim có suất chiếu trong tương lai"
+                                            wire:sc-model title="Xóa">
+                                            <i class="fas fa-trash" style="margin-right: 0"></i>
+                                        </button>
+                                        @endif
+                                    </div>
+                                    @endif
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="9" class="text-center py-4">
+                                    <div class="text-muted">
+                                        <i class="fas fa-inbox fa-3x mb-3"></i>
+                                        <p>
+                                            @if($showDeleted)
+                                            Không có phim nào đã xóa
+                                            @else
+                                            Không có phim nào
+                                            @endif
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -337,6 +347,95 @@
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng trailer</button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div wire:ignore.self class="offcanvas offcanvas-end text-bg-dark"  data-bs-backdrop="false" tabindex="-1" id="filterOffcanvas"
+        style="width: 400px;">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">
+                <i class="bi bi-funnel me-2"></i>
+                Bộ lọc nâng cao
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="filter-section">
+                <h6>
+                    <i class="bi bi-clock me-2 text-info"></i>
+                    Thời lượng phim
+                </h6>
+                <div class="mb-3">
+                    <label for="durationRange" class="form-label">
+                        Tối đa:
+                        <span class="text-info fw-bold">
+                            {{ $durationFilter }} phút
+                        </span>
+                    </label>
+
+                    <input type="range" class="form-range" id="durationRange" min="{{ $durationMaxMin['min'] }}"
+                        max="{{ $durationMaxMin['max'] }}" step="1" wire:model.live="durationFilter">
+                    <div class="d-flex justify-content-between text-muted small">
+                        <span>{{ $durationMaxMin['min'] }} phút</span>
+                        <span>{{ $durationMaxMin['max'] }} phút</span>
+                    </div>
+                </div>
+            </div>
+            <div class="filter-section">
+                <h6>
+                    <i class="bi bi-currency-dollar me-2 text-warning"></i>
+                    Khoảng giá vé
+                </h6>
+                <div class="mb-3">
+                    <label for="priceRange" class="form-label">
+                        Tối đa: <span id="priceValue" class="text-warning fw-bold">{{ number_format($priceFilter,
+                            0, '.', '.') }}đ</span>
+                    </label>
+                    <input wire:model.live="priceFilter" type="range" class="form-range" id="priceRange"
+                        min="{{ $priceMaxMin['min'] }}" max="{{ $priceMaxMin['max'] }}" step="1000">
+                    <div class="d-flex justify-content-between text-muted small">
+                        <span>{{ number_format($priceMaxMin['min'], 0, '.', '.') }}đ</span>
+                        <span>{{ number_format($priceMaxMin['max'], 0, '.', '.') }}đ</span>
+                    </div>
+                </div>
+            </div>
+            <div class="filter-section">
+                <h6>
+                    <i class="bi bi-calendar me-2 text-primary"></i>
+                    Năm phát hành
+                </h6>
+                <div class="row g-2">
+                    <div class="col-6">
+                        <select class="form-select text-white bg-dark border-secondary"
+                            wire:model.live="releaseDateFilter.from">
+                            <option value="">Từ năm</option>
+                            @for ($year = now()->year; $year >= $releaseDateMin; $year--)
+                            <option value="{{ $year }}">{{ $year }}</option>
+                            @endfor
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <select class="form-select text-white bg-dark border-secondary"
+                            wire:model.live="releaseDateFilter.to">
+                            <option value="">Đến năm</option>
+                            @for ($year = now()->year; $year >= $releaseDateMin; $year--)
+                            <option value="{{ $year }}">{{ $year }}</option>
+                            @endfor
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+            <!-- Filter Actions -->
+            <div class="d-grid gap-2 mt-4">
+                <button class="btn btn-success" data-bs-dismiss="offcanvas">
+                    <i class="fa-solid fa-check me-2"></i>
+                    Áp dụng bộ lọc
+                </button>
+                <button class="btn btn-outline-secondary" wire:click="resetFilters">
+                    <i class="fa-solid fa-arrow-rotate-right me-2"></i>
+                    Xóa bộ lọc nâng cao
+                </button>
             </div>
         </div>
     </div>
