@@ -161,6 +161,22 @@
                                         @enderror
                                     </div>
                                 </div>
+                                <div class="col-12">
+                                     <div class="mb-3">
+                                        <label class="form-label text-light">Cấu Hình Luật Kiểm Tra chọn ghế</label>
+                                        <div>
+                                            <input type="checkbox" wire:model="checkLonely" id="rule-lonely"> Cấm chỗ lẻ ví Dụ A1 , A3
+                                        </div>
+
+                                        <div>
+                                            <input type="checkbox" wire:model="checkSole" id="rule-sole"> Cấm chọn ghế lẻ góc tường , ví dụ A1 trống -> chọn A2
+                                        </div>
+
+                                        <div>
+                                            <input type="checkbox" wire:model="checkDiagonal" id="rule-diagonal"> Cấm chọn chéo A1 , B2
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="d-flex justify-content-between mb-3">
@@ -172,13 +188,16 @@
                             <div wire:ignore id="generate-seats"></div>
                             @script
                             <script>
-                                $wire.on('generateSeats', function([rows, seatsPerRow, vipRows, coupleRows]) {
+                                $wire.on('generateSeats', function([rows, seatsPerRow, vipRows, coupleRows , checkLonely , checkSole , checkDiagonal]) {
                                     document.querySelector('#generate-seats').innerHTML = '';
                                     document.querySelector('#generate-seats').append(window.generateDOMSeats({
                                         rows: rows,
                                         seatsPerRow: seatsPerRow,
                                         vipRows: vipRows,
-                                        coupleRows: coupleRows
+                                        coupleRows: coupleRows,
+                                        checkLonely: checkLonely,
+                                        checkSole: checkSole,
+                                        checkDiagonal: checkDiagonal
                                     }));
                                 });
 
