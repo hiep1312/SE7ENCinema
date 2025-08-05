@@ -21,6 +21,9 @@ class RoomCreate extends Component
     public $priceVip = 20000;
     public $priceCouple = 20000;
     public $temp = [];
+    public $checkLonely = true;
+    public $checkSole = true;
+    public $checkDiagonal = true;
 
     protected $rules = [
         'name' => 'required|string|max:255|unique:rooms,name',
@@ -59,6 +62,7 @@ class RoomCreate extends Component
         $this->temp = array_filter($this->temp, fn($item) => !Str::contains($item, ['add-column-btn', 'asile']));
     }
 
+
     public function createRoom()
     {
         $this->validate();
@@ -68,6 +72,9 @@ class RoomCreate extends Component
                 'name' => $this->name,
                 'capacity' => $this->rows * $this->seatsPerRow,
                 'status' => $this->status,
+                'check_lonely' => $this->checkLonely,
+                'check_sole' => $this->checkSole,
+                'check_diagonal' => $this->checkDiagonal,
             ]);
 
             $vipRows = collect(explode(',', strtoupper($this->vipRows)))->map(fn($v) => trim($v))->filter();
@@ -105,12 +112,13 @@ class RoomCreate extends Component
         } catch (\Exception $e) {
             session()->flash('error', 'Có lỗi xảy ra trong quá trình tạo phòng chiếu. Vui lòng thử lại!');
         }
+        
     }
 
     public function handleGenerateSeats()
     {
         $this->validate();
-        $this->dispatch('generateSeats', $this->rows, $this->seatsPerRow, $this->vipRows, $this->coupleRows);
+        $this->dispatch('generateSeats', $this->rows, $this->seatsPerRow, $this->vipRows, $this->coupleRows , $this->checkLonely, $this->checkSole, $this->checkDiagonal);
     }
 
     public function setTemp($data)
