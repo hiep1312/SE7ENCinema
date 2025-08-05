@@ -280,12 +280,12 @@ ul.colors li:hover p {
 
 .prs_navi_left_main_wrapper {
 	float: left;
-	width: 55%;
+	width: 50%;
 }
 
 .prs_navi_right_main_wrapper {
 	float: left;
-	width: 45%;
+	width: 50%;
 	padding-top: 25px;
 }
 
@@ -1434,7 +1434,7 @@ body.active #mobile-nav {
 }
 
 .mobile-list-nav {
-	padding: 100px 0;
+	padding: 100px 0px 50px 0px;
 	position: relative;
 	z-index: 90;
 	padding-left: 25px;
