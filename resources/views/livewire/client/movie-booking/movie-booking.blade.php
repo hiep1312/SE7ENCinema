@@ -10,13 +10,9 @@
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="prs_title_heading_wrapper">
-                       <div class="prs_title_heading_wrapper_left">
+                       <div class="prs_title_heading_wrapper_left title__Booking">
                             <h2>{{ $movie ? $movie->title : 'Movie Booking' }}</h2>
                        </div>
-                        <ul>
-                            <li><a href="{{ route('client.index') }}">HOME</a></li>
-                            <li>{{ $movie ? $movie->title : 'Movie Booking' }}</li>
-                        </ul>
                     </div>
                 </div>
             </div>
@@ -137,7 +133,7 @@
                                                             class="st_calender_row_cont @if (!$loop->first) st_calender_row_cont2 @endif float_left">
                                                             <div class="st_calender_asc">
                                                                 <div class="st_calen_asc_heart">
-                                                                    <a href="#"><i class="fa fa-heart"></i></a>
+                                                                    <a href="#"><i class="fa-duotone fa-light fa-screencast"></i></a>
                                                                 </div>
                                                                 <div class="st_calen_asc_heart_cont">
                                                                     <div class="title">

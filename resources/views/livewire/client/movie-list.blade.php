@@ -1,7 +1,7 @@
 @assets
     @vite('resources/css/movieList.css')
 @endassets
-<div class="prz_main_wrapper scMovieList">
+<div class="scMovieList prz_main_wrapper scMovieList">
     <div class="prs_title_main_sec_wrapper">
         <div class="prs_title_img_overlay"></div>
         <div class="container">
@@ -10,8 +10,8 @@
                     <div class="prs_title_heading_wrapper">
                         <h2>Danh Sách Phim</h2>
                         <ul>
-                            <li><a href="{{ route('client.index') }}">Home</a></li>
-                            <li> > Danh Sách Phim</li>
+                            <li><a href="{{ route('client.index') }}">Home <i class="fa fa-chevron-right"></i></a></li>
+                            <li> <i class="fa fa-chevron-right"></i> Danh Sách Phim</li>
                         </ul>
                     </div>
                 </div>
@@ -80,16 +80,16 @@
             <div class="row">
                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 hidden-sm hidden-xs">
                     <div class="prs_mcc_left_side_wrapper">
-                        <div class="prs_mcc_left_searchbar_wrapper">
-                            <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search Movie"
+                        <div class="prs_mcc_left_searchbar_wrapper search-movies">
+                            <input wire:model.live.debounce.300ms="search" type="text" placeholder="Tìm kiếm phim"
                                 class="border rounded-lg px-4 py-2 w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
                             <button><i class="flaticon-tool"></i></button>
                         </div>
-                        <div class="prs_mcc_bro_title_wrapper">
-                            <h2>Browse Title</h2>
+                        <div class="prs_mcc_bro_title_wrapper title-category">
+                            <h2>Danh Mục Phim</h2>
                             <ul>
                                 <li><i class="fa fa-caret-right"></i> <a href="#"
-                                        wire:click="$set('genreFilter', '')">All
+                                        wire:click="$set('genreFilter', '')">Tất Cả
                                         <span>{{ $genres->count() }}</span></a></li>
                                 @foreach ($genres as $genre)
                                     <li><i class="fa fa-caret-right"></i> <a href="#"
@@ -100,8 +100,8 @@
                             </ul>
                         </div>
                         <!-- Top Events -->
-                        <div class="prs_mcc_event_title_wrapper">
-                            <h2>Top Events</h2>
+                        <div class="prs_mcc_event_title_wrapper title-top-event">
+                            <h2>Phim Nổi Bật</h2>
                             <div class="mb-4">
                                 <div class="relative">
                                     <img src="{{ asset('storage/' . $topEventMovie->poster) }}"
@@ -134,8 +134,8 @@
                     <div class="prs_mcc_right_side_wrapper">
                         <div class="row">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <div class="prs_mcc_right_side_heading_wrapper">
-                                    <h2>Our Top Movies</h2>
+                                <div class="prs_mcc_right_side_heading_wrapper ICON">
+                                    <h2>Danh Sách Phim</h2>
                                     <ul class="nav nav-pills">
                                         <li class="active"><a data-toggle="pill" href="#coming_soon"><i
                                                     class="fa fa-th-large"></i></a></li>
@@ -207,7 +207,7 @@
                                                                     </a>
                                                                 @else
                                                                     <a href="{{ route('login') }}"
-                                                                        onclick="alert('Vui lòng đăng nhập để mua vé')"
+                                                                        wire:confirm.confirm="Vui lòng đăng nhập để mua vé"
                                                                         class="btn btn-primary"
                                                                         style="background-color: #e50914; border: none; padding: 10px 20px; font-size: 16px; color: white; text-transform: uppercase;">
                                                                         Mua Vé Ngay
@@ -225,8 +225,9 @@
                                                 </div>
                                             @endforelse
                                         </div>
+                                        {{-- <div style="clear: both;"></div> --}}
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <ul class="sc-pagination">
+                                            <ul class="sc-pagination ">
                                                 {{-- Previous Page --}}
                                                 <li>
                                                     <button class="sc-page sc-page--arrow"
@@ -312,7 +313,7 @@
                                                 {{ $age }}
                                             </span>
                                             <div class="prs_upcom_movie_img_overlay"></div>
-                                            <div class="prs_upcom_movie_img_btn_wrapper">
+                                            <div class="prs_upcom_movie_img_btn_wrapper butoon_view">
                                                 <ul>
                                                     @if ($movie->trailer_url)
                                                         <li><a href="{{ $movie->trailer_url }}" target="_blank">Xem trailer</a></li>
@@ -363,13 +364,13 @@
             <div class="row">
                 <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
                     <div class="prs_newsletter_text">
-                        <h3>Get update sign up now !</h3>
+                        <h3>Đăng ký nhận tin</h3>
                     </div>
                 </div>
                 <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
                     <div class="prs_newsletter_field">
-                        <input type="text" placeholder="Enter Your Email">
-                        <button type="submit">Submit</button>
+                        <input type="text" placeholder="Nhập email của bạn">
+                        <button type="submit">Gửi</button>
                     </div>
                 </div>
             </div>
