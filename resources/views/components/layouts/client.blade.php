@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
         @hasSection('title')
-        @yield('title', 'SE7ENCinema')
+            @yield('title', 'SE7ENCinema')
         @else
-        {{ $title ?? 'SE7ENCinema' }}
+            {{ $title ?? 'SE7ENCinema' }}
         @endif
     </title>
     <link rel="icon" type="image/x-icon" href="{{ asset('storage/favicon.ico') }}">
@@ -30,21 +30,17 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('client/assets/css/seat.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('client/assets/css/style.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('client/assets/css/responsive.css') }}" />
-
-
-
     @vite('resources/css/app.css')
     @stack('styles')
-
 </head>
 
 <body>
     <div>
-        {{-- @include('livewire.client.components.header') --}}
+        @include('livewire.client.components.header')
         @hasSection('content')
-        @yield('content')
+            @yield('content')
         @else
-        {{ $slot }}
+            {{ $slot }}
         @endif
         @include('livewire.client.components.footer')
     </div>
@@ -80,5 +76,4 @@
     <script src="{{ asset('client/assets/js/custom.js') }}"></script>
     @vite('resources/js/app.js')
 </body>
-
 </html>

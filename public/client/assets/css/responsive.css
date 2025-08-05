@@ -40,10 +40,10 @@
 		height:480px !important;
 	}
 	.prs_navi_left_main_wrapper{
-		width:60%;
+		width:80%;
 	}
 	.prs_navi_right_main_wrapper{
-		width:40%;
+		width:20%;
 	}
 	.prs_at_social_inner_main_wrapper li{
 		margin-right:10px;
@@ -628,6 +628,11 @@
 	}
 	.prs_animate_btn1 .button--tamaya{
 		min-width:120px;
+	}
+}
+@media (max-width:1199px) {
+	.product-heading{
+		display: none;
 	}
 }
 @media (max-width: 1030px){
