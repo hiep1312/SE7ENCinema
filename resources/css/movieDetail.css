@@ -14,7 +14,11 @@
 }
 
 .movie-header-block {
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 100%);
+    background: linear-gradient(
+        135deg,
+        rgba(0, 0, 0, 0.9) 0%,
+        rgba(0, 0, 0, 0.7) 100%
+    );
     overflow: hidden;
     position: relative;
 }
@@ -44,13 +48,17 @@
 
 .movie-poster {
     flex: 0 0 320px;
-}
-
-.movie-poster img {
-    width: 300px;
     height: 440px;
     object-fit: cover;
     border-radius: 18px;
+}
+
+.movie-poster img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 0;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
     background: linear-gradient(135deg, #e0e7ff 0%, #f5f7fa 100%);
 }
@@ -182,41 +190,204 @@
     color: #b0b0b0;
 }
 
+/* Modern Age Restriction Badges - Professional Design */
 .age-restriction {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    font-weight: bold;
-    padding: 4px 16px;
-    border-radius: 1rem;
-    font-size: 1.1rem;
-    z-index: 2;
-    color: #fff;
-    background: #f6c343;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    letter-spacing: 1px;
-    border: none;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
-}
-
-.age-restriction-T18 {
-    background: #f57c00 !important;
+    display: inline-block !important;
+    min-width: 46px !important;
+    max-width: 70px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    font-size: 0.95rem !important;
+    font-weight: 900 !important;
+    border-radius: 4px !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+    border: none !important;
+    letter-spacing: 0.3px !important;
+    text-align: center !important;
+    vertical-align: middle !important;
     color: #fff !important;
-}
-
-.age-restriction-T16 {
-    background: #1976d2 !important;
-    color: #fff !important;
-}
-
-.age-restriction-T13 {
-    background: #43a047 !important;
-    color: #fff !important;
-}
-
-.age-restriction-default {
     background: #bdbdbd !important;
+    position: absolute !important;
+    top: 10px !important;
+    left: 10px !important;
+    z-index: 15 !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    text-transform: uppercase !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        sans-serif !important;
+}
+
+/* Hover Effects */
+.age-restriction:hover {
+    transform: translateY(-1px) scale(1.03) !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* P - All Ages - Deep Blue */
+.age-restriction-P {
+    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
+    box-shadow: 0 2px 6px rgba(25, 118, 210, 0.35) !important;
+}
+
+.age-restriction-P:hover {
+    background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%) !important;
+    box-shadow: 0 4px 10px rgba(25, 118, 210, 0.5) !important;
+}
+
+/* K - Kids with Adult - Light Blue */
+.age-restriction-K {
+    background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%) !important;
+    box-shadow: 0 2px 6px rgba(100, 181, 246, 0.35) !important;
+}
+
+.age-restriction-K:hover {
+    background: linear-gradient(135deg, #42a5f5 0%, #2196f3 100%) !important;
+    box-shadow: 0 4px 10px rgba(100, 181, 246, 0.5) !important;
+}
+
+/* T13 - 13+ Years - Orange */
+.age-restriction-T13 {
+    background: linear-gradient(135deg, #e22ca6 0%, #e22ca6 100%) !important;
+    box-shadow: 0 2px 6px rgba(255, 179, 0, 0.35) !important;
+}
+
+.age-restriction-T13:hover {
+    background: linear-gradient(135deg, #e22ca6 0%, #e22ca6 100%) !important;
+    box-shadow: 0 4px 10px rgba(255, 179, 0, 0.5) !important;
+}
+
+/* T16 - 16+ Years - Golden Yellow like image */
+.age-restriction-T16 {
+    background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%) !important;
+    box-shadow: 0 2px 6px rgba(255, 193, 7, 0.35) !important;
     color: #fff !important;
+}
+
+.age-restriction-T16:hover {
+    background: linear-gradient(135deg, #ffb300 0%, #ffa000 100%) !important;
+    box-shadow: 0 4px 10px rgba(255, 193, 7, 0.5) !important;
+}
+
+/* T18 - 18+ Years - Pink/Rose like image */
+.age-restriction-T18 {
+    background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%) !important;
+    box-shadow: 0 2px 6px rgba(233, 30, 99, 0.35) !important;
+    color: #fff !important;
+}
+
+.age-restriction-T18:hover {
+    background: linear-gradient(135deg, #c2185b 0%, #ad1457 100%) !important;
+    box-shadow: 0 4px 10px rgba(233, 30, 99, 0.5) !important;
+}
+
+/* C - Banned Content - Gray with Warning */
+.age-restriction-C {
+    background: linear-gradient(135deg, #9e9e9e 0%, #757575 100%) !important;
+    box-shadow: 0 2px 6px rgba(158, 158, 158, 0.35) !important;
+    color: #fff !important;
+    text-decoration: line-through !important;
+    position: relative !important;
+}
+
+.age-restriction-C:hover {
+    background: linear-gradient(135deg, #757575 0%, #616161 100%) !important;
+    box-shadow: 0 4px 10px rgba(158, 158, 158, 0.5) !important;
+}
+
+/* Warning icon for C rating */
+.age-restriction-C::after {
+    content: "⚠" !important;
+    position: absolute !important;
+    top: -4px !important;
+    right: -4px !important;
+    font-size: 0.6rem !important;
+    background: #ff5722 !important;
+    border-radius: 50% !important;
+    width: 12px !important;
+    height: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 1px 3px rgba(255, 87, 34, 0.4) !important;
+    text-decoration: none !important;
+}
+
+/* Premium shine effect */
+.age-restriction::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.25),
+        transparent
+    ) !important;
+    transition: left 0.5s !important;
+    border-radius: 4px !important;
+}
+
+.age-restriction:hover::before {
+    left: 100% !important;
+}
+
+/* Animation for badge appearance */
+@keyframes badgeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-15px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+.age-restriction {
+    animation: badgeSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Focus states for accessibility */
+.age-restriction:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.6) !important;
+    outline-offset: 1px !important;
+}
+
+/* Print styles */
+@media print {
+    .age-restriction {
+        background: #333 !important;
+        color: #fff !important;
+        box-shadow: none !important;
+        border: 1px solid #333 !important;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .age-restriction {
+        min-width: 32px !important;
+        max-width: 44px !important;
+        height: 20px !important;
+        font-size: 0.8rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .age-restriction {
+        min-width: 30px !important;
+        max-width: 40px !important;
+        height: 18px !important;
+        font-size: 0.75rem !important;
+    }
 }
 
 /* New Hierarchical Tab System */
@@ -403,7 +574,7 @@
     max-width: 1200px;
     margin: 32px auto 0 auto;
     border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(25, 118, 210, 0.10);
+    box-shadow: 0 8px 32px rgba(25, 118, 210, 0.1);
     background: #111;
     overflow: hidden;
 }
@@ -433,7 +604,6 @@
     background: #fff;
     padding: 0 32px 0 32px;
     min-height: 500px;
-
 }
 
 .comments-header {
@@ -463,7 +633,6 @@
 }
 
 .comment-item {
-
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -605,7 +774,8 @@
 /* Emoji support */
 .comment-content,
 .reply-item .comment-content {
-    font-family: inherit, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-family: inherit, "Apple Color Emoji", "Segoe UI Emoji",
+        "Segoe UI Symbol";
 }
 
 .comments-list::-webkit-scrollbar {
@@ -620,7 +790,6 @@
     padding: 24px;
     /* transition: all 0.3s ease; */
 }
-
 
 .comment-avatar {
     width: 42px;
@@ -663,7 +832,6 @@
     transition: all 0.3s ease;
 }
 
-
 .reply-item .comment-avatar {
     width: 36px;
     height: 36px;
@@ -704,7 +872,12 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
     transition: left 0.5s ease;
 }
 
@@ -1252,8 +1425,10 @@
     }
 
     .movie-poster img {
-        width: 140px;
-        height: 200px;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 0;
     }
 
     .trailer-video-wrapper {
@@ -1435,7 +1610,7 @@
     border-radius: 50%;
     width: 36px;
     height: 36px;
-    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.10);
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.1);
     border: none;
     transition: background 0.2s, color 0.2s;
 }
@@ -1592,7 +1767,8 @@ textarea {
     font-size: 1.02rem;
     margin: 2px 0 0 44px;
     word-break: break-word;
-    font-family: inherit, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-family: inherit, "Apple Color Emoji", "Segoe UI Emoji",
+        "Segoe UI Symbol";
 }
 
 .comment-footer {
@@ -1856,13 +2032,17 @@ textarea {
 }
 
 .date-tab::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0.05)
+    );
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -2006,13 +2186,18 @@ textarea {
 }
 
 .buy-ticket-btn::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
     transition: left 0.5s ease;
 }
 
@@ -2149,32 +2334,56 @@ textarea {
 }
 
 .rating-header .btn-link.text-primary {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+    background: linear-gradient(
+        135deg,
+        rgba(102, 126, 234, 0.1),
+        rgba(118, 75, 162, 0.1)
+    );
     border-color: rgba(102, 126, 234, 0.2);
 }
 
 .rating-header .btn-link.text-primary:hover {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+    background: linear-gradient(
+        135deg,
+        rgba(102, 126, 234, 0.15),
+        rgba(118, 75, 162, 0.15)
+    );
     border-color: rgba(102, 126, 234, 0.3);
 }
 
 .rating-header .btn-link.text-danger {
-    background: linear-gradient(135deg, rgba(220, 53, 69, 0.1), rgba(220, 53, 69, 0.05));
+    background: linear-gradient(
+        135deg,
+        rgba(220, 53, 69, 0.1),
+        rgba(220, 53, 69, 0.05)
+    );
     border-color: rgba(220, 53, 69, 0.2);
 }
 
 .rating-header .btn-link.text-danger:hover {
-    background: linear-gradient(135deg, rgba(220, 53, 69, 0.15), rgba(220, 53, 69, 0.1));
+    background: linear-gradient(
+        135deg,
+        rgba(220, 53, 69, 0.15),
+        rgba(220, 53, 69, 0.1)
+    );
     border-color: rgba(220, 53, 69, 0.3);
 }
 
 .rating-header .btn-link.text-success {
-    background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(32, 201, 151, 0.1));
+    background: linear-gradient(
+        135deg,
+        rgba(40, 167, 69, 0.1),
+        rgba(32, 201, 151, 0.1)
+    );
     border-color: rgba(40, 167, 69, 0.2);
 }
 
 .rating-header .btn-link.text-success:hover {
-    background: linear-gradient(135deg, rgba(40, 167, 69, 0.15), rgba(32, 201, 151, 0.15));
+    background: linear-gradient(
+        135deg,
+        rgba(40, 167, 69, 0.15),
+        rgba(32, 201, 151, 0.15)
+    );
     border-color: rgba(40, 167, 69, 0.3);
 }
 
@@ -2204,45 +2413,91 @@ textarea {
     font-weight: 500;
     font-size: 1.1rem;
     min-width: 110px;
-    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     margin-right: 0;
     margin-bottom: 0;
+    position: relative;
+    overflow: hidden;
 }
 
 .date-btn-custom:not(.active):not(.today):hover {
     background: #f0f4fa;
     color: #1976d2;
-    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.06);
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.15);
+    transform: translateY(-2px);
 }
 
 .date-btn-custom.active,
 .date-btn-custom.today.active {
-    background: #0d47a1;
+    background: linear-gradient(135deg, #0d47a1 0%, #1976d2 100%);
     color: #fff;
-    box-shadow: 0 4px 16px rgba(13, 71, 161, 0.10);
+    box-shadow: 0 6px 20px rgba(13, 71, 161, 0.25);
+    transform: translateY(-2px);
 }
 
 .date-btn-custom.today {
-    background: #1565c0;
+    background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
     color: #fff;
     font-weight: 700;
+    box-shadow: 0 4px 12px rgba(21, 101, 192, 0.2);
 }
 
 .date-btn-custom .date-btn-weekday {
     font-size: 1.1rem;
     font-weight: 600;
     line-height: 1.1;
+    transition: all 0.3s ease;
 }
 
 .date-btn-custom .date-btn-day {
     font-size: 1.1rem;
     font-weight: 400;
     line-height: 1.1;
+    transition: all 0.3s ease;
 }
 
 .date-btn-custom:focus {
     outline: none;
-    box-shadow: 0 0 0 2px #1976d233;
+    box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2);
+}
+
+/* Loading state */
+.date-btn-custom:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Gạch ngang dưới dãy nút ngày */
+.date-selector {
+    border-bottom: 2px solid #0d47a1;
+    margin-bottom: 24px;
+    padding-bottom: 8px;
+}
+
+/* Showtime card improvements */
+.showtime-card {
+    transition: all 0.3s ease;
+}
+
+.showtime-card:hover {
+    transform: translateY(-2px);
+}
+
+.showtime-card .btn.default {
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.showtime-card .btn.default:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.showtime-card .btn.default:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 @media (max-width: 600px) {
@@ -2256,13 +2511,6 @@ textarea {
     .date-btn-custom .date-btn-day {
         font-size: 1rem;
     }
-}
-
-/* Gạch ngang dưới dãy nút ngày */
-.date-selector {
-    border-bottom: 2px solid #0d47a1;
-    margin-bottom: 24px;
-    padding-bottom: 8px;
 }
 
 /* Remove textarea scrollbar */
@@ -2314,7 +2562,6 @@ textarea {
 }
 
 @media (max-width: 600px) {
-
     .comment-avatar,
     .reply-item .comment-avatar,
     .rating-header .comment-avatar {
@@ -2581,4 +2828,82 @@ textarea {
     .rating-review {
         font-size: 0.98rem;
     }
+}
+
+.booking-info {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.movie-title-booking {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #0d47a1;
+    margin-bottom: 20px;
+}
+
+.showtime-details {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 500;
+    color: #666;
+}
+
+.detail-value {
+    font-weight: bold;
+    color: #333;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
+
+.btn-primary {
+    display: flex;
+    align-items: center;
+    background: #0d47a1;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover {
+    background: #0a3d8a;
+}
+
+.btn-secondary {
+    background: #f8f9fa;
+    color: #666;
+    border: 1px solid #ddd;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-secondary:hover {
+    background: #e9ecef;
 }

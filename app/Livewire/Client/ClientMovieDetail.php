@@ -5,6 +5,7 @@ namespace App\Livewire\Client;
 use App\Models\Movie;
 use App\Models\Comment;
 use App\Models\Rating;
+use App\Models\Showtime;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
@@ -52,6 +53,10 @@ class ClientMovieDetail extends Component
     public $showMoreComments = [];
     public $showMoreRatings = [];
 
+    // Booking modal properties
+    public $showBookingConfirmModal = false;
+    public $selectedShowtime = null;
+
     public function mount(Movie $movie)
     {
         $this->movie = $movie;
@@ -60,9 +65,49 @@ class ClientMovieDetail extends Component
     }
 
     // Navigation Methods
-    public function setTab($tab) { $this->tab = $tab; if ($tab === 'movie_info') $this->subTab = 'overview'; }
+    public function setTab($tab) {
+        $this->tab = $tab;
+        if ($tab === 'movie_info') $this->subTab = 'overview';
+        if ($tab === 'showtimes' && empty($this->selectedDate)) {
+            $this->setDefaultSelectedDate();
+        }
+
+        // Dispatch event để scroll xuống tab content
+        $this->dispatch('scrollToTabContent');
+    }
     public function setSubTab($subTab) { $this->subTab = $subTab; }
-    public function selectDate($date) { $this->selectedDate = $date; }
+    public function selectDate($date) {
+        $this->selectedDate = $date;
+        $this->dispatch('dateSelected', date: $date);
+    }
+
+    public function bookShowtime($showtimeId)
+    {
+        // Kiểm tra showtime còn hợp lệ không trước khi booking
+        $showtime = Showtime::find($showtimeId);
+
+        if (!$showtime || $showtime->start_time->lte(now())) {
+            session()->flash('error', 'Suất chiếu này đã hết hạn!');
+            return;
+        }
+
+        // Lưu thông tin suất chiếu để hiển thị trong modal
+        $this->selectedShowtime = $showtime;
+        $this->showBookingConfirmModal = true;
+    }
+
+    public function confirmBooking()
+    {
+        if ($this->selectedShowtime) {
+           return redirect()->route('client.booking.select_seats', ['movie_id' => $this->selectedShowtime->movie_id]);
+        }
+    }
+
+    public function closeBookingConfirmModal()
+    {
+        $this->showBookingConfirmModal = false;
+        $this->selectedShowtime = null;
+    }
 
     // Modal Methods
     public function openTrailerModal() { $this->showTrailerModal = true; }
@@ -180,6 +225,10 @@ class ClientMovieDetail extends Component
 
     public function confirmDelete($id, $type)
     {
+        // Hủy tất cả hành động khác trước khi xóa
+        $this->cancelEditComment();
+        $this->cancelReply();
+
         // Chỉ cho phép admin xóa đánh giá, user chỉ có thể xóa comment
         if ($type === 'rating' && Auth::user()->role !== 'admin') {
             session()->flash('error', 'Bạn không được phép xóa đánh giá. Chỉ có thể thay đổi đánh giá.');
@@ -289,6 +338,9 @@ class ClientMovieDetail extends Component
 
     public function startEditComment($commentId)
     {
+        // Hủy tất cả hành động khác trước khi bắt đầu sửa
+        $this->cancelReply();
+
         $comment = Comment::find($commentId);
         if ($comment && ($comment->user_id === Auth::id() || Auth::user()->role === 'admin')) {
             $this->editingComment = $commentId;
@@ -316,7 +368,12 @@ class ClientMovieDetail extends Component
     }
 
     // Reply Methods
-    public function startReply($commentId) { $this->replyingTo = $commentId; $this->replyContent = ''; }
+    public function startReply($commentId) {
+        // Hủy tất cả hành động khác trước khi bắt đầu trả lời
+        $this->cancelEditComment();
+        $this->replyingTo = $commentId;
+        $this->replyContent = '';
+    }
     public function cancelReply() { $this->replyingTo = null; $this->replyContent = ''; }
 
     public function submitReply()
@@ -386,18 +443,27 @@ class ClientMovieDetail extends Component
 
     private function setDefaultSelectedDate()
     {
+        $now = Carbon::now();
+
         $allShowtimes = $this->movie->showtimes()
             ->where('status', 'active')
             ->orderBy('start_time')
             ->get();
 
-        $showtimesByDay = $allShowtimes->groupBy(function($item) {
+        // Lọc suất chiếu: chỉ lấy những suất chiếu chưa bắt đầu
+        $validShowtimes = $allShowtimes->filter(function($showtime) use ($now) {
+            return $showtime->start_time->gt($now);
+        });
+
+        $showtimesByDay = $validShowtimes->groupBy(function($item) {
             return $item->start_time->format('Y-m-d');
         });
 
         $dates = array_keys($showtimesByDay->toArray());
         $this->selectedDate = $dates[0] ?? null;
     }
+
+
 
     private function getCommentsWithReplies()
     {
@@ -444,39 +510,51 @@ class ClientMovieDetail extends Component
     public function render()
     {
         $now = Carbon::now();
+
+        // Lấy tất cả suất chiếu active
         $allShowtimes = $this->movie->showtimes()
             ->where('status', 'active')
             ->orderBy('start_time')
             ->get();
 
-        // Group showtimes by day và filter thời gian
-        $showtimesByDay = $allShowtimes->groupBy(function($item) {
+        // Lọc suất chiếu: chỉ lấy những suất chiếu chưa bắt đầu
+        $validShowtimes = $allShowtimes->filter(function($showtime) use ($now) {
+            return $showtime->start_time->gt($now);
+        });
+
+        // Group showtimes by day
+        $showtimesByDay = $validShowtimes->groupBy(function($item) {
             return $item->start_time->format('Y-m-d');
         });
 
-        $todayKey = $now->format('Y-m-d');
-        if (isset($showtimesByDay[$todayKey])) {
-            $showtimesByDay[$todayKey] = $showtimesByDay[$todayKey]->filter(function($showtime) use ($now) {
-                return $showtime->start_time->greaterThanOrEqualTo($now->copy()->addMinutes(10));
-            })->values();
-        }
-
         // Tính available seats
-        foreach ($allShowtimes as $showtime) {
+        foreach ($validShowtimes as $showtime) {
             $room = $showtime->room;
             if ($room) {
                 $totalSeats = $room->seats()->where('status', 'active')->count();
                 $bookedSeats = \App\Models\Booking::where('showtime_id', $showtime->id)
-                    ->whereIn('status', ['pending', 'confirmed', 'paid'])
-                    ->with('seats')
+                    ->where('status', 'paid')
+                    ->withCount('seats')
                     ->get()
-                    ->flatMap(fn($booking) => $booking->seats->pluck('id'))
-                    ->unique()
-                    ->count();
-                $showtime->available_seats = $totalSeats - $bookedSeats;
+                    ->sum('seats_count');
+                $showtime->available_seats = max(0, $totalSeats - $bookedSeats);
             } else {
                 $showtime->available_seats = 0;
             }
+        }
+
+        // Lọc thêm để chỉ giữ lại những suất chiếu có ghế trống
+        $showtimesByDay = $showtimesByDay->map(function($showtimes) {
+            return $showtimes->filter(function($showtime) {
+                return $showtime->available_seats > 0;
+            })->values();
+        })->filter(function($showtimes) {
+            return $showtimes->count() > 0;
+        });
+
+        // Set default selected date nếu chưa có
+        if (empty($this->selectedDate) && !$showtimesByDay->isEmpty()) {
+            $this->selectedDate = $showtimesByDay->keys()->first();
         }
 
         // Comments

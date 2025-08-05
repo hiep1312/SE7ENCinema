@@ -24,7 +24,6 @@ class BookingPayment extends Component
     {
         $this->realtimeUpdateStatus();
 
-
         return view('livewire.client.bookings.booking-payment');
     }
 }

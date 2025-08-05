@@ -10,6 +10,7 @@ use App\Livewire\Admin\Banners\BannerIndex;
 use App\Livewire\Admin\Bookings\BookingDetail;
 use App\Livewire\Admin\Bookings\BookingIndex;
 use App\Livewire\Admin\FoodAttributes\FoodAttributeIndex;
+use App\Livewire\Client\MovieBooking\MovieBooking;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\Rooms\RoomCreate;
 use App\Livewire\Admin\Rooms\RoomDetail;
@@ -217,6 +218,13 @@ Route::name('client.')->group(function () {
     Route::prefix('/showtimes')->name('showtimes.')->group(function () {
         Route::get('/', ShowtimeIndexClient::class)->name('index');
     });
+
+    /* Chi tiết lịch chiếu từng phim */
+    Route::prefix('/movieBooking')->name('movieBooking.')->group(function () {
+        Route::get('{movie_id}/', MovieBooking::class)->name('movie');
+    });
+
+
     Route::view('/privacy-policy', 'livewire.client.template.abouts.privacy_policy')->name('privacy_policy');
     Route::view('/terms-of-service', 'livewire.client.template.abouts.terms_of_service')->name('terms_of_service');
     Route::get('/movies/{movie}', ClientMovieDetail::class)->name('movie_detail');

@@ -14,7 +14,9 @@
         "selectfood.css",
         "faq.css",
         "bookingFood.css",
-        "bookingPayment.css"
+        "bookingPayment.css",
+        "movieBooking.css",
+        "movieList.css"
     ],
     "scopedCssFiles": []
 }

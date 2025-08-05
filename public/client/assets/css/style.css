@@ -2139,6 +2139,10 @@ body.active #mobile-nav {
 	text-align: center;
 }
 
+.prs_upcom_movie_img_btn_wrapper a {
+    text-decoration: none;
+}
+
 .prs_upcom_movie_img_btn_wrapper ul {
 	display: inline-block;
 	width: 100%;
