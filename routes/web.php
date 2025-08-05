@@ -62,6 +62,7 @@ use App\Livewire\Client\ConfirmBooking;
 use App\Livewire\Payment\VnpayPayment;
 // use App\Livewire\Booking\BookingFood;
 use App\Livewire\Client\Bookings\BookingFood;
+use App\Livewire\Client\Bookings\BookingPayment;
 
 Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->group(function () {
     /* Banners */
@@ -228,13 +229,10 @@ Route::name('client.')->group(function () {
     Route::get('/booking-food', BookingFood::class);
     Route::view('/faq', 'livewire.client.template.abouts.faq')->name('faq');
 
-    //thanh-toan/{booking_id} | thanh-toan/abc mount($booking_id)
-    //index.php?act=thanh-toan&booking=abc
-
-
     /* Bookings */
     Route::prefix('/booking')->name('booking.')->group(function () {
         Route::get('/food', BookingFood::class)->name('food');
+        Route::get('/payment', BookingPayment::class)->name('payment');
     });
 });
 
