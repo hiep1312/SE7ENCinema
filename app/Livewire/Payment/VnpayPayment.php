@@ -4,7 +4,9 @@ namespace App\Livewire\Payment;
 
 use App\Models\Booking;
 use App\Models\BookingSeat;
+use App\Models\Ticket;
 use Livewire\Component;
+use Illuminate\Support\Str;
 
 class VnpayPayment extends Component
 {
@@ -51,6 +53,18 @@ class VnpayPayment extends Component
 
     public function redirectToVnpay()
     {
+        $ticketsAdd = BookingSeat::where('booking_id', $this->booking_id)->get('id')->map(function ($bookingSeat) {
+            return [
+                'booking_seat_id' => $bookingSeat->id,
+                'note' => null,
+                'qr_code' => Str::uuid(),
+                'taken' => false,
+                'status' => 'active',
+            ];
+        });
+
+        Ticket::insert($ticketsAdd->toArray());
+
         $deadlineKey = 'payment_deadline_' . $this->booking_id;
         $extendedKey = 'payment_extended_' . $this->booking_id;
 

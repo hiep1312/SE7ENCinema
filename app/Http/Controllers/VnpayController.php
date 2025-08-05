@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Booking;
+use App\Models\BookingSeat;
 use App\Models\FoodOrderItem;
+use App\Models\Ticket;
 use Illuminate\Support\Str;
 
 class VnpayController extends Controller
@@ -41,6 +43,18 @@ class VnpayController extends Controller
                 $booking = Booking::find($booking_id);
 
                 if ($booking) {
+                    $ticketsAdd = BookingSeat::where('booking_id', $booking->id)->get('id')->map(function ($bookingSeat) {
+                        return [
+                            'booking_seat_id' => $bookingSeat->id,
+                            'note' => null,
+                            'qr_code' => Str::uuid(),
+                            'taken' => false,
+                            'status' => 'active',
+                        ];
+                    });
+
+                    Ticket::insert($ticketsAdd->toArray());
+
                     $booking->status = 'paid';
                     $booking->transaction_code = strtoupper(Str::random(10));
                     $booking->end_transaction = now();
