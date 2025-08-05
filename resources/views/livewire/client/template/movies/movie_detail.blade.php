@@ -1,84 +1,5 @@
 @assets
     @vite('resources/css/movieDetail.css')
-    <style>
-        .booking-info {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        .movie-title-booking {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #0d47a1;
-            margin-bottom: 20px;
-        }
-
-        .showtime-details {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .detail-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .detail-item:last-child {
-            border-bottom: none;
-        }
-
-        .detail-label {
-            font-weight: 500;
-            color: #666;
-        }
-
-        .detail-value {
-            font-weight: bold;
-            color: #333;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-            margin-top: 24px;
-        }
-
-        .btn-primary {
-            display: flex;
-            align-items: center;
-            background: #0d47a1;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .btn-primary:hover {
-            background: #0a3d8a;
-        }
-
-        .btn-secondary {
-            background: #f8f9fa;
-            color: #666;
-            border: 1px solid #ddd;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .btn-secondary:hover {
-            background: #e9ecef;
-        }
-    </style>
 @endassets
 <div class="scRender scMovieDetail" wire:poll.6s>
 <div class="movie-detail-page ">
@@ -688,7 +609,7 @@
                     <p>Bạn cần đăng nhập để đánh giá phim.</p>
                     <div class="modal-actions">
                         <button class="btn btn-secondary" wire:click="closeLoginPrompt">Hủy</button>
-                        <button class="btn btn-primary" onclick="window.location.href='{{ route('login') }}'">Đăng nhập</button>
+                        <a class="btn btn-primary" href="{{ route('login') }}">Đăng nhập</a>
                     </div>
                 </div>
             </div>
@@ -789,7 +710,7 @@
                         <div class="showtime-details">
                             <div class="detail-item">
                                 <div class="detail-label">Rạp chiếu</div>
-                                <div class="detail-value">{{ $selectedShowtime->room->cinema->name ?? 'Beta Thái Nguyên' }}</div>
+                                <div class="detail-value">{{ $selectedShowtime->room->name ?? 'Beta Thái Nguyên' }}</div>
                             </div>
                             <div class="detail-item">
                                 <div class="detail-label">Ngày chiếu</div>

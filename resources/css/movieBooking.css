@@ -1,0 +1,1160 @@
+.movie-booking-header {
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    padding: 20px 0;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.prs_title_main_sec_wrapper {
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    position: relative;
+}
+
+.prs_title_main_sec_wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1;
+}
+
+.prs_title_heading_wrapper {
+    position: relative;
+    z-index: 2;
+}
+
+.prs_title_heading_wrapper h2 {
+    color: white !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.prs_title_heading_wrapper ul li {
+    color: white !important;
+    list-style: none;
+    padding: 0px 20px;
+}
+
+.prs_title_heading_wrapper ul li a {
+    color: #ffd700 !important;
+}
+
+/* Enhanced movie booking header styling */
+.st_video_slider_inner_wrapper {
+    position: relative;
+    z-index: 2;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 0;
+}
+
+.st_video_slider_overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.6) 50%, rgba(0, 0, 0, 0.9) 100%);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Center Content Layout */
+.movie-booking-center-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 10;
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* Play Button Center */
+.play-button-center {
+    width: 100px;
+    height: 100px;
+    background: rgba(61, 58, 58, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    border: 3px solid rgba(244, 217, 217, 0.2);
+}
+
+.play-button-center:hover {
+    transform: scale(1.1);
+    background: rgba(239, 116, 116, 0.9);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+}
+
+.play-icon-center {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    filter: brightness(1.2);
+}
+
+/* Movie Info Center */
+.movie-info-center {
+    color: white;
+    text-align: center;
+}
+
+.movie-title-center {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+    letter-spacing: 1px;
+}
+
+.movie-language-center {
+    font-size: 1.2rem;
+    color: #ccc;
+    margin-bottom: 15px;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+.movie-genres-center {
+    font-size: 1.4rem;
+    color: #ffd700;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+.movie-formats-center {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.movie-formats-center span {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* No Showtime Message Center */
+.no-showtime-message-center {
+    margin-top: 30px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.no-showtime-title {
+    color: #ffd700;
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.no-showtime-desc {
+    color: #ccc;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+}
+
+.no-showtime-link {
+    display: inline-block;
+    padding: 12px 24px;
+    background: #e50914;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+        .no-showtime-link:hover {
+            background: #c4080f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(229, 9, 20, 0.4);
+        }
+
+        /* Date Tabs Styling */
+        .st_calender_tabs .nav-tabs {
+            border: none;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .st_calender_tabs .nav-tabs li {
+            margin: 0;
+        }
+
+        .st_calender_tabs .nav-tabs li a {
+            border: none;
+            background: #333;
+            color: #fff;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            min-width: 80px;
+        }
+
+        .st_calender_tabs .nav-tabs li a:hover {
+            background: #444;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .st_calender_tabs .nav-tabs li.active a {
+            background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(229, 57, 53, 0.4);
+        }
+
+        .st_calender_tabs .nav-tabs li a span {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .st_calender_tabs .nav-tabs li a br + span {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        /* Import showtimeIndex badge styles */
+        .cinema-schedule__badge-age {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 46px;
+            max-width: 70px;
+            height: 32px;
+            padding: 0;
+            font-size: 0.95rem;
+            font-weight: 900;
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            border: none;
+            letter-spacing: 0.3px;
+            text-align: center;
+            vertical-align: middle;
+            color: #fff;
+            background: #bdbdbd;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            line-height: 1;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+        }
+
+        .cinema-schedule__badge-age:hover {
+            transform: translateY(-1px) scale(1.03);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .cinema-schedule__badge-age--P {
+            background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+            box-shadow: 0 2px 6px rgba(25, 118, 210, 0.35);
+        }
+
+        .cinema-schedule__badge-age--K {
+            background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
+            box-shadow: 0 2px 6px rgba(100, 181, 246, 0.35);
+        }
+
+        .cinema-schedule__badge-age--T13 {
+            background: linear-gradient(135deg, #e22ca6 0%, #e22ca6 100%);
+            box-shadow: 0 2px 6px rgba(255, 179, 0, 0.35);
+        }
+
+        .cinema-schedule__badge-age--T16 {
+            background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
+            box-shadow: 0 2px 6px rgba(255, 193, 7, 0.35);
+            color: #fff;
+        }
+
+        .cinema-schedule__badge-age--T18 {
+            background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+            box-shadow: 0 2px 6px rgba(233, 30, 99, 0.35);
+            color: #fff;
+        }
+
+        .cinema-schedule__format-badge {
+            background: #e53935;
+            color: #fff;
+            border-radius: 0.5rem;
+            padding: 0.15rem 0.7rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 1px 4px rgba(229, 57, 53, 0.10);
+        }
+
+        .movie-poster-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-right: 30px;
+            z-index: 3;
+        }
+
+        .movie-poster {
+            width: 280px;
+            height: 420px;
+            object-fit: cover;
+            border-radius: 16px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.6);
+            border: 3px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .age-restriction {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #ff4444;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .age-restriction-T18 {
+            background: #ff8800;
+        }
+
+        .age-restriction-T16 {
+            background: #ffaa00;
+        }
+
+        .age-restriction-T13 {
+            background: #00aa00;
+        }
+
+        .format-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #0d47a1;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: rgba(0,0,0,0.6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            opacity: 0;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .movie-poster-wrapper:hover .play-button {
+            opacity: 1;
+            background: rgba(0,0,0,0.8);
+            border-color: rgba(255,255,255,0.6);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .play-icon {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            filter: brightness(1.2);
+        }
+
+        .movie-info-section {
+            display: inline-block;
+            vertical-align: top;
+            max-width: 400px;
+            color: white;
+        }
+
+        .movie-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .movie-language {
+            color: #ccc;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .movie-genres {
+            color: #ffd700;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .movie-formats span {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-right: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .video-container {
+            position: relative;
+            z-index: 2;
+            max-width: 90vw;
+            max-height: 90vh;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 1rem;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .video-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .video-icon {
+            width: 50px;
+            height: 50px;
+            background: #ff0000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-icon i {
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .video-title {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .video-wrapper {
+            position: relative;
+        }
+
+        .responsive-iframe {
+            border-radius: 1rem;
+            overflow: hidden;
+            background: #222;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            position: relative;
+        }
+
+        .responsive-iframe iframe,
+        .responsive-iframe video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .trailer-bg-blur {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: center center / cover no-repeat;
+            filter: blur(16px) brightness(0.5);
+            z-index: 1;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .st_video_slider_inner_wrapper {
+                min-height: 500px;
+                padding: 30px 0;
+            }
+
+            .movie-booking-center-content {
+                padding: 20px 15px;
+            }
+
+            .play-button-center {
+                width: 80px;
+                height: 80px;
+                margin-bottom: 20px;
+            }
+
+            .play-icon-center {
+                width: 40px;
+                height: 40px;
+            }
+
+            .movie-title-center {
+                font-size: 2rem;
+            }
+
+            .movie-language-center {
+                font-size: 1rem;
+            }
+
+            .movie-genres-center {
+                font-size: 1.1rem;
+            }
+
+            .movie-formats-center {
+                gap: 10px;
+            }
+
+            .movie-formats-center span {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+
+            .cinema-schedule__badge-age {
+                min-width: 40px;
+                max-width: 60px;
+                height: 28px;
+                font-size: 0.85rem;
+            }
+
+            .cinema-schedule__format-badge {
+                font-size: 0.8rem;
+                padding: 0.1rem 0.6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .st_video_slider_inner_wrapper {
+                min-height: 400px;
+                padding: 20px 0;
+            }
+
+            .movie-title-center {
+                font-size: 1.5rem;
+            }
+
+            .movie-language-center {
+                font-size: 0.9rem;
+            }
+
+            .movie-genres-center {
+                font-size: 1rem;
+            }
+
+            .play-button-center {
+                width: 60px;
+                height: 60px;
+            }
+
+            .play-icon-center {
+                width: 30px;
+                height: 30px;
+            }
+
+            .cinema-schedule__badge-age {
+                min-width: 35px;
+                max-width: 50px;
+                height: 24px;
+                font-size: 0.75rem;
+            }
+
+            .cinema-schedule__format-badge {
+                font-size: 0.75rem;
+                padding: 0.1rem 0.5rem;
+            }
+        }
+
+        /* Animation for modal */
+        .modal-overlay {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .video-container {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+}
+
+
+/* Date Tabs Styling */
+.st_slider_rating_main_wrapper {
+    background: #2c3e50;
+    padding: 20px 0;
+    margin-bottom: 30px;
+}
+
+.date-tabs-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.date-tab-item {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 90px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.date-tab-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.date-tab-item:hover {
+    background: #f8f9fa;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    border-color: #3498db;
+}
+
+.date-tab-item:hover::before {
+    left: 100%;
+}
+
+.date-tab-item.active {
+    background: #3498db;
+    box-shadow: 0 6px 18px rgba(52, 152, 219, 0.3);
+    border-color: #2980b9;
+}
+
+.date-tab-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+    z-index: 1;
+}
+
+.day-name {
+    color: #2c3e50;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.day-number {
+    color: #2c3e50;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.date-tab-item.active .day-name,
+.date-tab-item.active .day-number {
+    color: #ffffff;
+}
+
+/* Cinema Room Cards */
+.showtime-content-wrapper {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.cinema-room-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.cinema-room-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.room-header {
+    background: #f8f9fa;
+    padding: 20px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.room-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.room-favorite {
+    width: 40px;
+    height: 40px;
+    background: #e74c3c;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.room-favorite:hover {
+    background: #c0392b;
+    transform: scale(1.1);
+}
+
+.room-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin: 0 0 8px 0;
+}
+
+.room-amenities {
+    display: flex;
+    gap: 10px;
+}
+
+.amenity-icon {
+    width: 20px;
+    height: 20px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.amenity-icon:hover {
+    opacity: 1;
+}
+
+/* Showtimes */
+.showtimes-container {
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.showtime-item {
+    display: flex;
+    align-items: center;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    min-width: 200px;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.showtime-item:hover {
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.showtime-info {
+    flex: 1;
+}
+
+.price {
+    font-size: 16px;
+    font-weight: bold;
+    color: #e74c3c;
+    margin-bottom: 4px;
+}
+
+.room-type {
+    font-size: 14px;
+    color: #6c757d;
+    margin-bottom: 4px;
+}
+
+.availability-status {
+    font-size: 12px;
+}
+
+/* Enhanced Showtime Cards - Clean & Modern Design */
+.st_calender_row_cont {
+    background: #ffffff;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.st_calender_row_cont:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.st_calender_row_cont2 {
+    background: #fafafa;
+}
+
+.st_calender_asc {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.st_calen_asc_heart {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #3498db;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(52, 152, 219, 0.2);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    padding: 0px 20px;
+}
+
+.st_calen_asc_heart:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.st_calen_asc_heart a {
+    color: #fff;
+    font-size: 1rem;
+    text-decoration: none;
+}
+
+.st_calen_asc_heart_cont {
+    flex: 1;
+}
+
+.st_calen_asc_heart_cont .title h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+}
+
+.st_calen_asc_heart_cont ul {
+    display: flex;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+}
+
+.st_calen_asc_heart_cont ul li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.st_calen_asc_heart_cont ul li img {
+    width: 20px;
+    height: 20px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.st_calen_asc_heart_cont ul li img:hover {
+    opacity: 1;
+}
+
+.st_calen_asc_tecket_time_select {
+    width: 100%;
+}
+/* Status colors - Cleaner */
+.status-critical {
+    color: #e74c3c;
+    font-weight: 600;
+}
+
+.status-warning {
+    color: #f39c12;
+    font-weight: 600;
+}
+
+.status-available {
+    color: #27ae60;
+    font-weight: 600;
+}
+
+/* No Showtimes Section */
+.no-showtimes-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 20px;
+    padding: 60px 40px;
+    text-align: center;
+    margin: 40px 0;
+    border: 2px dashed #dee2e6;
+    position: relative;
+    overflow: hidden;
+}
+
+.no-showtimes-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(102, 126, 234, 0.05) 50%, transparent 70%);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.no-showtimes-content {
+    position: relative;
+    z-index: 1;
+}
+
+.no-showtimes-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.no-showtimes-icon i {
+    font-size: 2rem;
+    color: #fff;
+}
+
+.no-showtimes-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 16px;
+}
+
+.no-showtimes-desc {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 24px;
+    line-height: 1.6;
+}
+
+.no-showtimes-desc strong {
+    color: #667eea;
+    font-weight: 700;
+}
+
+.no-showtimes-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.no-showtimes-actions p {
+    color: #888;
+    font-size: 1rem;
+    margin: 0;
+}
+
+.btn-back-home {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-back-home:hover {
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    color: #fff;
+    text-decoration: none;
+}
+
+.btn-back-home i {
+    font-size: 1.1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .date-tabs-container {
+        gap: 10px;
+    }
+
+    .date-tab-item {
+        padding: 12px 16px;
+        min-width: 70px;
+    }
+
+    .showtimes-container {
+        flex-direction: column;
+    }
+
+    .showtime-item {
+        min-width: auto;
+    }
+
+    .room-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .date-tab-item {
+        padding: 10px 12px;
+        min-width: 60px;
+    }
+
+    .day-name {
+        font-size: 12px;
+    }
+
+    .day-number {
+        font-size: 16px;
+    }
+
+    .no-showtimes-section {
+        padding: 30px 16px;
+        margin: 20px 0;
+    }
+
+    .no-showtimes-icon {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 16px;
+    }
+
+    .no-showtimes-icon i {
+        font-size: 1.3rem;
+    }
+
+    .no-showtimes-title {
+        font-size: 1.3rem;
+    }
+
+    .no-showtimes-desc {
+        font-size: 0.95rem;
+    }
+
+    .btn-back-home {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}
