@@ -20,7 +20,8 @@ export default defineConfig({
                 "resources/css/promotion.css",
                 'resources/css/showtimeIndex.css',
                 'resources/css/selectfood.css',
-                'resources/css/faq.css'
+                'resources/css/faq.css',
+                'resources/css/movieBooking.css'
             ],
             refresh: true,
         }),

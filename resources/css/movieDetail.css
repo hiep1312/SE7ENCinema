@@ -14,7 +14,11 @@
 }
 
 .movie-header-block {
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 100%);
+    background: linear-gradient(
+        135deg,
+        rgba(0, 0, 0, 0.9) 0%,
+        rgba(0, 0, 0, 0.7) 100%
+    );
     overflow: hidden;
     position: relative;
 }
@@ -214,7 +218,8 @@
     justify-content: center !important;
     line-height: 1 !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        sans-serif !important;
 }
 
 /* Hover Effects */
@@ -320,7 +325,12 @@
     left: -100% !important;
     width: 100% !important;
     height: 100% !important;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent) !important;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.25),
+        transparent
+    ) !important;
     transition: left 0.5s !important;
     border-radius: 4px !important;
 }
@@ -564,7 +574,7 @@
     max-width: 1200px;
     margin: 32px auto 0 auto;
     border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(25, 118, 210, 0.10);
+    box-shadow: 0 8px 32px rgba(25, 118, 210, 0.1);
     background: #111;
     overflow: hidden;
 }
@@ -594,7 +604,6 @@
     background: #fff;
     padding: 0 32px 0 32px;
     min-height: 500px;
-
 }
 
 .comments-header {
@@ -624,7 +633,6 @@
 }
 
 .comment-item {
-
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -766,7 +774,8 @@
 /* Emoji support */
 .comment-content,
 .reply-item .comment-content {
-    font-family: inherit, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-family: inherit, "Apple Color Emoji", "Segoe UI Emoji",
+        "Segoe UI Symbol";
 }
 
 .comments-list::-webkit-scrollbar {
@@ -781,7 +790,6 @@
     padding: 24px;
     /* transition: all 0.3s ease; */
 }
-
 
 .comment-avatar {
     width: 42px;
@@ -824,7 +832,6 @@
     transition: all 0.3s ease;
 }
 
-
 .reply-item .comment-avatar {
     width: 36px;
     height: 36px;
@@ -865,7 +872,12 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
     transition: left 0.5s ease;
 }
 
@@ -1598,7 +1610,7 @@
     border-radius: 50%;
     width: 36px;
     height: 36px;
-    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.10);
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.1);
     border: none;
     transition: background 0.2s, color 0.2s;
 }
@@ -1755,7 +1767,8 @@ textarea {
     font-size: 1.02rem;
     margin: 2px 0 0 44px;
     word-break: break-word;
-    font-family: inherit, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-family: inherit, "Apple Color Emoji", "Segoe UI Emoji",
+        "Segoe UI Symbol";
 }
 
 .comment-footer {
@@ -2019,13 +2032,17 @@ textarea {
 }
 
 .date-tab::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0.05)
+    );
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -2169,13 +2186,18 @@ textarea {
 }
 
 .buy-ticket-btn::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
     transition: left 0.5s ease;
 }
 
@@ -2312,32 +2334,56 @@ textarea {
 }
 
 .rating-header .btn-link.text-primary {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+    background: linear-gradient(
+        135deg,
+        rgba(102, 126, 234, 0.1),
+        rgba(118, 75, 162, 0.1)
+    );
     border-color: rgba(102, 126, 234, 0.2);
 }
 
 .rating-header .btn-link.text-primary:hover {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+    background: linear-gradient(
+        135deg,
+        rgba(102, 126, 234, 0.15),
+        rgba(118, 75, 162, 0.15)
+    );
     border-color: rgba(102, 126, 234, 0.3);
 }
 
 .rating-header .btn-link.text-danger {
-    background: linear-gradient(135deg, rgba(220, 53, 69, 0.1), rgba(220, 53, 69, 0.05));
+    background: linear-gradient(
+        135deg,
+        rgba(220, 53, 69, 0.1),
+        rgba(220, 53, 69, 0.05)
+    );
     border-color: rgba(220, 53, 69, 0.2);
 }
 
 .rating-header .btn-link.text-danger:hover {
-    background: linear-gradient(135deg, rgba(220, 53, 69, 0.15), rgba(220, 53, 69, 0.1));
+    background: linear-gradient(
+        135deg,
+        rgba(220, 53, 69, 0.15),
+        rgba(220, 53, 69, 0.1)
+    );
     border-color: rgba(220, 53, 69, 0.3);
 }
 
 .rating-header .btn-link.text-success {
-    background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(32, 201, 151, 0.1));
+    background: linear-gradient(
+        135deg,
+        rgba(40, 167, 69, 0.1),
+        rgba(32, 201, 151, 0.1)
+    );
     border-color: rgba(40, 167, 69, 0.2);
 }
 
 .rating-header .btn-link.text-success:hover {
-    background: linear-gradient(135deg, rgba(40, 167, 69, 0.15), rgba(32, 201, 151, 0.15));
+    background: linear-gradient(
+        135deg,
+        rgba(40, 167, 69, 0.15),
+        rgba(32, 201, 151, 0.15)
+    );
     border-color: rgba(40, 167, 69, 0.3);
 }
 
@@ -2516,7 +2562,6 @@ textarea {
 }
 
 @media (max-width: 600px) {
-
     .comment-avatar,
     .reply-item .comment-avatar,
     .rating-header .comment-avatar {
@@ -2783,4 +2828,82 @@ textarea {
     .rating-review {
         font-size: 0.98rem;
     }
+}
+
+.booking-info {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.movie-title-booking {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #0d47a1;
+    margin-bottom: 20px;
+}
+
+.showtime-details {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 500;
+    color: #666;
+}
+
+.detail-value {
+    font-weight: bold;
+    color: #333;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
+
+.btn-primary {
+    display: flex;
+    align-items: center;
+    background: #0d47a1;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover {
+    background: #0a3d8a;
+}
+
+.btn-secondary {
+    background: #f8f9fa;
+    color: #666;
+    border: 1px solid #ddd;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-secondary:hover {
+    background: #e9ecef;
 }

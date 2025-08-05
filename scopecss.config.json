@@ -12,7 +12,8 @@
             "showtimeIndex.css",
             "badgeML.css",
             "selectfood.css",
-            "faq.css"
+            "faq.css",
+            "movieBooking.css"
         ],
         "scopedCssFiles": [
         ]

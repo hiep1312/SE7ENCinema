@@ -197,7 +197,7 @@
                                                             <div class="booking-button-container"
                                                                 style="text-align: center; margin-top: 20px;">
                                                                 @auth
-                                                                    <a href="{{ route('client.booking.select_showtime', $movie->id) }}"
+                                                                    <a href="{{ route('client.movieBooking.movie', $movie->id) }}"
                                                                         class="btn btn-primary"
                                                                         style="background-color: #e50914; border: none; padding: 10px 20px; font-size: 14px; color: white; text-transform: uppercase; width: 100%; border-radius: 5px; font-weight: bold; margin-top: 10px;">
                                                                         Mua Vé Ngay
@@ -321,7 +321,7 @@
                                         <div class="prs_upcom_movie_content_box">
                                             <div class="prs_upcom_movie_content_box_inner">
                                                 <h2><a style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; display: block; width: 100%;"
-                                                        href="{{ route('client.movie_booking', $movie->id) }}">{{ $movie->title }}</a>
+                                                        href="{{ route('client.movieBooking.movie', $movie->id) }}">{{ $movie->title }}</a>
                                                 </h2>
                                                 <p
                                                     style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; display: block; width: 100%;">
@@ -340,7 +340,7 @@
                                             </div>
                                             <div class="prs_upcom_movie_content_box_inner_icon">
                                                 <ul>
-                                                    <li><a href="{{ route('client.movie_booking', $movie->id) }}"><i
+                                                    <li><a href="{{ route('client.movieBooking.movie', $movie->id) }}"><i
                                                                 class="flaticon-cart-of-ecommerce"></i></a></li>
                                                 </ul>
                                             </div>
