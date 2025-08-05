@@ -8,7 +8,6 @@
 @import './promotion.css';
 @import './showtimeIndex.css';
 @import './seat.css';
-@import './movieBooking.css';
 
 /* Vite */
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
