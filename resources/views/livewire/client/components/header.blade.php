@@ -31,7 +31,7 @@
                             <li class="parent megamenu"><a href="{{ route('client.movies.index') }}">Danh Sách Phim</a></li>
                             <li class="parent"><a href="{{ route('client.showtimes.index') }}">Lịch chiếu</a></li>
                             <li class="parent"><a href="{{ route('client.promotions.index') }}">Khuyến Mãi</a></li>
-                            <li class="parent"><a href="{{ route('client.faq') }}">Chính sách</a>
+                            <li class="parent"><a href="{{ route('client.faq') }}">Chính sách bảo mật</a>
                             </li>
                         </ul>
                     </div>
@@ -46,17 +46,17 @@
                 </button>
             </div>
             @guest
-                <div class="prs_top_login_btn_wrapper">
-                    <div class="prs_animate_btn1">
-                        <ul>
-                            <li>
-                                <a href="{{ route('login') }}" class="button button--tamaya"
-                                    data-text="Đăng nhập"><span>Đăng
-                                        nhập</span></a>
-                            </li>
-                        </ul>
-                    </div>
+            <div class="prs_top_login_btn_wrapper">
+                <div class="prs_animate_btn1">
+                    <ul>
+                        <li>
+                            <a href="{{ route('login') }}" class="button button--tamaya"
+                                data-text="Đăng nhập"><span>Đăng
+                                    nhập</span></a>
+                        </li>
+                    </ul>
                 </div>
+            </div>
             @endguest
             <livewire:client.content-page />
         </div>
@@ -83,59 +83,35 @@
                     <li><a href="{{ route('client.faq') }}">CHÍNH SÁCH VÀ BẢO MẬT</a>
                     </li>
                 </ul>
-
-                <div class="achivement-blog">
-                    <ul class="flat-list">
-                        <li>
-                            <a href="#"> <i class="fa fa-facebook"></i>
-                                <h6>Facebook</h6>
-                                <span class="counter">12546</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                    <path
-                                        d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
-                                </svg>
-                                <h6>Twitter</h6>
-                                <span class="counter">12546</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#"> <i class="fa fa-pinterest"></i>
-                                <h6>Pinterest</h6>
-                                <span class="counter">12546</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
                 <div class="prs_top_login_btn_wrapper prs_slidebar_searchbar_btn_wrapper">
                     <div class="prs_animate_btn1">
-                        <ul>
-                            @auth
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="button button--tamaya" data-text="Đăng xuất">Đăng
-                                    xuất</button>
-                            </form>
-                            @else
-                            <li>
-                                <a href="/login" class="button button--tamaya" data-text="Đăng nhập"><span>Đăng
-                                        nhập</span></a>
-                            </li>
-                            <li>
-                                <a href="/register" class="button button--tamaya" data-text="Đăng ký"><span>Đăng
-                                        ký</span></a>
-                            </li>
-                            @endauth
-                            <li>
-                                {{-- Notification Bell --}}
-                                <div
-                                    style="display: inline-block; position: relative; margin-left: 18px; vertical-align: middle; background: rgb(255, 109, 109); border-radius: 50%;">
-                                    @livewire('client.notifications.notification-index')
-                                </div>
-                            </li>
+
+                        <ul class="list-unstyled">
+                            <div style="display:flex">
+                                @auth
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="button button--tamaya" data-text="Đăng xuất">Đăng
+                                        xuất</button>
+                                </form>
+                                @else
+                                <li style="margin-right: 10px">
+                                    <a href="/login" class="button button--tamaya" data-text="Đăng nhập"><span>Đăng
+                                            nhập</span></a>
+                                </li>
+                                <li>
+                                    <a href="/register" class="button button--tamaya" data-text="Đăng ký"><span>Đăng
+                                            nhập</span></a>
+                                </li>
+                                @endauth
+                                <li>
+                                    {{-- Notification Bell --}}
+                                    <div
+                                        style="display: inline-block; position: relative; margin-left: 18px; vertical-align: middle; background: rgb(255, 109, 109); border-radius: 50%;">
+                                        @livewire('client.notifications.notification-index')
+                                    </div>
+                                </li>
+                            </div>
                         </ul>
                     </div>
                 </div>
