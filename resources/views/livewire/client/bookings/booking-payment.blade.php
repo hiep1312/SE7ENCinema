@@ -1,3 +1,4 @@
+@use('App\Models\Promotion')
 @assets
     @vite('resources/css/bookingPayment.css')
 @endassets
@@ -88,26 +89,79 @@
                         <div class="row">
                             <div class="col-md-8">
                                 <input type="text" class="booking-voucher-input"
-                                    placeholder="Nhập mã voucher...">
+                                    placeholder="Nhập mã giảm giá..." wire:model.live.debounce.300ms="seachPromotion">
                             </div>
                             <div class="col-md-4">
-                                <button class="booking-voucher-btn-apply">
+                                <button class="booking-voucher-btn-apply" wire:click="applyPromotion">
                                     <i class="fas fa-check me-2"></i>Áp dụng
+                                </button></div>
+                        </div>
+                        @if($selectedPromotionId && ($selectedPromotion = Promotion::where('id', $selectedPromotionId)->first()))
+                            <div class="booking-voucher-applied-message">
+                                <div class="booking-voucher-success-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="booking-voucher-success-content">
+                                    <strong>Voucher đã được áp dụng!</strong>
+                                    <p class="mb-0 mt-1">{{ $selectedPromotion->title }}</p>
+                                </div>
+                                <button class="booking-voucher-remove-btn">
+                                    <i class="fas fa-times"></i>
                                 </button>
                             </div>
-                        </div>
-                        <div class="booking-voucher-applied-message d-none" id="appliedMessage">
-                            <div class="booking-voucher-success-icon">
-                                <i class="fas fa-check-circle"></i>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="booking-voucher-available-card">
+                    <div class="booking-voucher-available-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-star text-warning"></i>
+                            Mã giảm giá có sẵn
+                        </h5>
+                        <small class="text-muted">Chọn mã giảm giá phù hợp với đơn hàng của bạn</small>
+                    </div>
+                    <div class="booking-voucher-available-body">
+                        @forelse($promotions as $promotion)
+                            @php $isQualified = $loop->index == 3 ? false : true; @endphp
+                            <div class="booking-voucher-card {{ $isQualified ? ($selectedPromotionId === $promotion->id ? 'selected' : '') : 'disabled' }}" wire:key="{{ $promotion->id }}" onclick="this.querySelector('.booking-voucher-select-btn').click()">
+                                <div class="booking-voucher-card-content">
+                                    <div class="booking-voucher-card-left">
+                                        <div class="booking-voucher-card-header">
+                                            <span class="booking-voucher-code">{{ $promotion->code }}</span>
+                                            <span class="booking-voucher-discount-badge {{ $promotion->discount_type }}">
+                                                {!! $promotion->discount_type === 'percentage' ? '<i class="fas fa-percent me-1"></i>' : '' !!}{{ number_format($promotion->discount_value, 0, '.', '.') . ($promotion->discount_type === 'percentage' ? '%' : 'đ') }}
+                                            </span>
+                                        </div>
+                                        <h6 class="booking-voucher-title">{{ $promotion->title }}</h6>
+                                        <p class="booking-voucher-desc">{{ Str::limit($promotion->description, 80, '...') }}</p>
+                                        <div class="booking-voucher-conditions">
+                                            <span class="booking-voucher-condition">
+                                                <i class="fas fa-shopping-cart me-1"></i>Đơn tối thiểu: {{ number_format($promotion->min_purchase, 0, '.', '.') }}đ
+                                            </span>
+                                            <span class="booking-voucher-condition">
+                                                <i class="fas fa-clock me-1"></i>HSD: {{ $promotion->end_date->format('d/m/Y H:i') }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="booking-voucher-card-right">
+                                        <button class="booking-voucher-select-btn {{ $isQualified ? '' : 'disabled' }}" wire:click="$set('selectedPromotionId', {{ $selectedPromotionId === $promotion->id ? 'null' : $promotion->id }})">
+                                            @if($isQualified)
+                                                @if($selectedPromotionId === $promotion->id)
+                                                    <i class="fas fa-check me-1"></i>Đã chọn
+                                                @else
+                                                    <i class="fas fa-plus me-1"></i>Chọn
+                                                @endif
+                                            @else
+                                                <i class="fas fa-lock me-1"></i>Không đủ điều kiện
+                                            @endif
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="booking-voucher-success-content">
-                                <strong>Voucher đã được áp dụng!</strong>
-                                <p class="mb-0 mt-1" id="appliedVoucherDesc">Giảm 50% cho tất cả combo đồ ăn & thức uống</p>
-                            </div>
-                            <button class="booking-voucher-remove-btn">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
+                        @empty
+                            <div class="alert alert-info"></div>
+                        @endforelse
                     </div>
                 </div>
             </div>
