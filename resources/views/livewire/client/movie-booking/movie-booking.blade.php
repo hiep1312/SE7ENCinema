@@ -10,9 +10,11 @@
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="prs_title_heading_wrapper">
-                        <h2>{{ $movie ? $movie->title : 'Movie Booking' }}</h2>
+                       <div class="prs_title_heading_wrapper_left">
+                            <h2>{{ $movie ? $movie->title : 'Movie Booking' }}</h2>
+                       </div>
                         <ul>
-                            <li><a href="{{ route('client.index') }}">Home</a></li>
+                            <li><a href="{{ route('client.index') }}">HOME</a></li>
                             <li>{{ $movie ? $movie->title : 'Movie Booking' }}</li>
                         </ul>
                     </div>

@@ -12,10 +12,16 @@
 }
 
 .prs_title_main_sec_wrapper {
-    background-size: cover !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
+    background-size: cover ;
+    background-position: center ;
+    background-repeat: no-repeat;
     position: relative;
+}
+
+.prs_newsletter_text h3{
+    color: white;
+    font-weight: 600;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .prs_title_main_sec_wrapper::before {
@@ -32,23 +38,29 @@
 .prs_title_heading_wrapper {
     position: relative;
     z-index: 2;
+    padding-bottom: 30px;
 }
 
 .prs_title_heading_wrapper h2 {
-    color: white !important;
+    color: white;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .prs_title_heading_wrapper ul li {
-    color: white !important;
+    color: white ;
     list-style: none;
-    padding: 0px 20px;
+    padding: 0px 30px;
 }
 
 .prs_title_heading_wrapper ul li a {
-    color: #ffd700 !important;
+    color: #ffd700;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
 }
-
+.prs_title_heading_wrapper ul li a:hover {
+    color: #f4562b;
+}
 /* Enhanced movie booking header styling */
 .st_video_slider_inner_wrapper {
     position: relative;
