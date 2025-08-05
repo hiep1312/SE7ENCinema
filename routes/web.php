@@ -224,7 +224,6 @@ Route::name('client.')->group(function () {
         Route::get('{movie_id}/', MovieBooking::class)->name('movie');
     });
 
-
     Route::view('/privacy-policy', 'livewire.client.template.abouts.privacy_policy')->name('privacy_policy');
     Route::view('/terms-of-service', 'livewire.client.template.abouts.terms_of_service')->name('terms_of_service');
     Route::get('/movies/{movie}', ClientMovieDetail::class)->name('movie_detail');
