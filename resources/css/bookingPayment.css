@@ -246,7 +246,7 @@
     color: #212529;
 }
 
-.booking-voucher-discount-badge.fixed {
+.booking-voucher-discount-badge.fixed_amount {
     background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
     color: white;
 }
