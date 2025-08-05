@@ -77,7 +77,7 @@ class VnpayController extends Controller
 
                     session()->forget(['booking_id', 'cart', 'cart_food_total', 'cart_seat_total']);
 
-                    return redirect()->route('client.index')->with('success', 'Thanh toán thành công!');
+                    return redirect()->route('userBooking')->with('success', 'Thanh toán thành công!');
                 } else {
                     echo "Không tìm thấy booking!";
                 }
