@@ -27,7 +27,7 @@ class VNPaymentService {
             'vnp_IpAddr' => request()->ip(),
             'vnp_Locale' => 'vn',
             'vnp_OrderType' => 250000,
-            'vnp_ReturnUrl' => route('temp'),
+            'vnp_ReturnUrl' => route('test'),
         ];
     }
 
