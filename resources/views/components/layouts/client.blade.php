@@ -40,7 +40,7 @@
 
 <body>
     <div>
-        @include('livewire.client.components.header')
+        {{-- @include('livewire.client.components.header') --}}
         @hasSection('content')
         @yield('content')
         @else
