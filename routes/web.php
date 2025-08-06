@@ -29,6 +29,7 @@ use App\Livewire\Admin\Movies\MovieIndex;
 use App\Livewire\Admin\Notifications\NotificationCreate;
 use App\Livewire\Admin\Notifications\NotificationDetail;
 use App\Livewire\Admin\Notifications\NotificationIndex;
+use App\Livewire\Admin\NotificationAdmins\NotificationAdm;
 use App\Livewire\Admin\Promotions\PromotionCreate;
 use App\Livewire\Admin\Promotions\PromotionDetail;
 use App\Livewire\Admin\Promotions\PromotionEdit;
@@ -152,6 +153,9 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->
         Route::get('/create', NotificationCreate::class)->name('create');
         Route::get('/detail/{notification}', NotificationDetail::class)->name('detail');
     });
+
+    /* Notification Admin Component */
+    Route::get('/notification-admin', NotificationAdm::class)->name('notification-admin');
 
     /* Scanner */
     Route::get('/scanner/{type}', ScannerIndex::class)
