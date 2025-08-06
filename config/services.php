@@ -37,5 +37,10 @@ return [
 
     'github' => [
         'token' => env('GITHUB_API_TOKEN', ''),
+    ],
+
+    'vnpay' => [
+        'vnp_TmnCode' => env('VNPAY_TMN_CODE'),
+        'vnp_HashSecret' => env('VNPAY_SECRET_KEY'),
     ]
 ];

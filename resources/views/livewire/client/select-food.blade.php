@@ -3,12 +3,14 @@
 @endassets
 <div class="scRender scSelectfood container py-5 mt-5" style="width:85%; height:auto; padding-top:9rem">
     <div class="main-header text-center py-4">
-    <h1 class="main-header__title d-inline-flex align-items-center justify-content-center gap-2 fs-2 fw-bold text-primary-emphasis mt-5">
-        <i class="bi bi-camera-reels fs-3 text-warning"></i>
-        Chọn đồ ăn kèm
-    </h1>
-    <p class="main-header__subtitle mt-2 text-secondary-emphasis lh-sm">Thưởng thức những món ăn ngon nhất cùng bộ phim của bạn</p>
-</div>
+        <h1
+            class="main-header__title d-inline-flex align-items-center justify-content-center gap-2 fs-2 fw-bold text-primary-emphasis mt-5">
+            <i class="bi bi-camera-reels fs-3 text-warning"></i>
+            Chọn đồ ăn kèm
+        </h1>
+        <p class="main-header__subtitle mt-2 text-secondary-emphasis lh-sm">Thưởng thức những món ăn ngon nhất cùng bộ
+            phim của bạn</p>
+    </div>
 
     <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4 mb-5">
         @foreach ($this->foodItems() as $food)
@@ -16,12 +18,17 @@
                 $prices = $food->variants->pluck('price')->sort()->values();
                 $minPrice = $prices->first();
                 $maxPrice = $prices->last();
-            @endphp
-
-            <div class="col">
-                <div class="card food-card h-100">
+            $isOutOfStock = $food->variants->sum('quantity_available') <= 0; @endphp <div class="col">
+                <div class="card food-card h-100 position-relative">
                     <img src="{{ $food->image ? asset('storage/' . $food->image) : 'https://via.placeholder.com/300x200?text=No+Image' }}"
-                        alt="{{ $food->name }}">
+                        alt="{{ $food->name }}" class="card-img-top">
+
+                    {{-- Badge hết hàng --}}
+                    @if ($isOutOfStock)
+                        <span class="position-absolute top-0 start-0 bg-danger text-white px-2 py-1 small rounded-end">
+                            Hàng đã hết
+                        </span>
+                    @endif
 
                     <div class="card-body d-flex flex-column">
                         <div>
@@ -35,15 +42,15 @@
                                     {{ number_format($minPrice) }}₫ - {{ number_format($maxPrice) }}₫
                                 @endif
                             </p>
-
                         </div>
 
-                        <button class="btn btn-select-food mt-auto" wire:click="selectFood({{ $food->id }})">
+                        <button class="btn btn-select-food mt-auto" wire:click="selectFood({{ $food->id }})"
+                            {{ $isOutOfStock ? 'disabled' : '' }}>
                             <i class="bi bi-plus-circle me-1"></i> Chọn món
                         </button>
 
                         @if ($selectedFoodId === $food->id)
-                            <div class="attributes-section">
+                            <div class="attributes-section mt-3">
                                 @php
                                     $attributes = $food->variants
                                         ->flatMap(fn($v) => $v->attributeValues)
@@ -53,7 +60,7 @@
                                 @foreach ($attributes as $attributeName => $values)
                                     <div class="mb-3">
                                         <label class="attribute-label">{{ $attributeName }}:</label>
-                                        <div class="d-flex flex-wrap">
+                                        <div class="d-flex flex-wrap gap-2">
                                             @foreach ($values->unique('value') as $value)
                                                 <button type="button"
                                                     wire:click="selectAttribute('{{ $attributeName }}', '{{ $value->value }}')"
@@ -71,16 +78,23 @@
                                             <div><strong>SKU:</strong> {{ $selectedVariant->sku }}</div>
                                             <div><strong>Giá:</strong> {{ number_format($selectedVariant->price) }}₫
                                             </div>
-                                        </div>
-                                        <button wire:click="addToCart" class="btn btn-add-to-cart">
-                                            <i class="bi bi-cart-plus me-1"></i> Thêm vào giỏ
-                                        </button>
-                                        <div class="text-danger mt-2">
-                                            <div>
-                                                @error('variant')
-                                                    <span class="error-message">{{ $message }}</span>
-                                                @enderror
+                                            <div><strong>Tồn kho:</strong> {{ $selectedVariant->quantity_available }}
                                             </div>
+                                        </div>
+
+                                        @if ($selectedVariant->quantity_available > 0)
+                                            <button wire:click="addToCart" class="btn btn-add-to-cart">
+                                                <i class="bi bi-cart-plus me-1"></i> Thêm vào giỏ
+                                            </button>
+                                        @else
+                                            <div class="text-danger small fw-semibold">Sản phẩm đã hết hàng</div>
+                                        @endif
+
+
+                                        <div class="text-danger mt-2">
+                                            @error('variant')
+                                                <span class="error-message">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
                                 @endif
@@ -91,6 +105,7 @@
             </div>
         @endforeach
     </div>
+
 
     @if (count($cart) > 0)
         <div class="cart-section mb-5">
@@ -153,11 +168,11 @@
         </div>
     @endif
     @if (count($cart) === 0)
-    <div class="action-buttons mb-3">
-        <button wire:click="skipFood" class="btn btn-skip">
-            <i class="fa-solid fa-arrow-left mx-2"></i> Bỏ qua
-        </button>
-    </div>
+        <div class="action-buttons mb-3">
+            <button wire:click="skipFood" class="btn btn-skip">
+                <i class="fa-solid fa-arrow-left mx-2"></i> Bỏ qua
+            </button>
+        </div>
     @endif
 
 

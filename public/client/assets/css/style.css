@@ -31,6 +31,10 @@
     text-decoration: none;
 }
 
+ul {
+    list-style: none;
+}
+
 /*-- Preloader css start --*/
 #preloader {
 	background-color: #ebf2f5;

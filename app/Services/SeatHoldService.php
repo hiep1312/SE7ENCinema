@@ -11,49 +11,51 @@ use Carbon\Carbon;
 
 class SeatHoldService
 {
-    const HOLD_DURATION_MINUTES = 0.2;
+    const HOLD_DURATION_MINUTES = 10;
     const MAX_TEMP_BANS = 3;
     const MAX_PERM_BANS = 5;
-    const BAN_DURATION_HOURS = 0.01;
+    const BAN_DURATION_HOURS = 24;
 
-    public function checkUserBan($sessionId, $userIp, $userId = null)
+    public function checkUserBan($userId)
     {
-        if ($userId) {
-            $user = User::find($userId);
-            if ($user && $user->status === 'banned') {
-                return true;
-            }
+        if (!$userId) return false;
+
+        $user = User::find($userId);
+        if ($user && $user->status === 'banned') {
+            return true;
         }
 
-        $violationCount = UserViolation::countViolations($sessionId, $userIp, 'seat_timeout', self::BAN_DURATION_HOURS);
+        $violationCount = UserViolation::where('user_id', $userId)
+            ->where('violation_type', 'seat_timeout')
+            ->where('occurred_at', '>=', now()->subHours(self::BAN_DURATION_HOURS))
+            ->count();
 
         if ($violationCount >= self::MAX_PERM_BANS) {
-            if ($userId) {
-                User::where('id', $userId)->update(['status' => 'banned']);
-            }
+            User::where('id', $userId)->update(['status' => 'banned']);
             return true;
         }
 
         return $violationCount >= self::MAX_TEMP_BANS;
     }
 
-
-    public function getBanInfo($sessionId, $userIp, $userId = null)
+    public function getBanInfo($userId)
     {
-        if ($userId) {
-            $user = User::find($userId);
-            if ($user && $user->status === 'banned') {
-                return [
-                    'type' => 'user_banned',
-                    'reason' => 'Tài khoản đã bị khóa vĩnh viễn',
-                    'details' => 'Tài khoản của bạn đã bị khóa do vi phạm quá nhiều lần',
-                    'banned_until' => null,
-                    'violation_count' => null
-                ];
-            }
+        if (!$userId) return null;
+
+        $user = User::find($userId);
+        if ($user && $user->status === 'banned') {
+            return [
+                'type' => 'user_banned',
+                'reason' => 'Tài khoản đã bị khóa vĩnh viễn',
+                'details' => 'Tài khoản của bạn đã bị khóa do vi phạm quá nhiều lần',
+                'banned_until' => null,
+                'violation_count' => null
+            ];
         }
 
-        $violationCount = UserViolation::countViolations($sessionId, $userIp, 'seat_timeout');
+        $violationCount = UserViolation::where('user_id', $userId)
+            ->where('violation_type', 'seat_timeout')
+            ->count();
 
         if ($violationCount >= self::MAX_PERM_BANS) {
             return [
@@ -66,9 +68,7 @@ class SeatHoldService
         }
 
         if ($violationCount >= self::MAX_TEMP_BANS) {
-            $latestViolation = UserViolation::where(function ($q) use ($sessionId, $userIp) {
-                $q->where('session_id', $sessionId)->orWhere('user_ip', $userIp);
-            })
+            $latestViolation = UserViolation::where('user_id', $userId)
                 ->where('violation_type', 'seat_timeout')
                 ->latest('occurred_at')
                 ->first();
@@ -85,40 +85,40 @@ class SeatHoldService
         return null;
     }
 
-
-    public function holdSeats($showtimeId, $seatIds, $sessionId, $userIp, $userId = null)
+    public function holdSeats($showtimeId, $seatIds, $userId)
     {
-        if ($this->checkUserBan($sessionId, $userIp, $userId)) {
-            $banInfo = $this->getBanInfo($sessionId, $userIp, $userId);
+        if ($this->checkUserBan($userId)) {
+            $banInfo = $this->getBanInfo($userId);
             throw new \Exception($banInfo['reason'] . ': ' . $banInfo['details']);
         }
 
         DB::beginTransaction();
         try {
-            SeatHold::cleanupExpired();
+            SeatHold::where('expires_at', '<', now())->update(['status' => 'expired']);
 
             $now = now();
-
-            $existingHold = SeatHold::where('session_id', $sessionId)
+            $existingHold = SeatHold::where('user_id', $userId)
                 ->where('showtime_id', $showtimeId)
                 ->where('status', 'holding')
                 ->where('expires_at', '>', $now)
                 ->first();
 
             if ($existingHold) {
-                SeatHold::where('session_id', $sessionId)
+                SeatHold::where('user_id', $userId)
                     ->where('showtime_id', $showtimeId)
                     ->where('status', 'holding')
                     ->update(['status' => 'released']);
             } else {
-                SeatHold::releaseHoldsBySession($sessionId);
+                SeatHold::where('user_id', $userId)
+                    ->where('status', 'holding')
+                    ->update(['status' => 'released']);
             }
 
             $expiresAt = $existingHold ? $existingHold->expires_at : $now->copy()->addMinutes(self::HOLD_DURATION_MINUTES);
 
             $conflictingHolds = SeatHold::whereIn('seat_id', $seatIds)
                 ->where('showtime_id', $showtimeId)
-                ->where('session_id', '!=', $sessionId)
+                ->where('user_id', '!=', $userId)
                 ->where('status', 'holding')
                 ->where('expires_at', '>', $now)
                 ->exists();
@@ -142,8 +142,7 @@ class SeatHoldService
                 SeatHold::create([
                     'showtime_id' => $showtimeId,
                     'seat_id' => $seatId,
-                    'session_id' => $sessionId,
-                    'user_ip' => $userIp,
+                    'user_id' => $userId,
                     'held_at' => $now,
                     'expires_at' => $expiresAt,
                     'status' => 'holding'
@@ -158,45 +157,56 @@ class SeatHoldService
         }
     }
 
-    public function releaseHolds($sessionId)
+    public function releaseHolds($userId)
     {
-        return SeatHold::releaseHoldsBySession($sessionId);
+        return SeatHold::where('user_id', $userId)
+            ->where('status', 'holding')
+            ->update(['status' => 'released']);
     }
 
-    public function getHeldSeats($showtimeId, $excludeSessionId = null)
+    public function getHeldSeats($showtimeId, $excludeUserId = null)
     {
-        SeatHold::cleanupExpired();
+        SeatHold::where('expires_at', '<', now())->update(['status' => 'expired']);
 
-        return SeatHold::getActiveHolds($showtimeId, $excludeSessionId)
-            ->map(function ($hold) {
-                return [
-                    'seat_id' => $hold->seat_id,
-                    'seat_code' => $hold->seat->seat_row . $hold->seat->seat_number,
-                    'session_id' => $hold->session_id,
-                    'expires_at' => $hold->expires_at,
-                    'remaining_seconds' => $hold->remaining_time
-                ];
-            });
-    }
+        $query = SeatHold::where('showtime_id', $showtimeId)
+            ->where('status', 'holding')
+            ->where('expires_at', '>', now())
+            ->with('seat');
 
-    public function handleExpiredHolds($sessionId, $userIp, $userId = null)
-    {
-        UserViolation::addViolation(
-            $sessionId,
-            $userIp,
-            'seat_timeout',
-            'User failed to complete booking within time limit'
-        );
-
-        $violationCount = UserViolation::countViolations($sessionId, $userIp, 'seat_timeout', self::BAN_DURATION_HOURS);
-
-        if ($userId) {
-            if ($violationCount >= self::MAX_PERM_BANS) {
-                User::where('id', $userId)->update(['status' => 'banned']);
-            }
+        if ($excludeUserId) {
+            $query->where('user_id', '!=', $excludeUserId);
         }
 
-        $this->releaseHolds($sessionId);
+        return $query->get()->map(function ($hold) {
+            return [
+                'seat_id' => $hold->seat_id,
+                'seat_code' => $hold->seat->seat_row . $hold->seat->seat_number,
+                'user_id' => $hold->user_id,
+                'expires_at' => $hold->expires_at,
+                'remaining_seconds' => max(0, Carbon::parse($hold->expires_at)->diffInSeconds(now()))
+            ];
+        });
+    }
+
+    public function handleExpiredHolds($userId)
+    {
+        UserViolation::create([
+            'user_id' => $userId,
+            'violation_type' => 'seat_timeout',
+            'violation_details' => 'User failed to complete booking within time limit',
+            'occurred_at' => now()
+        ]);
+
+        $violationCount = UserViolation::where('user_id', $userId)
+            ->where('violation_type', 'seat_timeout')
+            ->where('occurred_at', '>=', now()->subHours(self::BAN_DURATION_HOURS))
+            ->count();
+
+        if ($violationCount >= self::MAX_PERM_BANS) {
+            User::where('id', $userId)->update(['status' => 'banned']);
+        }
+
+        $this->releaseHolds($userId);
 
         $banned = $violationCount >= self::MAX_PERM_BANS;
         $tempBanned = !$banned && $violationCount >= self::MAX_TEMP_BANS;
@@ -210,10 +220,10 @@ class SeatHoldService
         ];
     }
 
-    public function getUserHoldStatus($showtimeId, $sessionId)
+    public function getUserHoldStatus($showtimeId, $userId)
     {
         $holds = SeatHold::where('showtime_id', $showtimeId)
-            ->where('session_id', $sessionId)
+            ->where('user_id', $userId)
             ->where('status', 'holding')
             ->where('expires_at', '>', now())
             ->with('seat')

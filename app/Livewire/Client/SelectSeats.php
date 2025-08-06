@@ -24,8 +24,6 @@ class SelectSeats extends Component
     public $room;
     public $seats;
     public $selectedSeats = [];
-    public $sessionId;
-    public $userIp;
     public $userId = null;
     public $holdExpiresAt = null;
     public $remainingSeconds = 0;
@@ -43,31 +41,34 @@ class SelectSeats extends Component
     public function mount($showtime_id)
     {
         $this->showtime_id = $showtime_id;
-        $this->sessionId = session()->getId();
-        $this->userIp = request()->ip();
         $this->userId = Auth::id();
+
+        // Redirect if not logged in
+        if (!$this->userId) {
+            return redirect()->route('login');
+        }
 
         $this->showtime = Showtime::with('room')->findOrFail($showtime_id);
         $this->room = $this->showtime->room;
-        $this->loadSeats();
         $this->checkCurrentHoldStatus();
+        $this->loadSeats();
         $this->generateSeatsLayout();
     }
 
     public function boot(SeatHoldService $seatHoldService)
     {
         $this->seatHoldService = $seatHoldService;
-        if ($this->seatHoldService->checkUserBan($this->sessionId, $this->userIp, $this->userId)) {
+        if ($this->userId && $this->seatHoldService->checkUserBan($this->userId)) {
             $this->isBanned = true;
-            $this->banInfo = $this->seatHoldService->getBanInfo($this->sessionId, $this->userIp, $this->userId);
+            $this->banInfo = $this->seatHoldService->getBanInfo($this->userId);
         }
     }
 
     public function checkCurrentHoldStatus()
     {
-        if ($this->isBanned) return;
+        if ($this->isBanned || !$this->userId) return;
 
-        $holdStatus = $this->seatHoldService->getUserHoldStatus($this->showtime_id, $this->sessionId);
+        $holdStatus = $this->seatHoldService->getUserHoldStatus($this->showtime_id, $this->userId);
 
         if ($holdStatus) {
             if ($this->seatHoldService->isHoldExpired($holdStatus['expires_at'])) {
@@ -81,15 +82,16 @@ class SelectSeats extends Component
         } else {
             $this->clearHoldData();
         }
+
     }
 
     private function handleExpiredHold()
     {
-        $result = $this->seatHoldService->handleExpiredHolds($this->sessionId, $this->userIp, $this->userId);
+        $result = $this->seatHoldService->handleExpiredHolds($this->userId);
 
         if ($result['banned']) {
             $this->isBanned = true;
-            $this->banInfo = $this->seatHoldService->getBanInfo($this->sessionId, $this->userIp, $this->userId);
+            $this->banInfo = $this->seatHoldService->getBanInfo($this->userId);
             $this->dispatch('sc-alert.error', $this->banInfo['reason'], $this->banInfo['details']);
         } else if ($result['warning']) {
             $this->dispatch('sc-alert.warning', 'Cảnh báo vi phạm!', 'Bạn đã vi phạm ' . $result['violation_count'] . ' lần. Lần vi phạm tiếp theo sẽ bị khóa tài khoản.');
@@ -112,6 +114,11 @@ class SelectSeats extends Component
             return;
         }
 
+        if (!$this->userId) {
+            $this->dispatch('sc-alert.error', 'Chưa đăng nhập', 'Vui lòng đăng nhập để chọn ghế.');
+            return;
+        }
+
         if (is_string($seats)) {
             $seats = explode(',', $seats);
         }
@@ -120,7 +127,7 @@ class SelectSeats extends Component
         if (!empty($this->selectedSeats)) {
             $this->updateSeatHolds();
         } else {
-            $this->seatHoldService->releaseHolds($this->sessionId);
+            $this->seatHoldService->releaseHolds($this->userId);
             $this->clearHoldData();
         }
 
@@ -135,8 +142,6 @@ class SelectSeats extends Component
             $expiresAt = $this->seatHoldService->holdSeats(
                 $this->showtime_id,
                 $seatIds,
-                $this->sessionId,
-                $this->userIp,
                 $this->userId
             );
 
@@ -145,7 +150,7 @@ class SelectSeats extends Component
         } catch (\Exception $e) {
             if (str_contains($e->getMessage(), 'khóa')) {
                 $this->isBanned = true;
-                $this->banInfo = $this->seatHoldService->getBanInfo($this->sessionId, $this->userIp, $this->userId);
+                $this->banInfo = $this->seatHoldService->getBanInfo($this->userId);
                 $this->dispatch('sc-alert.error', $this->banInfo['reason'], $this->banInfo['details']);
             } else {
                 $this->dispatch('sc-alert.error', 'Lỗi chọn ghế', $e->getMessage());
@@ -157,9 +162,11 @@ class SelectSeats extends Component
 
     public function checkHoldStatus()
     {
-        if ($this->seatHoldService->checkUserBan($this->sessionId, $this->userIp, $this->userId)) {
+        if (!$this->userId) return;
+
+        if ($this->seatHoldService->checkUserBan($this->userId)) {
             $this->isBanned = true;
-            $this->banInfo = $this->seatHoldService->getBanInfo($this->sessionId, $this->userIp, $this->userId);
+            $this->banInfo = $this->seatHoldService->getBanInfo($this->userId);
             return;
         }
 
@@ -184,7 +191,7 @@ class SelectSeats extends Component
                 ->where('status', 'paid');
         })->pluck('seat_id')->toArray();
 
-        $heldSeats = $this->seatHoldService->getHeldSeats($this->showtime_id, $this->sessionId);
+        $heldSeats = $this->seatHoldService->getHeldSeats($this->showtime_id, $this->userId);
         $heldSeatIds = $heldSeats->pluck('seat_id')->toArray();
 
         foreach ($this->seats as $seat) {
@@ -240,20 +247,27 @@ class SelectSeats extends Component
 
         $seats = json_encode($seatsData);
         $selectedSeats = json_encode($this->selectedSeats);
-        $sessionId = json_encode($this->sessionId);
+        $userId = json_encode($this->userId);
         $holdExpiresAt = $this->holdExpiresAt ? json_encode(Carbon::parse($this->holdExpiresAt)->toIso8601String()) : 'null';
         $remainingSeconds = max(0, $this->remainingSeconds);
         $isBanned = $this->isBanned ? 'true' : 'false';
         $banInfo = $this->banInfo ? json_encode($this->banInfo) : 'null';
 
+        $ruleConfig = json_encode([
+            'lonely' => $this->room->check_lonely ?? true,
+            'sole' => $this->room->check_sole ?? true,
+            'diagonal' => $this->room->check_diagonal ?? true,
+        ]);
+
         $this->js(<<<JS
+            window.seatRuleConfig = {$ruleConfig};
             const wrapper = document.getElementById('user-seat-wrapper');
             try {
                 wrapper.innerHTML = '';
                 const dom = window.generateClientDOMSeats({
                     seats: {$seats},
                     selectedSeats: {$selectedSeats},
-                    sessionId: {$sessionId},
+                    userId: {$userId},
                     holdExpiresAt: {$holdExpiresAt},
                     remainingSeconds: {$remainingSeconds},
                     isBanned: {$isBanned},
@@ -271,6 +285,11 @@ class SelectSeats extends Component
     {
         if ($this->isBanned) {
             $this->dispatch('sc-alert.error', $this->banInfo['reason'], $this->banInfo['details']);
+            return;
+        }
+
+        if (!$this->userId) {
+            $this->dispatch('sc-alert.error', 'Chưa đăng nhập', 'Vui lòng đăng nhập để tiếp tục.');
             return;
         }
 
