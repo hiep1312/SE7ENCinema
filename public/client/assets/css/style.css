@@ -520,6 +520,9 @@ a.navbar-brand img {
 	padding: 42px 10px;
 	text-transform: uppercase;
 }
+.xv-menuwrapper .dl-menu>li>a:hover {
+	text-decoration: underline;
+}
 
 .xv-menuwrapper .dl-menu>li.active:after,
 .xv-menuwrapper .dl-menu>li.megamenu.active>a:after {
