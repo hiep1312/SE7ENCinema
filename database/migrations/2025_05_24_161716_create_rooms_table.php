@@ -17,6 +17,9 @@ return new class extends Migration
             $table->integer('capacity');
             $table->enum('status', ['active', 'maintenance', 'inactive'])->default('active');
             $table->date('last_maintenance_date')->nullable();
+            $table->boolean('check_lonely')->default(true);
+            $table->boolean('check_sole')->default(true);
+            $table->boolean('check_diagonal')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });

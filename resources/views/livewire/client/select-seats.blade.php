@@ -2,7 +2,9 @@
     <link rel="stylesheet" href="{{ asset('client/assets/css/style.css') }}">
 @endassets
 
-<div class="scRender" wire:poll.6s="refreshSeatStatus">
+<div class="scRender" wire:poll.5000ms="refreshSeatStatus">
+
+
     @if ($isBanned && $banInfo)
         <div class="container mt-5">
             <div class="row justify-content-center mt-5">
@@ -79,9 +81,11 @@
                     </div>
                 </div>
             </div>
+            <div id="seat-countdown" class="seat-countdown-container text-center mb-3" wire:ignore></div>
         </div>
     </div>
 
     <div id="user-seat-wrapper" wire:ignore></div>
+
     @endif
 </div>

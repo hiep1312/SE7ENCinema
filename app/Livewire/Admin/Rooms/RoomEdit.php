@@ -21,6 +21,9 @@ class RoomEdit extends Component
     public $priceStandard = 0;
     public $priceVip = 0;
     public $priceCouple = 0;
+    public $checkLonely = true;
+    public $checkSole = true;
+    public $checkDiagonal = true;
 
     protected $rules = [
         'name' => 'required|string|max:255|unique:rooms,name',
@@ -59,6 +62,9 @@ class RoomEdit extends Component
     {
         $this->room = $room;
         $this->fill($room->only('name', 'status', 'last_maintenance_date'));
+        $this->checkLonely = $room->check_lonely;
+        $this->checkSole = $room->check_sole;
+        $this->checkDiagonal = $room->check_diagonal;
 
         // Format date
         if ($this->last_maintenance_date) {
@@ -122,6 +128,9 @@ class RoomEdit extends Component
                 'capacity' => $this->rows * $this->seatsPerRow,
                 'status' => $this->status,
                 'last_maintenance_date' => $this->last_maintenance_date ?: null,
+                'check_lonely' => $this->checkLonely,
+                'check_sole' => $this->checkSole,
+                'check_diagonal' => $this->checkDiagonal,
             ]);
 
             // Update seats configuration
@@ -179,7 +188,7 @@ class RoomEdit extends Component
     public function handleGenerateSeats()
     {
         $this->validate();
-        $this->dispatch('generateSeats', $this->rows, $this->seatsPerRow, $this->vipRows, $this->coupleRows);
+        $this->dispatch('generateSeats', $this->rows, $this->seatsPerRow, $this->vipRows, $this->coupleRows , $this->checkLonely, $this->checkSole, $this->checkDiagonal);
     }
 
     #[Title('Cập nhật phòng chiếu - SE7ENCinema')]

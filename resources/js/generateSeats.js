@@ -10,7 +10,6 @@ document.addEventListener("livewire:init", () => {
     function calculateSeatDistribution(totalSeats) {
         const aislePositions = [];
         let i = 2;
-
         while (i <= totalSeats) {
             let groupSize = 4;
             let remaining = totalSeats - i + 1;
@@ -24,7 +23,6 @@ document.addEventListener("livewire:init", () => {
 
             i += groupSize;
         }
-
         return aislePositions;
     }
 
@@ -47,9 +45,7 @@ document.addEventListener("livewire:init", () => {
         const isVip = vipArr.includes(rowChar);
         const isCouple = coupleArr.includes(rowChar);
 
-        const currentSeats = rowElement.querySelectorAll(
-            'li[data-seat]:not([data-seat="aisle"]):not([data-seat="add-column"])'
-        ).length;
+        const currentSeats = rowElement.querySelectorAll('li[data-seat]:not([data-seat="aisle"]):not([data-seat="add-column"])').length;
         const newSeatCount = currentSeats + 1;
 
         const caculateColumnAsile = calculateSeatDistribution(newSeatCount);
@@ -88,25 +84,17 @@ document.addEventListener("livewire:init", () => {
         rowElement.appendChild(seatCeil);
 
         const newAddColumnBtn = document.createElement("li");
-        newAddColumnBtn.innerHTML = `
-            <button class="add-column-btn" title="Thêm ghế">+</button>
-        `;
+        newAddColumnBtn.innerHTML = `<button class="add-column-btn" title="Thêm ghế">+</button>`;
         newAddColumnBtn.dataset.seat = "add-column";
         rowElement.appendChild(newAddColumnBtn);
 
-        const maxSeatsInAnyRow = Math.max(
-            ...Array.from(document.querySelectorAll(".seat-row-layout")).map(
-                (row) =>
-                    row.querySelectorAll(
-                        'li[data-seat]:not([data-seat="aisle"]):not([data-seat="add-column"])'
-                    ).length
+        const maxSeatsInAnyRow = Math.max(...Array.from(document.querySelectorAll(".seat-row-layout")).map(
+            (row) =>row.querySelectorAll('li[data-seat]:not([data-seat="aisle"]):not([data-seat="add-column"])').length
             )
         );
 
         window.currentSeatsPerRow = maxSeatsInAnyRow;
-
         updateControlPanelValues();
-
         attachEventHandlers();
     }
 
@@ -139,15 +127,15 @@ document.addEventListener("livewire:init", () => {
     function handleSeatClick(event) {
         const seatItem = event.target.closest("li");
         const rowElement = event.target.closest("ul");
-
         if (!seatItem || !rowElement) return;
-
-        const isRowClick =
-            event.target === rowElement || seatItem.dataset.seat === "aisle";
+        const isRowClick = event.target === rowElement || seatItem.dataset.seat === "aisle";
 
         if (isRowClick) {
+
             handleRowDelete(rowElement);
-        } else {
+
+        }
+        else {
             handleSeatDelete(seatItem);
         }
     }
@@ -155,9 +143,7 @@ document.addEventListener("livewire:init", () => {
     function handleSeatDelete(seatItem) {
         deleteClickCount++;
 
-        if (deleteTimeout) {
-            clearTimeout(deleteTimeout);
-        }
+        if (deleteTimeout) clearTimeout(deleteTimeout);
 
         if (deleteClickCount === 1) {
             deleteTimeout = setTimeout(() => {
@@ -166,11 +152,8 @@ document.addEventListener("livewire:init", () => {
         } else if (deleteClickCount === 2) {
             if (selectedForDelete) {
                 selectedForDelete.classList.remove("selected-for-delete");
-                const existingConfirm =
-                    selectedForDelete.querySelector(".delete-confirm");
-                if (existingConfirm) {
-                    existingConfirm.remove();
-                }
+                const existingConfirm = selectedForDelete.querySelector(".delete-confirm");
+                if (existingConfirm) existingConfirm.remove();
             }
 
             selectedForDelete = seatItem;
@@ -277,20 +260,15 @@ document.addEventListener("livewire:init", () => {
     }
 
     function deleteRow(rowElement) {
-        const rowChar = rowElement.dataset.row;
-
+        const backup = rowElement.cloneNode(true);
         rowElement.remove();
-
         const nextElement = rowElement.nextElementSibling;
-        if (nextElement && nextElement.classList.contains("row-aisle")) {
-            nextElement.remove();
-        }
+        if (nextElement && nextElement.classList.contains("row-aisle")) nextElement.remove();
 
         window.currentRows--;
-
         updateControlPanelValues();
-
         selectedForDelete = null;
+        return backup;
     }
 
     function attachEventHandlers() {
@@ -391,12 +369,24 @@ document.addEventListener("livewire:init", () => {
         return seatCeil.cloneNode(true);
     }
 
-    window.generateDOMSeats = function ({ rows, seatsPerRow, vipRows, coupleRows }, pathScreen) {
+    function addDomBtnColunm(isAdmin = true){
+        const addColumnBtn = document.createElement("li");
+        addColumnBtn.innerHTML = `<button class="add-column-btn" title="Thêm cột">+</button>`;
+        addColumnBtn.dataset.seat = "add-column";
+        isAdmin && addColumnBtn.setAttribute('sc-id', 'add-column-btn');
+        return addColumnBtn.cloneNode(true);
+    }
+
+    window.generateDOMSeats = function ({ rows, seatsPerRow, vipRows, coupleRows, checkLonely, checkSole, checkDiagonal }, pathScreen) {
         const frameSeats = generateDOMFrameSeats(pathScreen);
         const seatsLayout = frameSeats.querySelector("#seats-layout");
-
         const caculateColumnAsile = calculateSeatDistribution(seatsPerRow);
         const caculateRowAsile = calculateSeatDistribution(rows);
+        window.seatRuleConfig = {
+            lonely: checkLonely,
+            sole: checkSole,
+            diagonal: checkDiagonal
+        };
 
         for (let i = 1; i <= rows; i++) {
             const rowChar = window.getRowSeat(i);
@@ -408,22 +398,11 @@ document.addEventListener("livewire:init", () => {
 
             for (let j = 1; j <= seatsPerRow; j++) {
                 frameRow.appendChild(generateDOMSeatCeil((isCouple ? "double" : (isVip ? "vip" : "standard")), rowChar, j));
-
                 if (caculateColumnAsile.includes(j + 1) && j < seatsPerRow) frameRow.appendChild(generateDOMSeatCeil("aisle"));
-
-                /* Support */
-                if (isCouple && j < seatsPerRow) {
-                    j++;
-                }
+                if (isCouple && j < seatsPerRow) j++;
             }
 
-            const addColumnBtn = document.createElement("li");
-            addColumnBtn.innerHTML = `
-                <button class="add-column-btn" title="Thêm cột">+</button>
-            `;
-            addColumnBtn.dataset.seat = "add-column";
-            addColumnBtn.setAttribute('sc-id', 'add-column-btn');
-            frameRow.appendChild(addColumnBtn);
+            frameRow.appendChild(addDomBtnColunm(true));
 
             seatsLayout.appendChild(frameRow);
 
@@ -530,7 +509,6 @@ document.addEventListener("livewire:init", () => {
             const now = new Date();
 
             if (expireDate <= now) {
-                this.showTimeoutAlert();
                 if (typeof Livewire !== 'undefined') {
                     Livewire.dispatch('checkHoldStatus');
                 }
@@ -540,7 +518,6 @@ document.addEventListener("livewire:init", () => {
             this.countdownTimer = new SeatCountdownTimer(
                 expireDate,
                 () => {
-                    this.showTimeoutAlert();
                     if (typeof Livewire !== 'undefined') {
                         Livewire.dispatch('checkHoldStatus');
                     }
@@ -548,9 +525,9 @@ document.addEventListener("livewire:init", () => {
                 (remainingSeconds) => {
                     this.updateCountdownDisplay(remainingSeconds);
                     if (remainingSeconds === 120) {
-                        this.showWarningAlert('Còn 2 phút để hoàn tất việc chọn ghế!');
+                        alert('Còn 2 phút để hoàn tất việc chọn ghế!');
                     } else if (remainingSeconds === 30) {
-                        this.showWarningAlert('Còn 30 giây! Vui lòng nhanh chóng hoàn tất!');
+                        alert('Còn 30 giây! Vui lòng nhanh chóng hoàn tất!');
                     }
                 }
             );
@@ -558,51 +535,33 @@ document.addEventListener("livewire:init", () => {
 
         updateCountdownDisplay(remainingSeconds) {
             const countdownElement = document.getElementById('seat-countdown');
-            if (countdownElement) {
-                const timeString = this.countdownTimer.formatTime(remainingSeconds);
-                let alertClass = 'alert-dark';
-                let icon = 'fas fa-clock';
-
-                if (remainingSeconds <= 30) {
-                    icon = 'fas fa-exclamation-triangle';
-                } else if (remainingSeconds <= 120) {
-                    icon = 'fas fa-exclamation-circle';
-                }
-
-                countdownElement.innerHTML = `
-                <div class="d-flex align-items-center justify-content-center fs-3 text-light  ${alertClass} p-2 rounded">
-                        <i class="${icon} me-2"></i>
-                        <strong>Thời gian giữ ghế: ${timeString}</strong>
-                </div>
-            `;
+            if (!countdownElement) {
+                console.warn('#seat-countdown not found');
+                return;
             }
-        }
 
-        showTimeoutAlert() {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Hết thời gian giữ ghế!',
-                    text: 'Thời gian giữ ghế đã hết. Vui lòng chọn lại ghế.',
-                    confirmButtonText: 'Đồng ý'
-                });
-            } else {
-                alert('Hết thời gian giữ ghế! Vui lòng chọn lại ghế.');
+            if (!this.countdownTimer || typeof this.countdownTimer.formatTime !== 'function') {
+                console.warn('countdownTimer or formatTime() not available');
+                return;
             }
-        }
 
-        showWarningAlert(message) {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Cảnh báo!',
-                    text: message,
-                    timer: 3000,
-                    showConfirmButton: false,
-                    toast: true,
-                    position: 'top-end'
-                });
+            const timeString = this.countdownTimer.formatTime(remainingSeconds);
+
+            let alertClass = 'alert-dark';
+            let icon = 'fas fa-clock';
+
+            if (remainingSeconds <= 30) {
+                icon = 'fas fa-exclamation-triangle';
+            } else if (remainingSeconds <= 120) {
+                icon = 'fas fa-exclamation-circle';
             }
+
+            countdownElement.innerHTML = `
+        <div class="d-flex align-items-center justify-content-center fs-3 text-light ${alertClass} p-2 rounded">
+            <i class="${icon} me-2"></i>
+            <strong>Thời gian giữ ghế: ${timeString}</strong>
+        </div>
+    `;
         }
 
         stopCountdown() {
@@ -657,6 +616,7 @@ document.addEventListener("livewire:init", () => {
                 rowInfo[row].maxNumber = seat.seat_number;
             }
         }
+        console.log('Countdown expires at:', holdExpiresAt);
 
         const sortedRows = Array.from(rowSet).sort();
         const rows = sortedRows.length;
@@ -667,28 +627,7 @@ document.addEventListener("livewire:init", () => {
         const vipArr = vipRows.split(',').map(r => r.trim().toUpperCase());
         const coupleArr = coupleRows.split(',').map(r => r.trim().toUpperCase());
 
-        const frameSeats = document.createElement("div");
-        frameSeats.setAttribute("wire:ignore", "");
-        frameSeats.classList = "st_seatlayout_main_wrapper w-100 mt-2";
-        frameSeats.innerHTML = `
-        <div class="container">
-            <div class="st_seat_lay_heading float_left">
-                <h3>SE7ENCINEMA SCREEN</h3>
-            </div>
-
-            <!-- Countdown Timer Display -->
-            <div id="seat-countdown" class="seat-countdown-container text-center mb-3"></div>
-
-            <div class="st_seat_full_container" style="float: none">
-                <div class="st_seat_lay_economy_wrapper float_left" style="width: 100% !important">
-                    <div class="screen">
-                        <img src="${pathScreen || (location.origin + "/client/assets/images/content/screen.png")}" alt="Screen">
-                    </div>
-                </div>
-                <div class="st_seat_lay_economy_wrapper st_seat_lay_economy_wrapperexicutive float_left" style="width: auto !important" id="seats-layout"></div>
-            </div>
-        </div>
-    `;
+        const frameSeats = generateDOMFrameSeats(pathScreen);
 
         const seatsLayout = frameSeats.querySelector("#seats-layout");
         const caculateColumnAsile = calculateSeatDistribution(seatsPerRow);
@@ -810,6 +749,7 @@ document.addEventListener("livewire:init", () => {
             parentLi.appendChild(wrapper);
         }
 
+
         function hasLonelySeat(selectedSeats) {
             const grouped = {};
 
@@ -842,8 +782,6 @@ document.addEventListener("livewire:init", () => {
         }
 
         function hasSole(selectedSeats) {
-            if (selectedSeats.length < 2) return false;
-
             const grouped = {};
             for (const code of selectedSeats) {
                 const row = code.match(/[A-Z]/i)[0];
@@ -854,37 +792,28 @@ document.addEventListener("livewire:init", () => {
 
             for (const row in grouped) {
                 const cols = grouped[row].sort((a, b) => a - b);
-                const groups = [];
-                let currentGroup = [cols[0]];
-
-                for (let i = 1; i < cols.length; i++) {
-                    if (cols[i] - cols[i - 1] === 1) {
-                        currentGroup.push(cols[i]);
-                    } else {
-                        groups.push(currentGroup);
-                        currentGroup = [cols[i]];
+                const seatInputs = document.querySelectorAll(`input[value^="${row}"]`);
+                let maxSeatNumber = 0;
+                seatInputs.forEach(input => {
+                    const num = parseInt(input.value.replace(/[A-Z]/i, ''));
+                    if (!isNaN(num)) {
+                        maxSeatNumber = Math.max(maxSeatNumber, num);
+                    }
+                });
+                if (cols.includes(2) && !selectedSeats.includes(`${row}1`)) {
+                    const seat = document.querySelector(`input[value="${row}1"]`);
+                    if (seat && !seat.disabled && seat.dataset.booked !== 'true' && seat.dataset.held !== 'true') {
+                        return true;
                     }
                 }
-                groups.push(currentGroup);
-
-                if (groups.length > 1) {
-                    for (let i = 0; i < groups.length - 1; i++) {
-                        const gap = groups[i + 1][0] - groups[i][groups[i].length - 1];
-
-                        if (gap === 2) {
-                            const middleSeat = groups[i][groups[i].length - 1] + 1;
-                            const middleSeatId = `${row}${middleSeat}`;
-                            const middleInput = document.querySelector(`input[value="${middleSeatId}"]`);
-
-                            if (middleInput && !middleInput.disabled &&
-                                middleInput.dataset.booked !== 'true' &&
-                                middleInput.dataset.held !== 'true') {
-                                return true;
-                            }
-                        }
+                if (cols.includes(maxSeatNumber - 1) && !selectedSeats.includes(`${row}${maxSeatNumber}`)) {
+                    const seat = document.querySelector(`input[value="${row}${maxSeatNumber}"]`);
+                    if (seat && !seat.disabled && seat.dataset.booked !== 'true' && seat.dataset.held !== 'true') {
+                        return true;
                     }
                 }
             }
+
             return false;
         }
 
@@ -937,6 +866,21 @@ document.addEventListener("livewire:init", () => {
             return false;
         }
 
+        function validateDomSeatSelected(selectedSeats) {
+            const rules = window.seatRuleConfig || {
+                lonely: true,
+                sole: true,
+                diagonal: true
+            };
+
+            if (rules.lonely && hasLonelySeat(selectedSeats)) return { valid: false, reason: 'lonely' };
+            if (rules.sole && hasSole(selectedSeats)) return { valid: false, reason: 'sole' };
+            if (rules.diagonal && hasInvalidDiagonal(selectedSeats)) return { valid: false, reason: 'diagonal' };
+
+            return { valid: true };
+        }
+
+
         frameSeats.querySelectorAll('input.seat').forEach(input => {
             input.addEventListener('change', (e) => {
                 const current = e.target;
@@ -962,30 +906,32 @@ document.addEventListener("livewire:init", () => {
                 const checkedInputs = Array.from(frameSeats.querySelectorAll('input.seat:checked'));
                 const selectedSeatCodes = checkedInputs.map(i => i.value);
 
-                if (hasLonelySeat(selectedSeatCodes)) {
+                const validation = validateDomSeatSelected(selectedSeatCodes);
+                if (!validation.valid) {
                     e.preventDefault();
                     current.checked = false;
-                    current.setAttribute('wire:sc-alert.error.icon.position.timer.5000', '');
-                    current.setAttribute('wire:sc-title', 'Không được để ghế lẻ!');
-                    current.setAttribute('wire:sc-html', 'Vui lòng chọn lại ghế, không để ghế lẻ giữa các ghế đã chọn.');
-                    return;
-                }
 
-                if (hasSole(selectedSeatCodes)) {
-                    e.preventDefault();
-                    current.checked = false;
-                    current.setAttribute('wire:sc-alert.error.icon.position.timer.5000', '');
-                    current.setAttribute('wire:sc-title', 'Không được để khoảng trống!');
-                    current.setAttribute('wire:sc-html', 'Vui lòng chọn ghế liền kề, không để khoảng trống có thể chọn được.');
-                    return;
-                }
+                    switch (validation.reason) {
+                        case 'lonely':
+                            current.setAttribute('wire:sc-alert.error.icon.position.timer.5000', '');
+                            current.setAttribute('wire:sc-title', 'Không được để ghế lẻ!');
+                            current.setAttribute('wire:sc-html', 'Vui lòng chọn lại ghế, không để ghế lẻ giữa các ghế đã chọn');
+                            break;
 
-                if (hasInvalidDiagonal(selectedSeatCodes)) {
-                    e.preventDefault();
-                    current.checked = false;
-                    current.setAttribute('wire:sc-alert.error.icon.position.timer.5000', '');
-                    current.setAttribute('wire:sc-title', 'Cách chọn ghế không hợp lệ!');
-                    current.setAttribute('wire:sc-html', 'Vui lòng chọn ghế ở các hàng liền kề và gần nhau.');
+                        case 'sole':
+                            current.setAttribute('wire:sc-alert.error.icon.position.timer.5000', '');
+                            current.setAttribute('wire:sc-title', 'Không được để khoảng trống!');
+                            current.setAttribute('wire:sc-html', 'Vui lòng Không bỏ ghế trong góc tường hoặc cạnh lối ra (lối thoát hiểm)');
+                            break;
+
+                        case 'diagonal':
+                            current.setAttribute('wire:sc-alert.error.icon.position.timer.5000', '');
+                            current.setAttribute('wire:sc-title', 'Cách chọn ghế không hợp lệ!');
+                            current.setAttribute('wire:sc-html', 'Vui lòng chọn ghế ở các hàng liền kề và gần nhau không chọn chéo theo hình V dưới mọi hình thức');
+                            break;
+                    }
+
+                    current.setAttribute('wire:sc-model', 'noop');
                     return;
                 }
 

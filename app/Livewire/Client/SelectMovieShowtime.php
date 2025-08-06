@@ -13,9 +13,9 @@ class SelectMovieShowtime extends Component
 
     public function mount()
     {
-        $this->movies = Movie::where('status', 'showing')
+        $this->movies = Movie::whereIn('status', ['coming_soon', 'showing'])
             ->with(['showtimes' => function ($query) {
-                $query->where('status', 'completed')
+                $query->whereIn('status', ['active'])
                     ->orderBy('start_time');
             }])
             ->get();

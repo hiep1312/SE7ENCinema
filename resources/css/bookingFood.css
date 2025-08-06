@@ -1,0 +1,508 @@
+/* Header Styles */
+.booking-food-header {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.booking-food-header .row {
+  margin: 0;
+}
+
+.booking-food-header .col-md-6 {
+  padding: 0 8px;
+}
+
+.booking-food-header p {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.booking-food-movie-poster {
+  width: 60px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+}
+
+.booking-food-timer {
+  text-align: center;
+}
+
+.booking-food-countdown {
+  font-family: "Courier New", monospace;
+  background: rgba(255, 193, 7, 0.1);
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 2px solid #ffc107;
+  margin-top: 5px;
+}
+
+/* Section Titles */
+.booking-food-section-title {
+  color: #333;
+  font-weight: 600;
+  border-bottom: 3px solid #dc3545;
+  padding-bottom: 10px;
+}
+
+.booking-food-category {
+  margin-bottom: 2rem;
+}
+
+.booking-food-category-title {
+  color: #555;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+/* Food Item Cards */
+.booking-food-item-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.booking-food-item-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.booking-food-item-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.booking-food-item-content {
+  padding: 20px;
+}
+
+.booking-food-item-name {
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.booking-food-item-desc {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+/* Variants */
+.booking-food-item-variants {
+  margin-bottom: 20px;
+}
+
+.booking-food-variant-group {
+  margin-bottom: 20px;
+}
+
+.booking-food-variant-label {
+  display: block;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.booking-food-variant-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.booking-food-variant {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  font-size: 13px;
+}
+
+.booking-food-variant:hover {
+  border-color: #dc3545;
+  background-color: #fff5f5;
+}
+
+.booking-food-variant.active {
+  border-color: #dc3545;
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Checkbox Variants */
+.booking-food-variant-checkbox {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.booking-food-variant-checkbox input[type="checkbox"] {
+  margin-right: 8px;
+  transform: scale(1.2);
+}
+
+.booking-food-variant-checkbox label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 6px 12px;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  min-width: 150px;
+  font-size: 13px;
+  margin-bottom: 0;
+}
+
+.booking-food-variant-checkbox input[type="checkbox"]:checked + label {
+  border-color: #28a745;
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.booking-food-variant-checkbox label:hover {
+  border-color: #28a745;
+  background-color: #f8fff9;
+}
+
+/* Price Display */
+.booking-food-base-price,
+.booking-food-final-price {
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.booking-food-base-price {
+  background-color: #f8f9fa;
+  color: #6c757d;
+}
+
+.booking-food-final-price {
+  background-color: #dc3545;
+  color: white;
+  font-weight: 600;
+}
+
+.booking-food-price-value,
+.booking-food-final-price-value {
+  font-weight: 600;
+}
+
+/* Quantity Controls */
+.booking-food-item-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.booking-food-btn-minus,
+.booking-food-btn-plus {
+  width: 35px;
+  height: 35px;
+  border: none;
+  border-radius: 50%;
+  background: #dc3545;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.booking-food-btn-minus:hover,
+.booking-food-btn-plus:hover {
+  background: #c82333;
+  transform: scale(1.1);
+}
+
+.booking-food-btn-minus:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.booking-food-quantity {
+  font-size: 18px;
+  font-weight: 600;
+  min-width: 30px;
+  text-align: center;
+}
+
+.booking-food-quantity.animate {
+  animation: booking-food-bounce 0.6s;
+}
+
+/* Summary Card */
+.booking-food-summary-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+  top: 20px;
+}
+
+.booking-food-summary-title {
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #dc3545;
+}
+
+.booking-food-summary-section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.booking-food-summary-section:last-of-type {
+  border-bottom: none;
+}
+
+.booking-food-summary-subtitle {
+  color: #555;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.booking-food-summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.booking-food-summary-item.small {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.booking-food-summary-item.small span:first-child {
+  font-weight: normal;
+}
+
+.booking-food-summary-item:last-child {
+  border-bottom: none;
+}
+
+.booking-food-summary-item .text-muted.small {
+  font-size: 12px;
+  line-height: 1.3;
+  margin-top: 2px;
+}
+
+.booking-food-summary-empty {
+  text-align: center;
+  padding: 20px;
+}
+
+.booking-food-summary-empty i {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.booking-food-summary-total {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.booking-food-summary-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.booking-food-btn-back {
+  flex: 1;
+  padding: 12px 20px;
+  border: 2px solid #6c757d;
+  background: transparent;
+  color: #6c757d;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.booking-food-btn-back:hover {
+  background: #6c757d;
+  color: white;
+}
+
+.booking-food-btn-next {
+  flex: 2;
+  padding: 12px 20px;
+  border: none;
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.booking-food-btn-next:hover {
+  background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+}
+
+/* Seat Info Styles */
+.booking-food-seat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.booking-food-seat-item {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #ccc;
+}
+
+.booking-food-seat-type {
+  font-weight: 500;
+  margin-right: 6px;
+  min-width: 80px;
+}
+
+.booking-food-seat-numbers {
+  font-weight: 600;
+  color: #fff;
+}
+
+/* Seat Details in Summary */
+.booking-food-seat-details {
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.booking-food-seat-details .booking-food-summary-item {
+  margin-bottom: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.booking-food-seat-details .booking-food-summary-item:last-child {
+  margin-bottom: 0;
+  margin-top: 8px;
+}
+
+.booking-food-seat-details .booking-food-summary-item div {
+  display: flex;
+  align-items: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .booking-food-header .col-md-4 {
+    text-align: center !important;
+    margin-top: 15px;
+  }
+
+  .booking-food-header .d-flex {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .booking-food-movie-poster {
+    margin-bottom: 15px;
+    margin-right: 0 !important;
+  }
+
+  .booking-food-header .row {
+    justify-content: center;
+  }
+
+  .booking-food-header .col-md-6 {
+    margin-bottom: 10px;
+  }
+
+  .booking-food-summary-card {
+    position: relative !important;
+    top: 0 !important;
+    margin-top: 30px;
+  }
+
+  .booking-food-item-card {
+    margin-bottom: 20px;
+  }
+
+  .booking-food-summary-actions {
+    flex-direction: column;
+  }
+
+  .booking-food-btn-back,
+  .booking-food-btn-next {
+    flex: none;
+  }
+
+  .booking-food-variant-options {
+    flex-direction: column;
+  }
+
+  .booking-food-variant,
+  .booking-food-variant-checkbox label {
+    min-width: 100%;
+  }
+
+  /* Responsive cho seat info */
+  .booking-food-seat-info {
+    margin-top: 10px;
+  }
+
+  .booking-food-seat-item {
+    justify-content: center;
+    margin-bottom: 2px;
+  }
+}
+
+/* Animation for quantity changes */
+@keyframes booking-food-bounce {
+  0%,
+  20%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  80% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Success state */
+.booking-food-success {
+  border-color: #28a745 !important;
+  background-color: #d4edda !important;
+  color: #155724 !important;
+}
