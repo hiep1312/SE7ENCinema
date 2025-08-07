@@ -2,109 +2,211 @@
 
 namespace App\Livewire\Admin\FoodVariants;
 
+use Livewire\Component;
 use App\Models\FoodItem;
 use App\Models\FoodVariant;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Livewire\WithFileUploads;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
-use Livewire\Component;
-use Livewire\WithFileUploads;
+use App\Models\FoodAttribute;
+use App\Models\FoodAttributeValue;
+use Illuminate\Support\Str;
 
 class FoodVariantEdit extends Component
 {
     use WithFileUploads;
 
-    public $variantItem = null;
-    public $foodItemId = null;
+    public $foodItem;
+    public $variant;
     public $name = '';
+    public $price = 0;
+    public $quantity_available = 0;
+    public $limit = 0;
     public $image = null;
-    public $price = null;
-    public $quantity = null;
-    public $limit = null;
-    public $status = 'available';
-    public $relatedVariants = null;
+    public $currentImage = null;
+    public $status = 'activate';
+    public $variantId = null;
+    public $attributeVariant = [];
 
     protected $rules = [
-        'name' => 'required|string|max:255',
-        'foodItemId' => 'required|exists:food_items,id',
         'price' => 'required|numeric|min:0',
-        'image' => 'nullable|image|max:20480',
-        'quantity' => 'required|integer|min:0',
+        'quantity_available' => 'required|integer|min:0',
         'limit' => 'nullable|integer|min:0',
-        'status' => 'required|in:available,out_of_stock,hidden',
+        'image' => 'nullable|image|max:2048',
+        'status' => 'in:available,out_of_stock,hidden',
+
+        'attributeVariant.*.attribute_name' => 'required|string|max:255',
+        'attributeVariant.*.value' => 'required|string|max:255',
     ];
 
     protected $messages = [
-        'name.required' => 'Tên biến thể là bắt buộc.',
-        'name.max' => 'Tên biến thể không được vượt quá 255 ký tự.',
-        'foodItemId.required' => 'Món ăn liên kết là bắt buộc.',
-        'foodItemId.exists' => 'Món ăn liên kết không tồn tại.',
-        'price.required' => 'Giá biến thể là bắt buộc.',
-        'price.numeric' => 'Giá biến thể phải là số.',
-        'price.min' => 'Giá biến thể không được nhỏ hơn 0.',
-        'image.image' => 'Ảnh biến thể phải là một tệp hình ảnh hợp lệ.',
-        'image.max' => 'Ảnh biến thể không được vượt quá 20MB.',
-        'quantity.required' => 'Số lượng là bắt buộc.',
-        'quantity.integer' => 'Số lượng phải là số nguyên.',
-        'quantity.min' => 'Số lượng không được nhỏ hơn 0.',
-        'limit.integer' => 'Giới hạn số lượng nhập phải là số nguyên.',
-        'limit.min' => 'Giới hạn số lượng nhập không được nhỏ hơn 0.',
-        'status.required' => 'Trạng thái biến thể là bắt buộc.',
-        'status.in' => 'Trạng thái biến thể không hợp lệ.',
+        'price.required' => 'Giá là bắt buộc.',
+        'quantity_available.required' => 'Số lượng có sẵn là bắt buộc.',
+        'limit.integer' => 'Giới hạn phải là một số nguyên.',
+        'image.image' => 'Tệp tải lên phải là hình ảnh.',
+        'image.max' => 'Kích thước hình ảnh không được vượt quá 2MB.',
+        'status.in' => 'Trạng thái không hợp lệ.',
+        'attributeVariant.*.attribute_name.required' => 'Thuộc tính là bắt buộc.',
+        'attributeVariant.*.value.required' => 'Giá trị thuộc tính là bắt buộc.',
+        'attributeVariant.*.attribute_name.string' => 'Tên thuộc tính phải là một chuỗi.',
+        'attributeVariant.*.value.string' => 'Giá trị thuộc tính phải là một chuỗi.',
+        'attributeVariant.*.attribute_name.max' => 'Tên thuộc tính không được vượt quá 255 ký tự.',
+        'attributeVariant.*.value.max' => 'Giá trị thuộc tính không được vượt quá 255 ký tự.',
     ];
 
     public function mount(FoodVariant $variant)
     {
-        $this->variantItem = $variant;
-        $this->fill($variant->only('name', 'price', 'limit', 'status'));
-        $this->quantity = $variant->quantity_available;
-        $this->foodItemId = $variant->food_item_id;
+        $this->foodItem = FoodItem::find($variant->food_item_id);
+        $this->variant = $variant;
+        $this->currentImage = $variant->image;
+        $this->fill($variant->only('price', 'quantity_available', 'limit', 'status'));
+        $this->name = $this->foodItem->name;
 
-        $this->updatedFoodItemId();
+        $this->attributeVariant = $variant->attributeValues->map(function ($value) {
+            return [
+                'attribute_name' => $value->attribute->name,
+                'value' => $value->value,
+            ];
+        })->toArray();
     }
 
-    public function updatedFoodItemId()
+    public function addAttribute()
     {
-        !$this->foodItemId ?: ($this->relatedVariants = FoodVariant::where('food_item_id', $this->foodItemId)
-            ->where('id', '!=', $this->variantItem->id)
-            ->orderBy('created_at', 'desc')
-            ->get());
+        $this->attributeVariant[] = [
+            'attribute_name' => '',
+            'value' => '',
+        ];
     }
 
-    public function updateVariant()
+    public function removeAttribute($index)
     {
-        $this->validate();
+        unset($this->attributeVariant[$index]);
+        $this->attributeVariant = array_values($this->attributeVariant);
+    }
 
-        if ($this->limit > 0 && $this->quantity > $this->limit) {
-            $this->addError('quantity', 'Số lượng không được vượt quá giới hạn nhập.');
+    public function save()
+    {
+        if (!($this->image instanceof UploadedFile)) {
+            unset($this->rules['image']);
+        }
+
+        $this->validate($this->rules);
+
+        if ($this->limit !== null && $this->limit < $this->quantity_available) {
+            session()->flash('error', 'Giới hạn không được nhỏ hơn số lượng có sẵn.');
             return;
         }
 
-        $imagePath = $this->variantItem->image;
-        if($this->image && $this->image instanceof UploadedFile):
-            !Storage::disk('public')->exists($imagePath) ?: Storage::disk('public')->delete($imagePath);
-            $imagePath = $this->image->store('food_variants', 'public');
-        endif;
+        $combos = [];
+        $attributeNames = [];
 
-        $this->variantItem->update([
-            'food_item_id' => $this->foodItemId,
-            'name' => $this->name,
-            'image' => $imagePath,
+        foreach ($this->attributeVariant as $pair) {
+            $attributeName = trim(strtolower($pair['attribute_name']));
+            $value = trim(strtolower($pair['value']));
+
+            // Check trùng cặp attribute_name + value
+            $comboKey = $attributeName . '-' . $value;
+            if (in_array($comboKey, $combos)) {
+                session()->flash('error', 'Thuộc tính & giá trị bị trùng lặp. Vui lòng kiểm tra lại.');
+                return;
+            }
+            $combos[] = $comboKey;
+
+            // Check trùng attribute_name
+            if (in_array($attributeName, $attributeNames)) {
+                session()->flash('error', 'Mỗi thuộc tính chỉ được thêm 1 lần. Vui lòng kiểm tra lại.');
+                return;
+            }
+            $attributeNames[] = $attributeName;
+        }
+
+        $inputCombos = collect($this->attributeVariant)->map(function ($pair) {
+            return trim(strtolower($pair['attribute_name'])) . '-' . trim(strtolower($pair['value']));
+        })->sort()->values()->all();
+        $otherVariants = FoodVariant::where('food_item_id', $this->foodItem->id)
+            ->where('id', '!=', $this->variant->id)
+            ->get();
+
+        foreach ($otherVariants as $other) {
+            $otherCombos = $other->attributeValues->map(function ($val) {
+                return trim(strtolower($val->attribute->name)) . '-' . trim(strtolower($val->value));
+            })->sort()->values()->all();
+
+            if ($otherCombos === $inputCombos) {
+                session()->flash('error', 'Đã tồn tại biến thể khác có cùng tất cả thuộc tính & giá trị.');
+                return;
+            }
+        }
+
+        if ($this->getErrorBag()->isNotEmpty()) return;
+
+        $variant = $this->variant;
+        $variant->fill([
+            'food_item_id' => $this->foodItem->id,
             'price' => $this->price,
-            'quantity_available' => $this->quantity,
-            'limit' => $this->limit,
+            'quantity_available' => $this->quantity_available,
+            'limit' => $this->limit ?: null,
             'status' => $this->status,
         ]);
 
-        return redirect()->route('admin.food_variants.index')->with('success', 'Cập nhật biến thể thành công!');
+        if ($this->image instanceof UploadedFile) {
+            if ($this->currentImage && Storage::disk('public')->exists($this->currentImage)) {
+                Storage::disk('public')->delete($this->currentImage);
+            }
+            $variant->image = $this->image->store('food_variants', 'public');
+        } else {
+            $variant->image = $this->currentImage;
+        }
+
+        $variant->sku = $this->parseSku([
+            'attribute_values' => collect($this->attributeVariant)->map(function ($item) {
+                return [
+                    'attribute' => $item['attribute_name'],
+                    'value' => $item['value'],
+                ];
+            })->toArray(),
+        ]);
+
+        $variant->save();
+
+        $ids = [];
+        foreach ($this->attributeVariant as $pair) {
+            $attr = FoodAttribute::firstOrCreate([
+                'food_item_id' => $this->foodItem->id,
+                'name' => $pair['attribute_name'],
+            ]);
+
+            $val = FoodAttributeValue::firstOrCreate([
+                'food_attribute_id' => $attr->id,
+                'value' => $pair['value'],
+            ]);
+
+            $ids[] = $val->id;
+        }
+
+        $variant->attributeValues()->sync($ids);
+        return redirect()->route('admin.food_variants.index')->with('success', 'Sửa biến thể món ăn thành công!');
+    }
+
+    protected function parseSku($variant)
+    {
+        $parts = [];
+        $parts[] = Str::slug($this->foodItem->name);
+
+        foreach ($variant['attribute_values'] as $pair) {
+            $parts[] = Str::slug($pair['attribute']);
+            $parts[] = Str::slug($pair['value']);
+        }
+
+        return implode('-', $parts);
     }
 
     #[Title('Chỉnh sửa biến Thể')]
     #[Layout('components.layouts.admin')]
     public function render()
     {
-        $foods = FoodItem::all();
-        return view('livewire.admin.food-variants.food-variant-edit', compact('foods'));
+        return view('livewire.admin.food-variants.food-variant-edit');
     }
 }

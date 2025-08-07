@@ -26,7 +26,7 @@
 @endassets
 <div class="scRender">
     @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="alert alert-danger alert-dismissible fade show mt-2 mx-2" role="alert">
             {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>

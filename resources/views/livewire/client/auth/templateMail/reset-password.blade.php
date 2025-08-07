@@ -14,7 +14,7 @@
                     style="max-width: 700px; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); overflow: hidden;">
                     <tr>
                         <td style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); padding: 40px 40px 30px; text-align: center; position: relative;">
-                            <img src="https://i.ibb.co/2Lkk23R/Black-and-White-Filmstrip-Modern-Logo.png" alt="Logo"
+                            <img src="https://i.postimg.cc/s2zZhYzs/Black-and-White-Filmstrip-Modern-Logo.png" alt="Logo"
                                 style="width: 180px; height: auto; margin-bottom: 20px; filter: brightness(0) invert(1);">
 
                             <div style="width: 80px; height: 80px; background: rgba(255,255,255,0.15); border-radius: 50%; margin: 0 auto 20px; text-align: center; line-height: 70px; backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.2); font-size: 32px; color: white; vertical-align: middle;">

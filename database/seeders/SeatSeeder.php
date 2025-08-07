@@ -26,7 +26,7 @@ class SeatSeeder extends Seeder
                         'seat_number' => $num,
                         'price' => fake()->numberBetween(50000, 200000),
                         'seat_type' => fake()->randomElement($seatTypes),
-                        'status' => fake()->randomElement(['active', 'maintenance', 'inactive']),
+                        'status' => fake()->randomElement(['active', 'maintenance', 'selected']),
                     ]);
                 }
             }

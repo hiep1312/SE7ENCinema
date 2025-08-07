@@ -49,16 +49,16 @@
                         </select>
                     </div>
 
-                    <!-- Lọc theo giá tiền -->
-                    <div class="col-md-8 col-xl-5 mb-2 mb-md-0 d-flex align-items-center gap-2">
-                        <span id="lowerValue" x-text="$wire.priceFilter[0].toLocaleString('vi-VN') + 'đ'"></span>
-                        <div class="dual-range">
-                            <div class="range-track"></div>
-                            <div class="range-fill" id="rangeFill" wire:ignore.self></div>
-                            <input type="range" class="range-input lower" id="lowerRange" min="{{ $rangePrice[0] }}" max="{{ $rangePrice[1] }}" value="{{ $priceFilter[0] }}" wire:input="$js.updateSlider">
-                            <input type="range" class="range-input upper" id="upperRange" min="{{ $rangePrice[0] }}" max="{{ $rangePrice[1] }}" value="{{ $priceFilter[1] }}" wire:input="$js.updateSlider">
-                        </div>
-                        <span id="upperValue" x-text="$wire.priceFilter[1].toLocaleString('vi-VN') + 'đ'"></span>
+                    <div class="col-md-3 col-lg-2">
+                        <button class="btn btn-outline-secondary bg-dark text-light w-100" type="button"
+                            data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-funnel" viewBox="0 0 16 16">
+                                <path
+                                    d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z" />
+                            </svg>
+                            Bộ lọc nâng cao
+                        </button>
                     </div>
 
                     <!-- Reset filters -->
@@ -124,7 +124,7 @@
                                         </small>
                                     </td>
                                     <td class="text-center">
-                                        <span class="badge bg-gradient fs-6" style="background: linear-gradient(45deg, #667eea, #764ba2);">
+                                        <span class="badge bg-gradient fs-6">
                                             {{ number_format($showtime->price, 0, '.', '.') }}đ
                                         </span>
                                     </td>
@@ -205,38 +205,65 @@
             </div>
         </div>
     </div>
+    <div wire:ignore.self class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" data-bs-backdrop="false"
+        id="filterOffcanvas" style="width: 400px;">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">
+                <i class="bi bi-funnel me-2"></i>
+                Bộ lọc nâng cao
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="filter-section">
+                <h6>
+                    <i class="bi bi-currency-dollar me-2 text-warning"></i>
+                    Giá khung giờ
+                </h6>
+                <div class="mb-3">
+                    <label for="priceRange" class="form-label">
+                        Tối đa: <span id="priceValue" class="text-warning fw-bold">{{ number_format($priceFilters,
+                            0, '.', '.') }}đ</span>
+                    </label>
+                    <input wire:model.live="priceFilters" type="range" class="form-range" id="priceRange"
+                        min="{{ $priceMaxMin['0'] }}" max="{{ $priceMaxMin['1'] }}" step="1000">
+                    <div class="d-flex justify-content-between text-muted small">
+                        <span>{{ number_format($priceMaxMin['0'],0, '.', '.') }}đ</span>
+                        <span>{{ number_format($priceMaxMin['1'],0, '.', '.') }}đ</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Release Year Filter -->
+            <div class="filter-section">
+                <h6>
+                    <i class="bi bi-calendar me-2 text-primary"></i>
+                    Khung giờ chiếu
+                </h6>
+                <div class="row g-2">
+                    <div class="col-6">
+                        <input wire:model.live="startTime.from" type="datetime-local" class="form-select text-white bg-dark border-secondary"
+                            id="yearFrom">
+                        </input>
+                    </div>
+                    <div class="col-6">
+                        <input wire:model.live="startTime.to" type="datetime-local" class="form-select text-white bg-dark border-secondary"
+                            id="yearTo">
+                        </input>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Actions -->
+            <div class="d-grid gap-2 mt-4">
+                <button class="btn btn-success" data-bs-dismiss="offcanvas">
+                    <i class="fa-solid fa-check me-2"></i>
+                    Áp dụng bộ lọc
+                </button>
+                <button class="btn btn-outline-secondary" wire:click="resetFilters">
+                    <i class="fa-solid fa-arrow-rotate-right me-2"></i>
+                    Xóa bộ lọc nâng cao
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
-@script
-<script>
-    $js('resetSlider', function() {
-        document.getElementById('lowerRange').value = {{ $rangePrice[0] ?? 0 }};
-        document.getElementById('upperRange').value = {{ $rangePrice[1] ?? 1_000_000_000 }};
-        document.getElementById('rangeFill').style = "left: 0%; width: 100%;";
-    })
-
-    $js('updateSlider', function() {
-        // Lấy element
-        const lowerRange = document.getElementById('lowerRange');
-        const upperRange = document.getElementById('upperRange');
-        const rangeFill = document.getElementById('rangeFill');
-
-        // Lấy và phân tích giá trị
-        const lower = lowerRange?.valueAsNumber ?? parseInt(lowerRange.value);
-        const upper = upperRange?.valueAsNumber ?? parseInt(upperRange.value);
-
-        // Kiểm tra logic tránh lower >= upper && upper <= lower
-        lower >= upper && (lowerRange.value = upper - 1);
-        upper <= lower && (upperRange.value = lower + 1);
-
-        // Tính phần trăm
-        const lowerPercent = ((lowerRange.value - lowerRange.min) / (lowerRange.max - lowerRange.min)) * 100;
-        const upperPercent = ((upperRange.value - upperRange.min) / (upperRange.max - upperRange.min)) * 100;
-
-        // Cập nhật thanh fill
-        rangeFill.style.left = lowerPercent + '%';
-        rangeFill.style.width = (upperPercent - lowerPercent) + '%';
-
-        $wire.$set('priceFilter', [lower, upper], true);
-    })
-</script>
-@endscript

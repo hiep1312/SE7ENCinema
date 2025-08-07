@@ -1,12 +1,4 @@
 /* Override Library */
-div:where(.swal2-icon){
-    margin: 2.5em auto .6em !important;
-}
-
-.swal2-modal .swal2-title{
-    line-height: normal;
-}
-
 .page-link{
     line-height: var(--bs-body-line-height) !important;
 }
@@ -413,7 +405,7 @@ div:where(.swal2-icon){
     margin-right: 15px;
 }
 
-.checkbox-wrapper input[type="checkbox"] {
+.checkbox-wrapper input[type="checkbox"], .checkbox-wrapper input[type="radio"] {
     opacity: 0;
     position: absolute;
     cursor: pointer;
@@ -429,7 +421,7 @@ div:where(.swal2-icon){
     transition: all 0.3s ease;
 }
 
-.checkbox-wrapper input[type="checkbox"]:checked + .checkmark {
+.checkbox-wrapper input[type="checkbox"]:checked + .checkmark, .checkbox-wrapper input[type="radio"]:checked + .checkmark {
     background: #4a9eff;
     border-color: #4a9eff;
 }
@@ -447,7 +439,7 @@ div:where(.swal2-icon){
     transform: rotate(45deg);
 }
 
-.checkbox-wrapper input[type="checkbox"]:checked + .checkmark:after {
+.checkbox-wrapper input[type="checkbox"]:checked + .checkmark:after, .checkbox-wrapper input[type="radio"]:checked + .checkmark:after {
     display: block;
 }
 
@@ -580,6 +572,11 @@ div:where(.swal2-icon){
     color: white;
 }
 
+.room-icon {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+}
+
 .datetime-input-wrapper {
     position: relative;
     overflow: hidden;
@@ -626,6 +623,33 @@ div:where(.swal2-icon){
 
 .datetime-input:focus {
     border-color: #667eea;
+}
+
+.datetime-input.select {
+    appearance: none;
+}
+
+.datetime-input.select option {
+    background: #3c3c3c;
+    color: #ffffff;
+    padding: 8px;
+}
+
+.datetime-input.select option:hover {
+    background: #4a4a4a;
+}
+
+/* Custom dropdown arrow */
+.datetime-input-wrapper.select::after {
+    content: '▼';
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    color: #85929f;
+    pointer-events: none;
+    font-size: 0.8rem;
+    z-index: 1;
 }
 
 .btn-custom {
@@ -1326,7 +1350,7 @@ div:where(.swal2-icon){
     position: relative;
     width: 100%;
     height: 0;
-    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    padding-bottom: 56.25%;
 }
 
 .responsive-iframe iframe {
@@ -1780,8 +1804,8 @@ div:where(.swal2-icon){
 }
 
 .food-image {
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
     aspect-ratio: 1 / 1;
     background: linear-gradient(135deg, #374151, #4b5563);
     display: flex;
@@ -1790,6 +1814,20 @@ div:where(.swal2-icon){
     border: 2px solid #30363d;
     position: relative;
     overflow: hidden;
+}
+
+.user-avatar {
+    width: 70px;
+    height: 70px;
+    aspect-ratio: 1 / 1;
+    background: linear-gradient(135deg, #374151, #4b5563);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #30363d;
+    position: relative;
+    overflow: hidden;
+    border-radius: 50%;
 }
 
 .banner-image{
@@ -1821,7 +1859,7 @@ div:where(.swal2-icon){
     color: #58a6ff;
 }
 
-.food-image>i, .banner-image>i, .notification-image>i{
+.food-image>i, .banner-image>i, .notification-image>i, .user-avatar > i{
     font-size: 22px;
     color: #58a6ff;
 }
@@ -1949,4 +1987,103 @@ div:where(.swal2-icon){
 
 .btn-collapse:hover {
     background: linear-gradient(45deg, #d62c1a, #a93226);
+}
+
+.voucher-card-modern {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 50%, #fecaca 100%);
+  border-radius: 1.2rem;
+  box-shadow: 0 4px 16px 0 rgba(239, 68, 68, 0.12);
+  position: relative;
+  overflow: visible;
+  border: 1px solid #fecaca;
+  padding: 2rem 2rem 1.5rem 2rem;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-top: 3px;
+}
+
+.voucher-card-modern:hover {
+  box-shadow: 0 8px 32px 0 rgba(239, 68, 68, 0.2);
+  transform: translateY(-2px);
+  border-color: #f87171;
+}
+
+.voucher-ribbon {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f97316 100%);
+  border-bottom-right-radius: 1rem;
+  border-top-left-radius: 1rem;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+  color: #fff;
+}
+
+.voucher-hole {
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 1px 4px rgba(239, 68, 68, 0.15);
+  position: absolute;
+}
+
+.voucher-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f97316 100%);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25);
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.voucher-code-modern {
+  background: linear-gradient(135deg, #dc2626, #ef4444) !important;
+  letter-spacing: 1px;
+  border-radius: 1rem;
+  text-overflow: ellipsis;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.2);
+  text-overflow: unset;
+  white-space: normal;
+  font-size: 1.15rem;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+}
+
+.text-gradient-orange {
+  background: linear-gradient(135deg, #dc2626, #ef4444, #f97316);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  font-weight: 800;
+  font-size: 1.7rem;
+}
+
+.voucher-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.2rem;
+  flex-wrap: nowrap;
+  justify-content: center;
+}
+
+.voucher-fake-btn {
+  border: none;
+  outline: none;
+  padding: 0.45rem 1.2rem;
+  border-radius: 2rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f97316 100%);
+  color: #fff;
+  box-shadow: 0 3px 12px rgba(239, 68, 68, 0.18);
+  pointer-events: none;
+}
+
+.voucher-fake-btn.detail {
+  background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);
 }

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->integer('duration'); // in minutes
+            $table->integer('duration');
             $table->date('release_date');
             $table->date('end_date')->nullable();
             $table->string('director')->nullable();

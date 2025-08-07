@@ -13,11 +13,17 @@ class Room extends Model
         'capacity',
         'status',
         'last_maintenance_date',
+        'check_lonely',
+        'check_sole',
+        'check_diagonal',
     ];
 
     protected $casts = [
         'capacity' => 'integer',
-        'last_maintenance_date' => 'date'
+        'last_maintenance_date' => 'date',
+        'check_lonely' => 'boolean',
+        'check_sole' => 'boolean',
+        'check_diagonal' => 'boolean'
     ];
 
     public function seats()

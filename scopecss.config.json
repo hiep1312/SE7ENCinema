@@ -1,9 +1,22 @@
 {
     "prefixRoot": ".scRender",
     "globalCssFiles": [
-        "scanner.css"
+        "scanner.css",
+        "movieDetail.css",
+        "userInfo.css",
+        "confirm-access.css",
+        "termsOfService.css",
+        "privacyPolicy.css",
+        "notificationIndex.css",
+        "promotion.css",
+        "showtimeIndex.css",
+        "badgeML.css",
+        "selectfood.css",
+        "faq.css",
+        "bookingFood.css",
+        "bookingPayment.css",
+        "movieBooking.css",
+        "movieList.css"
     ],
-    "scopedCssFiles": [
-
-    ]
+    "scopedCssFiles": []
 }

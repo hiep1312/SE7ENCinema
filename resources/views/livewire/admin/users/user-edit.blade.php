@@ -1,4 +1,5 @@
-<div>
+@use('Illuminate\Http\UploadedFile')
+<div class="scRender">
     @if (session()->has('error'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             {{ session('error') }}
@@ -25,30 +26,29 @@
                     <div class="card-body bg-dark">
                         <form wire:submit.prevent="updateUser" enctype="multipart/form-data" novalidate>
                             <div class="row align-items-start mb-2">
-                                <div class="col-xl-3 mb-3">
-                                    <div class="mt-1 overflow-auto position-relative text-center"
-                                        style="max-height: 230px;">
-                                        <img src="{{ asset('storage/' . ($user->avatar ?? '404.webp')) }}"
-                                            alt="Ảnh biến thể hiện tại"
-                                            style="width: 230px; height: 230px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
-                                        <span class="position-absolute opacity-50 badge rounded bg-danger"
-                                            style="top: 49%; left: 50%; transform: translate(-50%, -50%);">
-                                            Ảnh hiện tại
-                                        </span>
-                                    </div>
-                                    @if ($avatar && $avatar instanceof Illuminate\Http\UploadedFile)
-                                        <div class="mt-2 overflow-auto position-relative text-center"
-                                            style="max-height: 230px;">
+                                <div class="col-md-3 col-xxl-2 col-{{ ($avatar && $avatar instanceof UploadedFile) ? '12' : '6' }} d-flex d-md-block gap-2 mb-3">
+                                        <div class="mt-1 user-avatar w-100 position-relative" style="height: auto;">
+                                            @if($user->avatar)
+                                                <img src="{{ asset('storage/' . $user->avatar) }}" alt="Ảnh đại diện hiện tại"
+                                                    style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
+                                            @else
+                                                <i class="fa-solid fa-user" style="font-size: 32px;"></i>
+                                            @endif
+                                            <span class="position-absolute opacity-75 top-0 start-20 mt-2 ms-1 badge rounded bg-danger">
+                                                Ảnh hiện tại
+                                            </span>
+                                        </div>
+                                    @if ($avatar && $avatar instanceof UploadedFile)
+                                        <div class="mt-md-2 mt-1 user-avatar w-100 position-relative" style="height: auto;">
                                             <img src="{{ $avatar->temporaryUrl() }}" alt="Ảnh người dùng tải lên"
-                                                style="width: 230px; height: 230px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
-                                            <span class="position-absolute opacity-50 badge rounded bg-success"
-                                                style="top: 49%; left: 50%; transform: translate(-50%, -50%);">
+                                                style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
+                                            <span class="position-absolute opacity-75 top-0 start-20 mt-2 ms-1 badge rounded bg-success">
                                                 Ảnh mới
                                             </span>
                                         </div>
                                     @endif
                                 </div>
-                                <div class="col-xl-9 row align-items-start">
+                                <div class="col-md-9 col-xxl-10 row align-items-start">
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="name" class="form-label text-light">Tên người dùng </label>

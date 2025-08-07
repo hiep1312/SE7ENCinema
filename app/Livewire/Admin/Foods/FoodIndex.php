@@ -21,11 +21,11 @@ class FoodIndex extends Component
 
     public function deleteFood(array $status, int $foodId, bool $statusDeleteVariants = false)
     {
-        if(!$status['isConfirmed']) return;
+        if (!$status['isConfirmed']) return;
         $food = FoodItem::find($foodId);
 
         // Kiểm tra xem có biến thể liên kết không
-        if(!$statusDeleteVariants && $food->variants()->exists()) {
+        if (!$statusDeleteVariants && $food->variants()->exists()) {
             $this->scConfirm("Phát hiện có biến thể đang liên kết!", "Bạn có chắc chắn vẫn muốn xóa không? Hành động này sẽ xóa tất cả các biến thể liên kết với món ăn, cùng với món ăn {$food->name} này!", 'warning', "deleteFood({$foodId}, {$status['isConfirmed']})");
             return;
         }
@@ -47,25 +47,42 @@ class FoodIndex extends Component
 
     public function forceDeleteFood(array $status, int $foodId, bool $statusDeleteVariants = false)
     {
-        if(!$status['isConfirmed']) return;
+        if (!$status['isConfirmed']) return;
+
         $food = FoodItem::onlyTrashed()->find($foodId);
 
-        // Kiểm tra xem có biến thể liên kết không
-        if(!$statusDeleteVariants && $food->variants()->onlyTrashed()->count() > 0) {
-            $this->scConfirm("Phát hiện có biến thể đã bị xóa đang liên kết!", "Bạn có chắc chắn vẫn muốn xóa không? Hành động này sẽ xóa tất cả các biến thể đã bị xóa đang liên kết với món ăn, cùng với món ăn {$food->name} này! Và KHÔNG THỂ HOÀN TÁC!", 'warning', "deleteFood({$foodId}, {$status['isConfirmed']})");
+        if (!$food) {
+            session()->flash('error', 'Món ăn chưa bị xoá mềm hoặc không tồn tại.');
             return;
         }
 
-        // Kiểm tra image, nếu có thì xóa
-        !Storage::disk('public')->exists($food->image) ?: Storage::disk('public')->delete($food->image);
-        $food->variants()->onlyTrashed()->each(function($variant) {
-            !Storage::disk('public')->exists($variant->image) ?: Storage::disk('public')->delete($variant->image);
+        if (!$statusDeleteVariants && $food->variants()->onlyTrashed()->count() > 0) {
+            $this->scConfirm(
+                "Phát hiện có biến thể đã bị xoá đang liên kết!",
+                "Bạn có chắc chắn vẫn muốn xoá không? Hành động này sẽ xoá tất cả biến thể đã xoá cùng với món ăn {$food->name}!",
+                'warning',
+                "forceDeleteFood({$foodId}, {$status['isConfirmed']}, true)"
+            );
+            return;
+        }
+
+        // Xoá ảnh nếu có
+        if ($food->image && Storage::disk('public')->exists($food->image)) {
+            Storage::disk('public')->delete($food->image);
+        }
+
+        // Xoá ảnh biến thể đã xoá mềm nếu có
+        $food->variants()->onlyTrashed()->each(function ($variant) {
+            if ($variant->image && Storage::disk('public')->exists($variant->image)) {
+                Storage::disk('public')->delete($variant->image);
+            }
         });
 
-        // Xóa cứng món ăn và biến thể món ăn
+        // Xoá cứng biến thể và món ăn
         $food->variants()->onlyTrashed()->forceDelete();
         $food->forceDelete();
-        session()->flash('success', 'Xóa vĩnh viễn món ăn và biến thể của nó thành công!');
+
+        session()->flash('success', 'Xoá vĩnh viễn món ăn & biến thể thành công!');
     }
 
     public function resetFilters()
@@ -78,21 +95,31 @@ class FoodIndex extends Component
     #[Layout('components.layouts.admin')]
     public function render()
     {
-        $query = FoodItem::query()->when($this->search, function($query) {
-            $query->withTrashed();
-            $query->where(function($query){
-                $query->where('name', 'like', '%' . $this->search . '%')
-                ->orWhere('description', 'like', '%' . $this->search . '%');
-            });
-        })->with(['variants' => function($query) {
-            $this->search ? $query->withTrashed() : (!$this->showDeleted ?: $query->onlyTrashed());
-        }]);
+        $query = FoodItem::query()
+            ->when($this->search, function ($query) {
+                $query->withTrashed();
+                $query->where(function ($query) {
+                    $query->where('name', 'like', '%' . trim($this->search) . '%')
+                        ->orWhere('description', 'like', '%' . trim($this->search) . '%');
+                });
+            })
+            ->with(['variants' => function ($variantQuery) {
+                if ($this->search) {
+                    $variantQuery->withTrashed();
+                } elseif ($this->showDeleted) {
+                    $variantQuery->onlyTrashed();
+                }
 
-        if($this->showDeleted){
+                $variantQuery->with('attributeValues');
+            }]);
+
+        if ($this->showDeleted) {
             $query->onlyTrashed()->orderBy('deleted_at', $this->sortDateFilter);
-        }else{
+        } else {
             $query->orderBy('created_at', $this->sortDateFilter);
-            !$this->statusFilter ?: $query->where('status', $this->statusFilter);
+            if ($this->statusFilter) {
+                $query->where('status', $this->statusFilter);
+            }
         }
 
         $foodItems = $query->paginate(20);
