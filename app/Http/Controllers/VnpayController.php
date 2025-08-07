@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Ticket;
 use App\Models\Booking;
-use App\Models\FoodOrderItem;
+use App\Models\BookingSeat;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Models\FoodOrderItem;
+use App\Models\SeatHold;
 
 class VnpayController extends Controller
 {
@@ -41,6 +44,21 @@ class VnpayController extends Controller
                 $booking = Booking::find($booking_id);
 
                 if ($booking) {
+                    $ticketsAdd = BookingSeat::where('booking_id', $booking->id)->get('id')->map(function ($bookingSeat) {
+                        return [
+                            'booking_seat_id' => $bookingSeat->id,
+                            'note' => null,
+                            'qr_code' => Str::uuid(),
+                            'taken' => false,
+                            'status' => 'active',
+                        ];
+                    });
+
+                    Ticket::insert($ticketsAdd->toArray());
+
+                    SeatHold::releaseHoldsByUser($booking->user_id);
+                    SeatHold::cleanupExpired();
+
                     $booking->status = 'paid';
                     $booking->transaction_code = strtoupper(Str::random(10));
                     $booking->end_transaction = now();
@@ -63,7 +81,7 @@ class VnpayController extends Controller
 
                     session()->forget(['booking_id', 'cart', 'cart_food_total', 'cart_seat_total']);
 
-                    return redirect()->route('client.index')->with('success', 'Thanh toán thành công!');
+                    return redirect()->route('client.userBooking', ['booking' => $booking->id])->with('success', 'Thanh toán thành công!');
                 } else {
                     echo "Không tìm thấy booking!";
                 }

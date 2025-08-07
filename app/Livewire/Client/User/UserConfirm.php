@@ -15,7 +15,7 @@ class UserConfirm extends Component
             session()->flash('error', 'Mật khẩu không chính xác.');
             return;
         }
-        return redirect()->route('userInfo', ['user' => Auth::id()])
+        return redirect()->route('client.userInfo')
                          ->with('isConfirmed', true);
     }
     public function render()

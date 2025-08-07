@@ -99,7 +99,7 @@ class ClientMovieDetail extends Component
     public function confirmBooking()
     {
         if ($this->selectedShowtime) {
-            return redirect()->route('client.booking.select_showtime', ['showtime' => $this->selectedShowtime->id]);
+           return redirect()->route('client.booking.select_seats', ['movie_id' => $this->selectedShowtime->movie_id]);
         }
     }
 

@@ -25,18 +25,20 @@ class RoomEdit extends Component
     public $checkSole = true;
     public $checkDiagonal = true;
 
-    protected $rules = [
-        'name' => 'required|string|max:255|unique:rooms,name',
-        'status' => 'required|in:active,maintenance,inactive',
-        'last_maintenance_date' => 'nullable|date|before_or_equal:today',
-        'rows' => 'required|integer|min:5|max:26',
-        'seatsPerRow' => 'required|integer|min:10|max:30',
-        'vipRows' => 'nullable|string',
-        'coupleRows' => 'nullable|string',
-        'priceStandard' => 'required|numeric|min:20000',
-        'priceVip' => 'required|numeric|min:20000|gt:priceStandard',
-        'priceCouple' => 'required|numeric|min:20000|gt:priceStandard',
-    ];
+    protected function rules(){
+        return [
+            'name' => 'required|string|max:255|unique:rooms,name,' . $this->room->id,
+            'status' => 'required|in:active,maintenance,inactive',
+            'last_maintenance_date' => 'nullable|date|before_or_equal:today',
+            'rows' => 'required|integer|min:5|max:26',
+            'seatsPerRow' => 'required|integer|min:10|max:30',
+            'vipRows' => 'nullable|string',
+            'coupleRows' => 'nullable|string',
+            'priceStandard' => 'required|numeric|min:20000',
+            'priceVip' => 'required|numeric|min:20000|gt:priceStandard',
+            'priceCouple' => 'required|numeric|min:20000|gt:priceStandard',
+        ];
+    }
 
     protected $messages = [
         'name.required' => 'Tên phòng chiếu là bắt buộc',
@@ -117,8 +119,6 @@ class RoomEdit extends Component
             return to_route('admin.rooms.index')->with('error', "Không thể chỉnh sửa phòng đang có suất chiếu đang hoạt động!");
         }
 
-        // Update validation rule for unique name
-        $this->rules['name'] = $this->rules['name'] . ',' . $this->room->id;
         $this->validate();
 
         try {

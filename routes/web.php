@@ -10,6 +10,7 @@ use App\Livewire\Admin\Banners\BannerIndex;
 use App\Livewire\Admin\Bookings\BookingDetail;
 use App\Livewire\Admin\Bookings\BookingIndex;
 use App\Livewire\Admin\FoodAttributes\FoodAttributeIndex;
+use App\Livewire\Client\MovieBooking\MovieBooking;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\Rooms\RoomCreate;
 use App\Livewire\Admin\Rooms\RoomDetail;
@@ -60,8 +61,10 @@ use App\Livewire\Client\SelectSeats;
 use App\Livewire\Client\SelectFood;
 use App\Livewire\Client\ConfirmBooking;
 use App\Livewire\Payment\VnpayPayment;
-// use App\Livewire\Booking\BookingFood;
-use App\Livewire\Client\Bookings\BookingFood;
+use App\Livewire\Booking\BookingFood;
+// use App\Livewire\Client\Bookings\BookingFood;
+use App\Livewire\Client\Bookings\BookingPayment;
+use App\Livewire\Client\User\BookingDetail as UserBookingDetail;
 
 Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->group(function () {
     /* Banners */
@@ -216,25 +219,29 @@ Route::name('client.')->group(function () {
     Route::prefix('/showtimes')->name('showtimes.')->group(function () {
         Route::get('/', ShowtimeIndexClient::class)->name('index');
     });
+
+    /* Chi tiết lịch chiếu từng phim */
+    Route::prefix('/movieBooking')->name('movieBooking.')->group(function () {
+        Route::get('{movie_id}/', MovieBooking::class)->name('movie');
+    });
+
     Route::view('/privacy-policy', 'livewire.client.template.abouts.privacy_policy')->name('privacy_policy');
     Route::view('/terms-of-service', 'livewire.client.template.abouts.terms_of_service')->name('terms_of_service');
     Route::get('/movies/{movie}', ClientMovieDetail::class)->name('movie_detail');
     /* Promotions */
     Route::get('/promotions', PromotionIndexClient::class)->name('promotions.index');
-    Route::get('/user-info', UserInformation::class)->name('userInfo')->middleware('auth');
+    Route::get('/user-info/{tab?}', UserInformation::class)->name('userInfo')->middleware('auth');
     Route::get('/user-confirm', UserConfirm::class)->name('userConfirm')->middleware('auth');
+    Route::get('/booking-detail/{booking}', UserBookingDetail::class)->name('userBooking')->middleware('auth');
     Route::get('/thanh-toan/{booking_id}', VnpayPayment::class)->name('thanh-toan');
     Route::get('/vnpay-return', [VnpayController::class, 'vnpayReturn'])->name('vnpay.return');
     Route::get('/booking-food', BookingFood::class);
     Route::view('/faq', 'livewire.client.template.abouts.faq')->name('faq');
 
-    //thanh-toan/{booking_id} | thanh-toan/abc mount($booking_id)
-    //index.php?act=thanh-toan&booking=abc
-
-
     /* Bookings */
     Route::prefix('/booking')->name('booking.')->group(function () {
         Route::get('/food', BookingFood::class)->name('food');
+        Route::get('/payment', BookingPayment::class)->name('payment');
     });
 });
 

@@ -67,6 +67,18 @@
                             </select>
                         </div>
 
+                        <div class="col-md-3 col-lg-2">
+                            <button class="btn btn-outline-secondary bg-dark text-light w-100" type="button"
+                                data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-funnel" viewBox="0 0 16 16">
+                                    <path
+                                        d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z" />
+                                </svg>
+                                Bộ lọc nâng cao
+                            </button>
+                        </div>
+
                         <!-- Reset filters -->
                         <div class="col-md-2">
                             <button wire:click="resetFilters" class="btn btn-outline-warning">
@@ -337,6 +349,95 @@
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng trailer</button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div wire:ignore.self class="offcanvas offcanvas-end text-bg-dark"  data-bs-backdrop="false" tabindex="-1" id="filterOffcanvas"
+        style="width: 400px;">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">
+                <i class="bi bi-funnel me-2"></i>
+                Bộ lọc nâng cao
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="filter-section">
+                <h6>
+                    <i class="bi bi-clock me-2 text-info"></i>
+                    Thời lượng phim
+                </h6>
+                <div class="mb-3">
+                    <label for="durationRange" class="form-label">
+                        Tối đa:
+                        <span class="text-info fw-bold">
+                            {{ $durationFilter }} phút
+                        </span>
+                    </label>
+
+                    <input type="range" class="form-range" id="durationRange" min="{{ $durationMaxMin['min'] }}"
+                        max="{{ $durationMaxMin['max'] }}" step="1" wire:model.live="durationFilter">
+                    <div class="d-flex justify-content-between text-muted small">
+                        <span>{{ $durationMaxMin['min'] }} phút</span>
+                        <span>{{ $durationMaxMin['max'] }} phút</span>
+                    </div>
+                </div>
+            </div>
+            <div class="filter-section">
+                <h6>
+                    <i class="bi bi-currency-dollar me-2 text-warning"></i>
+                    Khoảng giá vé
+                </h6>
+                <div class="mb-3">
+                    <label for="priceRange" class="form-label">
+                        Tối đa: <span id="priceValue" class="text-warning fw-bold">{{ number_format($priceFilter,
+                            0, '.', '.') }}đ</span>
+                    </label>
+                    <input wire:model.live="priceFilter" type="range" class="form-range" id="priceRange"
+                        min="{{ $priceMaxMin['min'] }}" max="{{ $priceMaxMin['max'] }}" step="1000">
+                    <div class="d-flex justify-content-between text-muted small">
+                        <span>{{ number_format($priceMaxMin['min'], 0, '.', '.') }}đ</span>
+                        <span>{{ number_format($priceMaxMin['max'], 0, '.', '.') }}đ</span>
+                    </div>
+                </div>
+            </div>
+            <div class="filter-section">
+                <h6>
+                    <i class="bi bi-calendar me-2 text-primary"></i>
+                    Năm phát hành
+                </h6>
+                <div class="row g-2">
+                    <div class="col-6">
+                        <select class="form-select text-white bg-dark border-secondary"
+                            wire:model.live="releaseDateFilter.from">
+                            <option value="">Từ năm</option>
+                            @for ($year = now()->year; $year >= $releaseDateMin; $year--)
+                            <option value="{{ $year }}">{{ $year }}</option>
+                            @endfor
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <select class="form-select text-white bg-dark border-secondary"
+                            wire:model.live="releaseDateFilter.to">
+                            <option value="">Đến năm</option>
+                            @for ($year = now()->year; $year >= $releaseDateMin; $year--)
+                            <option value="{{ $year }}">{{ $year }}</option>
+                            @endfor
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+            <!-- Filter Actions -->
+            <div class="d-grid gap-2 mt-4">
+                <button class="btn btn-success" data-bs-dismiss="offcanvas">
+                    <i class="fa-solid fa-check me-2"></i>
+                    Áp dụng bộ lọc
+                </button>
+                <button class="btn btn-outline-secondary" wire:click="resetFilters">
+                    <i class="fa-solid fa-arrow-rotate-right me-2"></i>
+                    Xóa bộ lọc nâng cao
+                </button>
             </div>
         </div>
     </div>

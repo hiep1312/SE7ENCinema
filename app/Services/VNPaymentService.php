@@ -27,7 +27,7 @@ class VNPaymentService {
             'vnp_IpAddr' => request()->ip(),
             'vnp_Locale' => 'vn',
             'vnp_OrderType' => 250000,
-            'vnp_ReturnUrl' => route('client.index'),
+            'vnp_ReturnUrl' => route('test'),
         ];
     }
 
@@ -83,13 +83,13 @@ class VNPaymentService {
         JS, 200, ['Content-Type' => 'text/html']) : redirect($this->paymentUrl);
     }
 
-    public function queryResult(bool $returnCollection = true) {
+    public function queryResult(bool $returnArray = false) {
         if(empty($this->config)) throw new RuntimeException('Payment has not been initialized. Please call createPaymentUrl() before queryResult().');
 
-        return self::queryResultPayment($this->config, $returnCollection);
+        return self::queryResultPayment($this->config, $returnArray);
     }
 
-    public static function queryResultPayment(Collection|array $configInput, bool $returnCollection = true) {
+    public static function queryResultPayment(Collection|array $configInput, bool $returnArray = false) {
         $configInput = is_array($configInput) ? $configInput : $configInput->toArray();
 
         $config = [
@@ -112,7 +112,7 @@ class VNPaymentService {
 
         $http = Http::withHeaders(['Content-Type' => 'application/json'])->post(self::API_URL, $config);
 
-        return $returnCollection ? collect($http->json()) : $http->json();
+        return $returnArray ? $http->json() : collect($http->json());
     }
 
     protected function buildPaymentConfig(array $configInput): array
@@ -141,7 +141,59 @@ class VNPaymentService {
         return array_filter($configNew);
     }
 
-    public static function parse(array|string|null $data = null){
+    public static function parse(array|string $dataInput, bool $checkSum = false, bool $returnArray = false) {
+        if(empty($dataInput)) return [];
 
+        $data = [];
+        if(is_string($dataInput)) parse_str($dataInput, $data);
+        elseif(is_array($dataInput)) $data = array_is_list($dataInput) ? collect($dataInput)->mapWithKeys(fn($item) => [$item[0] => $item[1]])->toArray() : $dataInput;
+
+        $result = [
+            'vnp_TmnCode' => $data['vnp_TmnCode'] ?? config('services.vnpay.vnp_TmnCode'),
+            'vnp_Amount' => $data['vnp_Amount'] ?? 0,
+            'vnp_BankCode' => $data['vnp_BankCode'] ?? null,
+            'vnp_BankTranNo' => $data['vnp_BankTranNo'] ?? '',
+            'vnp_CardType' => $data['vnp_CardType'] ?? '',
+            'vnp_PayDate' => $data['vnp_PayDate'] ?? '',
+            'vnp_OrderInfo' => $data['vnp_OrderInfo'] ?? '',
+            'vnp_TransactionNo' => $data['vnp_TransactionNo'] ?? throw new InvalidArgumentException('The vnp_TransactionNo attribute is required'),
+            'vnp_ResponseCode' => $data['vnp_ResponseCode'] ?? throw new InvalidArgumentException('The vnp_ResponseCode attribute is required'),
+            'vnp_TransactionStatus' => $data['vnp_TransactionStatus'] ?? throw new InvalidArgumentException('The vnp_TransactionStatus attribute is required'),
+            'vnp_TxnRef' => $data['vnp_TxnRef'] ?? '',
+        ];
+
+        ksort($result);
+        $keyFirst = array_key_first($result);
+        $query = "";
+
+        foreach ($result as $key => $value) {
+            if ($keyFirst !== $key) $query .= '&' . urlencode($key) . "=" . urlencode($value);
+            else $query .= urlencode($key) . "=" . urlencode($value);
+        }
+
+        (isset($data['vnp_SecureHash']) || throw new InvalidArgumentException('The vnp_SecureHash attribute is required')) && ($result['vnp_SecureHash'] = $data['vnp_SecureHash']);
+        $result['vnp_Amount'] = (int)$result['vnp_Amount'] / 100;
+
+        if($checkSum){
+            $secureHash = hash_hmac('sha512', $query, config('services.vnpay.vnp_HashSecret'), false);
+            if($secureHash !== $result['vnp_SecureHash']) throw new InvalidArgumentException('Checksum mismatch: the vnp_SecureHash is invalid or the data has been tampered.');
+        }
+
+        return $returnArray ? $result : collect($result);
+    }
+
+    public static function parseWithQueryString(?string $query = null, bool $checkSum = false, bool $returnArray = true){
+        return self::parse($query ?? $_SERVER['QUERY_STRING'] ?? request()->query(), $checkSum, $returnArray);
+    }
+
+    public static function cleanupURL(?callable $callback = null){
+        $dataParse = self::parseWithQueryString();
+        if($callback) $callback($dataParse);
+
+        echo <<<JS
+            <script type="text/javascript">
+                if(window.location.search) window.history.replaceState({}, '', window.location.pathname);
+            </script>
+        JS;
     }
 }

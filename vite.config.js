@@ -21,7 +21,10 @@ export default defineConfig({
                 'resources/css/showtimeIndex.css',
                 'resources/css/selectfood.css',
                 'resources/css/faq.css',
-                'resources/css/bookingFood.css'
+                'resources/css/bookingFood.css',
+                'resources/css/bookingPayment.css',
+                'resources/css/movieBooking.css',
+                'resources/css/movieList.css',
             ],
             refresh: true,
         }),

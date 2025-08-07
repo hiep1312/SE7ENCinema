@@ -34,8 +34,8 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
       </div>
 
       <!-- Body -->
-      <div class="offcanvas-body p-0 d-flex flex-column full-notifications__content" style="flex: 1 1 auto; min-height: 0;">
-        <div style="display: flex; flex-direction: column; height: 100%; min-height: 0;">
+      <div class="offcanvas-body p-0 d-flex flex-column full-notifications__content" style="flex: 1 1 auto; min-height: 0; z-index: 100000000;">
+        <div style="display: flex; flex-direction: column; height: 98%; min-height: 0;">
 
          <!-- Notification Tabs -->
          <div class="notification-tabs full-notifications__nav">
@@ -62,7 +62,7 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
         </div>
 
         <!-- Content -->
-        <div class="notification-content flex-grow-1" style="height: 100%; overflow-y: auto; min-height: 0;">
+        <div class="notification-content flex-grow-1" style="height: 100%; overflow: hidden; min-height: 0;">
           {{-- All Notifications --}}
           @if($tab === 'all')
           <div class="full-notifications__tab-content">
@@ -153,7 +153,7 @@ $isAllNotifications = request()->routeIs('client.notifications.allnotification')
             <div class="notification__load-more">
                 <a wire:click="loadMore"
                         class="notification__load-more-link"
-                        wire:loading.attr="disabled">
+                        wire:loading.class="disabled">
                     <span wire:loading.remove wire:target="loadMore">
                         Hiển thị thêm thông báo trước đó
                     </span>
