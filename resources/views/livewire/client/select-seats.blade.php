@@ -4,7 +4,7 @@
 
 <div class="scRender" wire:poll.5000ms="refreshSeatStatus">
 
-<h1>test</h1>
+<h1>thử đẩy lên nhánh main</h1>
     @if ($isBanned && $banInfo)
         <div class="container mt-5">
             <div class="row justify-content-center mt-5">
