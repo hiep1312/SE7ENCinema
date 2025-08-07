@@ -19,10 +19,28 @@ class MovieIndex extends Component
     public $showDeleted = false;
     public $statusFilter = '';
     public $showtimeFilter = '';
+    public $durationFilter = '';
+    public $priceFilter = '';
+    public $releaseDateFilter = [
+        'from' => null,
+        'to' => null,
+    ];
+    public $durationMaxMin = '';
+    public $priceMaxMin = '';
+    public $releaseDateMin = '';
+
+    public function mount()
+    {
+        $this->durationMaxMin = ['min' => Movie::min('duration'), 'max' => Movie::max('duration')];
+        $this->priceMaxMin = ['min' => Movie::min('price'), 'max' => Movie::max('price')];
+        $this->releaseDateMin = Carbon::parse(Movie::min('release_date'))->year;
+        $this->durationFilter = $this->durationMaxMin['max'];
+        $this->priceFilter = $this->priceMaxMin['max'];
+    }
 
     public function deleteMovie(array $status, int $movieId)
     {
-        if(!$status['isConfirmed']) return;
+        if (!$status['isConfirmed']) return;
         $movie = Movie::find($movieId);
 
         if ($movie->hasActiveShowtimes()) {
@@ -44,7 +62,7 @@ class MovieIndex extends Component
 
     public function forceDeleteMovie(array $status, int $movieId)
     {
-        if(!$status['isConfirmed']) return;
+        if (!$status['isConfirmed']) return;
         $movie = Movie::onlyTrashed()->find($movieId);
 
         // Kiểm tra quyền xóa cứng
@@ -56,7 +74,7 @@ class MovieIndex extends Component
         // Xóa tất cả thể loại trước
         $movie->genres()->detach();
 
-        if(isset($movie->poster) && Storage::disk('public')->exists($movie->poster)) Storage::disk('public')->delete($movie->poster);
+        if (isset($movie->poster) && Storage::disk('public')->exists($movie->poster)) Storage::disk('public')->delete($movie->poster);
         // Xóa cứng phim
         $movie->forceDelete();
         session()->flash('success', 'Xóa vĩnh viễn phim thành công!');
@@ -64,16 +82,19 @@ class MovieIndex extends Component
 
     public function resetFilters()
     {
-        $this->reset(['search', 'statusFilter', 'showtimeFilter']);
+        $this->reset(['search', 'statusFilter', 'showtimeFilter', 'releaseDateFilter']);
+        $this->durationFilter = $this->durationMaxMin['max'];
+        $this->priceFilter = $this->priceMaxMin['max'];
         $this->resetPage();
     }
 
-    public function updateStatusMoviesAndShowtimes(){
-        Movie::all()->each(function($movie){
+    public function updateStatusMoviesAndShowtimes()
+    {
+        Movie::all()->each(function ($movie) {
             $releaseDate = Carbon::parse($movie->release_date);
             $endDate = !$movie->end_date ?: Carbon::parse($movie->end_date);
-            if(is_object($endDate) && $endDate->isPast()) $movie->status = 'ended';
-            else if($releaseDate->isFuture()) $movie->status = 'coming_soon';
+            if (is_object($endDate) && $endDate->isPast()) $movie->status = 'ended';
+            elseif($releaseDate->isFuture()) $movie->status = 'coming_soon';
             else $movie->status = 'showing';
             $movie->save();
         });
@@ -98,7 +119,7 @@ class MovieIndex extends Component
         if ($this->showDeleted) {
             $query = Movie::onlyTrashed();
         } else {
-            $fnShowtimeFilter = function($q) {
+            $fnShowtimeFilter = function ($q) {
                 $q->where('start_time', '>=', now())
                     ->where('status', 'active');
             };
@@ -106,15 +127,32 @@ class MovieIndex extends Component
             $query->when($this->statusFilter, function ($query) {
                 $query->where('status', $this->statusFilter);
             })->when($this->showtimeFilter, function ($query) use ($fnShowtimeFilter) {
-                $this->showtimeFilter === 'has_showtimes' ? $query->whereHas('showtimes', $fnShowtimeFilter) : $query->whereDoesntHave('showtimes', $fnShowtimeFilter);
+                $this->showtimeFilter === 'has_showtimes'
+                    ? $query->whereHas('showtimes', $fnShowtimeFilter)
+                    : $query->whereDoesntHave('showtimes', $fnShowtimeFilter);
+            })
+            ->when($this->durationFilter, function ($query) {
+                $query->where('duration', '<=', $this->durationFilter);
+            })
+            ->when($this->priceFilter, function ($query) {
+                $query->where('price', '<=', $this->priceFilter);
+            })
+            ->when($this->releaseDateFilter['from'], function ($query) {
+                $query->whereYear('release_date', '>=', $this->releaseDateFilter['from']);
+            })
+            ->when($this->releaseDateFilter['to'], function ($query) {
+                $query->whereYear('end_date', '<=', $this->releaseDateFilter['to']);
             });
         }
 
         $movies = $query->when($this->search, function ($query) {
-                $query->withTrashed();
-                $query->where('title', 'like', '%' . $this->search . '%');
+            $query->withTrashed();
+            $query->where('title', 'like', '%' . trim($this->search) . '%')
+                ->orWhereHas('genres', function ($q) {
+                    $q->where('name', 'like', '%' . trim($this->search) . '%');
+                });
             })
-            ->with(['showtimes' => function($query) {
+            ->with(['showtimes' => function ($query) {
                 $query->with('room')
                     ->where('start_time', '>=', now())
                     ->where('status', 'active')

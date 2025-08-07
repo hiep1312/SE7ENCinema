@@ -4,7 +4,9 @@ namespace App\Livewire\Payment;
 
 use App\Models\Booking;
 use App\Models\BookingSeat;
+use App\Models\Ticket;
 use Livewire\Component;
+use Illuminate\Support\Str;
 
 class VnpayPayment extends Component
 {
