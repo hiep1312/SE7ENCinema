@@ -121,7 +121,8 @@
                                             <div class="movie-poster position-relative" style="width: 80px; height: 100px; margin: 0;">
                                                 @if($movie->poster)
                                                     <img src="{{ asset('storage/' . $movie->poster) }}"
-                                                        alt="Ảnh phim {{ $movie->title }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
+                                                        alt="Ảnh phim {{ $movie->title }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;"
+                                                        loading="lazy">
                                                 @else
                                                     <i class="fas fa-film" style="font-size: 22px;"></i>
                                                 @endif
@@ -323,7 +324,7 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="trailerPreview" wire:ignore>
+        <div class="modal fade" id="trailerPreview" tabindex="-1" wire:ignore>
             <div class="modal-dialog modal-fullscreen">
                 <div class="modal-content">
                     <div class="modal-body">

@@ -39,7 +39,7 @@ class GenreIndex extends Component
     #[Layout('components.layouts.admin')]
     public function render()
     {
-        $query = Genre::with('movies')->when($this->search, function($query) {
+        $query = Genre::with(['movies' => fn($query) => $query->select('movies.id', 'movies.title')])->when($this->search, function($query) {
             $query->where(function($subQuery){
                 $subQuery->whereLike('name', '%' . trim($this->search) . '%')
                     ->orWhereLike('description', '%' . trim($this->search) . '%');

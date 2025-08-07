@@ -211,7 +211,7 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="bannerPreview" wire:ignore.self>
+        <div class="modal fade" id="bannerPreview" tabindex="-1" wire:ignore.self>
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">

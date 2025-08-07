@@ -11,10 +11,11 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use SE7ENCinema\scAlert;
 
 class MovieCreate extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, scAlert;
 
     public $title = '';
     public $description = null;
@@ -28,6 +29,7 @@ class MovieCreate extends Component
     public $trailer_url = null;
     public $format = '2D';
     public $price = null;
+    public $formattedPrice = null;
     public $status = "showing";
 
     /* Genre */
@@ -40,7 +42,13 @@ class MovieCreate extends Component
     /* Showtime */
     public $baseShowtimeStart = null;
     public $baseShowtimeEnd = null;
+    public $baseRoom = null;
     public $showtimes = [];
+
+    /* Modal type */
+    public $modalType = null;
+    public $searchModal = '';
+    public $modalSelected = null;
 
     protected $rules = [
         'title' => 'required|string|max:255',
@@ -61,7 +69,6 @@ class MovieCreate extends Component
 
         'showtimes.*.room_id' => 'required|integer|exists:rooms,id',
         'showtimes.*.start_time' => 'required|date_format:Y-m-d\TH:i|after_or_equal:now',
-        'showtimes.*.price' => 'required|numeric|min:0',
     ];
 
     protected $messages = [
@@ -97,9 +104,6 @@ class MovieCreate extends Component
         'showtimes.*.start_time.required' => 'Vui lòng chọn khung giờ chiếu.',
         'showtimes.*.start_time.date_format' => 'Khung giờ chiếu không hợp lệ.',
         'showtimes.*.start_time.after_or_equal' => 'Khung giờ chiếu phải lớn hơn hoặc bằng thời điểm hiện tại.',
-        'showtimes.*.price.required' => 'Vui lòng nhập giá khung giờ.',
-        'showtimes.*.price.numeric' => 'Giá khung giờ phải là một số.',
-        'showtimes.*.price.min' => 'Giá khung giờ không được nhỏ hơn 0.',
     ];
 
     public function toggleShowtime(?int $index = null)
@@ -108,28 +112,35 @@ class MovieCreate extends Component
         else $this->showtimes[] = [
             'room_id' => null,
             'start_time' => '',
-            'price' => null,
         ];
     }
 
     public function generateShowtimes(){
-        $this->validate([
+        /* $this->validate([
             'baseShowtimeStart' => 'required|date_format:Y-m-d\TH:i|after_or_equal:now',
             'baseShowtimeEnd' => 'nullable|date_format:Y-m-d\TH:i|after:baseShowtimeStart',
+            'baseRoom' => 'nullable|integer|exists:rooms,id',
         ], [
             'baseShowtimeStart.required' => 'Vui lòng nhập thời gian bắt đầu chiếu.',
             'baseShowtimeStart.date_format' => 'Thời gian bắt đầu chiếu phải có định dạng đúng: YYYY-MM-DDTHH:MM.',
             'baseShowtimeStart.after_or_equal' => 'Thời gian bắt đầu chiếu phải lớn hơn hoặc bằng thời điểm hiện tại.',
             'baseShowtimeEnd.date_format' => 'Thời gian kết thúc chiếu phải có định dạng đúng: YYYY-MM-DDTHH:MM.',
             'baseShowtimeEnd.after' => 'Thời gian kết thúc chiếu phải sau thời gian bắt đầu chiếu.',
+            'baseRoom.integer' => 'ID phòng chiếu không hợp lệ.',
+            'baseRoom.exists' => 'Phòng chiếu được chọn không tồn tại.',
         ]); $this->validateOnly('duration');
 
         $startTime = Carbon::parse($this->baseShowtimeStart);
         $endTime = $this->baseShowtimeEnd ? Carbon::parse($this->baseShowtimeEnd) : $startTime->copy()->endOfDay();
         $movieDuration = +$this->duration;
-        $currentShowtimes = array_map(function($showtime){
-            return date('Y-m-d\TH:i', strtotime($showtime['start_time']));
-        }, $this->showtimes);
+        $roomId = $this->baseRoom;
+        $currentShowtimes = collect(array_map(function($showtime){
+            return array_merge($showtime, ['start_time' => date('Y-m-d\TH:i', strtotime($showtime['start_time']))]);
+        }, $this->showtimes));
+        is_int($roomId) && ($existingShowtimes = Showtime::select('id', 'room_id', 'start_time')->where('room_id', $roomId)
+            ->where('status', '!=', 'canceled')
+            ->whereBetween('start_time', [$startTime, $endTime])
+            ->get()->toArray());
 
         // Tạo danh sách suất chiếu
         $generatedShowtimes = [];
@@ -141,11 +152,11 @@ class MovieCreate extends Component
 
             $formattedStartTime = $startTime->format('Y-m-d\TH:i');
             // Kiểm tra xem thời gian bắt đầu của suất chiếu này có trong danh sách hiện tại hay chưa. Nếu không có thì tạo suất chiếu mới
-            if(!in_array($formattedStartTime, $currentShowtimes)){
+            if(in_array($formattedStartTime, $currentShowtimes)){
+                $startTime = $showtimeEndTime->addMinutes(10);
                 $generatedShowtimes[] = [
                     'room_id' => null,
                     'start_time' => $formattedStartTime,
-                    'price' => null,
                 ];
             }
 
@@ -162,7 +173,7 @@ class MovieCreate extends Component
         $this->showtimes = array_merge($this->showtimes, $generatedShowtimes);
         usort($this->showtimes, fn($valueA, $valueB) => strtotime($valueA['start_time']) - strtotime($valueB['start_time']));
 
-        session()->flash('successGeneratedShowtimes', "Đã tạo thành công {$showtimeCount} suất chiếu!");
+        session()->flash('successGeneratedShowtimes', "Đã tạo thành công {$showtimeCount} suất chiếu!"); */
     }
 
     public function addGenre(){
@@ -176,6 +187,20 @@ class MovieCreate extends Component
 
         $genreAdded = Genre::create(['name' => $this->searchGenre]);
         $this->genresSelected[] = $genreAdded->id;
+    }
+
+    public function updatedFormattedPrice(){
+        $this->price = str_replace([',', '.'], '', $this->formattedPrice);
+    }
+
+    public function setData(){
+        $modalText = $this->modalType==="director" ? 'đạo diễn' : 'diễn viên';
+        if(empty($this->modalSelected)) $this->scAlert("Chưa chọn {$modalText}", "Bạn chưa chọn {$modalText} nào. Hệ thống sẽ tiếp tục mà không cập nhật {$modalText}.", 'warning', '');
+        else $this->{$this->modalType} = $this->modalType==="director" ? $this->modalSelected : implode(', ', $this->actors ? collect(array_unique(array_merge($this->modalSelected, array_map(fn($actor) => trim($actor), explode(',', $this->actors ?? '')))))->sort()->toArray() : $this->modalSelected);
+    }
+
+    public function resetModal(){
+        $this->reset(['modalType', 'searchModal', 'modalSelected']);
     }
 
     public function createMovie()
@@ -208,7 +233,6 @@ class MovieCreate extends Component
                 'room_id' => $showtime['room_id'],
                 'start_time' => $showtime['start_time'],
                 'end_time' => Carbon::parse($showtime['start_time'])->addMinutes(+$this->duration),
-                'price' => $showtime['price'],
             ]);
         }
 
@@ -220,7 +244,22 @@ class MovieCreate extends Component
     public function render()
     {
         $genres = Genre::select('id', 'name')->when($this->searchGenre, fn ($query) => $query->where('name', 'like', '%' . $this->searchGenre . '%'))->get();
+        $totalGenres = Genre::count();
         $rooms = Room::select('id', 'name')->where('status', 'active')->get();
-        return view('livewire.admin.movies.movie-create', compact('genres', 'rooms'));
+
+        $modalData = [];
+        if($this->modalType){
+            $query = Movie::select("{$this->modalType} as name")
+                ->when($this->searchModal, fn ($query) => $query->whereLike($this->modalType, '%' . trim($this->searchModal) . '%'));
+            if($this->modalType === 'director'){
+                $modalData = $query->distinct()->orderBy('name')->get()->pluck('name');
+                (is_null($this->modalSelected)) && ($this->modalSelected = $modalData->contains($this->director) ? $this->director : '');
+            }else{
+                $modalData = $query->get()->pluck('name')->flatMap(fn($actors) => array_map(fn($actor) => trim($actor), explode(',', $actors)))->unique()->sort();
+                (is_null($this->modalSelected)) && ($this->modalSelected = $this->actors ? array_filter(array_map(fn($actor) => $modalData->contains(trim($actor)) ? trim($actor) : null, explode(',', $this->actors))) : []);
+            }
+        }
+
+        return view('livewire.admin.movies.movie-create', compact('genres', 'rooms', 'totalGenres', 'modalData'));
     }
 }

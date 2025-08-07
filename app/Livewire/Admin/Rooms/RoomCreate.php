@@ -15,27 +15,36 @@ class RoomCreate extends Component
     public $status = 'active';
     public $rows = 10;
     public $seatsPerRow = 15;
-    public $vipRows = 'A';
-    public $coupleRows = 'B';
-    public $priceStandard = 20000;
-    public $priceVip = 20000;
-    public $priceCouple = 20000;
+    public $vipRows = null;
+    public $vipArr = [];
+    public $coupleRows = null;
+    public $coupleArr = [];
+    public $priceStandard = null;
+    public $formattedPriceStandard = null;
+    public $priceVip = null;
+    public $formattedPriceVip = null;
+    public $priceCouple = null;
+    public $formattedPriceCouple = null;
     public $temp = [];
     public $checkLonely = true;
     public $checkSole = true;
     public $checkDiagonal = true;
 
-    protected $rules = [
-        'name' => 'required|string|max:255|unique:rooms,name',
-        'status' => 'required|in:active,maintenance,inactive',
-        'rows' => 'required|integer|min:5|max:26',
-        'seatsPerRow' => 'required|integer|min:10|max:30',
-        'vipRows' => 'nullable|string',
-        'coupleRows' => 'nullable|string',
-        'priceStandard' => 'required|numeric|min:20000',
-        'priceVip' => 'required|numeric|min:20000|gt:priceStandard',
-        'priceCouple' => 'required|numeric|min:20000|gt:priceStandard',
-    ];
+    protected function rules() {
+        $rules = [
+            'name' => 'required|string|max:255|unique:rooms,name',
+            'status' => 'required|in:active,maintenance,inactive',
+            'rows' => 'required|integer|min:5|max:26',
+            'seatsPerRow' => 'required|integer|min:10|max:30',
+            'vipArr.*' => 'string|distinct:ignore_case',
+            'coupleArr.*' => 'string|distinct:ignore_case',
+            'priceStandard' => 'required|numeric|min:0',
+            'priceVip' => 'numeric|min:0|gt:priceStandard|lt:priceCouple' . ($this->vipRows ? '|required' : '|nullable'),
+            'priceCouple' => 'numeric|min:0|gt:priceStandard' . ($this->coupleRows ? '|required' : '|nullable'),
+        ];
+
+        return $rules;
+    }
 
     protected $messages = [
         'name.required' => 'Tên phòng chiếu là bắt buộc',
@@ -47,25 +56,45 @@ class RoomCreate extends Component
         'seatsPerRow.required' => 'Số ghế mỗi hàng là bắt buộc',
         'seatsPerRow.min' => 'Số ghế mỗi hàng tối thiểu là 10',
         'seatsPerRow.max' => 'Số ghế mỗi hàng tối đa là 30',
+        'vipArr.*.string' => 'Mỗi giá trị trong danh sách hàng ghế VIP phải là một chuỗi ký tự.',
+        'vipArr.*.distinct' => 'Danh sách hàng ghế VIP không được chứa các giá trị trùng lặp.',
+        'coupleArr.*.string' => 'Mỗi giá trị trong danh sách hàng ghế đôi phải là một chuỗi ký tự.',
+        'coupleArr.*.distinct' => 'Danh sách hàng ghế đôi không được chứa các giá trị trùng lặp.',
         'priceStandard.required' => 'Giá ghế thường là bắt buộc',
-        'priceStandard.min' => 'Giá ghế thường tối thiểu là 20.000 VNĐ',
+        'priceStandard.numeric' => 'Giá ghế thường phải là một số.',
+        'priceStandard.min' => 'Giá ghế thường tối thiểu là 0 VNĐ',
         'priceVip.required' => 'Giá ghế VIP là bắt buộc',
-        'priceVip.min' => 'Giá ghế VIP tối thiểu là 20.000 VNĐ',
+        'priceVip.numeric' => 'Giá ghế VIP phải là một số.',
+        'priceVip.min' => 'Giá ghế VIP tối thiểu là 0 VNĐ',
         'priceVip.gt' => 'Giá ghế VIP phải lớn hơn giá ghế thường',
+        'priceVip.lt' => 'Giá ghế VIP phải nhỏ hơn giá ghế đôi',
         'priceCouple.required' => 'Giá ghế đôi là bắt buộc',
-        'priceCouple.min' => 'Giá ghế đôi tối thiểu là 20.000 VNĐ',
+        'priceCouple.numeric' => 'Giá ghế đôi phải là một số.',
+        'priceCouple.min' => 'Giá ghế đôi tối thiểu là 0 VNĐ',
         'priceCouple.gt' => 'Giá ghế đôi phải lớn hơn giá ghế thường',
     ];
+
+    public function updated($property){
+        if($property === 'formattedPriceStandard' || $property === 'formattedPriceVip' || $property === 'formattedPriceCouple')
+            $this->{lcfirst(strstr($property, 'Price'))} = str_replace([',', '.'], '', $this->{$property});
+        elseif($property === 'vipRows' || $property === 'coupleRows')
+            $this->{str_replace('Rows', 'Arr', $property)} = array_map(fn($row) => trim($row), $this->{$property} ? explode(',', $this->{$property}) : []);
+    }
 
     public function updatedTemp()
     {
         $this->temp = array_filter($this->temp, fn($item) => !Str::contains($item, ['add-column-btn', 'asile']));
     }
 
-
     public function createRoom()
     {
         $this->validate();
+
+        if(collect($this->vipArr)->some(fn($row) => in_array($row, $this->coupleArr)) || collect($this->coupleArr)->some(fn($row) => in_array($row, $this->vipArr))){
+            $this->addError('vipArr.*', 'Danh sách hàng ghế VIP không được chứa các hàng đã thuộc ghế đôi.');
+            $this->addError('coupleArr.*', 'Danh sách hàng ghế đôi không được chứa các hàng đã thuộc ghế VIP.');
+            return;
+        }
 
         try {
             $room = Room::create([
@@ -112,13 +141,21 @@ class RoomCreate extends Component
         } catch (\Exception $e) {
             session()->flash('error', 'Có lỗi xảy ra trong quá trình tạo phòng chiếu. Vui lòng thử lại!');
         }
-        
+
     }
 
     public function handleGenerateSeats()
     {
-        $this->validate();
-        $this->dispatch('generateSeats', $this->rows, $this->seatsPerRow, $this->vipRows, $this->coupleRows , $this->checkLonely, $this->checkSole, $this->checkDiagonal);
+        $this->validateOnly('vipArr.*');
+        $this->validateOnly('coupleArr.*');
+
+        if(collect($this->vipArr)->some(fn($row) => in_array($row, $this->coupleArr)) || collect($this->coupleArr)->some(fn($row) => in_array($row, $this->vipArr))){
+            $this->addError('vipArr.*', 'Danh sách hàng ghế VIP không được chứa các hàng đã thuộc ghế đôi.');
+            $this->addError('coupleArr.*', 'Danh sách hàng ghế đôi không được chứa các hàng đã thuộc ghế VIP.');
+            return;
+        }
+
+        $this->dispatch('generateSeats', $this->rows, $this->seatsPerRow, $this->vipArr, $this->coupleArr, $this->checkLonely, $this->checkSole, $this->checkDiagonal);
     }
 
     public function setTemp($data)

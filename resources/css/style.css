@@ -405,7 +405,7 @@
     margin-right: 15px;
 }
 
-.checkbox-wrapper input[type="checkbox"] {
+.checkbox-wrapper input[type="checkbox"], .checkbox-wrapper input[type="radio"] {
     opacity: 0;
     position: absolute;
     cursor: pointer;
@@ -421,7 +421,7 @@
     transition: all 0.3s ease;
 }
 
-.checkbox-wrapper input[type="checkbox"]:checked + .checkmark {
+.checkbox-wrapper input[type="checkbox"]:checked + .checkmark, .checkbox-wrapper input[type="radio"]:checked + .checkmark {
     background: #4a9eff;
     border-color: #4a9eff;
 }
@@ -439,7 +439,7 @@
     transform: rotate(45deg);
 }
 
-.checkbox-wrapper input[type="checkbox"]:checked + .checkmark:after {
+.checkbox-wrapper input[type="checkbox"]:checked + .checkmark:after, .checkbox-wrapper input[type="radio"]:checked + .checkmark:after {
     display: block;
 }
 
@@ -572,6 +572,11 @@
     color: white;
 }
 
+.room-icon {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+}
+
 .datetime-input-wrapper {
     position: relative;
     overflow: hidden;
@@ -618,6 +623,33 @@
 
 .datetime-input:focus {
     border-color: #667eea;
+}
+
+.datetime-input.select {
+    appearance: none;
+}
+
+.datetime-input.select option {
+    background: #3c3c3c;
+    color: #ffffff;
+    padding: 8px;
+}
+
+.datetime-input.select option:hover {
+    background: #4a4a4a;
+}
+
+/* Custom dropdown arrow */
+.datetime-input-wrapper.select::after {
+    content: '▼';
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    color: #85929f;
+    pointer-events: none;
+    font-size: 0.8rem;
+    z-index: 1;
 }
 
 .btn-custom {
@@ -1318,7 +1350,7 @@
     position: relative;
     width: 100%;
     height: 0;
-    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    padding-bottom: 56.25%;
 }
 
 .responsive-iframe iframe {
