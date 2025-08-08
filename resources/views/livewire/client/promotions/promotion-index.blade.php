@@ -1,5 +1,8 @@
+@assets
+    @vite('resources/css/promotion.css')
+@endassets
 <div class="scRender scPromotion" wire:poll.10s>
-<div class="container-fluid d-flex justify-content-center align-items-start scPromotion">
+<div class="container-fluid d-flex justify-content-center align-items-start">
     <div class="container">
         <!-- Tips/Intro Section -->
         <div class="promotion-tips-box mt-4 mb-4">
@@ -135,7 +138,7 @@
                         <div class="col-lg-6 col-md-6 col-sm-12">
                             <div class="card movie-hot p-0 border-0" style="height: 440px; min-height: 440px;">
                                 <div class="position-relative movie-img-wrapper" style="height: 400px; border-radius: 1.2rem; overflow: hidden;">
-                                    <img src="{{ $movie->poster ? (Str::startsWith($movie->poster, ['http://', 'https://']) ? $movie->poster : asset('storage/' . $movie->poster)) : asset('404.webp') }}" class="card-img-top movie-img-large" alt="{{ $movie->title }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 1.2rem;">
+                                    <img src="{{ $movie->poster ? (Str::startsWith($movie->poster, ['http://', 'https://']) ? $movie->poster : asset('storage/' . $movie->poster)) : asset('404.webp') }}" class="card-img-top movie-img-large" alt="{{ $movie->title }}" style="aspect-ratio: 4/5; object-fit: cover; border-radius: 1.2rem;">
                                     @if($movie->age_restriction)
                                     <span class="badge badge-age badge-age-{{ strtoupper($movie->age_restriction) }}">
                                         {{ $movie->age_restriction }}
