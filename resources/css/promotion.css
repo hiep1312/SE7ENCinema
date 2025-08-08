@@ -824,7 +824,7 @@
   max-width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: wrap;
 }
 
 /* UPDATED PAGINATION STYLE - Red/Orange Theme */
