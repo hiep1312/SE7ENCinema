@@ -8514,11 +8514,6 @@ body.active #mobile-nav {
 	animation: pulse 1.2s infinite cubic-bezier(0.66, 0, 0, 1);
 }
 
-@-webkit-keyframes pulse {
-	to {
-		box-shadow: 0 0 0 40px rgba(232, 76, 61, 0);
-	}
-}
 
 @-moz-keyframes pulse {
 	to {
@@ -9364,11 +9359,6 @@ i:before {
 	animation: pulse 1.2s infinite cubic-bezier(0.66, 0, 0, 1);
 }
 
-@-webkit-keyframes pulse {
-	to {
-		box-shadow: 0 0 0 40px rgba(232, 76, 61, 0);
-	}
-}
 
 @-moz-keyframes pulse {
 	to {
