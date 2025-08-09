@@ -14,7 +14,7 @@ use Livewire\Component;
 
 class DashboardIndex extends Component
 {
-    public $revenuePeriod = 'month';
+    public $revenuePeriod = '1_month';
     public $chartData = [];
     public $currentMonthRevenue = 0;
     public $lastMonthRevenue = 0;
@@ -80,6 +80,7 @@ class DashboardIndex extends Component
         $this->revenuePeriod = $period;
         $this->loadChartData();
         $this->dispatch('updateRevenueChart', data: $this->chartData);
+        $this->dispatch('updateFilterText', elementId: 'revenueFilterText', text: $this->getFilterText($period));
     }
 
     private function getRevenueData($period)
@@ -88,51 +89,215 @@ class DashboardIndex extends Component
         $now = Carbon::now();
 
         switch ($period) {
-            case 'week':
+            case '3_days':
+                for ($i = 2; $i >= 0; $i--) {
+                    $date = $now->copy()->subDays($i);
+                    $revenue = Booking::where('status', 'paid')
+                        ->whereDate('created_at', $date)
+                        ->sum('total_price');
+                    $bookings = Booking::where('status', 'paid')
+                        ->whereDate('created_at', $date)
+                        ->count();
+                    $data[] = [
+                        'x' => $date->format('d/m'),
+                        'y' => $revenue,
+                        'bookings' => $bookings
+                    ];
+                }
+                break;
+
+            case '7_days':
                 for ($i = 6; $i >= 0; $i--) {
                     $date = $now->copy()->subDays($i);
                     $revenue = Booking::where('status', 'paid')
                         ->whereDate('created_at', $date)
                         ->sum('total_price');
-
+                    $bookings = Booking::where('status', 'paid')
+                        ->whereDate('created_at', $date)
+                        ->count();
                     $data[] = [
                         'x' => $date->format('d/m'),
-                        'y' => $revenue
+                        'y' => $revenue,
+                        'bookings' => $bookings
                     ];
                 }
                 break;
 
-            case 'month':
+            case '30_days':
                 for ($i = 29; $i >= 0; $i--) {
                     $date = $now->copy()->subDays($i);
                     $revenue = Booking::where('status', 'paid')
                         ->whereDate('created_at', $date)
                         ->sum('total_price');
-
+                    $bookings = Booking::where('status', 'paid')
+                        ->whereDate('created_at', $date)
+                        ->count();
                     $data[] = [
                         'x' => $date->format('d/m'),
-                        'y' => $revenue
+                        'y' => $revenue,
+                        'bookings' => $bookings
                     ];
                 }
                 break;
 
-            case 'year':
+            case '1_month':
+                for ($i = 29; $i >= 0; $i--) {
+                    $date = $now->copy()->subDays($i);
+                    $revenue = Booking::where('status', 'paid')
+                        ->whereDate('created_at', $date)
+                        ->sum('total_price');
+                    $bookings = Booking::where('status', 'paid')
+                        ->whereDate('created_at', $date)
+                        ->count();
+                    $data[] = [
+                        'x' => $date->format('d/m'),
+                        'y' => $revenue,
+                        'bookings' => $bookings
+                    ];
+                }
+                break;
+
+            case '3_months':
+                for ($i = 2; $i >= 0; $i--) {
+                    $date = $now->copy()->subMonths($i);
+                    $revenue = Booking::where('status', 'paid')
+                        ->whereYear('created_at', $date->year)
+                        ->whereMonth('created_at', $date->month)
+                        ->sum('total_price');
+                    $bookings = Booking::where('status', 'paid')
+                        ->whereYear('created_at', $date->year)
+                        ->whereMonth('created_at', $date->month)
+                        ->count();
+                    $data[] = [
+                        'x' => $date->format('M Y'),
+                        'y' => $revenue,
+                        'bookings' => $bookings
+                    ];
+                }
+                break;
+
+            case '6_months':
+                for ($i = 5; $i >= 0; $i--) {
+                    $date = $now->copy()->subMonths($i);
+                    $revenue = Booking::where('status', 'paid')
+                        ->whereYear('created_at', $date->year)
+                        ->whereMonth('created_at', $date->month)
+                        ->sum('total_price');
+                    $bookings = Booking::where('status', 'paid')
+                        ->whereYear('created_at', $date->year)
+                        ->whereMonth('created_at', $date->month)
+                        ->count();
+                    $data[] = [
+                        'x' => $date->format('M Y'),
+                        'y' => $revenue,
+                        'bookings' => $bookings
+                    ];
+                }
+                break;
+
+            case '1_year':
                 for ($i = 11; $i >= 0; $i--) {
                     $date = $now->copy()->subMonths($i);
                     $revenue = Booking::where('status', 'paid')
                         ->whereYear('created_at', $date->year)
                         ->whereMonth('created_at', $date->month)
                         ->sum('total_price');
-
+                    $bookings = Booking::where('status', 'paid')
+                        ->whereYear('created_at', $date->year)
+                        ->whereMonth('created_at', $date->month)
+                        ->count();
                     $data[] = [
                         'x' => $date->format('M Y'),
-                        'y' => $revenue
+                        'y' => $revenue,
+                        'bookings' => $bookings
+                    ];
+                }
+                break;
+
+            case '2_years':
+                for ($i = 23; $i >= 0; $i--) {
+                    $date = $now->copy()->subMonths($i);
+                    $revenue = Booking::where('status', 'paid')
+                        ->whereYear('created_at', $date->year)
+                        ->whereMonth('created_at', $date->month)
+                        ->sum('total_price');
+                    $bookings = Booking::where('status', 'paid')
+                        ->whereYear('created_at', $date->year)
+                        ->whereMonth('created_at', $date->month)
+                        ->count();
+                    $data[] = [
+                        'x' => $date->format('M Y'),
+                        'y' => $revenue,
+                        'bookings' => $bookings
+                    ];
+                }
+                break;
+
+            case '3_years':
+                for ($i = 35; $i >= 0; $i--) {
+                    $date = $now->copy()->subMonths($i);
+                    $revenue = Booking::where('status', 'paid')
+                        ->whereYear('created_at', $date->year)
+                        ->whereMonth('created_at', $date->month)
+                        ->sum('total_price');
+                    $bookings = Booking::where('status', 'paid')
+                        ->whereYear('created_at', $date->year)
+                        ->whereMonth('created_at', $date->month)
+                        ->count();
+                    $data[] = [
+                        'x' => $date->format('M Y'),
+                        'y' => $revenue,
+                        'bookings' => $bookings
+                    ];
+                }
+                break;
+
+            default:
+                // Default to 1 month view
+                for ($i = 29; $i >= 0; $i--) {
+                    $date = $now->copy()->subDays($i);
+                    $revenue = Booking::where('status', 'paid')
+                        ->whereDate('created_at', $date)
+                        ->sum('total_price');
+                    $bookings = Booking::where('status', 'paid')
+                        ->whereDate('created_at', $date)
+                        ->count();
+                    $data[] = [
+                        'x' => $date->format('d/m'),
+                        'y' => $revenue,
+                        'bookings' => $bookings
                     ];
                 }
                 break;
         }
 
         return $data;
+    }
+
+    public function getFilterText($period)
+    {
+        switch ($period) {
+            case '3_days':
+                return '3 ngày gần nhất';
+            case '7_days':
+                return '7 ngày gần nhất';
+            case '30_days':
+                return '30 ngày gần nhất';
+            case '1_month':
+                return '1 tháng gần nhất';
+            case '3_months':
+                return '3 tháng gần nhất';
+            case '6_months':
+                return '6 tháng gần nhất';
+            case '1_year':
+                return '1 năm gần nhất';
+            case '2_years':
+                return '2 năm gần nhất';
+            case '3_years':
+                return '3 năm gần nhất';
+            default:
+                return '1 tháng gần nhất';
+        }
     }
 
     public function getRevenueGrowth()
