@@ -1,7 +1,9 @@
 @php
 $isAllNotifications = request()->routeIs('client.notifications.allnotification');
 @endphp
-
+@assets
+    @vite('resources/css/notificationIndex.css')
+@endassets
 <div class="scRender scNotificationIndex" wire:poll.6s="refreshNotifications">
 
   @if(!$isAllNotifications)

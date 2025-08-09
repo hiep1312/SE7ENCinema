@@ -1,3 +1,6 @@
+@assets
+    @vite('resources/css/showtimeIndex.css')
+@endassets
 <div class="scRender cinema-schedule container scShowtimeIndex" wire:poll="loadMoviesForDate">
     <!-- Header -->
     <div class="cinema-schedule__header text-center mb-4">
