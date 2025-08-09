@@ -11,14 +11,14 @@
 
 .cinema-schedule__header {
     margin-bottom: 1.2rem;
-    margin-top: 8rem;
+    margin-top: 50px;
 }
 
 .cinema-schedule__main-title {
     font-size: 2rem;
     font-weight: 700;
     color: #e53935;
-    margin-bottom: 0.1rem;
+    margin-bottom: 2rem;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;

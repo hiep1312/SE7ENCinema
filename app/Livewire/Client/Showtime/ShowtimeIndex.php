@@ -111,7 +111,7 @@ class ShowtimeIndex extends Component
         ]);
 
         // Redirect logic here
-        return redirect()->route('client.booking.select_seats', ['movie_id' => $showtime->movie_id]);
+        return redirect()->route('client.booking.select_seats', ['showtime_id' => $showtime->movie_id]);
     }
 
 
