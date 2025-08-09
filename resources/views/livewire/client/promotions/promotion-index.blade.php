@@ -2,6 +2,7 @@
     @vite('resources/css/promotion.css')
 @endassets
 <div class="scRender scPromotion" wire:poll.10s>
+    <div style="clear: both"></div>
     <div class="container-fluid d-flex justify-content-center align-items-start scPromotion">
         <div class="container">
             <!-- Tips/Intro Section -->

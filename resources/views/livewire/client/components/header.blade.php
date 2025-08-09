@@ -49,13 +49,9 @@
             @guest
             <div class="prs_top_login_btn_wrapper">
                 <div class="prs_animate_btn1">
-                    <ul>
-                        <li>
                             <a href="{{ route('login') }}" class="button button--tamaya"
                                 data-text="Đăng nhập"><span>Đăng
                                     nhập</span></a>
-                        </li>
-                    </ul>
                 </div>
             </div>
             @endguest

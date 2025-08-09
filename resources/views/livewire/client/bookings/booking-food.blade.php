@@ -2,6 +2,7 @@
     @vite('resources/css/bookingFood.css')
 @endassets
 <div class="scRender scBookingFood">
+    <div style="clear: both"></div>
     <div class="booking-food-header text-light py-3">
         <div class="container-lg">
             <div class="row align-items-center">

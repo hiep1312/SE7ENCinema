@@ -2,6 +2,7 @@
     @vite(['resources/css/selectfood.css'])
 @endassets
 <div class="scRender scSelectfood container py-5 mt-5" style="width:85%; height:auto; padding-top:9rem">
+    <div style="clear: both"></div>
     <div class="main-header text-center py-4">
         <h1
             class="main-header__title d-inline-flex align-items-center justify-content-center gap-2 fs-2 fw-bold text-primary-emphasis mt-5">

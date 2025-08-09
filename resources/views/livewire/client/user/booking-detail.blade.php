@@ -2,6 +2,7 @@
 @vite('resources/css/userInfo.css')
 @endassets
 <div class="scUserInfo">
+    <div style="clear: both"></div>
     <div class="info">
         <!-- Main Content -->
         @use('chillerlan\QRCode\QRCode')

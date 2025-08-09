@@ -3,6 +3,7 @@
 @endassets
 <div class="scRender scMovieBooking" wire:poll.6s>
     <!-- prs title wrapper Start -->
+    <div style="clear: both"></div>
     <div class="prs_title_main_sec_wrapper"
         style="background-image: url('{{ $movie ? asset('storage/' . $movie->poster) : asset('client/assets/images/index_III/icon.png') }}');">
         <div class="prs_title_img_overlay"></div>

@@ -74,12 +74,11 @@ class MovieList extends Component
         // Top Event Movie
         $topEventMovie = Movie::withAvg('ratings', 'score')
             ->where('status', 'showing')
-            ->where('age_restriction', '!=', 'C')
             ->orderByDesc('ratings_avg_score')
             ->first() ?? $topMovies->first();
 
         // Main movies với pagination
-        $movies = $query->where('age_restriction', '!=', 'C')->orderBy('created_at', 'desc')->paginate(20);
+        $movies = $query->orderBy('created_at', 'desc')->paginate(20);
 
         return view('livewire.client.movie-list', compact(
             'movies',
