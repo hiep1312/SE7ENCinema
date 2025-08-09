@@ -127,7 +127,7 @@
                                                 <div class="meta-item">
                                                     <span>🌟</span>
                                                     <span>Đánh giá:
-                                                        {{$bookingInfo->showtime->movie->ratings->avg('score')}}/10</span>
+                                                        {{floor($bookingInfo->showtime->movie->ratings->avg('score')*10)/10}}/5</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -232,15 +232,41 @@
                                     @empty
                                     @endforelse
                                     @endif
+                                    <div class="detail-item" style="grid-column:span 2;">
+                                        <div style="font-weight: 600;color: #333; font-size: 16px;">Giảm giá: 
+                                            @if ($bookingInfo->promotionUsage != null)
+                                                @if ($bookingInfo->promotionUsage->promotion->discount_type == 'percentage')
+                                                {{ $bookingInfo->promotionUsage->promotion->discount_value . '%' }}
+                                                @endif
+                                            @endif
+                                        </div>
+                                        <div style="text-align: right">
+                                            @if ($bookingInfo->promotionUsage != null)
+                                                <div style="color: red">
+                                                    @if ($bookingInfo->promotionUsage->promotion->discount_type == 'percentage')
+                                                    -{{ number_format($bookingInfo->total_price * ($bookingInfo->promotionUsage->promotion->discount_value/100), 0, '.', '.') . 'đ' }}
+                                                    @else
+                                                    -{{ number_format($bookingInfo->promotionUsage->promotion->discount_value, 0, '.', '.') . 'đ' }}
+                                                    @endif
+                                                </div>
+                                            @else
+                                            Không có
+                                            @endif
+                                        </div>
+                                    </div>
                                     <div class="detail-item">
+                                        @php
+                                               $total = 0;
+                                            foreach ($bookingInfo->seats as $seat) {
+                                               $total += $bookingInfo->showtime->movie->price + $seat->price;
+                                            }
+                                        @endphp
                                         <span class="detail-label">Giá vé
                                             ({{number_format($bookingInfo->seats->count(),0, '.', '.') }}x):</span>
                                         <span class="detail-value">
-                                            {{number_format($bookingInfo->showtime->movie->price *
-                                            $bookingInfo->seats->count(), 0, '.','.')}}
+                                            {{number_format($total, 0, '.','.')}}
                                         </span>
                                     </div>
-
                                     <div class="detail-item">
                                         <span class="detail-label">Tổng tiền:</span>
                                         <span class="detail-value price"

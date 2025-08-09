@@ -690,6 +690,15 @@
     }
 }
 @media (max-width: 769px) {
+        .prs_navi_left_main_wrapper {
+        width: 86%;
+    }
+    .prs_navi_right_main_wrapper {
+        width: 14%;
+    }
+}
+@media (max-width: 426px) {
+    
     .prs_slidebar_wrapper {
         display: none;
     }

@@ -957,7 +957,7 @@
 
     .detail-value {
         color: #666;
-        font-size: 14px;
+        font-size: 15px;
         text-align: right;
     }
 
@@ -1045,29 +1045,80 @@
     }
 
 
-@media (max-width: 968px) {
-    .profile-container {
-        grid-template-columns: 1fr;
+@media (max-width: 1030px) {
+    .profile-container{
+        display: block;
     }
-
-    .form-grid {
-        grid-template-columns: 1fr;
+    .ticket-content{
+        display: block;
     }
-
-    .form-group.full-width {
-        grid-column: span 1;
+    .ticket-content .ticket-section{
+        margin-top: 30px;
     }
-
-    .info-row {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 14px;
-        color: #666;
+}
+@media (max-width: 426px) {
+    .profile-container{
+        display: block;
     }
-
-    .tab-item {
-        padding: 12px 15px;
-        font-size: 12px;
+     .ticket-content{
+        display: block;
+    }
+    .ticket-content .ticket-section{
+        margin-top: 30px;
+    }
+    .additional-info ul{
+        margin: 0;
+        padding: 0;
+    }
+    .detail-item{
+        grid-column: span 2;
+    }
+}
+@media (max-width: 376px) {
+    .profile-container{
+        display: block;
+    }
+     .ticket-content{
+        display: block;
+    }
+    .ticket-content .ticket-section{
+        margin-top: 30px;
+    }
+    .additional-info ul{
+        margin: 0;
+        padding: 0;
+    }
+    .detail-item{
+        grid-column: span 2;
+    }
+    .movie-info{
+        display: block;
+    }
+    .movie-poster-large{
+        width: 194px;
+    }
+}
+@media (max-width: 321px) {
+    .profile-container{
+        display: block;
+    }
+     .ticket-content{
+        display: block;
+    }
+    .ticket-content .ticket-section{
+        margin-top: 30px;
+    }
+    .additional-info ul{
+        margin: 0;
+        padding: 0;
+    }
+    .detail-item{
+        grid-column: span 2;
+    }
+    .movie-info{
+        display: block;
+    }
+    .movie-poster-large{
+        width: 138px;
     }
 }
