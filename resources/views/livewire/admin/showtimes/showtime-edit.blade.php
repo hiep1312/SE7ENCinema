@@ -38,69 +38,58 @@
                                     <div class="col-md-9 col-xxl-10 row">
                                 @endif
                                 <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label for="movie_id" class="form-label text-light">Phim chiếu *</label>
-                                        <select id="movie_id" class="form-select bg-dark text-light border-light" disabled>
-                                            <option value="">{{ $movies->isEmpty() ? "Không có phim chiếu nào đang hoạt động" : "-- Chọn phim chiếu --" }}</option>
-                                            @foreach($movies as $movie)
-                                                <option value="{{ $movie->id }}" {{ $showtimeItem->movie_id === $movie->id ? 'selected' : '' }}>{{ $movie->title }}</option>
-                                            @endforeach
-                                        </select>
+                                    <div class="mb-3">
+                                        <label for="movie" class="form-label text-light">Phim chiếu *</label>
+                                        <div class="input-group">
+                                            <input type="text" id = "movie" value="{{ $showtimeItem->movie?->title ?? '' }}"
+                                                class="form-control bg-dark text-light border-light"
+                                                placeholder="Chưa chọn phim chiếu" disabled>
+                                            <button type="button" class="btn btn-outline-warning" disabled>Chọn</button>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label for="room_id" class="form-label text-light">Phòng chiếu *</label>
-                                        <select id="room_id" class="form-select bg-dark text-light border-light" disabled>
-                                            <option value="">{{ $rooms->isEmpty() ? "Không có phòng chiếu nào đang hoạt động" : "-- Chọn phòng chiếu --" }}</option>
-                                            @foreach($rooms as $room)
-                                                <option value="{{ $room->id }}" {{ $showtimeItem->room_id === $room->id ? 'selected' : '' }}>{{ $room->name }}</option>
-                                            @endforeach
-                                        </select>
+                                    <div class="mb-3">
+                                        <label for="room" class="form-label text-light">Phòng chiếu *</label>
+                                        <div class="input-group">
+                                            <input type="text" id = "room" value="{{ $rooms->firstWhere('id', $room_id)?->name ?? '' }}"
+                                                class="form-control bg-dark text-light border-light @error('room_id') is-invalid @enderror"
+                                                placeholder="Chưa chọn phòng chiếu" disabled>
+                                            <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#frameSelectionData" wire:click="$set('modalType', 'room')">Chọn</button>
+                                        </div>
+                                        @error("room_id")
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
                                         <label for="start_time" class="form-label text-light">Khung giờ chiếu *</label>
                                         <input type="datetime-local"
                                             id = "start_time"
-                                            wire:model.blur="start_time"
+                                            wire:model.live.debounce.500ms="start_time"
                                             class="form-control bg-dark text-light border-light @error("start_time") is-invalid @enderror">
                                         @error("start_time")
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
                                         <label for="end_time" class="form-label text-light">Khung giờ kết thúc *</label>
                                         <input type="datetime-local"
                                             id = "end_time"
                                             class="form-control bg-dark text-light border-light"
-                                            readonly value="{{ date("Y-m-d\TH:i", strtotime("+ {$showtimeItem->movie->duration} minutes", strtotime($start_time)) ?: null) }}">
+                                            readonly value="{{ date("Y-m-d\TH:i", strtotime("+ ". $showtimeItem->movie?->duration." minutes", strtotime($start_time)) ?: null) }}">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label for="price" class="form-label text-light">Giá khung giờ *</label>
-                                        <input type="text"
-                                            id = "price"
-                                            wire:model="price"
-                                            class="form-control bg-dark text-light border-light @error("price") is-invalid @enderror"
-                                            placeholder="VD: 20000đ" min="0">
-                                        @error("price")
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
                                         <label for="status" class="form-label text-light">Trạng thái *</label>
                                         <select id="status" wire:model="status"
                                             class="form-select bg-dark text-light border-light @error("status") is-invalid @enderror">
                                             <option value="active">Hoạt động</option>
                                             <option value="canceled">Hủy chiếu</option>
-                                            {{-- <option value="completed">Đã hoàn thành</option> --}}
                                         </select>
                                         @error("status")
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -189,4 +178,62 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" tabindex="-1" id="frameSelectionData" wire:ignore.self>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        @switch($modalType)
+                            @case('movie') Chọn phim chiếu @break
+                            @case('room') Chọn phòng chiếu @break
+                            @default Đang tải...
+                        @endswitch
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @if($modalType)
+                        @php
+                            $modalText = $modalType === 'movie' ? 'phim' : 'phòng';
+                            $fieldName = $this->modalType === "movie" ? "title" : "name";
+                        @endphp
+                        <div class="search-box">
+                            <input type="text" wire:model.live.debounce.300ms="searchModal" placeholder="Tìm kiếm {{ $modalText }}..." autocomplete="off">
+                            <div class="search-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <path d="m21 21-4.35-4.35"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="checkbox-container" style="margin-bottom: 0;">
+                            <div class="checkbox-list" id="checkboxListModal">
+                                @forelse($modalData as $modalDataItem)
+                                    <div class="checkbox-item" onclick="this.querySelector('input[type=radio]').click()" wire:key="{{ $fieldName . "-" . $modalDataItem->id }}">
+                                        <div class="checkbox-wrapper">
+                                            <input type="radio" name="{{ $modalType }}" wire:model.live="modalSelected" value="{{ $modalDataItem->id }}">
+                                            <span class="checkmark"></span>
+                                        </div>
+                                        <label class="checkbox-label">{{ $modalDataItem->{$fieldName} }}</label>
+                                    </div>
+                                @empty
+                                    <div class="empty-state">Không tìm thấy {{ $modalText }} nào</div>
+                                @endforelse
+                            </div>
+                        </div>
+                    @else Đang tải nội dung...
+                    @endif
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" wire:click="setData">Cập nhật</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+@script
+<script>
+    document.getElementById('frameSelectionData').addEventListener('hidden.bs.modal', $wire.resetModal);
+</script>
+@endscript
