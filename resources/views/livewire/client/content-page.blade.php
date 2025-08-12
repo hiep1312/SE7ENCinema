@@ -17,9 +17,9 @@
             <i class="flaticon-tool"></i>
         </button>
         {{-- Notification Bell --}}
-                   <div style="display: inline-block; position: relative; margin-left: 18px; vertical-align: middle;" >
-                       @livewire('client.notifications.notification-index')
-                   </div>
+        <div style="display: inline-block; position: relative; margin-left: 18px; vertical-align: middle;" >
+            @livewire('client.notifications.notification-index')
+        </div>
     </div>
 </div>
 

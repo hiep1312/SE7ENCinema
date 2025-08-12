@@ -753,7 +753,12 @@ document.addEventListener("livewire:init", () => {
         function hasLonelySeat(selectedSeats) {
             const grouped = {};
 
-            for (const code of selectedSeats) {
+            const nonCoupleSeats = selectedSeats.filter(seatCode => {
+                const input = document.querySelector(`input[value="${seatCode}"]`);
+                return input && input.dataset.type !== 'couple';
+            });
+
+            for (const code of nonCoupleSeats) {
                 const row = code.match(/[A-Z]/i)[0];
                 const col = parseInt(code.replace(/[A-Z]/i, ''));
                 if (!grouped[row]) grouped[row] = [];
@@ -769,8 +774,8 @@ document.addEventListener("livewire:init", () => {
                     const currentSeatId = `${row}${col}`;
                     const input = document.querySelector(`input[value="${currentSeatId}"]`);
 
-                    if (input && !input.disabled && input.dataset.booked !== 'true' && input.dataset.held !== 'true') {
-                        const isSelected = selectedSeats.includes(currentSeatId);
+                    if (input && !input.disabled && input.dataset.booked !== 'true' && input.dataset.held !== 'true' && input.dataset.type !== 'couple') {
+                        const isSelected = nonCoupleSeats.includes(currentSeatId);
                         if (!isSelected) {
                             return true;
                         }
@@ -783,7 +788,13 @@ document.addEventListener("livewire:init", () => {
 
         function hasSole(selectedSeats) {
             const grouped = {};
-            for (const code of selectedSeats) {
+
+            const nonCoupleSeats = selectedSeats.filter(seatCode => {
+                const input = document.querySelector(`input[value="${seatCode}"]`);
+                return input && input.dataset.type !== 'couple';
+            });
+
+            for (const code of nonCoupleSeats) {
                 const row = code.match(/[A-Z]/i)[0];
                 const col = parseInt(code.replace(/[A-Z]/i, ''));
                 if (!grouped[row]) grouped[row] = [];
@@ -800,15 +811,17 @@ document.addEventListener("livewire:init", () => {
                         maxSeatNumber = Math.max(maxSeatNumber, num);
                     }
                 });
-                if (cols.includes(2) && !selectedSeats.includes(`${row}1`)) {
+
+                if (cols.includes(2) && !nonCoupleSeats.includes(`${row}1`)) {
                     const seat = document.querySelector(`input[value="${row}1"]`);
-                    if (seat && !seat.disabled && seat.dataset.booked !== 'true' && seat.dataset.held !== 'true') {
+                    if (seat && !seat.disabled && seat.dataset.booked !== 'true' && seat.dataset.held !== 'true' && seat.dataset.type !== 'couple') {
                         return true;
                     }
                 }
-                if (cols.includes(maxSeatNumber - 1) && !selectedSeats.includes(`${row}${maxSeatNumber}`)) {
+
+                if (cols.includes(maxSeatNumber - 1) && !nonCoupleSeats.includes(`${row}${maxSeatNumber}`)) {
                     const seat = document.querySelector(`input[value="${row}${maxSeatNumber}"]`);
-                    if (seat && !seat.disabled && seat.dataset.booked !== 'true' && seat.dataset.held !== 'true') {
+                    if (seat && !seat.disabled && seat.dataset.booked !== 'true' && seat.dataset.held !== 'true' && seat.dataset.type !== 'couple') {
                         return true;
                     }
                 }
@@ -818,9 +831,14 @@ document.addEventListener("livewire:init", () => {
         }
 
         function hasInvalidDiagonal(selectedSeats) {
-            if (selectedSeats.length < 2) return false;
+            const nonCoupleSeats = selectedSeats.filter(seatCode => {
+                const input = document.querySelector(`input[value="${seatCode}"]`);
+                return input && input.dataset.type !== 'couple';
+            });
 
-            const positions = selectedSeats.map(code => {
+            if (nonCoupleSeats.length < 2) return false;
+
+            const positions = nonCoupleSeats.map(code => {
                 const row = code.match(/[A-Z]/i)[0];
                 const col = parseInt(code.replace(/[A-Z]/i, ''));
                 return { row, col, rowCode: row.charCodeAt(0) };
@@ -915,19 +933,19 @@ document.addEventListener("livewire:init", () => {
                         case 'lonely':
                             current.setAttribute('wire:sc-alert.error.icon.position.timer.5000', '');
                             current.setAttribute('wire:sc-title', 'Không được để ghế lẻ!');
-                            current.setAttribute('wire:sc-html', 'Vui lòng chọn lại ghế, không để ghế lẻ giữa các ghế đã chọn');
+                            current.setAttribute('wire:sc-html', 'Vui lòng chọn lại ghế, không để ghế lẻ giữa các ghế đã chọn (áp dụng cho ghế thường và VIP)');
                             break;
 
                         case 'sole':
                             current.setAttribute('wire:sc-alert.error.icon.position.timer.5000', '');
                             current.setAttribute('wire:sc-title', 'Không được để khoảng trống!');
-                            current.setAttribute('wire:sc-html', 'Vui lòng Không bỏ ghế trong góc tường hoặc cạnh lối ra (lối thoát hiểm)');
+                            current.setAttribute('wire:sc-html', 'Vui lòng không bỏ ghế trong góc tường hoặc cạnh lối ra (áp dụng cho ghế thường và VIP)');
                             break;
 
                         case 'diagonal':
                             current.setAttribute('wire:sc-alert.error.icon.position.timer.5000', '');
                             current.setAttribute('wire:sc-title', 'Cách chọn ghế không hợp lệ!');
-                            current.setAttribute('wire:sc-html', 'Vui lòng chọn ghế ở các hàng liền kề và gần nhau không chọn chéo theo hình V dưới mọi hình thức');
+                            current.setAttribute('wire:sc-html', 'Vui lòng chọn ghế ở các hàng liền kề và gần nhau không chọn chéo (áp dụng cho ghế thường và VIP)');
                             break;
                     }
 

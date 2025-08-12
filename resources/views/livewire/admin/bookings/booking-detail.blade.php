@@ -1154,112 +1154,112 @@
                 </div>
             </div>
             @elseif($tabCurrent === 'promotions')
-                <div class="row">
-                    <div class="col-12">
-                        @if($booking->promotionUsage)
-                            @php $promotionUsage = $booking->promotionUsage; $promotion = $promotionUsage->promotion; @endphp
-                            <div class="row mt-1">
-                                <div class="col-lg-6">
-                                    <div class="card bg-dark border-light">
-                                        <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                            <h5><i class="fas fa-info me-2"></i>Thông tin mã giảm giá</h5>
-                                        </div>
-                                        <div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
-                                            <table class="table table-borderless text-light">
-                                                <tr>
-                                                    <td><strong class="text-warning">Tiêu đề:</strong></td>
-                                                    <td><strong>{{ $promotion->title }}</strong></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong class="text-warning">Mô tả:</strong></td>
-                                                    <td class="text-start text-wrap text-muted lh-base">{{ $promotion->description ?? 'Không có mô tả' }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong class="text-warning">Giảm giá:</strong></td>
-                                                    <td>{{ number_format($promotion->discount_value, 0, '.', '.') . ($promotion->discount_type === 'percentage' ? '%' : 'đ') }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong class="text-warning">Giá trị đơn tối thiểu:</strong></td>
-                                                    <td>{{ number_format($promotion->min_purchase, 0, '.', '.') }}đ</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong class="text-warning">Thời gian bắt đầu:</strong></td>
-                                                    <td>
-                                                        <span style="color: #34c759;"><i class="fas fa-play me-1"></i>{{ $promotion->start_date->format('Y-m-d H:i') }}</span>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong class="text-warning">Thời gian kết thúc:</strong></td>
-                                                    <td>
-                                                        <span style="color: #ff4d4f;"><i class="fas fa-stop me-1"></i>{{ $promotion->end_date->format('Y-m-d H:i') }}</span>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong class="text-warning">Trạng thái:</strong></td>
-                                                    <td>
-                                                        @switch($promotion->status)
-                                                            @case('active')
-                                                                <span class="badge-clean-base badge-clean-green">Hoạt động</span>
-                                                                @break
-                                                            @case('inactive')
-                                                                <span class="badge-clean-base badge-clean-red">Ngừng hoạt động</span>
-                                                                @break
-                                                            @case('expired')
-                                                                <span class="badge-clean-base badge-clean-orange">Đã hết hạn</span>
-                                                                @break
-                                                        @endswitch
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </div>
+            <div class="row">
+                <div class="col-12">
+                    @if($booking->promotionUsage)
+                        @php $promotionUsage = $booking->promotionUsage; $promotion = $promotionUsage->promotion; @endphp
+                        <div class="row mt-1">
+                            <div class="col-lg-6">
+                                <div class="card bg-dark border-light">
+                                    <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                        <h5><i class="fas fa-info me-2"></i>Thông tin mã giảm giá</h5>
+                                    </div>
+                                    <div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
+                                        <table class="table table-borderless text-light">
+                                            <tr>
+                                                <td><strong class="text-warning">Tiêu đề:</strong></td>
+                                                <td><strong>{{ $promotion->title }}</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong class="text-warning">Mô tả:</strong></td>
+                                                <td class="text-start text-wrap text-muted lh-base">{{ $promotion->description ?? 'Không có mô tả' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong class="text-warning">Giảm giá:</strong></td>
+                                                <td>{{ number_format($promotion->discount_value, 0, '.', '.') . ($promotion->discount_type === 'percentage' ? '%' : 'đ') }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong class="text-warning">Giá trị đơn tối thiểu:</strong></td>
+                                                <td>{{ number_format($promotion->min_purchase, 0, '.', '.') }}đ</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong class="text-warning">Thời gian bắt đầu:</strong></td>
+                                                <td>
+                                                    <span style="color: #34c759;"><i class="fas fa-play me-1"></i>{{ $promotion->start_date->format('Y-m-d H:i') }}</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong class="text-warning">Thời gian kết thúc:</strong></td>
+                                                <td>
+                                                    <span style="color: #ff4d4f;"><i class="fas fa-stop me-1"></i>{{ $promotion->end_date->format('Y-m-d H:i') }}</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong class="text-warning">Trạng thái:</strong></td>
+                                                <td>
+                                                    @switch($promotion->status)
+                                                        @case('active')
+                                                            <span class="badge-clean-base badge-clean-green">Hoạt động</span>
+                                                            @break
+                                                        @case('inactive')
+                                                            <span class="badge-clean-base badge-clean-red">Ngừng hoạt động</span>
+                                                            @break
+                                                        @case('expired')
+                                                            <span class="badge-clean-base badge-clean-orange">Đã hết hạn</span>
+                                                            @break
+                                                    @endswitch
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
-                                    <div class="card bg-dark border-light">
-                                        <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                            <h5><i class="fas fa-chart-line me-2"></i>Thống kê sử dụng</h5>
-                                        </div>
-                                        <div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
-                                            <table class="table table-borderless text-light">
-                                                <tr>
-                                                    <td><strong class="text-warning">Tổng lượt sử dụng:</strong></td>
-                                                    <td><strong>{{ $promotion->usages->count() }}</strong></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong class="text-warning">Giới hạn sử dụng:</strong></td>
-                                                    <td>{{ $promotion->usage_limit ?? "Vô hạn" }}
-                                                        @if($promotion->usage_limit) <span class="text-muted">(còn {{ $promotion->usage_limit - $promotion->usages->count() }} lượt)</span> @endif
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong class="text-warning">Tổng tiền đã giảm:</strong></td>
-                                                    <td class="text-warning fw-bold">{{ number_format($promotion->usages->sum('discount_amount'), 0, '.', '.') }}đ</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong class="text-warning">Ngày tạo:</strong></td>
-                                                    <td>{{ $promotion->created_at->format('d/m/Y H:i') }}</td>
-                                                </tr>
-                                            </table>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="card bg-dark border-light">
+                                    <div class="card-header bg-gradient text-light" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                        <h5><i class="fas fa-chart-line me-2"></i>Thống kê sử dụng</h5>
+                                    </div>
+                                    <div class="card-body bg-dark" style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
+                                        <table class="table table-borderless text-light">
+                                            <tr>
+                                                <td><strong class="text-warning">Tổng lượt sử dụng:</strong></td>
+                                                <td><strong>{{ $promotion->usages->count() }}</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong class="text-warning">Giới hạn sử dụng:</strong></td>
+                                                <td>{{ $promotion->usage_limit ?? "Vô hạn" }}
+                                                    @if($promotion->usage_limit) <span class="text-muted">(còn {{ $promotion->usage_limit - $promotion->usages->count() }} lượt)</span> @endif
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong class="text-warning">Tổng tiền đã giảm:</strong></td>
+                                                <td class="text-warning fw-bold">{{ number_format($promotion->usages->sum('discount_amount'), 0, '.', '.') }}đ</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong class="text-warning">Ngày tạo:</strong></td>
+                                                <td>{{ $promotion->created_at->format('d/m/Y H:i') }}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card bg-dark border-light">
+                                    <div class="card-body text-center py-5">
+                                        <div class="text-muted">
+                                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                                            <p>Không áp dụng mã giảm giá nào</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        @else
-                            <div class="row mt-4">
-                                <div class="col-12">
-                                    <div class="card bg-dark border-light">
-                                        <div class="card-body text-center py-5">
-                                            <div class="text-muted">
-                                                <i class="fas fa-inbox fa-3x mb-3"></i>
-                                                <p>Không áp dụng mã giảm giá nào</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-                    </div>
+                        </div>
+                    @endif
                 </div>
+            </div>
             @endif
         </div>
     </div>

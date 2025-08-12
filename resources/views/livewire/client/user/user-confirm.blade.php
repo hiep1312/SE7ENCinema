@@ -2,6 +2,7 @@
 @vite('resources/css/confirm-access.css')
 @endassets
 <div class="scConfirm-access">
+    <div style="clear: both"></div>
     <div class="main-container">
         <div class="confirm-card">
             <h1 class="confirm-title">Xác nhận quyền truy cập</h1>

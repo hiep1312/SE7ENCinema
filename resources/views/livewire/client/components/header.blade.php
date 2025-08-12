@@ -27,8 +27,9 @@
                         </div>
                         <div class="clearfix"></div>
                         <ul class="dl-menu">
-                            {{-- <li class="parent"><a href="{{ route('client.index') }}">Trang Chủ</a></li> --}}
-                            <li class="parent megamenu"><a href="{{ route('client.movies.index') }}">Danh Sách Phim</a></li>
+                            <li class="parent "><a href="{{ route('client.index') }}">Trang Chủ</a></li>
+                            <li class="parent megamenu"><a href="{{ route('client.movies.index') }}">Danh Sách Phim</a>
+                            </li>
                             <li class="parent"><a href="{{ route('client.showtimes.index') }}">Lịch chiếu</a></li>
                             <li class="parent"><a href="{{ route('client.promotions.index') }}">Khuyến Mãi</a></li>
                             <li class="parent"><a href="{{ route('client.faq') }}">Chính sách bảo mật</a>
@@ -48,13 +49,9 @@
             @guest
             <div class="prs_top_login_btn_wrapper">
                 <div class="prs_animate_btn1">
-                    <ul>
-                        <li>
                             <a href="{{ route('login') }}" class="button button--tamaya"
                                 data-text="Đăng nhập"><span>Đăng
                                     nhập</span></a>
-                        </li>
-                    </ul>
                 </div>
             </div>
             @endguest
