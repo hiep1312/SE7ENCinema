@@ -12,14 +12,12 @@ class Showtime extends Model
         'room_id',
         'start_time',
         'end_time',
-        'price',
         'status',
     ];
 
     protected $casts = [
         'start_time' => 'datetime',
         'end_time' => 'datetime',
-        'price' => 'integer',
     ];
 
     public function room()

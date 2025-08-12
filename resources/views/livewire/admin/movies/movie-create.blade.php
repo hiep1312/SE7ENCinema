@@ -75,7 +75,7 @@
                                         <label for="duration" class="form-label text-light">Thời lượng *</label>
                                         <input type="number"
                                             id = "duration"
-                                            wire:model.blur="duration"
+                                            wire:model.live.debounce.300ms="duration"
                                             class="form-control bg-dark text-light border-light @error('duration') is-invalid @enderror"
                                             placeholder="VD: 120" min="1">
                                         @error('duration')
@@ -327,7 +327,7 @@
                                                         @endforeach
                                                     </select>
                                                 </div>
-                                                @error('baseShowtimeEnd')
+                                                @error('baseRoom')
                                                     <small class="text-danger" style="color: var(--bs-form-invalid-color) !important; margin-left: 2px; margin-top: .25rem !important;">{{ $message }}</small>
                                                 @enderror
                                             </div>
@@ -367,10 +367,10 @@
                                                                 <div class="col-md-6">
                                                                     <div class="mb-2">
                                                                         <label for="showtimes.{{ $index }}.room_id" class="form-label text-light">Phòng chiếu *</label>
-                                                                        <select id="showtimes.{{ $index }}.room_id" wire:model="showtimes.{{ $index }}.room_id" class="form-select bg-dark text-light border-light @error("showtimes.$index.room_id") is-invalid @enderror">
+                                                                        <select id="showtimes.{{ $index }}.room_id" wire:model.change="showtimes.{{ $index }}.room_id" class="form-select bg-dark text-light border-light @error("showtimes.$index.room_id") is-invalid @enderror">
                                                                             <option value="">{{ $rooms->isEmpty() ? "Không có phòng chiếu nào đang hoạt động" : "-- Chọn phòng chiếu --" }}</option>
-                                                                            @foreach($rooms as $room)
-                                                                                <option value="{{ $room->id }}">{{ $room->name }}</option>
+                                                                            @foreach($showtimes[$index]['rooms'] as $room)
+                                                                                <option value="{{ $room->id }}" wire:key="room-{{ $room->id }}">{{ $room->name }}</option>
                                                                             @endforeach
                                                                         </select>
                                                                         @error("showtimes.$index.room_id")

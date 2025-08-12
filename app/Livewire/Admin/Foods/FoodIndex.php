@@ -95,6 +95,7 @@ class FoodIndex extends Component
     #[Layout('components.layouts.admin')]
     public function render()
     {
+        dd(FoodItem::first()->getAllVariants()->toArray()[0]->attributes->get("Đá"));
         $query = FoodItem::query()
             ->when($this->search, function ($query) {
                 $query->withTrashed();

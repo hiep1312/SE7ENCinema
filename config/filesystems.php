@@ -47,6 +47,14 @@ return [
             'report' => false,
         ],
 
+        'chart' => [
+            'driver' => 'local',
+            'root' => app_path('Charts'),
+            'visibility' => 'private',
+            'throw' => true,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

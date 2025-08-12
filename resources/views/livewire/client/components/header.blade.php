@@ -1,8 +1,8 @@
-<div id="preloader">
+{{-- <div id="preloader">
     <div id="status">
         <img src="{{ asset('client/assets/images/header/horoscope.gif') }}" id="preloader_image" alt="loader">
     </div>
-</div>
+</div> --}}
 <!-- prs navigation Start -->
 <div class="prs_navigation_main_wrapper">
     <div class="container-fluid">
