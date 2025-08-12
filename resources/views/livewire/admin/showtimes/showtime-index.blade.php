@@ -1,3 +1,13 @@
+@assets
+<style>
+    .time-slot::before {
+        content: "●";
+        color: #10b981;
+        margin-right: 8px;
+    }
+</style>
+@endassets
+@use("Carbon\Carbon")
 <div class="scRender">
     @if (session()->has('success'))
         <div class="alert alert-success alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
@@ -69,112 +79,121 @@
             </div>
 
             <div class="card-body bg-dark">
-                {{-- <div class="date-info fw-bold mb-3">
-                    Thứ Hai, 11 tháng 8, 2025 (4 suất chiếu - 2 phim)
-                </div>
-                <div class="movie-card border rounded p-3">
-                    <div class="row">
-                        <div class="col-lg-4" data-bs-toggle="collapse" data-bs-target="#showtimes1" style="cursor: pointer;">
-                            <div class="d-flex">
-                                <div class="movie-poster">
-                                    <img src="/placeholder.svg?height=160&width=120" alt="Avengers: Endgame" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
-                                    {{-- @if($showtime->movie->poster)
-                                        <img src="{{ asset('storage/' . $showtime->movie->poster) }}"
-                                            alt="Ảnh phim {{ $showtime->movie->title }}" >
-                                    @else
-                                        <i class="fas fa-film" style="font-size: 22px;"></i>
-                                    @endif -}}
+                @foreach($showtimes as $date => $movies)
+                    <div class="date-info fw-bold mb-3" wire:key="date-{{ $date }}">
+                        {{ ucfirst(Carbon::parse($date)->translatedFormat('l, d/m/Y')) }} ({{ (clone $movies)->flatten()->count() }} suất chiếu - {{ $movies->count() }} phim)
+                    </div>
+                    @foreach ($movies as $movieId => $showtimes)
+                        <div class="movie-card border rounded p-3 mb-3" wire:key="movie-{{ $movieId }}">
+                            <div class="row">
+                                @php $movie = $showtimes->first()->movie; @endphp
+                                <div class="col-lg-4" data-bs-toggle="collapse" data-bs-target="#data-{{ $date }}" style="cursor: pointer;">
+                                    <div class="d-flex">
+                                        <div class="movie-poster">
+                                            @if($movie->poster)
+                                                <img src="{{ asset('storage/' . $movie->poster) }}"
+                                                    alt="Ảnh phim {{ $movie->title }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
+                                            @else
+                                                <i class="fas fa-film" style="font-size: 22px;"></i>
+                                            @endif
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h3 class="movie-title">{{ $movie->title }}</h3>
+                                            <div class="movie-genre" style="margin-bottom: 0; margin-top: 3px;">
+                                                <i class="fas fa-tags me-1"></i>
+                                                {{ $movie->genres->take(1)->implode('name', ', ') ?: 'Không có thể loại' }} • {{ $movie->duration }} phút
+                                            </div>
+                                            <div class="d-flex align-items-center mt-1">
+                                                <span class="badge text-secondary">{{ $showtimes->count() }} suất chiếu</span>
+                                                <div class="badge bg-warning text-dark px-2 py-1"
+                                                    style="font-size: 0.8rem; font-weight: 600;">
+                                                    {{ $movie->age_restriction }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                {{-- <img src="/placeholder.svg?height=160&width=120" alt="Avengers: Endgame" class="movie-poster me-3"> -}}
-                                <div class="flex-grow-1">
-                                    <h3 class="movie-title">Avengers: Endgame</h3>
-                                    <div class="movie-info mb-2">Hành động, Phiêu lưu • 181 phút</div>
-                                    <div class="d-flex align-items-center gap-3 mb-3">
-                                        <span class="badge-custom">3 suất chiếu</span>
+
+                                <div class="col-lg-8 mt-3 mt-lg-0 collapse" id="data-{{ $date }}" wire:ignore.self>
+                                    <div class="table-responsive">
+                                        <table class="table table-dark table-hover mb-0">
+                                            <thead>
+                                                <tr style="border-color: #3a3d4a;">
+                                                    <th class="text-center" style="width: 60px;">STT</th>
+                                                    <th class="text-center">Phòng chiếu</th>
+                                                    <th class="text-center">Thời gian</th>
+                                                    <th class="text-center">Trạng thái</th>
+                                                    <th class="text-center" style="width: 100px;">Hành động</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($showtimes as $showtime)
+                                                    <tr style="border-color: #3a3d4a;">
+                                                        <td class="text-center">{{ $loop->iteration }}</td>
+                                                        <td class="text-center"><strong>{{ $showtime->room->name }}</strong></td>
+                                                        <td class="text-center">
+                                                            <span class="time-slot">{{ $showtime->start_time->format('H:i') }} - {{ $showtime->end_time->format('H:i') }}</span>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            @switch($showtime->status)
+                                                                @case('active')
+                                                                    <span class="badge bg-primary">Đang hoạt động</span>
+                                                                    @break
+                                                                @case('completed')
+                                                                    <span class="badge bg-success">Đã hoàn thành</span>
+                                                                    @break
+                                                                @case('canceled')
+                                                                    <span class="badge bg-danger">Đã bị hủy</span>
+                                                                    @break
+                                                            @endswitch
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex gap-2 justify-content-center">
+                                                                @if($showtime->status !== "completed" && $showtime->start_time->isFuture())
+                                                                    <a href="{{ route('admin.showtimes.edit', $showtime->id) }}"
+                                                                        class="btn btn-sm btn-warning"
+                                                                        title="Chỉnh sửa">
+                                                                        <i class="fas fa-edit" style="margin-right: 0"></i>
+                                                                    </a>
+                                                                @else
+                                                                    <button type="button"
+                                                                            class="btn btn-sm btn-warning"
+                                                                            wire:sc-alert.error="Không thể chỉnh sửa suất chiếu đang chiếu hoặc đã hoàn thành!"
+                                                                            wire:sc-model
+                                                                            title="Chỉnh sửa">
+                                                                        <i class="fas fa-edit" style="margin-right: 0"></i>
+                                                                    </button>
+                                                                @endif
+                                                                @if($showtime->isLockedForDeletion())
+                                                                    <button type="button"
+                                                                            class="btn btn-sm btn-danger"
+                                                                            wire:sc-alert.error="Không thể xóa suất chiếu sẽ diễn ra trong vòng 1 giờ tới hoặc đang diễn ra, hoặc đã có người đặt vé!"
+                                                                            wire:sc-model
+                                                                            title="Xóa">
+                                                                        <i class="fas fa-trash" style="margin-right: 0"></i>
+                                                                    </button>
+                                                                @else
+                                                                    <button type="button"
+                                                                            class="btn btn-sm btn-danger"
+                                                                            wire:sc-model="deleteShowtime({{ $showtime->id }})"
+                                                                            wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa suất chiếu '{{ $showtime->start_time->format('d/m/Y H:i') }} - {{ $showtime->end_time->format('H:i') }}'?"
+                                                                            title="Xóa">
+                                                                        <i class="fas fa-trash" style="margin-right: 0"></i>
+                                                                    </button>
+                                                                @endif
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="col-lg-8 collapse" id="showtimes1">
-                            <div class="table-responsive">
-                                <table class="table table-dark table-hover mb-0">
-                                    <thead>
-                                        <tr style="border-color: #3a3d4a;">
-                                            <th scope="col" class="text-center" style="width: 60px;">#</th>
-                                            <th scope="col">Phòng chiếu</th>
-                                            <th scope="col" >Thời gian</th>
-                                            <th scope="col" class="text-center">Trạng thái</th>
-                                            <th scope="col" class="text-center" style="width: 100px;">Hành động</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr style="border-color: #3a3d4a;">
-                                            <td class="text-center"><span class="showtime-number">1</span></td>
-                                            <td><div class="room-name">Room 1</div></td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <span class="status-indicator"></span>
-                                                    <span class="time-slot">09:00 - 12:01</span>
-                                                </div>
-                                            </td>
-                                            <td class="text-center"><span class="status-active">Đang hoạt động</span></td>
-                                            <td class="text-center">
-                                                <div class="d-flex gap-1 justify-content-center">
-                                                    <button class="btn btn-edit"><i class="fas fa-edit"></i></button>
-                                                    <button class="btn btn-delete"><i class="fas fa-trash"></i></button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr style="border-color: #3a3d4a;">
-                                            <td class="text-center"><span class="showtime-number">2</span></td>
-                                            <td><div class="room-name">Room 2</div></td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <span class="status-indicator"></span>
-                                                    <span class="time-slot">14:30 - 17:31</span>
-                                                </div>
-                                            </td>
-                                            <td class="text-center"><span class="status-active">Đang hoạt động</span></td>
-                                            <td class="text-center">
-                                                <div class="d-flex gap-1 justify-content-center">
-                                                    <button class="btn btn-edit"><i class="fas fa-edit"></i></button>
-                                                    <button class="btn btn-delete"><i class="fas fa-trash"></i></button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr style="border-color: #3a3d4a;">
-                                            <td class="text-center"><span class="showtime-number">3</span></td>
-                                            <td><div class="room-name">Room 1</div></td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <span class="status-indicator"></span>
-                                                    <span class="time-slot">19:00 - 22:01</span>
-                                                </div>
-                                            </td>
-                                            <td class="text-center"><span class="status-active">Đang hoạt động</span></td>
-                                            <td class="text-center">
-                                                <div class="d-flex gap-1 justify-content-center">
-                                                    <button class="btn btn-edit"><i class="fas fa-edit"></i></button>
-                                                    <button class="btn btn-delete"><i class="fas fa-trash"></i></button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                    </div>
-                    <style>
-                        .time-slot::before {
-                            content: "●";
-                            color: #10b981;
-                            margin-right: 8px;
-                        }
-                    </style>
-                </div> --}}
-                <div class="table-responsive">
+                    @endforeach
+                @endforeach
+                {{-- <div class="table-responsive">
                     <table class="table table-dark table-striped table-hover">
                         <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                             <tr>
@@ -297,8 +316,8 @@
                     </table>
                 </div>
                 <div class="mt-3">
-                    {{-- {{ $showtimes->links() }} --}}
-                </div>
+                    {{ $showtimes->links() }}
+                </div> --}}
             </div>
         </div>
     </div>

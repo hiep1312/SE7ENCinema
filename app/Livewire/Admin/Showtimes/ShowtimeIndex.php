@@ -53,7 +53,7 @@ class ShowtimeIndex extends Component
     {
         $this->realtimeUpdateShowtimes();
 
-        $query = Showtime::select('*', DB::raw('DATE(start_time) as show_date'))->whereHas('movie')
+        $query = Showtime::with('movie', 'room')->whereHas('movie')
             ->when($this->search, function($query) {
                 $query->where(function ($subQuery){
                     $subQuery->whereHas('movie', fn($q) => $q->where('title', 'like', '%' . $this->search . '%'))
@@ -61,13 +61,12 @@ class ShowtimeIndex extends Component
                 });
             })
             ->when($this->statusFilter, fn($query) => $query->where('status', $this->statusFilter))
-            ->groupBy('show_date', 'id');
+            ->select('*', DB::raw('DATE(start_time) as show_date'));
 
         if($this->sortByDate) $query->where('start_time', '>=', now()->subDays($this->sortByDate));
         else $query->where('start_time', '>=', now()->startOfDay());
 
-        $showtimes = $query->orderBy('start_time', 'asc')->orderBy('status', 'asc')->get();
-        dd($showtimes->toArray());
+        $showtimes = $query->orderBy('start_time', 'asc')->orderBy('status', 'asc')->paginate(30)->groupBy(['show_date', 'movie_id']);
 
         return view('livewire.admin.showtimes.showtime-index', compact('showtimes'));
     }
