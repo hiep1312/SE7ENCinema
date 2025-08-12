@@ -1,4 +1,4 @@
-<div class="scRender" wire:poll.1s>
+<div class="scRender" wire:poll.6s>
     <div class="content-wrapper">
         <div class="row">
             <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
@@ -106,7 +106,7 @@
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h4 class="card-title mb-0">Lịch sử giao dịch</h4>
                             <div class="dropdown" wire:ignore>
-                                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
+                                <button class="btn btn-outline-success btn-sm dropdown-toggle" type="button"
                                     data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-filter me-1"></i>
                                     <span id="transactionHistoryFilterText">
@@ -139,7 +139,7 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-dark">
                                     <li>
-                                        <h6 class="dropdown-header text-primary">
+                                        <h6 class="dropdown-header text-success">
                                             <i class="fas fa-calendar-day me-1"></i>
                                             Theo ngày
                                         </h6>
@@ -157,7 +157,7 @@
                                         <hr class="dropdown-divider">
                                     </li>
                                     <li>
-                                        <h6 class="dropdown-header text-primary">
+                                        <h6 class="dropdown-header text-success">
                                             <i class="fas fa-calendar me-1"></i>
                                             Theo tháng
                                         </h6>
@@ -172,7 +172,7 @@
                                         <hr class="dropdown-divider">
                                     </li>
                                     <li>
-                                        <h6 class="dropdown-header text-primary">
+                                        <h6 class="dropdown-header text-success">
                                             <i class="fas fa-calendar-check me-1"></i>
                                             Theo năm
                                         </h6>
@@ -196,9 +196,9 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h4 class="card-title mb-0">Xu hướng doanh thu theo thời gian</h4>
+                            <h4 class="card-title mb-0">Biểu đồ doanh thu theo vé và đồ ăn</h4>
                             <div class="dropdown" wire:ignore>
-                                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
+                                <button class="btn btn-outline-info btn-sm dropdown-toggle" type="button"
                                     data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-filter me-1"></i>
                                     <span id="revenueSourceFilterText">
@@ -231,7 +231,7 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-dark">
                                     <li>
-                                        <h6 class="dropdown-header text-primary">
+                                        <h6 class="dropdown-header text-info">
                                             <i class="fas fa-calendar-day me-1"></i>
                                             Theo ngày
                                         </h6>
@@ -249,7 +249,7 @@
                                         <hr class="dropdown-divider">
                                     </li>
                                     <li>
-                                        <h6 class="dropdown-header text-primary">
+                                        <h6 class="dropdown-header text-info">
                                             <i class="fas fa-calendar me-1"></i>
                                             Theo tháng
                                         </h6>
@@ -263,7 +263,7 @@
                                         <hr class="dropdown-divider">
                                     </li>
                                     <li>
-                                        <h6 class="dropdown-header text-primary">
+                                        <h6 class="dropdown-header text-info">
                                             <i class="fas fa-calendar-check me-1"></i>
                                             Theo năm
                                         </h6>
@@ -280,7 +280,7 @@
                         <div wire:ignore>
                             <div id="revenueSourceChart" style="height: 300px;"></div>
                         </div>
-                    </div>
+                            </div>
                 </div>
             </div>
         </div>
@@ -370,6 +370,160 @@
                         </div>
                         <div wire:ignore>
                             <div id="foodManagementChart" style="height: 380px;"></div>
+                        </div>
+                            </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Chart Doanh thu theo thành phố và Bản đồ Việt Nam --}}
+        <div class="row">
+            <div class="col-12 grid-margin">
+                <div class="card bg-dark border-secondary shadow-sm">
+                    <div class="card-header bg-transparent border-secondary">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="card-title mb-0 text-white">
+                                <i class="fas fa-map-marked-alt me-2 text-success"></i>
+                                Doanh thu theo thành phố & Bản đồ Việt Nam
+                            </h4>
+                            <div class="dropdown" wire:ignore>
+                                <button class="btn btn-outline-success btn-sm dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-filter me-1"></i>
+                                    <span id="cityRevenueFilterText">
+                                        @switch($cityRevenuePeriod)
+                                            @case('3_days')
+                                                3 ngày gần nhất
+                                            @break
+                                            @case('7_days')
+                                                7 ngày gần nhất
+                                            @break
+                                            @case('30_days')
+                                                30 ngày gần nhất
+                                            @break
+                                            @case('1_month')
+                                                1 tháng gần nhất
+                                            @break
+                                            @case('3_months')
+                                                3 tháng gần nhất
+                                            @break
+                                            @case('1_year')
+                                                1 năm gần nhất
+                                            @break
+                                            @case('2_years')
+                                                2 năm gần nhất
+                                            @break
+                                            @default
+                                                7 ngày gần nhất
+                                        @endswitch
+                                    </span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li>
+                                        <h6 class="dropdown-header text-success">
+                                            <i class="fas fa-calendar-day me-1"></i>
+                                            Theo ngày
+                                        </h6>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#"
+                                            wire:click.prevent="changeCityRevenuePeriod('3_days')">3 ngày gần
+                                            nhất</a></li>
+                                    <li><a class="dropdown-item" href="#"
+                                            wire:click.prevent="changeCityRevenuePeriod('7_days')">7 ngày gần
+                                            nhất</a></li>
+                                    <li><a class="dropdown-item" href="#"
+                                            wire:click.prevent="changeCityRevenuePeriod('30_days')">30 ngày
+                                            gần nhất</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li>
+                                        <h6 class="dropdown-header text-success">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            Theo tháng
+                                        </h6>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#"
+                                            wire:click.prevent="changeCityRevenuePeriod('1_month')">1
+                                            tháng</a></li>
+                                    <li><a class="dropdown-item" href="#"
+                                            wire:click.prevent="changeCityRevenuePeriod('3_months')">3
+                                            tháng</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li>
+                                        <h6 class="dropdown-header text-success">
+                                            <i class="fas fa-calendar-check me-1"></i>
+                                            Theo năm
+                                        </h6>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#"
+                                            wire:click.prevent="changeCityRevenuePeriod('1_year')">1 năm</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#"
+                                            wire:click.prevent="changeCityRevenuePeriod('2_years')">2 năm</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {{-- Bảng thống kê thành phố --}}
+                            <div class="col-md-6">
+                                <div class="city-stats-container">
+                                    <h6 class="text-white mb-3">
+                                        <i class="fas fa-chart-bar me-2 text-success"></i>
+                                        Top thành phố theo doanh thu
+                                    </h6>
+                                    <div class="city-stats-list" id="cityStatsList">
+                                        @if(!empty($cityRevenueData['cityData']))
+                                            @foreach($cityRevenueData['cityData'] as $city)
+                                                <div class="city-stat-item mb-3">
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <span class="text-white fw-medium">{{ $city['city'] }}</span>
+                                                        <span class="text-success fw-bold">{{ $city['percentage'] }}%</span>
+                                                    </div>
+                                                    <div class="progress bg-dark" style="height: 8px;">
+                                                        <div class="progress-bar bg-success"
+                                                             style="width: {{ $city['percentage'] }}%"></div>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between mt-1">
+                                                        <small class="text-muted">
+                                                            <i class="fas fa-money-bill me-1"></i>
+                                                            {{ number_format($city['revenue']) }}đ
+                                                        </small>
+                                                        <small class="text-muted">
+                                                            <i class="fas fa-ticket-alt me-1"></i>
+                                                            {{ $city['bookings'] }} vé
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <div class="text-muted text-center py-4">
+                                                <i class="fas fa-map-marker-alt fa-3x mb-3"></i>
+                                                <p>Chưa có dữ liệu doanh thu theo thành phố</p>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Bản đồ Việt Nam --}}
+                            <div class="col-md-6">
+                                <div class="vietnam-map-container text-center">
+                                    <h6 class="text-white mb-3">
+                                        <i class="fas fa-map me-2 text-info"></i>
+                                        Bản đồ doanh thu Việt Nam
+                                    </h6>
+                                    <div class="vietnam-map" id="vietnamMap" style="position: relative; height: 450px;">
+                                        {{-- Google Maps iframe --}}
+                                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d8302888.535480116!2d105.91023324999999!3d15.793925249999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31157a4d736a1e5f%3A0xb03bb0c9e2fe62be!2zVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1754982219848!5m2!1svi!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -505,7 +659,7 @@
                                         <h6 class="dropdown-header text-primary">
                                             <i class="fas fa-calendar-day me-1"></i>
                                             Theo ngày
-                                        </h6>
+                                </h6>
                                     </li>
                                     <li><a class="dropdown-item" href="#"
                                             wire:click.prevent="changeRevenuePeriod('3_days')">3 ngày gần nhất</a></li>
@@ -549,17 +703,102 @@
                     </div>
                     <div class="card-body">
                         <div wire:ignore id="revenueChart" style="height: 450px;"></div>
-                    </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
     <style>
         .apexcharts-menu {
             color: black;
         }
+
+        /* CSS cho chart thành phố */
+        .city-stats-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .city-stats-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .city-stats-container::-webkit-scrollbar-track {
+            background: #2d3748;
+            border-radius: 3px;
+        }
+
+        .city-stats-container::-webkit-scrollbar-thumb {
+            background: #4a5568;
+            border-radius: 3px;
+        }
+
+        .city-stats-container::-webkit-scrollbar-thumb:hover {
+            background: #718096;
+        }
+
+        .city-stat-item {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .city-stat-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(40, 167, 69, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .progress {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #28a745, #20c997) !important;
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+
+        /* CSS cho bản đồ Việt Nam */
+        .vietnam-map-container {
+            position: relative;
+        }
+
+        .vietnam-map {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .vietnam-map iframe {
+            transition: all 0.3s ease;
+        }
+
+        .vietnam-map iframe:hover {
+            transform: scale(1.02);
+        }
+
+        /* Responsive cho mobile */
+        @media (max-width: 768px) {
+            .city-stats-container {
+                max-height: 300px;
+                margin-bottom: 20px;
+            }
+
+            .vietnam-map {
+                height: 250px !important;
+            }
+        }
+
+        .place-card .place-card-large {
+            display: none;
+        }
     </style>
-</div>
 @script
     <script>
         globalThis.chartInstances = globalThis.chartInstances || {};
@@ -857,6 +1096,72 @@
             }
         });
 
+        // Lắng nghe sự kiện cập nhật chart thành phố
+        Livewire.on('updateCityRevenueChart', (event) => {
+            if (event.data) {
+                updateCityRevenueChart(event.data);
+            }
+        });
+
+        // Function để cập nhật chart thành phố
+        function updateCityRevenueChart(data) {
+            // Cập nhật bảng thống kê thành phố
+            updateCityStats(data.cityData);
+
+            // Cập nhật bản đồ Việt Nam
+            updateVietnamMap(data.mapData);
+        }
+
+        // Function cập nhật bảng thống kê thành phố
+        function updateCityStats(cityData) {
+            const container = document.getElementById('cityStatsList');
+            if (!container) return;
+
+            if (!cityData || cityData.length === 0) {
+                container.innerHTML = `
+                    <div class="text-muted text-center py-4">
+                        <i class="fas fa-map-marker-alt fa-3x mb-3"></i>
+                        <p>Chưa có dữ liệu doanh thu theo thành phố</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            cityData.forEach(city => {
+                html += `
+                    <div class="city-stat-item mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-white fw-medium">${city.city}</span>
+                            <span class="text-success fw-bold">${city.percentage}%</span>
+                        </div>
+                        <div class="progress bg-dark" style="height: 8px;">
+                            <div class="progress-bar bg-success"
+                                 style="width: ${city.percentage}%"></div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <small class="text-muted">
+                                <i class="fas fa-money-bill me-1"></i>
+                                ${new Intl.NumberFormat('vi-VN').format(city.revenue)}đ
+                            </small>
+                            <small class="text-muted">
+                                <i class="fas fa-ticket-alt me-1"></i>
+                                ${city.bookings} vé
+                            </small>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // Function cập nhật bản đồ Việt Nam
+        function updateVietnamMap(mapData) {
+            // Với iframe Google Maps đơn giản, chúng ta chỉ cần hiển thị bản đồ
+            // Các điểm thành phố sẽ được hiển thị trong bảng thống kê bên trái
+            console.log('Bản đồ Việt Nam đã được cập nhật với dữ liệu:', mapData);
+        }
+
         Livewire.on('updateData', function([$transactionHistoryData, $revenueSourceData, $foodManagementData,
         $filterTexts]) {
             // Update filter text from server
@@ -869,6 +1174,9 @@
                 }
                 if ($filterTexts.foodManagementFilterText) {
                     updateFilterText('foodManagementFilterText', $filterTexts.foodManagementFilterText);
+                }
+                if ($filterTexts.cityRevenueFilterText) {
+                    updateFilterText('cityRevenueFilterText', $filterTexts.cityRevenueFilterText);
                 }
             }
 
@@ -1228,11 +1536,11 @@
                                 <div style="border-left:3px solid #FF9800;padding-left:8px;margin-bottom:8px">
                                     <div style="color:#FF9800;font-weight:600;margin-bottom:4px">🍽️ Đồ ăn:</div>
                                     <div style="display:flex;justify-content:space-between;gap:8px;color:#ddd;margin-bottom:2px">
-                                        <span>Doanh thu:</span>
+                                    <span>Doanh thu:</span>
                                         <strong style="color:#fff">${foodRevenueFmt}</strong>
-                                    </div>
+                                </div>
                                     <div style="display:flex;justify-content:space-between;gap:8px;color:#ddd">
-                                        <span>Số lượng:</span>
+                                    <span>Số lượng:</span>
                                         <strong style="color:#fff">${foodQuantity} số lượng</strong>
                                     </div>
                                 </div>
@@ -1279,5 +1587,57 @@
 
             renderAllCharts();
         });
+
+        // Khởi tạo chart thành phố khi trang được load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Khởi tạo dữ liệu mặc định cho chart thành phố
+            const defaultCityData = {
+                cityData: [],
+                mapData: [],
+                totalRevenue: 0
+            };
+
+            // Cập nhật chart thành phố với dữ liệu mặc định
+            updateCityRevenueChart(defaultCityData);
+        });
+
+        // Function hiển thị lỗi bản đồ
+        function showMapError() {
+            const mapContainer = document.getElementById('vietnamMap');
+            if (mapContainer) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'map-loading';
+                errorDiv.innerHTML = `
+                    <div class="text-center">
+                        <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                        Không thể tải bản đồ Google Maps
+                        <br><small class="text-muted">Vui lòng kiểm tra API key hoặc kết nối internet</small>
+                    </div>
+                `;
+
+                // Ẩn iframe và hiển thị thông báo lỗi
+                const iframe = mapContainer.querySelector('iframe');
+                if (iframe) iframe.style.display = 'none';
+
+                // Xóa thông báo lỗi cũ nếu có
+                const oldError = mapContainer.querySelector('.map-loading');
+                if (oldError) oldError.remove();
+
+                mapContainer.appendChild(errorDiv);
+            }
+        }
+
+        // Function ẩn lỗi bản đồ
+        function hideMapError() {
+            const mapContainer = document.getElementById('vietnamMap');
+            if (mapContainer) {
+                const iframe = mapContainer.querySelector('iframe');
+                if (iframe) iframe.style.display = 'block';
+
+                const errorDiv = mapContainer.querySelector('.map-loading');
+                if (errorDiv) errorDiv.remove();
+            }
+        }
     </script>
 @endscript
+</div>

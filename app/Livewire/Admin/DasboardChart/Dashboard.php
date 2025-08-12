@@ -30,11 +30,13 @@ class Dashboard extends Component
     public $transactionHistoryData = [];
     public $revenueSourceData = [];
     public $foodManagementData = [];
+    public $cityRevenueData = []; // Thêm dữ liệu doanh thu theo thành phố
 
     // Chart periods
     public $transactionHistoryPeriod = '7_days';
     public $revenueSourcePeriod = '7_days';
     public $foodManagementPeriod = '7_days';
+    public $cityRevenuePeriod = '7_days'; // Thêm period cho chart thành phố
 
     // Additional statistics for detailed cards
     public $currentMonthRevenue = 0;
@@ -56,12 +58,71 @@ class Dashboard extends Component
         7 => 'T7', 8 => 'T8', 9 => 'T9', 10 => 'T10', 11 => 'T11', 12 => 'T12'
     ];
 
+    // Map coordinates for Vietnamese cities
+    private $cityCoordinates = [
+        'Hà Nội' => ['x' => 50, 'y' => 30],
+        'TP. Hồ Chí Minh' => ['x' => 45, 'y' => 75],
+        'Đà Nẵng' => ['x' => 35, 'y' => 55],
+        'Hải Phòng' => ['x' => 55, 'y' => 35],
+        'Cần Thơ' => ['x' => 40, 'y' => 80],
+        'Nha Trang' => ['x' => 30, 'y' => 65],
+        'Huế' => ['x' => 30, 'y' => 50],
+        'Vũng Tàu' => ['x' => 40, 'y' => 75],
+        'Quy Nhơn' => ['x' => 25, 'y' => 60],
+        'Đà Lạt' => ['x' => 35, 'y' => 70],
+        'Vinh' => ['x' => 45, 'y' => 40],
+        'Nam Định' => ['x' => 50, 'y' => 45],
+        'Thái Nguyên' => ['x' => 55, 'y' => 25],
+        'Bắc Ninh' => ['x' => 55, 'y' => 30],
+        'Hải Dương' => ['x' => 55, 'y' => 35],
+        'Phú Thọ' => ['x' => 50, 'y' => 20],
+        'Lào Cai' => ['x' => 45, 'y' => 15],
+        'Sơn La' => ['x' => 40, 'y' => 20],
+        'Lạng Sơn' => ['x' => 60, 'y' => 25],
+        'Quảng Ninh' => ['x' => 60, 'y' => 35],
+        'Thái Bình' => ['x' => 55, 'y' => 40],
+        'Hưng Yên' => ['x' => 55, 'y' => 35],
+        'Hà Nam' => ['x' => 50, 'y' => 40],
+        'Ninh Bình' => ['x' => 50, 'y' => 45],
+        'Thanh Hóa' => ['x' => 45, 'y' => 45],
+        'Nghệ An' => ['x' => 40, 'y' => 45],
+        'Hà Tĩnh' => ['x' => 35, 'y' => 45],
+        'Quảng Bình' => ['x' => 30, 'y' => 45],
+        'Quảng Trị' => ['x' => 30, 'y' => 50],
+        'Thừa Thiên Huế' => ['x' => 30, 'y' => 50],
+        'Quảng Nam' => ['x' => 30, 'y' => 55],
+        'Quảng Ngãi' => ['x' => 25, 'y' => 60],
+        'Bình Định' => ['x' => 25, 'y' => 60],
+        'Phú Yên' => ['x' => 25, 'y' => 65],
+        'Khánh Hòa' => ['x' => 30, 'y' => 65],
+        'Ninh Thuận' => ['x' => 30, 'y' => 70],
+        'Bình Thuận' => ['x' => 35, 'y' => 70],
+        'Bình Phước' => ['x' => 40, 'y' => 70],
+        'Tây Ninh' => ['x' => 40, 'y' => 75],
+        'Bình Dương' => ['x' => 40, 'y' => 75],
+        'Đồng Nai' => ['x' => 40, 'y' => 75],
+        'Bà Rịa - Vũng Tàu' => ['x' => 40, 'y' => 75],
+        'Long An' => ['x' => 40, 'y' => 80],
+        'Tiền Giang' => ['x' => 40, 'y' => 80],
+        'Bến Tre' => ['x' => 40, 'y' => 80],
+        'Trà Vinh' => ['x' => 40, 'y' => 80],
+        'Vĩnh Long' => ['x' => 40, 'y' => 80],
+        'Đồng Tháp' => ['x' => 40, 'y' => 80],
+        'An Giang' => ['x' => 40, 'y' => 80],
+        'Kiên Giang' => ['x' => 35, 'y' => 80],
+        'Cà Mau' => ['x' => 35, 'y' => 85],
+        'Bạc Liêu' => ['x' => 35, 'y' => 80],
+        'Sóc Trăng' => ['x' => 40, 'y' => 80],
+        'Hậu Giang' => ['x' => 40, 'y' => 80],
+    ];
+
     public function mount()
     {
         $this->transactionHistoryPeriod = '7_days';
         $this->revenueSourcePeriod = '7_days';
         $this->foodManagementPeriod = '7_days';
         $this->revenuePeriod = '7_days';
+        $this->cityRevenuePeriod = '7_days';
 
         // Load all statistics and chart data
         $this->loadStatistics();
@@ -71,6 +132,7 @@ class Dashboard extends Component
         $this->transactionHistoryData = $this->getTransactionHistoryData($this->transactionHistoryPeriod);
         $this->revenueSourceData = $this->getRevenueSourceData($this->revenueSourcePeriod);
         $this->foodManagementData = $this->getFoodManagementData($this->foodManagementPeriod);
+        $this->cityRevenueData = $this->getCityRevenueData($this->cityRevenuePeriod);
     }
 
     public function loadStatistics()
@@ -141,6 +203,13 @@ class Dashboard extends Component
         $this->dispatch('updateFilterText', elementId: 'revenueFilterText', text: $this->getRevenueFilterText($period));
     }
 
+    public function changeCityRevenuePeriod($period)
+    {
+        $this->cityRevenuePeriod = $period;
+        $this->cityRevenueData = $this->getCityRevenueData($period);
+        $this->dispatch('updateFilterText', elementId: 'cityRevenueFilterText', text: $this->getFilterText($period));
+    }
+
     public function loadChartData()
     {
         $this->chartData = $this->getRevenueData($this->revenuePeriod);
@@ -156,6 +225,10 @@ class Dashboard extends Component
 
         if (empty($this->foodManagementData)) {
             $this->foodManagementData = $this->getFoodManagementData($this->foodManagementPeriod);
+        }
+
+        if (empty($this->cityRevenueData)) {
+            $this->cityRevenueData = $this->getCityRevenueData($this->cityRevenuePeriod);
         }
     }
 
@@ -524,6 +597,175 @@ class Dashboard extends Component
         ];
     }
 
+    private function getCityRevenueData($period)
+    {
+        switch ($period) {
+            case '3_days':
+                $startDate = now()->subDays(2)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '7_days':
+                $startDate = now()->subDays(6)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '30_days':
+                $startDate = now()->subDays(29)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '1_month':
+                $startDate = now()->subMonth()->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '3_months':
+                $startDate = now()->subMonths(3)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '1_year':
+                $startDate = now()->subYear()->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            case '2_years':
+                $startDate = now()->subYears(2)->startOfDay();
+                $endDate = now()->endOfDay();
+                break;
+            default:
+                $startDate = now()->subDays(6)->startOfDay();
+                $endDate = now()->endOfDay();
+        }
+
+        // Lấy dữ liệu doanh thu theo thành phố từ users và bookings
+        $cityRevenue = DB::table('users as u')
+            ->join('bookings as b', 'u.id', '=', 'b.user_id')
+            ->where('b.status', 'paid')
+            ->whereBetween('b.created_at', [$startDate, $endDate])
+            ->whereNotNull('u.address')
+            ->select(
+                'u.address',
+                DB::raw('SUM(b.total_price) as total_revenue'),
+                DB::raw('COUNT(DISTINCT b.id) as total_bookings'),
+                DB::raw('COUNT(DISTINCT u.id) as total_users')
+            )
+            ->groupBy('u.address')
+            ->orderByDesc('total_revenue')
+            ->limit(10)
+            ->get();
+
+        $cityData = [];
+        $mapData = [];
+
+        foreach ($cityRevenue as $item) {
+            $cityName = $this->extractCityFromAddress($item->address);
+            if ($cityName && isset($this->cityCoordinates[$cityName])) {
+                $coordinates = $this->cityCoordinates[$cityName];
+
+                $cityData[] = [
+                    'city' => $cityName,
+                    'revenue' => (int) $item->total_revenue,
+                    'bookings' => (int) $item->total_bookings,
+                    'users' => (int) $item->total_users,
+                    'percentage' => 0 // Sẽ tính sau
+                ];
+
+                $mapData[] = [
+                    'city' => $cityName,
+                    'x' => $coordinates['x'],
+                    'y' => $coordinates['y'],
+                    'revenue' => (int) $item->total_revenue,
+                    'bookings' => (int) $item->total_bookings
+                ];
+            }
+        }
+
+        // Tính phần trăm
+        $totalRevenue = array_sum(array_column($cityData, 'revenue'));
+        if ($totalRevenue > 0) {
+            foreach ($cityData as &$city) {
+                $city['percentage'] = round(($city['revenue'] / $totalRevenue) * 100, 1);
+            }
+        }
+
+        return [
+            'cityData' => $cityData,
+            'mapData' => $mapData,
+            'totalRevenue' => $totalRevenue
+        ];
+    }
+
+    private function extractCityFromAddress($address)
+    {
+        if (!$address) return null;
+
+        $address = strtolower($address);
+
+        // Danh sách các thành phố và từ khóa nhận dạng
+        $cityKeywords = [
+            'Hà Nội' => ['hà nội', 'ha noi', 'hn', 'thành phố hà nội'],
+            'TP. Hồ Chí Minh' => ['tp. hồ chí minh', 'tp hcm', 'hồ chí minh', 'ho chi minh', 'hcm', 'sài gòn', 'saigon'],
+            'Đà Nẵng' => ['đà nẵng', 'da nang', 'thành phố đà nẵng'],
+            'Hải Phòng' => ['hải phòng', 'hai phong', 'thành phố hải phòng'],
+            'Cần Thơ' => ['cần thơ', 'can tho', 'thành phố cần thơ'],
+            'Nha Trang' => ['nha trang', 'khánh hòa', 'khanh hoa'],
+            'Huế' => ['huế', 'hue', 'thừa thiên huế', 'thua thien hue'],
+            'Vũng Tàu' => ['vũng tàu', 'vung tau', 'bà rịa - vũng tàu', 'ba ria vung tau'],
+            'Quy Nhơn' => ['quy nhơn', 'quy nhon', 'bình định', 'binh dinh'],
+            'Đà Lạt' => ['đà lạt', 'da lat', 'lâm đồng', 'lam dong'],
+            'Vinh' => ['vinh', 'nghệ an', 'nghe an'],
+            'Nam Định' => ['nam định', 'nam dinh'],
+            'Thái Nguyên' => ['thái nguyên', 'thai nguyen'],
+            'Bắc Ninh' => ['bắc ninh', 'bac ninh'],
+            'Hải Dương' => ['hải dương', 'hai duong'],
+            'Phú Thọ' => ['phú thọ', 'phu tho'],
+            'Lào Cai' => ['lào cai', 'lao cai'],
+            'Sơn La' => ['sơn la', 'son la'],
+            'Lạng Sơn' => ['lạng sơn', 'lang son'],
+            'Quảng Ninh' => ['quảng ninh', 'quang ninh'],
+            'Thái Bình' => ['thái bình', 'thai binh'],
+            'Hưng Yên' => ['hưng yên', 'hung yen'],
+            'Hà Nam' => ['hà nam', 'ha nam'],
+            'Ninh Bình' => ['ninh bình', 'ninh binh'],
+            'Thanh Hóa' => ['thanh hóa', 'thanh hoa'],
+            'Nghệ An' => ['nghệ an', 'nghe an'],
+            'Hà Tĩnh' => ['hà tĩnh', 'ha tinh'],
+            'Quảng Bình' => ['quảng bình', 'quang binh'],
+            'Quảng Trị' => ['quảng trị', 'quang tri'],
+            'Thừa Thiên Huế' => ['thừa thiên huế', 'thua thien hue'],
+            'Quảng Nam' => ['quảng nam', 'quang nam'],
+            'Quảng Ngãi' => ['quảng ngãi', 'quang ngai'],
+            'Bình Định' => ['bình định', 'binh dinh'],
+            'Phú Yên' => ['phú yên', 'phu yen'],
+            'Khánh Hòa' => ['khánh hòa', 'khanh hoa'],
+            'Ninh Thuận' => ['ninh thuận', 'ninh thuan'],
+            'Bình Thuận' => ['bình thuận', 'binh thuan'],
+            'Bình Phước' => ['bình phước', 'binh phuoc'],
+            'Tây Ninh' => ['tây ninh', 'tay ninh'],
+            'Bình Dương' => ['bình dương', 'binh duong'],
+            'Đồng Nai' => ['đồng nai', 'dong nai'],
+            'Bà Rịa - Vũng Tàu' => ['bà rịa - vũng tàu', 'ba ria vung tau'],
+            'Long An' => ['long an'],
+            'Tiền Giang' => ['tiền giang', 'tien giang'],
+            'Bến Tre' => ['bến tre', 'ben tre'],
+            'Trà Vinh' => ['trà vinh', 'tra vinh'],
+            'Vĩnh Long' => ['vĩnh long', 'vinh long'],
+            'Đồng Tháp' => ['đồng tháp', 'dong thap'],
+            'An Giang' => ['an giang'],
+            'Kiên Giang' => ['kiên giang', 'kien giang'],
+            'Cà Mau' => ['cà mau', 'ca mau'],
+            'Bạc Liêu' => ['bạc liêu', 'bac lieu'],
+            'Sóc Trăng' => ['sóc trăng', 'soc trang'],
+            'Hậu Giang' => ['hậu giang', 'hau giang'],
+        ];
+
+        foreach ($cityKeywords as $cityName => $keywords) {
+            foreach ($keywords as $keyword) {
+                if (strpos($address, $keyword) !== false) {
+                    return $cityName;
+                }
+            }
+        }
+
+        return null;
+    }
+
     private function getFilterText($period)
     {
         switch ($period) {
@@ -688,11 +930,15 @@ class Dashboard extends Component
                 'transactionHistoryFilterText' => $this->getFilterText($this->transactionHistoryPeriod),
                 'revenueSourceFilterText' => $this->getFilterText($this->revenueSourcePeriod),
                 'foodManagementFilterText' => $this->getFilterText($this->foodManagementPeriod),
+                'cityRevenueFilterText' => $this->getFilterText($this->cityRevenuePeriod),
             ]
         );
 
         // Dispatch dữ liệu cho revenue chart
         $this->dispatch('updateRevenueChart', data: $this->chartData);
+
+        // Dispatch dữ liệu cho city revenue chart
+        $this->dispatch('updateCityRevenueChart', data: $this->cityRevenueData);
 
         return view('livewire.admin.dasboard-chart.dashboard');
     }
