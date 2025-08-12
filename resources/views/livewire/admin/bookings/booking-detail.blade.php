@@ -53,13 +53,7 @@
                             <div>
                                 <h6 class="card-title">Doanh thu món ăn</h6>
                                 <h3 class="mb-0" style="color: #ffefbe; text-shadow: 0 0 6px rgba(197, 169, 86, 0.8);">
-                                    {{ number_format(
-                                    $booking->foodOrderItems->sum(fn($foodOrderItem) => $foodOrderItem->price *
-                                    $foodOrderItem->quantity),
-                                    0,
-                                    '.',
-                                    '.',
-                                    ) }}đ
+                                    {{ number_format($booking->foodOrderItems->sum(fn($foodOrderItem) => $foodOrderItem->price * $foodOrderItem->quantity), 0, '.', '.', ) }}đ
                                 </h3>
                                 <small>VNĐ</small>
                             </div>
@@ -789,15 +783,14 @@
                                         <div class="showtime-info text-start">
                                             <i class="fas fa-clock"></i>
                                             <span>Thời gian chiếu:
-                                                <strong>{{ $showtimeBooking->start_time->format('d/m/Y H:i') }} -
-                                                    {{ $showtimeBooking->end_time->format('H:i') }}</strong></span>
+                                                <strong>{{ $showtimeBooking->start_time->format('d/m/Y H:i') }} - {{ $showtimeBooking->end_time->format('H:i') }}</strong></span>
                                         </div>
 
                                         <div class="showtime-info text-start">
                                             <i class="fa-solid fa-square-dollar"></i>
                                             <span>Giá vé:
-                                                <strong>{{ number_format((int) $showtimeBooking->movie->price + (int)
-                                                    $showtimeBooking->price, 0, '.', '.') }}</strong></span>
+                                                <strong>{{ number_format((int) $showtimeBooking->movie->price, 0, '.', '.') }}</strong>
+                                            </span>
                                         </div>
 
                                         <div class="showtime-info text-start">

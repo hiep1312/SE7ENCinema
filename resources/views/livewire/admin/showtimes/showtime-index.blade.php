@@ -49,16 +49,14 @@
                         </select>
                     </div>
 
-                    <!-- Lọc theo giá tiền -->
-                    <div class="col-md-8 col-xl-5 mb-2 mb-md-0 d-flex align-items-center gap-2">
-                        <span id="lowerValue" x-text="$wire.priceFilter[0].toLocaleString('vi-VN') + 'đ'"></span>
-                        <div class="dual-range">
-                            <div class="range-track"></div>
-                            <div class="range-fill" id="rangeFill" wire:ignore.self></div>
-                            <input type="range" class="range-input lower" id="lowerRange" min="{{ $rangePrice[0] }}" max="{{ $rangePrice[1] }}" value="{{ $priceFilter[0] }}" wire:input="$js.updateSlider">
-                            <input type="range" class="range-input upper" id="upperRange" min="{{ $rangePrice[0] }}" max="{{ $rangePrice[1] }}" value="{{ $priceFilter[1] }}" wire:input="$js.updateSlider">
-                        </div>
-                        <span id="upperValue" x-text="$wire.priceFilter[1].toLocaleString('vi-VN') + 'đ'"></span>
+                    <!-- Lọc theo phương thức thanh toán -->
+                    <div class="col-md-3 col-lg-2">
+                        <select wire:model.live="sortByDate" class="form-select bg-dark text-light">
+                            <option disabled>Sắp xếp theo thời gian</option>
+                            <option value="">Mới nhất</option>
+                            <option value="7">7 ngày trước</option>
+                            <option value="30">30 ngày trước</option>
+                        </select>
                     </div>
 
                     <!-- Reset filters -->
@@ -71,6 +69,111 @@
             </div>
 
             <div class="card-body bg-dark">
+                {{-- <div class="date-info fw-bold mb-3">
+                    Thứ Hai, 11 tháng 8, 2025 (4 suất chiếu - 2 phim)
+                </div>
+                <div class="movie-card border rounded p-3">
+                    <div class="row">
+                        <div class="col-lg-4" data-bs-toggle="collapse" data-bs-target="#showtimes1" style="cursor: pointer;">
+                            <div class="d-flex">
+                                <div class="movie-poster">
+                                    <img src="/placeholder.svg?height=160&width=120" alt="Avengers: Endgame" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
+                                    {{-- @if($showtime->movie->poster)
+                                        <img src="{{ asset('storage/' . $showtime->movie->poster) }}"
+                                            alt="Ảnh phim {{ $showtime->movie->title }}" >
+                                    @else
+                                        <i class="fas fa-film" style="font-size: 22px;"></i>
+                                    @endif -}}
+                                </div>
+                                {{-- <img src="/placeholder.svg?height=160&width=120" alt="Avengers: Endgame" class="movie-poster me-3"> -}}
+                                <div class="flex-grow-1">
+                                    <h3 class="movie-title">Avengers: Endgame</h3>
+                                    <div class="movie-info mb-2">Hành động, Phiêu lưu • 181 phút</div>
+                                    <div class="d-flex align-items-center gap-3 mb-3">
+                                        <span class="badge-custom">3 suất chiếu</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-8 collapse" id="showtimes1">
+                            <div class="table-responsive">
+                                <table class="table table-dark table-hover mb-0">
+                                    <thead>
+                                        <tr style="border-color: #3a3d4a;">
+                                            <th scope="col" class="text-center" style="width: 60px;">#</th>
+                                            <th scope="col">Phòng chiếu</th>
+                                            <th scope="col" >Thời gian</th>
+                                            <th scope="col" class="text-center">Trạng thái</th>
+                                            <th scope="col" class="text-center" style="width: 100px;">Hành động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr style="border-color: #3a3d4a;">
+                                            <td class="text-center"><span class="showtime-number">1</span></td>
+                                            <td><div class="room-name">Room 1</div></td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <span class="status-indicator"></span>
+                                                    <span class="time-slot">09:00 - 12:01</span>
+                                                </div>
+                                            </td>
+                                            <td class="text-center"><span class="status-active">Đang hoạt động</span></td>
+                                            <td class="text-center">
+                                                <div class="d-flex gap-1 justify-content-center">
+                                                    <button class="btn btn-edit"><i class="fas fa-edit"></i></button>
+                                                    <button class="btn btn-delete"><i class="fas fa-trash"></i></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr style="border-color: #3a3d4a;">
+                                            <td class="text-center"><span class="showtime-number">2</span></td>
+                                            <td><div class="room-name">Room 2</div></td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <span class="status-indicator"></span>
+                                                    <span class="time-slot">14:30 - 17:31</span>
+                                                </div>
+                                            </td>
+                                            <td class="text-center"><span class="status-active">Đang hoạt động</span></td>
+                                            <td class="text-center">
+                                                <div class="d-flex gap-1 justify-content-center">
+                                                    <button class="btn btn-edit"><i class="fas fa-edit"></i></button>
+                                                    <button class="btn btn-delete"><i class="fas fa-trash"></i></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr style="border-color: #3a3d4a;">
+                                            <td class="text-center"><span class="showtime-number">3</span></td>
+                                            <td><div class="room-name">Room 1</div></td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <span class="status-indicator"></span>
+                                                    <span class="time-slot">19:00 - 22:01</span>
+                                                </div>
+                                            </td>
+                                            <td class="text-center"><span class="status-active">Đang hoạt động</span></td>
+                                            <td class="text-center">
+                                                <div class="d-flex gap-1 justify-content-center">
+                                                    <button class="btn btn-edit"><i class="fas fa-edit"></i></button>
+                                                    <button class="btn btn-delete"><i class="fas fa-trash"></i></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                    <style>
+                        .time-slot::before {
+                            content: "●";
+                            color: #10b981;
+                            margin-right: 8px;
+                        }
+                    </style>
+                </div> --}}
                 <div class="table-responsive">
                     <table class="table table-dark table-striped table-hover">
                         <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
@@ -80,7 +183,6 @@
                                 <th class="text-center text-light">Phim chiếu</th>
                                 <th class="text-center text-light">Phòng chiếu</th>
                                 <th class="text-center text-light">Khung giờ chiếu</th>
-                                <th class="text-center text-light">Giá khung giờ</th>
                                 <th class="text-center text-light">Trạng thái</th>
                                 <th class="text-center text-light">Ngày tạo</th>
                                 <th class="text-center text-light">Hành động</th>
@@ -122,11 +224,6 @@
                                             {{ $showtime->start_time->format('H:i') }} -
                                             {{ $showtime->end_time->format('H:i') }}
                                         </small>
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="badge bg-gradient fs-6">
-                                            {{ number_format($showtime->price, 0, '.', '.') }}đ
-                                        </span>
                                     </td>
                                     <td class="text-center">
                                         @switch($showtime->status)
@@ -186,7 +283,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="9" class="text-center py-4">
+                                    <td colspan="8" class="text-center py-4">
                                         <div class="text-muted">
                                             <i class="fas fa-inbox fa-3x mb-3"></i>
                                             <p>
@@ -200,38 +297,9 @@
                     </table>
                 </div>
                 <div class="mt-3">
-                    {{ $showtimes->links() }}
+                    {{-- {{ $showtimes->links() }} --}}
                 </div>
             </div>
         </div>
     </div>
 </div>
-@script
-<script>
-    $js('resetSlider', function() {
-        document.getElementById('lowerRange').value = {{ $rangePrice[0] ?? 0 }};
-        document.getElementById('upperRange').value = {{ $rangePrice[1] ?? 1_000_000_000 }};
-        document.getElementById('rangeFill').style = "left: 0%; width: 100%;";
-    })
-
-    $js('updateSlider', function() {
-        const lowerRange = document.getElementById('lowerRange');
-        const upperRange = document.getElementById('upperRange');
-        const rangeFill = document.getElementById('rangeFill');
-
-        const lower = lowerRange?.valueAsNumber ?? parseInt(lowerRange.value);
-        const upper = upperRange?.valueAsNumber ?? parseInt(upperRange.value);
-
-        lower >= upper && (lowerRange.value = upper - 1);
-        upper <= lower && (upperRange.value = lower + 1);
-
-        const lowerPercent = ((lowerRange.value - lowerRange.min) / (lowerRange.max - lowerRange.min)) * 100;
-        const upperPercent = ((upperRange.value - upperRange.min) / (upperRange.max - upperRange.min)) * 100;
-
-        rangeFill.style.left = lowerPercent + '%';
-        rangeFill.style.width = (upperPercent - lowerPercent) + '%';
-
-        $wire.$set('priceFilter', [lower, upper], true);
-    })
-</script>
-@endscript

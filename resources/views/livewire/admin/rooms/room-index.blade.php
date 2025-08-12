@@ -163,14 +163,6 @@
                                             </small>
                                         </div>
 
-                                        <!-- Giá vé -->
-                                        <div class="showtime-price mb-1">
-                                            <i class="fas fa-money-bill me-1 text-warning"></i>
-                                            <span class="text-warning">
-                                                {{ number_format($nextShowtime->price,0, '.', '.') }}đ
-                                            </span>
-                                        </div>
-
                                         <!-- Badge trạng thái -->
                                         @if($room->hasActiveShowtimes())
                                         <span class="badge bg-success">

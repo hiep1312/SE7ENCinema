@@ -12,6 +12,7 @@ export default defineConfig({
                 "resources/css/ticket.css",
                 "resources/css/scanner.css",
                 "resources/js/scannerQR.js",
+                "resources/js/foodSelection.js",
                 "resources/css/userInfo.css",
                 "resources/css/confirm-access.css",
                 "resources/css/movieDetail.css",

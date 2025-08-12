@@ -76,7 +76,7 @@
 
 .booking-food-item-image {
     width: 100%;
-    height: 200px;
+    aspect-ratio: 1/1;
     object-fit: cover;
 }
 
@@ -620,9 +620,17 @@
     }
 }
 
-/* Success state */
-.booking-food-success {
-    border-color: #28a745 !important;
-    background-color: #d4edda !important;
-    color: #155724 !important;
+[data-value] {
+    filter: opacity(1);
+    transition: filter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-value].unavailable {
+    filter: opacity(0.7);
+}
+
+[data-value].unavailable:hover {
+    border-color: #6b7280;
+    background: #f9fafb;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
