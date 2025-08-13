@@ -10,14 +10,16 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
+use SE7ENCinema\scChart;
+use App\Charts\admin\movie\dailyChart;
 
 class MovieDetail extends Component
 {
-    use WithPagination;
+    use WithPagination,scChart;
     public $movie;
     public $tabCurrent = 'chart';
 
-    public $dailyChart = 'monthly';
+    // public $dailyChart = 'monthly';
     public $checkinChart = '3_days';
     public $showtimeChart = '3_days';
 
@@ -127,60 +129,14 @@ class MovieDetail extends Component
             ->orderBy('status', 'asc')
             ->orderBy('created_at', 'desc');
 
-
         $bookingChart = Booking::whereHas('showtime', function ($q) {
             $q->where('movie_id', $this->movie->id);
         })->with(['showtime.room'])->get();
-        $bookingCounts = $bookingChart->groupBy('status')->map->count();
+
+        $dailyChart = new dailyChart($this->movie);
+        $this->realtimeUpdateCharts($dailyChart);    
         // CHART Vé đã bán theo ngày
         // Lấy danh sách booking trong 7 ngày gần đây
-        $dates = [];
-        if ($this->dailyChart == 'monthly') {
-            for ($i = 6; $i >= 0; $i--) {
-                $date = Carbon::now()->startOfMonth()->subMonths($i);
-                $dates[] = $date;
-            }
-        } elseif ($this->dailyChart == 'daily') {
-            for ($i = 6; $i >= 0; $i--) {
-                $date = Carbon::now()->subDays($i);
-                $dates[] = $date;
-            }
-        } elseif ($this->dailyChart == 'yearly') {
-            for ($i = 6; $i >= 0; $i--) {
-                $date = Carbon::now()->subYears($i);
-                $dates[] = $date;
-            }
-        }
-        $bookingStatByDate = collect($dates)->mapWithKeys(function ($date) use ($bookingChart) {
-            if ($this->dailyChart == 'monthly') {
-                $dateStr = $date->format('m-Y');
-            } elseif ($this->dailyChart == 'daily') {
-                $dateStr = $date->format('m-d');
-            } elseif ($this->dailyChart == 'yearly') {
-                $dateStr = $date->format('Y');
-            }
-            $bookingsOnDate = $bookingChart->filter(function ($booking) use ($date) {
-                $bookingDate = Carbon::parse($booking->showtime->start_time);
-                if ($this->dailyChart == 'monthly') {
-                    return $bookingDate->year === $date->year && $bookingDate->month === $date->month;
-                } elseif ($this->dailyChart == 'daily') {
-                    return $bookingDate->isSameDay($date);
-                } elseif ($this->dailyChart == 'yearly') {
-                    return $bookingDate->year === $date->year;
-                }
-            });
-            $paidCount = $bookingsOnDate->where('status', 'paid')->count();
-            $cancelledCount = $bookingsOnDate->whereIn('status', ['failed', 'expired'])->count();
-            $totalRevenue = $bookingsOnDate->where('status', 'paid')->sum('total_price');
-            return [
-                $dateStr => [
-                    'paid' => $paidCount,
-                    'cancelled' => $cancelledCount,
-                    'totalRevenue' => $totalRevenue,
-                ]
-            ];
-        });
-        $totalMax = $bookingStatByDate->pluck('paid')->max();
 
         // CHART Vé đã bán theo suất chiếu
         // capacity của room
@@ -234,9 +190,7 @@ class MovieDetail extends Component
         ($this->tabCurrent === "chart" || ($this->js('chartInstances = {}') || false)) && $this->dispatch(
             'updateData',
             $bookingCountFormatted,
-            $bookingStatByDate,
             $result,
-            $totalMax,
             [
                 'filterShowtimeChart' => $this->getFilterText($this->showtimeChart),
                 'checkinFilter' => $this->getFilterText($this->checkinChart),
@@ -247,6 +201,6 @@ class MovieDetail extends Component
         $ratings = $this->movie->ratings()->with('user')->orderBy('created_at', 'desc')->paginate(10, ['*'], 'ratings');
         $comments = $this->movie->comments()->with('user')->orderBy('created_at', 'desc')->paginate(10, ['*'], 'comments');
 
-        return view('livewire.admin.movies.movie-detail', compact('recentShowtimes', 'upcomingShowtimes', 'ratings', 'comments', 'bookings', 'totalOrdersIn30Days', 'bookingCountFormatted', 'bookingStatByDate', 'result', 'totalMax'));
+        return view('livewire.admin.movies.movie-detail', compact('recentShowtimes', 'upcomingShowtimes', 'ratings', 'comments', 'bookings', 'totalOrdersIn30Days', 'bookingCountFormatted', 'result','dailyChart'));
     }
 }

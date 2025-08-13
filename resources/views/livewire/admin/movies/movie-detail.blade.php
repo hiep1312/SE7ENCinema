@@ -822,12 +822,12 @@
                             </h5>
                             <div class="btn-group" role="group">
                                 <button wire:click="$set('dailyChart', 'daily')" type="button"
-                                    class="btn btn-sm {{ $dailyChart === 'daily' ? 'btn-primary' : 'btn-outline-primary' }}">Ngày
+                                    class="btn btn-sm">Ngày
                                 </button>
                                 <button wire:click="$set('dailyChart', 'monthly')" type="button"
-                                    class="btn btn-sm {{ $dailyChart === 'monthly' ? 'btn-primary' : 'btn-outline-primary' }}">Tháng</button>
+                                    class="btn btn-sm">Tháng</button>
                                 <button wire:click="$set('dailyChart', 'yearly')" type="button"
-                                    class="btn btn-sm {{ $dailyChart === 'yearly' ? 'btn-primary' : 'btn-outline-primary' }}">Năm</button>
+                                    class="btn btn-sm">Năm</button>
                             </div>
                         </div>
                         <div>
@@ -842,6 +842,7 @@
 </div>
 @script
 <script>
+    {{!! $dailyChart->compileJavascript() !!}}
     globalThis.chartInstances = {};
     function updateFilterText(elementId, text) {
         const element = document.getElementById(elementId);
@@ -1157,14 +1158,11 @@
 
         window.renderAllCharts = function() {
             if(Object.values(chartInstances).length > 0){
-                chartInstances.dailyChart.updateOptions(optionsDailyChart);
                 chartInstances.showtimeChart.updateOptions(optionsShowtimeChart);
                 chartInstances.checkinChart.updateOptions(optionsCheckinChart);
             }else{
-                const dailyChartEl = document.querySelector("#dailyChart");
                 const showtimeChartEl = document.querySelector("#showtimeChart");
                 const checkinChartEl = document.querySelector("#checkinChart");
-                if (dailyChartEl) chartInstances.dailyChart = createScChart(dailyChartEl, optionsDailyChart);
                 if (showtimeChartEl) chartInstances.showtimeChart = createScChart(showtimeChartEl, optionsShowtimeChart);
                 if (checkinChartEl) chartInstances.checkinChart = createScChart(checkinChartEl, optionsCheckinChart);
             }
