@@ -76,7 +76,7 @@
     </div>
 
     <div class="prs_mc_category_sidebar_main_wrapper">
-        <div class="container">
+        <div class="container" >
             <div class="row">
                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 hidden-sm hidden-xs">
                     <div class="prs_mcc_left_side_wrapper">
@@ -85,14 +85,14 @@
                                 class="border rounded-lg px-4 py-2 w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
                             <button><i class="flaticon-tool"></i></button>
                         </div>
-                        <div class="prs_mcc_bro_title_wrapper title-category">
+                        <div style="padding-top: 90px;" class="prs_mcc_bro_title_wrapper title-category">
                             <h2>Danh Mục Phim</h2>
                             <ul>
                                 <li><i class="fa fa-caret-right"></i> <a href="#"
                                         wire:click="$set('genreFilter', '')">Tất Cả
                                         <span>{{ $genres->count() }}</span></a></li>
                                 @foreach ($genres as $genre)
-                                    <li><i class="fa fa-caret-right"></i> <a href="#"
+                                    <li><i class="fa fa-caret-right"></i> <a href="javascript:void(0)"
                                             wire:click="$set('genreFilter', '{{ $genre->id }}')">{{ Str::limit($genre->name, 15) }}
                                             <span>{{ $genre->movies->count() ?? 0 }}</span></a>
                                     </li>
