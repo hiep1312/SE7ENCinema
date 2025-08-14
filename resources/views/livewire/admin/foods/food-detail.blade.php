@@ -260,17 +260,18 @@
                                                                         class="badge bg-secondary ms-1">{{ $value->value }}</span>
                                                                 </div>
                                                             @empty
-                                                                <span class="text-muted">Đây là sản phẩm gốc không có biến thể</span>
+                                                                <span class="text-muted">Đây là sản phẩm gốc không có
+                                                                    biến thể</span>
                                                             @endforelse
                                                         </td>
 
                                                         {{-- Cột ảnh --}}
-                                                        <td class="d-flex justify-content-center">
-                                                            <div class="mt-1 overflow-auto d-block"
-                                                                style="max-height: 70px; width: 100px;">
+                                                        <td>
+                                                            <div class="d-flex justify-content-center align-items-center mt-1 w-100"
+                                                                style="width: 100%; height: 70px; overflow: hidden;">
                                                                 <img src="{{ asset('storage/' . ($variant->image ?? '404.webp')) }}"
                                                                     alt="Ảnh biến thể" class="rounded"
-                                                                    style="width: 100%; height: auto;">
+                                                                    style="width: 100%; height: 100%; object-fit: cover; max-width: 80px; max-height: 80px;">
                                                             </div>
                                                         </td>
 
@@ -344,122 +345,144 @@
                             </div>
                         </div>
                     </div>
-                @elseif($tabCurrent === 'orders')
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card bg-dark border-light">
-                                <div class="card-header bg-gradient text-light"
-                                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                    <h5><i class="fas fa-receipt me-2"></i>Chi tiết các đơn hàng đã đặt</h5>
-                                </div>
-                                <div class="card-body bg-dark"
-                                    style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
-                                    <div class="table-responsive">
-                                        <table class="table table-dark table-striped table-hover text-light border">
-                                            <thead>
+            </div>
+        @elseif($tabCurrent === 'orders')
+            <div class="row">
+                <div class="col-12">
+                    <div class="card bg-dark border-light">
+                        <div class="card-header bg-gradient text-light"
+                            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <h5><i class="fas fa-receipt me-2"></i>Chi tiết các đơn hàng đã đặt</h5>
+                        </div>
+                        <div class="card-body bg-dark"
+                            style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
+                            <div class="table-responsive">
+                                <table class="table table-dark table-striped table-hover text-light border">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center text-light">Mã đơn hàng</th>
+                                            <th class="text-center text-light">Tên món ăn</th>
+                                            <th class="text-center text-light">Số lượng</th>
+                                            <th class="text-center text-light">Tổng giá</th>
+                                            <th class="text-center text-light">Tên khách hàng</th>
+                                            <th class="text-center text-light">Email / SĐT</th>
+                                            <th class="text-center text-light">Trạng thái</th>
+                                            <th class="text-center text-light">Ngày mua</th>
+                                            <th class="text-center text-light">Hành động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($foodOrderItems as $foodOrder)
+                                            <tr wire:key="{{ $foodOrder->id }}">
+                                                <td class="text-center">
+                                                    {{ $foodOrder->booking?->booking_code ?? 'N/A' }}</td>
+                                                <td class="text-center">
+                                                    <strong class="text-light">{{ $foodItem->name }}</strong>
+                                                </td>
+                                                <td class="text-center">
+                                                    {{ number_format($foodOrder->quantity, 0, ',', '.') }}</td>
+                                                <td class="text-center text-warning">
+                                                    {{ number_format($foodOrder->price, 0, ',', '.') }}đ</td>
+                                                <td class="text-center">
+                                                    <strong
+                                                        class="text-light text-wrap d-block mb-2">{{ $foodOrder->booking?->user->name }}</strong>
+                                                    @switch($foodOrder->booking?->user->status)
+                                                        @case('active')
+                                                            <span class="badge bg-success"><i class="fas fa-play me-1"></i>Đang
+                                                                hoạt động</span>
+                                                        @break
+
+                                                        @case('inactive')
+                                                            <span class="badge bg-warning text-dark"><i
+                                                                    class="fa-solid fa-user-slash me-1"></i>Không hoạt động</span>
+                                                        @break
+
+                                                        @case('banned')
+                                                            <span class="badge bg-danger"><i class="fa-solid fa-ban me-1"></i>Bị
+                                                                cấm</span>
+                                                        @break
+                                                    @endswitch
+                                                </td>
+                                                <td class="text-center">
+                                                    <span
+                                                        class="text-light">{{ $foodOrder->booking?->user->email ?? 'N/A' }}</span>
+                                                    @if ($foodOrder->booking?->user->phone)
+                                                        <small class="text-muted d-block mt-2" style="font-size: 12px">
+                                                            SĐT: {{ $foodOrder->booking->user->phone }}
+                                                        </small>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                    @switch($foodOrder->booking->status)
+                                                        @case('pending')
+                                                            <span class="badge bg-primary">Đang chờ xử lý</span>
+                                                        @break
+
+                                                        @case('expired')
+                                                            <span class="badge bg-warning text-dark">Đã hết hạn xử lý</span>
+                                                        @break
+
+                                                        @case('paid')
+                                                            <span class="badge bg-success">Đã thanh toán</span>
+                                                        @break
+
+                                                        @case('failed')
+                                                            <span class="badge bg-danger">Lỗi thanh toán</span>
+                                                        @break
+                                                    @endswitch
+                                                    <small class="text-muted d-block mt-1" style="font-size: 12px">
+                                                        PTTT:
+                                                        @switch($foodOrder->booking->payment_method)
+                                                            @case('credit_card')
+                                                                Thẻ tín dụng
+                                                            @break
+
+                                                            @case('bank_transfer')
+                                                                Chuyển khoản
+                                                            @break
+
+                                                            @case('e_wallet')
+                                                                Ví điện tử
+                                                            @break
+
+                                                            @case('cash')
+                                                                Tiền mặt
+                                                            @break
+                                                        @endswitch
+                                                    </small>
+                                                </td>
+                                                <td class="text-center">
+                                                    {{ $foodOrder->created_at->format('d/m/Y H:i') }}đ</td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        <a href="{{ route('admin.bookings.detail', $foodOrder->booking->id) }}"
+                                                            class="btn btn-sm btn-info" title="Xem chi tiết">
+                                                            <i class="fas fa-eye" style="margin-right: 0"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            @empty
                                                 <tr>
-                                                    <th class="text-center text-light">Mã đơn hàng</th>
-                                                    <th class="text-center text-light">Tên món ăn</th>
-                                                    <th class="text-center text-light">Số lượng</th>
-                                                    <th class="text-center text-light">Tổng giá</th>
-                                                    <th class="text-center text-light">Tên khách hàng</th>
-                                                    <th class="text-center text-light">Email / SĐT</th>
-                                                    <th class="text-center text-light">Trạng thái</th>
-                                                    <th class="text-center text-light">Ngày mua</th>
-                                                    <th class="text-center text-light">Hành động</th>
+                                                    <td colspan="9" class="text-center py-4">
+                                                        <div class="text-muted">
+                                                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                                                            <p>Không có đơn hàng nào đã đặt</p>
+                                                        </div>
+                                                    </td>
                                                 </tr>
-                                            </thead>
-                                            <tbody>
-                                                @forelse ($foodOrderItems as $foodOrder)
-                                                    <tr wire:key="{{ $foodOrder->id }}">
-                                                        <td class="text-center">
-                                                            {{ $foodOrder->booking?->booking_code ?? 'N/A' }}</td>
-                                                        <td class="text-center">
-                                                            <strong class="text-light">{{ $foodItem->name }}</strong>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            {{ number_format($foodOrder->quantity, 0, ',', '.') }}</td>
-                                                        <td class="text-center text-warning">
-                                                            {{ number_format($foodOrder->price, 0, ',', '.') }}đ</td>
-                                                        <td class="text-center">
-                                                            <strong class="text-light text-wrap d-block mb-2">{{ $foodOrder->booking?->user->name }}</strong>
-                                                            @switch($foodOrder->booking?->user->status)
-                                                                @case('active')
-                                                                    <span class="badge bg-success"><i class="fas fa-play me-1"></i>Đang hoạt động</span>
-                                                                    @break
-                                                                @case('inactive')
-                                                                    <span class="badge bg-warning text-dark"><i class="fa-solid fa-user-slash me-1"></i>Không hoạt động</span>
-                                                                    @break
-                                                                @case('banned')
-                                                                    <span class="badge bg-danger"><i class="fa-solid fa-ban me-1"></i>Bị cấm</span>
-                                                                    @break
-                                                            @endswitch
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <span class="text-light">{{ $foodOrder->booking?->user->email ?? 'N/A' }}</span>
-                                                            @if ($foodOrder->booking?->user->phone)
-                                                                <small class="text-muted d-block mt-2" style="font-size: 12px">
-                                                                    SĐT: {{ $foodOrder->booking->user->phone }}
-                                                                </small>
-                                                            @endif
-                                                        </td>
-                                                        <td class="text-center">
-                                                            @switch($foodOrder->booking->status)
-                                                                @case('pending')
-                                                                    <span class="badge bg-primary">Đang chờ xử lý</span>
-                                                                    @break
-                                                                @case('expired')
-                                                                    <span class="badge bg-warning text-dark">Đã hết hạn xử lý</span>
-                                                                    @break
-                                                                @case('paid')
-                                                                    <span class="badge bg-success">Đã thanh toán</span>
-                                                                    @break
-                                                                @case('failed')
-                                                                    <span class="badge bg-danger">Lỗi thanh toán</span>
-                                                                    @break
-                                                            @endswitch
-                                                            <small class="text-muted d-block mt-1" style="font-size: 12px">
-                                                                PTTT:
-                                                                @switch($foodOrder->booking->payment_method)
-                                                                    @case('credit_card') Thẻ tín dụng @break
-                                                                    @case('bank_transfer') Chuyển khoản @break
-                                                                    @case('e_wallet') Ví điện tử @break
-                                                                    @case('cash') Tiền mặt @break
-                                                                @endswitch
-                                                            </small>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            {{ $foodOrder->created_at->format('d/m/Y H:i') }}đ</td>
-                                                        <td>
-                                                            <div class="d-flex justify-content-center">
-                                                                <a href="{{ route('admin.bookings.detail', $foodOrder->booking->id) }}"
-                                                                    class="btn btn-sm btn-info" title="Xem chi tiết">
-                                                                    <i class="fas fa-eye" style="margin-right: 0"></i>
-                                                                </a>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="9" class="text-center py-4">
-                                                            <div class="text-muted">
-                                                                <i class="fas fa-inbox fa-3x mb-3"></i>
-                                                                <p>Không có đơn hàng nào đã đặt</p>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="mt-3">
-                                        {{ $foodOrderItems->links() }}
-                                    </div>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="mt-3">
+                                    {{ $foodOrderItems->links() }}
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
                 @endif
             </div>
         </div>
-    </div>
+        </div>
