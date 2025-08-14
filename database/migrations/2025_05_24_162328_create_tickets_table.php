@@ -17,6 +17,8 @@ return new class extends Migration
             $table->text('note')->nullable();
             $table->string('qr_code');
             $table->boolean('taken')->default(false);
+            $table->timestamp('taken_at')->nullable();
+            $table->timestamp('checkin_at')->nullable();
             $table->enum('status', ['active', 'used', 'canceled'])->default('active');
             $table->timestamps();
         });

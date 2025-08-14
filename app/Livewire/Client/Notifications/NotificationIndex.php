@@ -51,7 +51,7 @@ class NotificationIndex extends Component
         // Cache current time for better performance
         $now = now();
 
-        $this->notifications = $userNotifications->map(function ($userNotification) use ($now) {
+        $this->notifications = $userNotifications->map(function($userNotification) use ($now) {
             $notification = $userNotification->notification;
 
             // Tạo object mới thay vì thay đổi trực tiếp
@@ -78,30 +78,30 @@ class NotificationIndex extends Component
             return $notificationData;
         });
 
-        $this->unreadNotifications = $this->notifications->filter(function ($notification) {
+        $this->unreadNotifications = $this->notifications->filter(function($notification) {
             return $notification->pivot->is_read === 0; // So sánh với number 0
         });
 
         $this->unreadCount = $this->unreadNotifications->count();
 
         // Phân loại thông báo mới/cũ cho tất cả (sử dụng created_at)
-        $this->newNotifications = $this->notifications->filter(function ($notification) use ($now) {
+        $this->newNotifications = $this->notifications->filter(function($notification) use ($now) {
             $createdAt = $notification->pivot->created_at ?? null;
             return $createdAt && $createdAt->diffInHours($now) < 2;
         })->values();
 
-        $this->oldNotifications = $this->notifications->filter(function ($notification) use ($now) {
+        $this->oldNotifications = $this->notifications->filter(function($notification) use ($now) {
             $createdAt = $notification->pivot->created_at ?? null;
             return !$createdAt || $createdAt->diffInHours($now) >= 2;
         })->values();
 
         // Phân loại thông báo chưa đọc mới/cũ (sử dụng created_at)
-        $this->newUnreadNotifications = $this->unreadNotifications->filter(function ($notification) use ($now) {
+        $this->newUnreadNotifications = $this->unreadNotifications->filter(function($notification) use ($now) {
             $createdAt = $notification->pivot->created_at ?? null;
             return $createdAt && $createdAt->diffInHours($now) < 2;
         })->values();
 
-        $this->oldUnreadNotifications = $this->unreadNotifications->filter(function ($notification) use ($now) {
+        $this->oldUnreadNotifications = $this->unreadNotifications->filter(function($notification) use ($now) {
             $createdAt = $notification->pivot->created_at ?? null;
             return !$createdAt || $createdAt->diffInHours($now) >= 2;
         })->values();
@@ -302,7 +302,7 @@ class NotificationIndex extends Component
         }
 
         // Cập nhật lại các collections
-        $this->unreadNotifications = $this->notifications->filter(function ($notification) {
+        $this->unreadNotifications = $this->notifications->filter(function($notification) {
             return $notification->pivot && $notification->pivot->is_read === 0; // So sánh với number 0
         });
 
@@ -310,12 +310,12 @@ class NotificationIndex extends Component
 
         // Cập nhật lại các collections phân loại
         $now = now();
-        $this->newUnreadNotifications = $this->unreadNotifications->filter(function ($notification) use ($now) {
+        $this->newUnreadNotifications = $this->unreadNotifications->filter(function($notification) use ($now) {
             $createdAt = $notification->pivot ? $notification->pivot->created_at : null;
             return $createdAt && $createdAt->diffInHours($now) < 2;
         })->values();
 
-        $this->oldUnreadNotifications = $this->unreadNotifications->filter(function ($notification) use ($now) {
+        $this->oldUnreadNotifications = $this->unreadNotifications->filter(function($notification) use ($now) {
             $createdAt = $notification->pivot ? $notification->pivot->created_at : null;
             return !$createdAt || $createdAt->diffInHours($now) >= 2;
         })->values();

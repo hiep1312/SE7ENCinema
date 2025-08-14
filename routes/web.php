@@ -239,10 +239,10 @@ Route::name('client.')->group(function () {
     Route::view('/faq', 'livewire.client.template.abouts.faq')->name('faq');
 
     /* Bookings */
-    Route::prefix('/booking')->name('booking.')->group(function () {
+    /* Route::prefix('/booking')->name('booking.')->group(function () {
         Route::get('/food', BookingFood::class)->name('food');
         Route::get('/payment', BookingPayment::class)->name('payment');
-    });
+    }); */
 });
 
 // Route::view('/admintest', 'clienttest')->name('welcome');

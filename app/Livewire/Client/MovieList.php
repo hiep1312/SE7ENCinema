@@ -77,7 +77,6 @@ class MovieList extends Component
             ->where('age_restriction', '!=', 'C')
             ->orderByDesc('ratings_avg_score')
             ->first() ?? $topMovies->first();
-
         // Main movies với pagination
         $movies = $query->where('age_restriction', '!=', 'C')->orderBy('created_at', 'desc')->paginate(20);
 

@@ -948,7 +948,6 @@ class BookingDetail extends Component
                 'topFoodsFilterText' => $this->getFilterText($this->topFoodsPeriod)
             ]
         );
-
         return view('livewire.admin.bookings.booking-detail', compact('tickets'));
     }
 }

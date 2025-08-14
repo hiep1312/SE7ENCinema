@@ -7,21 +7,14 @@
     width: 40px;
     height: 40px;
     cursor: pointer;
+    background: none !important;
     border-radius: 50%;
-    background: #f0f2f5;
     border: none;
-    color: #1c1e21;
+    color: white;
     font-size: 20px;
     transition: all 0.2s ease;
     box-shadow: none;
 }
-
-.notification-bell:hover {
-    background: #e4e6ea;
-    color: #1c1e21;
-    transform: none;
-}
-
 .notification-bell .notification-count {
     position: absolute;
     top: -2px;

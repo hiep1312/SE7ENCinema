@@ -1,4 +1,5 @@
 <div>
+    <div style="clear: both"></div>
     <!-- prs title wrapper Start -->
     <div class="prs_title_main_sec_wrapper">
         <div class="prs_title_img_overlay"></div>

@@ -223,7 +223,7 @@ function openResultPopup(typeQR, data, options = {}) {
 
 function playSuccessSound() {
     const audio = new Audio(`${location.origin}/storage/successSound.mp3`);
-    audio.play().catch(e => console.log('Audio play failed: ', e));
+    audio.play().catch(e => console.error('Audio play failed: ', e));
 }
 
 function toggleControlPanel(ofUpload = true){

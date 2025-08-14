@@ -1,4 +1,4 @@
-<div class="scRender">
+<div class="scRender scSeat">
     @if (session()->has('success'))
     <div class="alert alert-success alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
         {{ session('success') }}
@@ -161,14 +161,6 @@
                                                 {{ $nextShowtime->start_time->format('H:i') }} -
                                                 {{ $nextShowtime->end_time->format('H:i') }}
                                             </small>
-                                        </div>
-
-                                        <!-- Giá vé -->
-                                        <div class="showtime-price mb-1">
-                                            <i class="fas fa-money-bill me-1 text-warning"></i>
-                                            <span class="text-warning">
-                                                {{ number_format($nextShowtime->price,0, '.', '.') }}đ
-                                            </span>
                                         </div>
 
                                         <!-- Badge trạng thái -->

@@ -9,6 +9,11 @@ class BookingSeat extends Model
     protected $fillable = [
         'seat_id',
         'booking_id',
+        'ticket_price'
+    ];
+
+    protected $casts = [
+        'ticket_price' => 'integer'
     ];
 
     public $timestamps = false;

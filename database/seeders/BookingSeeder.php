@@ -15,7 +15,7 @@ class BookingSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = User::all()->pluck('id')->toArray();
+        /* $users = User::all()->pluck('id')->toArray();
         $showtimes = Showtime::all()->pluck('id')->toArray();
 
         foreach (range(1, 20) as $i) {
@@ -33,6 +33,6 @@ class BookingSeeder extends Seeder
                 'status' => fake()->randomElement(['pending', 'expired', 'paid', 'failed']),
                 'payment_method' => fake()->randomElement(['credit_card', 'bank_transfer', 'e_wallet', 'cash']),
             ]);
-        }
+        } */
     }
 }

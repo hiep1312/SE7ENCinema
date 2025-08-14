@@ -18,6 +18,10 @@
     position: relative;
 }
 
+.title__Booking{
+    padding-bottom: 20px;
+}
+
 .prs_newsletter_text h3{
     color: white;
     font-weight: 600;

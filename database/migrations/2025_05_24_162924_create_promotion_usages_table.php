@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('promotion_id')->constrained()->onDelete('cascade');
             $table->foreignId('booking_id')->constrained()->onDelete('cascade');
-            $table->bigInteger('discount_amount');
+            $table->unsignedBigInteger('discount_amount');
             $table->dateTime('used_at');
             $table->timestamps();
         });

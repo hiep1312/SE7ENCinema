@@ -3,6 +3,7 @@
     @vite('resources/css/bookingPayment.css')
 @endassets
 <div class="scRender scBookingPayment">
+    <div style="clear: both"></div>
     <div class="booking-voucher-header bg-dark text-white py-3">
         <div class="container">
             <div class="row align-items-center">
