@@ -102,9 +102,6 @@ class RoomCreate extends Component
                 'name' => $this->name,
                 'capacity' => $this->rows * $this->seatsPerRow,
                 'status' => $this->status,
-                'check_lonely' => $this->checkLonely,
-                'check_sole' => $this->checkSole,
-                'check_diagonal' => $this->checkDiagonal,
             ]);
 
             $vipRows = collect(explode(',', strtoupper($this->vipRows)))->map(fn($v) => trim($v))->filter();
