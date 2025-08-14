@@ -63,6 +63,7 @@ class GenreEdit extends Component
     public function render()
     {
         $movies = Movie::select('id', 'title')->when($this->searchMovie, fn ($query) => $query->whereLike('title', '%' . trim($this->searchMovie) . '%'))->get();
-        return view('livewire.admin.genres.genre-edit', compact('movies'));
+        $totalMovies = Movie::count();
+        return view('livewire.admin.genres.genre-edit', compact('movies', 'totalMovies'));
     }
 }
