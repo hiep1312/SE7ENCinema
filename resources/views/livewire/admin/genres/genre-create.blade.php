@@ -101,7 +101,7 @@
                                             </div>
                                         </div>
                                         <div class="selected-items">
-                                            <h3>Đã chọn <span id="selectedCount">{{ count($moviesSelected) }}</span>/{{ $movies->count() }} thể loại:</h3>
+                                            <h3>Đã chọn <span id="selectedCount">{{ count($moviesSelected) }}</span>/{{ $totalMovies }} thể loại:</h3>
                                             <div class="selected-tags" id="selectedTags">
                                                 @forelse($moviesSelected as $movieId)
                                                     <div class="tag">

@@ -22,7 +22,6 @@ class GenreIndex extends Component
         if(!$status['isConfirmed']) return;
         $genre = Genre::find($genreId);
 
-        // Xóa tất cả phim liên kết trước
         $genre->movies()->detach();
 
         $genre->delete();
