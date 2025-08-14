@@ -61,8 +61,8 @@ use App\Livewire\Client\SelectSeats;
 use App\Livewire\Client\SelectFood;
 use App\Livewire\Client\ConfirmBooking;
 use App\Livewire\Payment\VnpayPayment;
-// use App\Livewire\Booking\BookingFood;
-use App\Livewire\Client\Bookings\BookingFood;
+use App\Livewire\Booking\BookingFood;
+// use App\Livewire\Client\Bookings\BookingFood;
 use App\Livewire\Client\Bookings\BookingPayment;
 use App\Livewire\Client\User\BookingDetail as UserBookingDetail;
 
