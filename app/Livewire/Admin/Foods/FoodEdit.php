@@ -103,7 +103,18 @@ class FoodEdit extends Component
         $this->availableAttributes = FoodAttribute::with('values')
             ->whereNull('food_item_id')
             ->get();
+
+        foreach ($this->variants as $i => $variant) {
+            $this->variants[$i]['price'] = number_format((int) $variant['price'], 0, ',', '.');
+        }
     }
+
+    public function formatPrice($index)
+    {
+        $value = preg_replace('/\D/', '', $this->variants[$index]['price']); // bỏ ký tự không phải số
+        $this->variants[$index]['price'] = number_format((int) $value, 0, ',', '.');
+    }
+
 
     public function applyBulkValues(): void
     {

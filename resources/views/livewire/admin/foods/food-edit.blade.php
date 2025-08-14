@@ -446,7 +446,8 @@
                                                                         alt="Ảnh biến thể hiện tại"
                                                                         style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
                                                                 @else
-                                                                    <i class="fa-solid fa-bowl-food" style="font-size: 30px;"></i>
+                                                                    <i class="fa-solid fa-bowl-food"
+                                                                        style="font-size: 30px;"></i>
                                                                 @endif
                                                                 <span
                                                                     class="position-absolute opacity-75 top-0 start-0 mt-2 ms-2 badge rounded bg-danger">
@@ -458,12 +459,11 @@
                                                         <div class="col-md-9 col-xl-10 row g-3">
                                                             <div class="col-lg-4 col-sm-6">
                                                                 <label class="form-label">Giá *</label>
-                                                                <input type="number"
-                                                                    wire:model="variants.{{ $vIndex }}.price"
-                                                                    class="form-control bg-dark text-light border-secondary @error("
-                                                            variants.$vIndex.price") is-invalid @enderror"
-                                                                    min="0">
-                                                                @error("variants.$vIndex.price")
+                                                                <input type="text"
+                                                                    wire:model.live="variants.{{ $vIndex }}.price"
+                                                                    wire:input="formatPrice({{ $vIndex }})"
+                                                                    class="form-control bg-dark text-light border-secondary @error('variants.' . $vIndex . '.price') is-invalid @enderror">
+                                                                @error('variants.' . $vIndex . '.price')
                                                                     <div class="invalid-feedback">{{ $message }}
                                                                     </div>
                                                                 @enderror
