@@ -15,7 +15,7 @@ class ShowtimeSeeder extends Seeder
      */
     public function run(): void
     {
-        $movies = Movie::where('status', 'showing')->pluck('id')->toArray();
+        /* $movies = Movie::where('status', 'showing')->pluck('id')->toArray();
         $rooms = Room::where('status', 'active')->pluck('id')->toArray();
 
         foreach (range(1, 60) as $i) {
@@ -30,6 +30,6 @@ class ShowtimeSeeder extends Seeder
                 'end_time' => $end,
                 'status' => $end > now() ? 'active' : 'completed',
             ]);
-        }
+        } */
     }
 }

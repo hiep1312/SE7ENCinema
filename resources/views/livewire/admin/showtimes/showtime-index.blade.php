@@ -314,10 +314,7 @@
                             @endforelse
                         </tbody>
                     </table>
-                </div>
-                <div class="mt-3">
-                    {{ $showtimes->links() }}
-                </div> --}}
+                </div>--}}
             </div>
         </div>
     </div>

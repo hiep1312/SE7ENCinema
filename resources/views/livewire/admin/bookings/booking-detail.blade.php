@@ -1035,7 +1035,7 @@
                                         <td>
                                             <div class="d-flex justify-content-center">
                                                 @if ($ticket->isValidTicketOrder())
-                                                <a href="{{ route('client.ticket', [$booking->booking_code, $ticket->getCurrentIndex()]) }}"
+                                                <a href="{{ route('client.ticket', [$booking->booking_code, $ticket->currentIndex]) }}"
                                                     target="_blank" class="btn btn-sm btn-outline-info"
                                                     title="Xem chi tiết">
                                                     <i class="fas fa-eye" style="margin-right: 0"></i>

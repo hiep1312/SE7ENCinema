@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('showtime_id')->constrained()->onDelete('cascade');
             $table->string('booking_code')->unique();
-            $table->bigInteger('total_price')->default(0);
+            $table->unsignedBigInteger('total_price');
             $table->string('transaction_code')->unique()->nullable();
             $table->dateTime('start_transaction')->nullable();
             $table->dateTime('end_transaction')->nullable();
