@@ -16,18 +16,16 @@ class PromotionUsageSeeder extends Seeder
      */
     public function run(): void
     {
-        $promos = Promotion::all();
+        $promotions = Promotion::all();
         $bookings = Booking::all();
 
         foreach (Arr::shuffle($bookings->toArray()) as $booking) {
-            foreach(range(0, rand(1, 3)) as $i){
-                PromotionUsage::create([
-                    'promotion_id' => $promos->random()->id,
-                    'booking_id' => $booking['id'],
-                    'discount_amount' => fake()->numberBetween(10000, 100000),
-                    'used_at' => fake()->dateTimeBetween('-1 month', 'now'),
-                ]);
-            }
+            PromotionUsage::create([
+                'promotion_id' => $promotions->random()->id,
+                'booking_id' => $booking['id'],
+                'discount_amount' => fake()->numberBetween(10000, 100000),
+                'used_at' => fake()->dateTimeBetween('-1 month', 'now'),
+            ]);
         }
     }
 }

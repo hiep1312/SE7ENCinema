@@ -1,13 +1,13 @@
-<div>
+<div class="scRender">
     @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert" wire:ignore>
+        <div class="alert alert-success alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
             {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
     @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert" wire:ignore>
+        <div class="alert alert-danger alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
             {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -98,26 +98,25 @@
                                 <tr wire:key="{{ $food->id }}">
                                     <td class="text-center fw-bold">{{ $loop->iteration }}</td>
                                     <td>
-                                        <div class="mt-1 overflow-auto d-block text-center"
-                                            style="max-height: 100px; width: 100px;">
-                                            <img src="{{ asset('storage/' . ($food->image ?? '404.webp')) }}"
-                                                alt="Ảnh sản phẩm {{ $food->name }}" class="rounded"
-                                                style="width: 100%; height: auto;">
+                                        <div class="d-flex justify-content-center">
+                                            <div class="food-image">
+                                                @if($food->image)
+                                                    <img src="{{ asset('storage/' . $food->image) }}"
+                                                        alt="Ảnh món ăn {{ $food->name }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
+                                                @else
+                                                    <i class="fa-solid fa-burger-soda"></i>
+                                                @endif
+                                            </div>
                                         </div>
                                     </td>
-                                    <td>
-                                        <strong class="text-light">{{ $food->name }}</strong>
+                                    <td style="max-width: 200px;">
+                                        <strong class="text-light text-wrap lh-base">{{ $food->name }}</strong>
                                         @if ($food->trashed())
                                             <span class="badge bg-danger ms-1">Đã xóa</span>
                                         @endif
                                     </td>
-                                    <td class="text-center">
-                                        @if ($food->description)
-                                            <span
-                                                class="text-light text-wrap">{{ Str::limit($food->description, 30, '...') }}</span>
-                                        @else
-                                            <span class="text-muted">Không có mô tả</span>
-                                        @endif
+                                    <td class="text-center" style="max-width: 300px;">
+                                        <p class="text-wrap text-muted lh-base" style="margin-bottom: 0;">{{ Str::limit($food->description ?? 'Không có mô tả', 100, '...') }}</p>
                                     </td>
                                     <td class="text-center">
                                         @if (!$showDeleted && !$food->trashed())
@@ -136,22 +135,28 @@
                                     </td>
 
                                     <td class="col-2 bg-opacity-10 border-start border-3" style="max-width: 200px;">
-                                        @if ($food->variants->count() > 0)
-                                            <div class="showtime-info">
-                                                <!-- Tên các biến thể -->
-                                                <div class="movie-title mb-1">
-                                                    <i class="fa-solid fa-expand-arrows-alt me-1 text-primary"></i>
-                                                    <strong class="text-primary text-wrap">
-                                                        {{ Str::limit($food->variants->pluck('name')->implode(', '), 45, '...') ?? 'Không có biến thể' }}
-                                                    </strong>
-                                                </div>
+                                        @php
+                                            $variantCount = $food->variants->count();
+                                            $isOriginal = false;
 
-                                                <!-- Tổng biển thể -->
-                                                <div class="showtime-price mb-1">
+                                            if (
+                                                $variantCount === 1 &&
+                                                $food->variants->first()->attributeValues->isEmpty()
+                                            ) {
+                                                $isOriginal = true;
+                                            }
+                                        @endphp
+
+                                        @if ($variantCount > 0)
+                                            <div>
+                                                <!-- Tiêu đề -->
+                                                <div class="mb-1">
                                                     <i class="fa-solid fa-list me-1 text-warning"></i>
-                                                    <span class="text-warning">
-                                                        {{ $food->variants->count() }} biến thể
-                                                    </span>
+                                                    @if ($isOriginal)
+                                                        <span class="text-warning">Sản phẩm gốc</span>
+                                                    @else
+                                                        <span class="text-warning">{{ $variantCount }} biến thể</span>
+                                                    @endif
                                                 </div>
 
                                                 <!-- Badge giá từ thấp đến cao -->
@@ -161,7 +166,7 @@
                                                     {{ number_format($food->variants->max('price'), 0, '.', '.') }}đ
                                                 </span>
 
-                                                <!-- Tổng số lượng sản phẩm biến thể -->
+                                                <!-- Tổng số lượng -->
                                                 <div class="time-until mt-1">
                                                     <small class="text-info">
                                                         <i class="fas fa-utensils me-1"></i>
@@ -180,6 +185,7 @@
                                             </div>
                                         @endif
                                     </td>
+
 
                                     <td class="text-center">
                                         @if ($showDeleted)
@@ -227,29 +233,29 @@
                                         @endif
                                     </td>
                                 </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="8" class="text-center py-4">
-                                            <div class="text-muted">
-                                                <i class="fas fa-inbox fa-3x mb-3"></i>
-                                                <p>
-                                                    @if ($showDeleted)
-                                                        Không có món ăn nào đã xóa
-                                                    @else
-                                                        Không có món ăn nào
-                                                    @endif
-                                                </p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="mt-3">
-                        {{ $foodItems->links() }}
-                    </div>
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="text-center py-4">
+                                        <div class="text-muted">
+                                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                                            <p>
+                                                @if ($showDeleted)
+                                                    Không có món ăn nào đã xóa
+                                                @else
+                                                    Không có món ăn nào
+                                                @endif
+                                            </p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-3">
+                    {{ $foodItems->links() }}
                 </div>
             </div>
         </div>
     </div>
+</div>

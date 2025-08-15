@@ -1,5 +1,5 @@
-<div>
-    <div class="scRender container-lg mb-4" wire:poll.1s="realTimeUserUpdate">
+<div class="scRender">
+    <div class="container-lg mb-4" wire:poll.1s="realTimeUserUpdate">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2 class="text-light">Chi tiết người dùng: {{ $user->name }}</h2>
@@ -135,7 +135,7 @@
         </ul>
 
         <!-- Tab Content -->
-        <div class="tab-content mt-3">
+        <div class="tab-content mt-1">
             <!-- Overview Tab -->
             @if($tabCurrent === 'overview')
                 <div class="row">
@@ -150,7 +150,7 @@
                                 <table class="table table-borderless text-light">
                                     <tr>
                                         <td><strong class="text-warning">Tên người dùng:</strong></td>
-                                        <td>{{ $user->name }}</td>
+                                        <td><strong>{{ $user->name }}</strong></td>
                                     </tr>
                                     <tr>
                                         <td><strong class="text-warning">Email:</strong></td>
@@ -162,7 +162,9 @@
                                     </tr>
                                     <tr>
                                         <td><strong class="text-warning">Địa chỉ:</strong></td>
-                                        <td class="text-wrap lh-base">{{ $user->address ?? 'N/A' }}</td>
+                                        <td>
+                                            <p class="text-start text-wrap text-muted lh-base" style="margin-bottom: 0;">{{ $user->address ?? 'N/A' }}</p>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td><strong class="text-warning">Ngày sinh:</strong></td>
@@ -176,14 +178,23 @@
                                         <td><strong class="text-warning">Vai trò:</strong></td>
                                         <td>
                                             @switch($user->role)
-                                                @case('user')
-                                                    <span class="badge bg-info text-dark">Người dùng</span>
-                                                @break
-                                                @case('staff')
-                                                    <span class="badge bg-primary">Nhân viên</span>
-                                                @break
                                                 @case('admin')
-                                                    <span class="badge bg-success">Quản trị viên</span>
+                                                    <span class="badge-clean-base badge-clean-yellow">
+                                                        <i class="fa-solid fa-crown me-1"></i>
+                                                        Quản trị viên
+                                                    </span>
+                                                    @break
+                                                @case('staff')
+                                                    <span class="badge-clean-base badge-clean-rose">
+                                                        <i class="fa-solid fa-user-tie me-1"></i>
+                                                        Nhân viên
+                                                    </span>
+                                                    @break
+                                                @case('user')
+                                                    <span class="badge-clean-base badge-clean-purple">
+                                                        <i class="fa-solid fa-user me-1"></i>
+                                                        Người dùng
+                                                    </span>
                                                     @break
                                             @endswitch
                                         </td>
@@ -193,13 +204,13 @@
                                         <td>
                                             @switch($user->status)
                                                 @case('active')
-                                                    <span class="badge bg-success">Đang hoạt động</span>
-                                                @break
+                                                    <span class="badge bg-success"><i class="fas fa-play me-1"></i>Đang hoạt động</span>
+                                                    @break
                                                 @case('inactive')
-                                                    <span class="badge bg-warning text-dark">Ngừng hoạt động</span>
-                                                @break
+                                                    <span class="badge bg-warning text-dark"><i class="fa-solid fa-user-slash me-1"></i>Không hoạt động</span>
+                                                    @break
                                                 @case('banned')
-                                                    <span class="badge bg-danger">Bị cấm</span>
+                                                    <span class="badge bg-danger"><i class="fa-solid fa-ban me-1"></i>Bị cấm</span>
                                                     @break
                                             @endswitch
                                         </td>
@@ -244,8 +255,8 @@
                                         <thead>
                                             <tr>
                                                 <th class="text-center text-light">Mã đơn hàng</th>
-                                                <th class="text-center text-light">Phòng / Tên phim</th>
-                                                <th class="text-center text-light">Thời lượng</th>
+                                                <th class="text-center text-light">Tên phim</th>
+                                                <th class="text-center text-light">Phòng chiếu</th>
                                                 <th class="text-center text-light">Thời gian chiếu</th>
                                                 <th class="text-center text-light">Tên món ăn</th>
                                                 <th class="text-center text-light">Số lượng</th>
@@ -258,34 +269,62 @@
                                             @forelse ($bookings as $booking)
                                                 <tr wire:key="{{ $booking->id }}">
                                                     <td class="text-center">{{ $booking->booking_code ?? 'N/A' }}</td>
+                                                    @php $movie = $booking->showtime?->movie @endphp
+                                                    <td class="text-start">
+                                                        <strong class="text-light text-wrap lh-base">{{ $movie?->title ?? 'N/A' }}</strong>
+                                                        <div class="movie-genre text-wrap lh-base" style="margin-bottom: 0; margin-top: 3px;">
+                                                            <i class="fas fa-tags me-1"></i>
+                                                            {{ $movie?->genres->take(1)->implode('name', ', ') ?: 'Không có thể loại' }} • {{ $movie?->duration ?? 0 }} phút
+                                                        </div>
+                                                    </td>
                                                     <td class="text-center">
-                                                        <strong class="badge bg-gradient text-light" style="background: linear-gradient(to right, #642b73, #c6426e) !important;">
-                                                            {{ $booking->showtime->room->name }} / {{ $booking->showtime->movie->title }}
+                                                        <strong class="badge text-light" style="background: linear-gradient(to right, #642b73, #c6426e);">
+                                                            {{ $booking->showtime?->room->name ?? 'N/A' }}
                                                         </strong>
                                                     </td>
                                                     <td class="text-center">
-                                                        {{ $booking->showtime->movie->duration }}</td>
-                                                    <td class="text-center">
-                                                        {{ $booking->showtime->start_time->format('d/m/Y H:i') }} - {{ $booking->showtime->end_time->format('d/m/Y H:i') }}</td>
-                                                    <td class="text-center"><strong
-                                                            class="text-light">{{ Str::limit($booking->foodOrderItems()->with('variant')->get()->pluck('variant.name')->implode(', '), 20, '...') }}</strong>
+                                                        <i class="fas fa-clock me-1" style="color: #34c759;"></i>
+                                                        <span style="color: #34c759;">
+                                                            {{ $booking->showtime->start_time->format('d/m/Y') }}
+                                                        </span>
+                                                        <br>
+                                                        <small class="text-muted ms-3">
+                                                            {{ $booking->showtime->start_time->format('H:i') }} -
+                                                            {{ $booking->showtime->end_time->format('H:i') }}
+                                                        </small>
+                                                    </td>
+                                                    <td class="text-center" style="max-width: 150px;">
+                                                        <strong class="text-light text-wrap lh-base">{{ Str::limit($booking->foodOrderItems()->with('variant.foodItem')->get()->pluck('variant.foodItem.name')->implode(', '), 30, '...') }}</strong>
                                                     </td>
                                                     <td class="text-center">
                                                         {{ $booking->foodOrderItems->sum('quantity') }}</td>
+                                                    <td class="text-center text-warning">
+                                                        {{ number_format($booking->total_price, 0, ',', '.') }}đ
+                                                    </td>
                                                     <td class="text-center">
-                                                        {{ number_format($booking->total_price, 0, ',', '.') }}đ</td>
-                                                    <td class="text-center">
-                                                            @switch($booking->status)
+                                                        @switch($booking->status)
                                                             @case('pending')
-                                                                <span class="badge bg-info text-dark">Chờ xử lý</span>
-                                                            @break
-                                                            @case('confirmed')
-                                                                <span class="badge bg-primary">Đã xác nhận</span>
-                                                            @break
+                                                                <span class="badge bg-primary">Đang chờ xử lý</span>
+                                                                @break
+                                                            @case('expired')
+                                                                <span class="badge bg-warning text-dark">Đã hết hạn xử lý</span>
+                                                                @break
                                                             @case('paid')
                                                                 <span class="badge bg-success">Đã thanh toán</span>
                                                                 @break
+                                                            @case('failed')
+                                                                <span class="badge bg-danger">Lỗi thanh toán</span>
+                                                                @break
                                                         @endswitch
+                                                        <small class="text-muted d-block mt-1" style="font-size: 12px">
+                                                            PTTT:
+                                                            @switch($booking->payment_method)
+                                                                @case('credit_card') Thẻ tín dụng @break
+                                                                @case('bank_transfer') Chuyển khoản @break
+                                                                @case('e_wallet') Ví điện tử @break
+                                                                @case('cash') Tiền mặt @break
+                                                            @endswitch
+                                                        </small>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">

@@ -1077,8 +1077,7 @@ th {
           box-sizing: border-box;
 }
 html {
-  font-size: 10px;
-
+  font-size: 16px;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 body {
@@ -5092,22 +5091,6 @@ a.thumbnail.active {
 }
 .alert-danger .alert-link {
   color: #843534;
-}
-@-webkit-keyframes progress-bar-stripes {
-  from {
-    background-position: 40px 0;
-  }
-  to {
-    background-position: 0 0;
-  }
-}
-@-o-keyframes progress-bar-stripes {
-  from {
-    background-position: 40px 0;
-  }
-  to {
-    background-position: 0 0;
-  }
 }
 @keyframes progress-bar-stripes {
   from {

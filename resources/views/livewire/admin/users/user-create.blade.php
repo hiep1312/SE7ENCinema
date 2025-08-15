@@ -1,4 +1,4 @@
-<div>
+<div class="scRender">
     @if (session()->has('error'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             {{ session('error') }}
@@ -26,13 +26,13 @@
                         <form wire:submit.prevent="createUser" enctype="multipart/form-data" novalidate>
                             <div class="row align-items-start mb-2">
                                 @if ($avatar)
-                                    <div class="col-xl-3 col-5 mb-3">
-                                        <div class="mt-1 overflow-auto text-center" style="max-height: 230px;">
+                                    <div class="col-md-3 col-xxl-2 col-6 mb-3">
+                                        <div class="mt-1 user-avatar w-100" style="height: auto;">
                                             <img src="{{ $avatar->temporaryUrl() }}" alt="Ảnh người dùng tải lên"
-                                                style="width: 230px; height: 230px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+                                                style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
                                         </div>
                                     </div>
-                                    <div class="col-xl-9 row">
+                                    <div class="col-md-9 col-xxl-10 row">
                                 @endif
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -172,8 +172,8 @@
                                         @enderror
                                     </div>
                                 </div>
+                                @if ($avatar) </div> @endif
                             </div>
-                            @if($avatar) </div> @endif
                             <div class="d-flex justify-content-between">
                                 <button type="submit" class="btn btn-success">
                                     <i class="fas fa-save"></i> Tạo người dùng

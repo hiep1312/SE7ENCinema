@@ -4,84 +4,78 @@
         <div class="row">
             <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div class="prs_footer_cont1_wrapper prs_footer_cont1_wrapper_1">
-                    <h2>LANGUAGE MOVIES</h2>
+                    <h2>Phim theo nước</h2>
                     <ul>
-                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">English movie</a>
+                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Phim Việt</a>
                         </li>
-                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Tamil movie</a>
+                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Phim Anh</a>
                         </li>
-                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Punjabi Movie</a>
+                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Phim Hàn Quốc</a>
                         </li>
-                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Hindi movie</a>
+                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Phim Thái</a>
                         </li>
-                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Malyalam movie</a>
+                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Phim Trung Quốc</a>
                         </li>
-                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">English Action movie</a>
+                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Phim Lồng Tiếng</a>
                         </li>
-                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Hindi Action movie</a>
+                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Phim Có Phụ Đề</a>
                         </li>
                     </ul>
                 </div>
             </div>
             <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div class="prs_footer_cont1_wrapper prs_footer_cont1_wrapper_2">
-                    <h2>MOVIES by presenter</h2>
+                    <h2>Phim theo thể loại</h2>
                     <ul>
-                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Action movie</a>
+                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Phim hành động</a>
                         </li>
-                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Romantic movie</a>
+                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Phim tình cảm</a>
                         </li>
-                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Adult movie</a>
+                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Phim hài</a>
                         </li>
-                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Comedy movie</a>
+                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Phim kinh dị</a>
                         </li>
-                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Drama movie</a>
+                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Phim hoạt hình</a>
                         </li>
-                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Musical movie</a>
+                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Phim tài liệu</a>
                         </li>
-                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Classical movie</a>
+                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">Phim khoa học viễn tưởng</a>
                         </li>
                     </ul>
                 </div>
             </div>
             <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div class="prs_footer_cont1_wrapper prs_footer_cont1_wrapper_3">
-                    <h2>BOOKING ONLINE</h2>
+                    <h2>Liên hệ</h2>
                     <ul>
-                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">www.example.com</a>
+                        <li><a href="#">Hotline: 1900 6017</a>
                         </li>
-                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">www.hello.com</a>
+                        <li><a href="#">Giờ làm việc: 8:00 - 22:00 (Tất cả các ngày bao gồm cả Lễ Tết)</a>
                         </li>
-                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">www.example.com</a>
+                        <li><a href="#">Email hỗ trợ: hoidap@sevencinema.vn</a>
                         </li>
-                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">www.hello.com</a>
-                        </li>
-                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">www.example.com</a>
-                        </li>
-                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">www.hello.com</a>
-                        </li>
-                        <li><i class="fa fa-circle"></i> &nbsp;&nbsp;<a href="#">www.example.com</a>
+                        <li><a href="#">Địa chỉ: 13 P. Trịnh Văn Bô, Xuân Phương, Nam Từ Liêm, Hà Nội, Việt Nam</a>
                         </li>
                     </ul>
                 </div>
             </div>
             <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div class="prs_footer_cont1_wrapper prs_footer_cont1_wrapper_4">
-                    <h2>App available on</h2>
-                    <p>Download App and Get Free Movie Ticket !</p>
-                    <ul>
-                        <li>
-                            <a href="#">
-                                <img src="{{ asset('client/assets/images/content/f1.jpg') }}" alt="footer_img">
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <img src="{{ asset('client/assets/images/content/f2.jpg') }}" alt="footer_img">
-                            </a>
-                        </li>
-                    </ul>
-                    <h5><span>$50</span> Payback on App Download</h5>
+                    <h2>Kết nối với chúng tôi</h2>
+                    <div style="display:flex">
+                        <ul style="padding:10px 5px">
+                            <li class="list-unstyled"><i style="font-size:30px" class="fa-brands fa-square-facebook"></i></li>
+                        </ul>                    
+                        <ul style="padding:10px 5px">
+                            <li class="list-unstyled"><i style="font-size:30px" class="fa-brands fa-instagram"></i></li>
+                        </ul>                    
+                        <ul style="padding:10px 5px">
+                            <li class="list-unstyled"><i style="font-size:30px" class="fa-brands fa-youtube"></i></li>
+                        </ul>            
+                        <ul style="padding:10px 5px">
+                            <li class="list-unstyled"><i style="font-size:30px" class="fa-brands fa-tiktok"></i></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -91,31 +85,11 @@
             class="flaticon-play-button"></i></a>
     <div class="container">
         <div class="row">
-            <div class="col-lg-6 col-md-6 col-sm-8 col-xs-12">
+            <div class="col-lg-6 col-md-6 col-sm-8 col-xs-12" style="width:100%">
                 <div class="prs_bottom_footer_cont_wrapper">
-                    <p>Copyright 2025-26 <a href="#">Movie Pro</a> . All rights reserved - Design by <a
-                            href="#">Webstrot</a>
+                    <p>Bản Quyền Thuộc về nhóm <a href="#">SE7VEN CINEMA</a> Thiết kế , Sáng Tạo và Bảo Trì Hỗ trợ kĩ thuật bởi <a
+                            href="#">SE7VEN CINEMA</a>
                     </p>
-                </div>
-            </div>
-            <div class="col-lg-6 col-md-6 col-sm-4 col-xs-12">
-                <div class="prs_footer_social_wrapper">
-                    <ul>
-                        <li><a href="#"><i class="fa fa-facebook"></i></a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                    <path
-                                        d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
-                                </svg>
-                            </a>
-                        </li>
-                        <li><a href="#"><i class="fa fa-linkedin"></i></a>
-                        </li>
-                        <li><a href="#"><i class="fa fa-youtube-play"></i></a>
-                        </li>
-                    </ul>
                 </div>
             </div>
         </div>

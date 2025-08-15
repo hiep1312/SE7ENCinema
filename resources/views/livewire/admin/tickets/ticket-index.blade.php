@@ -17,11 +17,11 @@
     <div class="container-lg mb-4">
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2 class="text-light">Quản lý vé</h2>
-            {{-- <div>
-                <a href="{{ route('admin.bookings.create') }}" class="btn btn-success me-2">
-                    <i class="fas fa-plus me-1"></i>Thêm suất chiếu
+            <div>
+                <a href="{{ route('admin.scanner', 'tickets') }}" class="btn btn-primary me-2">
+                    <i class="fa-light fa-qrcode me-1"></i>Quét vé
                 </a>
-            </div> --}}
+            </div>
         </div>
 
         <div class="card bg-dark" wire:poll.6s>
@@ -208,7 +208,7 @@
                                     <td>
                                         <div class="d-flex justify-content-center">
                                             @if($ticket->isValidTicketOrder())
-                                                <a href="{{ route('client.ticket', [$booking->booking_code, $ticket->getCurrentIndex()]) }}" target="_blank"
+                                                <a href="{{ route('client.ticket', [$booking->booking_code, $ticket->currentIndex]) }}" target="_blank"
                                                     class="btn btn-sm btn-outline-info" title="Xem chi tiết">
                                                     <i class="fas fa-eye" style="margin-right: 0"></i>
                                                 </a>

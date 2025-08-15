@@ -11,18 +11,41 @@
     .ticket-container {
         box-shadow: none !important;
         border: 2px solid #000 !important;
+        page-break-after: always;
+        break-inside: avoid;
     }
 
     .no-print {
         display: none !important;
     }
+
+    #printArea {
+        gap: 0 !important;
+        padding: 0 !important;
+    }
+
+    #printArea > div {
+        padding: 20px;
+    }
 }
 
 body {
     margin: 0;
-    padding: 20px;
-    background: #f5f5f5;
+    background: #f8f9fa;
     font-family: 'Arial', sans-serif;
+}
+
+#printArea {
+    padding-top: 0.2rem;
+}
+
+#printArea > div {
+    position: relative;
+}
+
+#printArea .control-buttons {
+    position: absolute;
+    top: 0;
 }
 
 /* Control Buttons */
@@ -33,6 +56,15 @@ body {
     display: flex;
     gap: 10px;
     z-index: 1000;
+}
+
+#printArea .control-btn.print {
+    display: none;
+}
+
+#printArea .control-btn.open {
+    display: block !important;
+    text-decoration: none;
 }
 
 .control-btn {
@@ -68,6 +100,12 @@ body {
 
 .control-btn.settings-btn.active {
     background: #28a745;
+}
+
+#printArea .settings-panel {
+    position: absolute;
+    top: 60px;
+    max-height: 95%;
 }
 
 /* Settings Panel */
@@ -119,6 +157,10 @@ body {
 
 .settings-group {
     margin-bottom: 20px;
+}
+
+.settings-group:last-child {
+    margin-bottom: 0;
 }
 
 .settings-group h6 {
@@ -488,4 +530,147 @@ body {
         border-left: none;
         border-top: 2px dashed rgba(255,255,255,0.3);
     }
+}
+
+/* Header Styles */
+.header-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 1.8rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header-section h1 {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.header-section p {
+    opacity: 0.9;
+    margin-bottom: 1.5rem;
+}
+
+/* Control Panel in Header */
+.control-panel-header {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 1.5rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.control-panel-header h4 {
+    color: white;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+/* Stats Cards */
+.stats-card {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 1rem;
+}
+
+.stats-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.stats-label {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Filter Controls */
+.filter-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: start;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+    margin-left: 5px;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-group label {
+    color: white;
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+
+.form-select-custom {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    color: #495057;
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+    min-width: 150px;
+}
+
+.form-select-custom:focus {
+    background: white;
+    border-color: #00d4ff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 212, 255, 0.25);
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.btn-print-all {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border: none;
+    color: white;
+    padding: 0.6rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    font-size: 0.9rem;
+}
+
+.btn-print-all:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+    color: white;
+}
+
+.btn-refresh {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.btn-refresh:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+    transform: translateY(-1px);
 }

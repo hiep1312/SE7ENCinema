@@ -17,7 +17,6 @@ return new class extends Migration
             $table->foreignId('room_id')->constrained()->onDelete('cascade');
             $table->dateTime('start_time');
             $table->dateTime('end_time');
-            $table->bigInteger('price')->default(0);
             $table->enum('status', ['active', 'canceled', 'completed'])->default('active');
             $table->timestamps();
         });

@@ -1,6 +1,6 @@
 <div class="scRender">
     @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="alert alert-danger alert-dismissible fade show mt-2 mx-2" role="alert">
             {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -36,16 +36,18 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="code" class="form-label text-light">Mã giảm giá *</label>
-                                    <div class="input-group">
-                                        <input type="text" id="code" wire:model="code"
-                                            class="form-control bg-dark text-light border-light @error('code') is-invalid @enderror"
-                                            placeholder="VD: SALE50, NEWUSER, GIAM10K">
-                                        <button type="button" wire:click="$set('code', '{{ strtoupper(Str::random(8)) }}')" class="btn btn-outline-warning">Tạo mã</button>
+                                    <div class="mb-3">
+                                        <label for="code" class="form-label text-light">Mã giảm giá *</label>
+                                        <div class="input-group">
+                                            <input type="text" id="code" wire:model="code"
+                                                class="form-control bg-dark text-light border-light @error('code') is-invalid @enderror"
+                                                placeholder="VD: SALE50, NEWUSER, GIAM10K">
+                                            <button type="button" wire:click="$set('code', '{{ strtoupper(Str::random(8)) }}')" class="btn btn-outline-warning">Tạo mã</button>
+                                        </div>
+                                        @error('code')
+                                            <div class="invalid-feedback" style="display: block">{{ $message }}</div>
+                                        @enderror
                                     </div>
-                                    @error('code')
-                                        <div class="invalid-feedback" style="display: block">{{ $message }}</div>
-                                    @enderror
                                 </div>
                                 <div class="col-12">
                                     <div class="mb-3">

@@ -1,0 +1,999 @@
+/* Promotion Page Custom Styles */
+.promotion-tips-box {
+  background: #fff5f5;
+  border-radius: 1.2rem;
+  box-shadow: 0 2px 12px 0 rgba(239, 68, 68, 0.08);
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+  margin-top: 2rem;
+  border-left: 6px solid #ef4444;
+}
+
+.promotion-tips-title {
+  font-size: 1.15rem;
+  font-weight: bold;
+  color: blue;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.5px;
+}
+
+.promotion-tip {
+  font-size: 1rem;
+  margin-bottom: 0.4rem;
+  color: #333;
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.promotion-tip i {
+  color: #f97316;
+  /* margin-right: 0.7rem; */
+  font-size: 1.1rem;
+  margin-top: 0.2rem;
+}
+
+.promotion-tip strong {
+  color: #dc2626;
+}
+
+.promotion-tips-box .alert {
+  margin-bottom: 0.5rem;
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fbbf24;
+}
+
+/* Fix Bootstrap 5.3 grid spacing for promotion page */
+.promotion-main-row {
+  --bs-gutter-x: 2.5rem;
+}
+
+/* Collapse icon style */
+.collapse-toggle {
+  background: none;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 1rem;
+  transition: transform 0.2s;
+}
+
+.collapse-toggle:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.collapse-toggle .fa-chevron-down,
+.collapse-toggle .fa-chevron-up {
+  font-size: 1.5rem;
+  color: #dc2626;
+  transition: transform 0.2s;
+}
+
+.collapse.show + .collapse-toggle .fa-chevron-down {
+  transform: rotate(180deg);
+}
+
+.card.promotion-card {
+  border-radius: 1.5rem;
+  overflow: hidden;
+  box-shadow: 0 2px 12px 0 rgba(239, 68, 68, 0.08);
+  border: none;
+  transition: box-shadow 0.2s;
+}
+
+.card.promotion-card:hover {
+  box-shadow: 0 4px 24px 0 rgba(239, 68, 68, 0.15);
+}
+
+/* Movie hot card */
+.card.movie-hot {
+  border-radius: 1.5rem;
+  overflow: hidden !important;
+  border: none !important;
+  box-shadow: none !important;
+  position: relative;
+  transition: 0.2s;
+}
+
+
+.movie-hot .card-img-top {
+  border-radius: 1.5rem 1.5rem 1.5rem 1.5rem  !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  position: relative !important;
+}
+
+.movie-hot .movie-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 1.5rem 1.5rem 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 2;
+}
+
+.card.movie-hot:hover .movie-overlay {
+  opacity: 1;
+  border-radius: 1.5rem 1.5rem 1.5rem 1.5rem  !important;
+  box-shadow: none !important;
+}
+
+.movie-hot .play-btn {
+  width: 56px;
+  height: 56px;
+  background: rgba(244, 68, 37, 0.9) !important;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px 0 rgba(239, 68, 68, 0.15) !important;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s !important;
+  /* border: 2px solid #dc2626 !important; */
+}
+
+.movie-hot .play-btn:hover {
+  background: #dc2626;
+  color: #fff;
+  box-shadow: 0 4px 16px 0 rgba(239, 68, 68, 0.25);
+}
+
+.movie-hot .play-btn i {
+  font-size: 2rem;
+  color: #dc2626;
+  transition: color 0.2s;
+}
+
+.movie-hot .play-btn:hover i {
+  color: #fff;
+}
+
+.movie-hot .card-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #222;
+}
+
+.movie-hot .card-body {
+  padding: 1rem 0.5rem 1.2rem 0.5rem;
+}
+
+/* Collapse content style */
+.promotion-card .collapse .card-body {
+  background: #fef2f2 !important;
+  color: #222 !important;
+  border-radius: 0 0 1.5rem 1.5rem;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px 0 rgba(239, 68, 68, 0.04);
+  border-top: 1px solid #fecaca;
+  padding: 1.5rem 1.2rem 1.2rem 1.2rem;
+}
+
+.promotion-card .collapse .fw-bold {
+  font-weight: 600 !important;
+  color: #dc2626 !important;
+}
+
+.promotion-card .collapse .text-secondary {
+  color: #4b5563 !important;
+}
+
+.promotion-card .collapse .badge.bg-danger {
+  background: linear-gradient(45deg, #ef4444, #f97316) !important;
+  color: #fff;
+}
+
+.promotion-card .collapse .badge.bg-primary {
+  background: linear-gradient(45deg, #dc2626, #ef4444) !important;
+  color: #fff;
+}
+
+.promotion-card .collapse .badge.bg-success {
+  background: linear-gradient(45deg, #10b981, #059669) !important;
+  color: #fff;
+}
+
+/* Voucher Card (vé) - Updated to Red/Orange Theme */
+.voucher-card {
+  background: #fff;
+  border-radius: 1.5rem;
+  border: 2px dashed #dc2626;
+  box-shadow: 0 2px 12px 0 rgba(239, 68, 68, 0.08);
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: box-shadow 0.2s, border-color 0.2s;
+  position: relative;
+}
+
+.voucher-card:hover {
+  box-shadow: 0 4px 24px 0 rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+}
+
+.voucher-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 60px;
+}
+
+.voucher-title {
+  font-size: 1.15rem;
+  color: #222;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+  letter-spacing: 0.5px;
+}
+
+.voucher-code {
+  font-size: 1rem;
+  padding: 0.4rem 1.2rem;
+  border-radius: 1rem;
+  background: linear-gradient(45deg, #dc2626, #ef4444);
+  color: #fff !important;
+  font-weight: 700;
+  letter-spacing: 1px;
+  box-shadow: 0 1px 4px 0 rgba(239, 68, 68, 0.08);
+}
+
+.voucher-detail.card-body {
+  background: #fef2f2 !important;
+  border-radius: 0 0 1.5rem 1.5rem;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px 0 rgba(239, 68, 68, 0.04);
+  border-top: 1px solid #fecaca;
+  padding: 1.5rem 1.2rem 1.2rem 1.2rem;
+}
+
+/* Movie Hot Card */
+.movie-hot {
+  border-radius: 1.5rem;
+  overflow: hidden;
+  border: none;
+  background: #fff;
+  box-shadow: 0 2px 12px 0 rgba(239, 68, 68, 0.08);
+  transition: box-shadow 0.2s;
+}
+
+.movie-hot:hover {
+  box-shadow: 0 4px 24px 0 rgba(239, 68, 68, 0.15);
+}
+
+.movie-img-wrapper {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: transparent !important;
+  border-radius: 0 !important;
+  overflow: hidden;
+  border: none !important;
+}
+
+.movie-img-large {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Modern Age Restriction Badges - Professional Design */
+.badge-age {
+    display: inline-block !important;
+    min-width: 46px !important;
+    max-width: 70px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    font-size: 0.95rem !important;
+    font-weight: 900 !important;
+    border-radius: 4px !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+    border: none !important;
+    letter-spacing: 0.3px !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    color: #fff !important;
+    background: #bdbdbd !important;
+    position: relative !important;
+    z-index: 15 !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    text-transform: uppercase !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  }
+
+  /* Hover Effects */
+  .badge-age:hover {
+    transform: translateY(-1px) scale(1.03) !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  /* P - All Ages - Deep Blue */
+  .badge-age-P {
+    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
+    box-shadow: 0 2px 6px rgba(25, 118, 210, 0.35) !important;
+  }
+
+  .badge-age-P:hover {
+    background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%) !important;
+    box-shadow: 0 4px 10px rgba(25, 118, 210, 0.5) !important;
+  }
+
+  /* K - Kids with Adult - Light Blue */
+  .badge-age-K {
+    background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%) !important;
+    box-shadow: 0 2px 6px rgba(100, 181, 246, 0.35) !important;
+  }
+
+  .badge-age-K:hover {
+    background: linear-gradient(135deg, #42a5f5 0%, #2196f3 100%) !important;
+    box-shadow: 0 4px 10px rgba(100, 181, 246, 0.5) !important;
+  }
+
+  /* T13 - 13+ Years - Orange */
+  .badge-age-T13 {
+    background: linear-gradient(135deg, #e22ca6 0%, #e22ca6 100%) !important;
+    box-shadow: 0 2px 6px rgba(255, 179, 0, 0.35) !important;
+  }
+
+  .badge-age-T13:hover {
+    background: linear-gradient(135deg, #e22ca6 0%, #e22ca6 100%) !important;
+    box-shadow: 0 4px 10px rgba(255, 179, 0, 0.5) !important;
+  }
+
+  /* T16 - 16+ Years - Golden Yellow like image */
+  .badge-age-T16 {
+    background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%) !important;
+    box-shadow: 0 2px 6px rgba(255, 193, 7, 0.35) !important;
+    color: #fff !important;
+  }
+
+  .badge-age-T16:hover {
+    background: linear-gradient(135deg, #ffb300 0%, #ffa000 100%) !important;
+    box-shadow: 0 4px 10px rgba(255, 193, 7, 0.5) !important;
+  }
+
+  /* T18 - 18+ Years - Pink/Rose like image */
+  .badge-age-T18 {
+    background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%) !important;
+    box-shadow: 0 2px 6px rgba(233, 30, 99, 0.35) !important;
+    color: #fff !important;
+  }
+
+  .badge-age-T18:hover {
+    background: linear-gradient(135deg, #c2185b 0%, #ad1457 100%) !important;
+    box-shadow: 0 4px 10px rgba(233, 30, 99, 0.5) !important;
+  }
+
+  /* C - Banned Content - Gray with Warning */
+  .badge-age-C {
+    background: linear-gradient(135deg, #9e9e9e 0%, #757575 100%) !important;
+    box-shadow: 0 2px 6px rgba(158, 158, 158, 0.35) !important;
+    color: #fff !important;
+    text-decoration: line-through !important;
+    position: relative !important;
+  }
+
+  .badge-age-C:hover {
+    background: linear-gradient(135deg, #757575 0%, #616161 100%) !important;
+    box-shadow: 0 4px 10px rgba(158, 158, 158, 0.5) !important;
+  }
+
+  /* Warning icon for C rating */
+  .badge-age-C::after {
+    content: "⚠" !important;
+    position: absolute !important;
+    top: -4px !important;
+    right: -4px !important;
+    font-size: 0.6rem !important;
+    background: #ff5722 !important;
+    border-radius: 50% !important;
+    width: 12px !important;
+    height: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 1px 3px rgba(255, 87, 34, 0.4) !important;
+    text-decoration: none !important;
+  }
+
+  /* Enhanced positioning for movie cards */
+  .movie-img-wrapper .badge-age {
+    position: absolute !important;
+    top: 8px !important;
+    left: 8px !important;
+    z-index: 20 !important;
+    margin: 0 !important;
+  }
+
+  /* Premium shine effect */
+  .badge-age::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent) !important;
+    transition: left 0.5s !important;
+    border-radius: 4px !important;
+  }
+
+  .badge-age:hover::before {
+    left: 100% !important;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .badge-age {
+      min-width: 32px !important;
+      max-width: 44px !important;
+      height: 20px !important;
+      font-size: 0.8rem !important;
+    }
+
+    .movie-img-wrapper .badge-age {
+      top: 6px !important;
+      left: 6px !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .badge-age {
+      min-width: 30px !important;
+      max-width: 40px !important;
+      height: 18px !important;
+      font-size: 0.75rem !important;
+    }
+
+    .movie-img-wrapper .badge-age {
+      top: 5px !important;
+      left: 5px !important;
+    }
+  }
+
+  /* Animation for badge appearance */
+  @keyframes badgeSlideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-15px) scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+    }
+  }
+
+  .badge-age {
+    animation: badgeSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  /* Focus states for accessibility */
+  .badge-age:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.6) !important;
+    outline-offset: 1px !important;
+  }
+
+  /* Print styles */
+  @media print {
+    .badge-age {
+      background: #333 !important;
+      color: #fff !important;
+      box-shadow: none !important;
+      border: 1px solid #333 !important;
+    }
+  }
+
+/* end age_retriction */
+.movie-title-main {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #dc2626;
+  margin-bottom: 0.2rem;
+  margin-top: 0.7rem;
+  letter-spacing: 0.5px;
+}
+
+/* Modal trailer style */
+.modal-content.bg-dark {
+  background: black !important;
+  color: #fff;
+  border-radius: 1.2rem;
+  border: none;
+}
+
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  opacity: 1 !important;
+}
+
+.modal-header.border-0 {
+  border: none !important;
+  background: transparent;
+}
+
+.btn-close-white {
+  filter: invert(1) grayscale(1);
+}
+
+/* Video Modal Styles */
+.video-container {
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 1rem;
+  padding: 2rem;
+  position: relative;
+  backdrop-filter: blur(10px);
+}
+
+.video-container.glow-effect {
+  box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+}
+
+.video-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.video-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(45deg, #ff0000, #ff4444);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1.5rem;
+  box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
+}
+
+.video-icon i {
+  font-size: 2rem;
+  color: #fff;
+}
+
+.video-title {
+  color: #fff;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.responsive-iframe {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+}
+
+.responsive-iframe iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 1rem;
+}
+
+/* Modal footer styling */
+.modal-footer {
+  background: rgba(0, 0, 0, 0.8);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem 2rem;
+}
+
+.modal-footer .btn-secondary {
+  background: linear-gradient(45deg, #6c757d, #495057);
+  border: none;
+  border-radius: 0.8rem;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.modal-footer .btn-secondary:hover {
+  background: linear-gradient(45deg, #495057, #343a40);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Hiệu ứng mượt cho modal mở/đóng */
+.modal.show .modal-dialog {
+  transform: translateY(0);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal .modal-dialog {
+  transform: translateY(-40px);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Responsive tweaks */
+@media (max-width: 991.98px) {
+  .promotion-main-row {
+    --bs-gutter-x: 1rem;
+  }
+  .promotion-tips-box {
+    padding: 1rem 1rem;
+  }
+  .movie-hot .card-img-top {
+    height: 180px;
+  }
+  .movie-img-wrapper {
+    height: 260px;
+  }
+}
+
+/* Updated Voucher Card - Red/Orange Theme */
+.voucher-card-modern {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 50%, #fecaca 100%);
+  border-radius: 1.2rem;
+  min-width: 260px;
+  max-width: 100%;
+  width: 100%;
+  box-shadow: 0 4px 16px 0 rgba(239, 68, 68, 0.12);
+  position: relative;
+  overflow: visible;
+  border: 1px solid #fecaca;
+  padding: 1.1rem 1.2rem 1.1rem 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.voucher-card-modern:hover {
+  box-shadow: 0 8px 32px 0 rgba(239, 68, 68, 0.2);
+  transform: translateY(-2px);
+  border-color: #f87171;
+}
+
+.voucher-ribbon {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f97316 100%);
+  border-bottom-right-radius: 1rem;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+  z-index: 2;
+  padding: 0.3rem 1.2rem;
+  color: #fff;
+}
+
+.voucher-hole {
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border: 2px solid #fecaca;
+  box-shadow: 0 1px 4px rgba(239, 68, 68, 0.15);
+  z-index: 2;
+}
+
+.voucher-main-modern {
+  margin-top: 1.5rem;
+  margin-bottom: 0.7rem;
+}
+
+.voucher-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f97316 100%);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25);
+  font-size: 1.2rem;
+}
+
+.voucher-code-modern {
+  background: linear-gradient(135deg, #dc2626, #ef4444) !important;
+  letter-spacing: 1px;
+  border-radius: 0.7rem;
+  font-size: 1rem;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.2);
+}
+
+.text-gradient-orange {
+  background: linear-gradient(135deg, #dc2626, #ef4444, #f97316);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  font-weight: 800;
+}
+
+.voucher-detail-modern {
+  border-radius: 0.7rem;
+  background: rgba(254, 242, 242, 0.8) !important;
+  box-shadow: none !important;
+  border: 1px solid #fecaca !important;
+  padding: 0.8rem 0.5rem 0.5rem 0.5rem;
+  animation: fadeInDetail 0.5s;
+  margin-top: 0.5rem;
+}
+
+@keyframes fadeInDetail {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Save Voucher Button */
+.btn-warning.color1 {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f97316 100%) !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  box-shadow: 0 3px 12px rgba(239, 68, 68, 0.25);
+  transition: all 0.3s ease;
+}
+
+.btn-warning.color1:hover {
+  background: linear-gradient(135deg, #b91c1c 0%, #dc2626 50%, #ea580c 100%) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 20px rgba(239, 68, 68, 0.35);
+}
+
+/* Card phim */
+.movie-hot {
+  border: none !important;
+  /* box-shadow: 0 4px 16px rgba(239, 68, 68, 0.08) !important; */
+  border-radius: 1.2rem;
+  transition: all 0.3s ease;
+  background: none !important;
+  min-height: 340px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.movie-hot:hover {
+  /* box-shadow: 0 8px 32px rgba(239, 68, 68, 0.15) !important; */
+  transform: translateY(-3px);
+}
+
+.movie-img-wrapper {
+  border-radius: 1.2rem 1.2rem 0 0;
+  overflow: hidden;
+  width: 100%;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9fafb;
+}
+
+.movie-img-large {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 1.2rem 1.2rem 0 0;
+}
+
+.movie-title-main {
+  font-size: 1.1rem;
+  font-weight: 700;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #dc2626;
+}
+
+/* Truncate text for voucher description and title */
+.voucher-card-modern .fw-medium.text-dark,
+.voucher-card-modern .voucher-discount,
+.voucher-card-modern .voucher-title,
+.voucher-card-modern .voucher-code-modern {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: wrap;
+}
+
+/* UPDATED PAGINATION STYLE - Red/Orange Theme */
+.pager_wrapper.gc_blog_pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 40px 0 32px 0;
+  padding: 20px 0;
+}
+
+.pager_wrapper .pagination {
+  display: flex;
+  gap: 12px;
+  background: transparent;
+  border-radius: 0 !important;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.pager_wrapper .page-item {
+  margin: 0;
+}
+
+.pager_wrapper .page-link {
+  border: none;
+  background: #fff;
+  color: #374151;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.75rem 1.25rem !important;
+  font-size: 1.1rem;
+  min-width: 48px !important;
+  min-height: 48px !important;
+  display: flex;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.08);
+  border: 2px solid #f3f4f6;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.pager_wrapper .page-item.active .page-link,
+.pager_wrapper .page-link:focus,
+.pager_wrapper .page-link:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f97316 100%);
+  color: #fff !important;
+  text-align: center !important;
+  border: 1px solid #dc2626;
+  /* outline: none; */
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.25);
+  /* transform: translateY(-2px) !important; */
+  transform-origin: center !important;
+
+}
+
+.pager_wrapper .page-item.disabled .page-link {
+  color: #9ca3af;
+  background: #f9fafb;
+  border: 2px solid #e5e7eb;
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.pager_wrapper .page-item.disabled .page-link:hover {
+  background: #f9fafb;
+  color: #9ca3af;
+  transform: none;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.08);
+}
+
+.pager_wrapper .page-link svg,
+.pager_wrapper .page-link i {
+  font-size: 1.2rem;
+  margin: 0;
+  padding: 0;
+  vertical-align: middle;
+}
+
+.pager_wrapper .page-item.active .page-link svg,
+.pager_wrapper .page-item.active .page-link i,
+.pager_wrapper .page-link:focus svg,
+.pager_wrapper .page-link:focus i,
+.pager_wrapper .page-link:hover svg,
+.pager_wrapper .page-link:hover i {
+  color: #fff !important;
+}
+
+.pager_wrapper .page-link:not(.active):not(:hover):not(:focus) svg,
+.pager_wrapper .page-link:not(.active):not(:hover):not(:focus) i {
+  color: #dc2626 !important;
+}
+
+/* Pagination Numbers Styling */
+.pager_wrapper .page-item:not(.disabled) .page-link {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.pager_wrapper .page-item.active .page-link {
+  font-weight: 800;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+}
+
+/* Hide default Laravel pagination info text */
+p.small.text-muted {
+  display: none;
+}
+
+/* Additional styling for better visual hierarchy */
+.pager_wrapper .page-link[rel="prev"],
+.pager_wrapper .page-link[rel="next"] {
+  font-weight: 700;
+  padding: 0.75rem 1rem;
+}
+
+.pager_wrapper .page-link[rel="prev"]:hover,
+.pager_wrapper .page-link[rel="next"]:hover {
+  background: linear-gradient(135deg, #b91c1c 0%, #dc2626 50%, #ea580c 100%);
+}
+
+/* Responsive pagination */
+@media (max-width: 768px) {
+  .pager_wrapper .pagination {
+    gap: 8px;
+  }
+
+  .pager_wrapper .page-link {
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .pager_wrapper .page-link[rel="prev"],
+  .pager_wrapper .page-link[rel="next"] {
+    padding: 0.6rem 0.8rem;
+  }
+}
+
+.voucher-card-modern {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.voucher-code-modern {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  white-space: normal !important;
+  border-radius: 0.7rem !important;
+  text-align: center !important;
+  font-size: 1.15rem !important;
+  margin-bottom: 0.5rem;
+}
+
+.respon {
+  border-top: #1976d2 5px solid;
+  max-width: 80% !important;
+}
+
+@media (max-width: 768px) {
+  .respon {
+    max-width: 100% !important;
+  }
+}

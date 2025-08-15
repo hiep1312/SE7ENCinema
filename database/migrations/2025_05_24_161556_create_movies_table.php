@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->integer('duration'); // in minutes
+            $table->integer('duration');
             $table->date('release_date');
             $table->date('end_date')->nullable();
             $table->string('director')->nullable();
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('poster')->nullable();
             $table->string('trailer_url')->nullable();
             $table->enum('format', ['2D', '3D', '4DX', 'IMAX'])->default('2D');
-            $table->bigInteger('price')->default(0);
+            $table->unsignedBigInteger('price');
             $table->enum('status', ['coming_soon', 'showing', 'ended'])->default('coming_soon');
             $table->timestamps();
             $table->softDeletes();

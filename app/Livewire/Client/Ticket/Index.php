@@ -12,31 +12,28 @@ use Livewire\Component;
 class Index extends Component
 {
     public ?Booking $booking;
-    public BookingSeat $bookingSeat;
-    public $userName = '';
-    public $notes = null;
-
-    protected $rules = [
-        'userName' => 'required|string|max:255',
-        'notes' => 'nullable|string|max:500',
-    ];
-
-    protected $messages = [
-        'userName.required' => 'Tên người dùng là bắt buộc.',
-        'userName.string' => 'Tên người dùng phải là chuỗi ký tự.',
-        'userName.max' => 'Tên người dùng không được vượt quá 255 ký tự.',
-        'notes.string' => 'Ghi chú phải là chuỗi ký tự.',
-        'notes.max' => 'Ghi chú không được vượt quá 500 ký tự.',
-    ];
+    public ?BookingSeat $bookingSeat = null;
+    public $statusFilter = '';
+    public $takenFilter = '';
 
     public function mount(string $bookingCode, ?int $index = null) {
-        $this->booking = Booking::with('showtime.movie.genres', 'showtime.room', 'user')->where('booking_code', $bookingCode)->first();
-        if(is_null($this->booking)) abort(404);
-        $bookingSeat = BookingSeat::with('seat', 'ticket')->where('booking_id', $this->booking->id)->get();
-        $this->bookingSeat = !is_null($index) ? $bookingSeat->get(--$index, $bookingSeat->first()) : $bookingSeat->first();
+        $this->booking = Booking::where('booking_code', $bookingCode)->first();
+        if(is_null($this->booking) || $this->booking->status !== 'paid') abort(404);
 
-        if(!$this->bookingSeat->ticket->isValidTicketOrder()) return redirect()->route('admin.tickets.index');
-        $this->resetCustomInfo();
+        if(is_int($index)){
+            $bookingSeat = BookingSeat::where('booking_id', $this->booking->id)->get();
+            $this->bookingSeat = $bookingSeat->get(--$index, $bookingSeat->first());
+        }
+
+        $this->resetCustomInfoAll();
+    }
+
+    public function resetCustomInfoAll(){
+        foreach (session()->all() as $key => $value) {
+            if (str_starts_with($key, 'userName')) {
+                session()->forget($key);
+            }
+        }
     }
 
     public function realtimeUpdate(){
@@ -47,40 +44,27 @@ class Index extends Component
 
             $ticket->save();
         });
-
-        $this->booking = Booking::with('showtime.movie.genres', 'showtime.room', 'user')->where('id', $this->booking->id)->first();
-        $this->bookingSeat = BookingSeat::with('seat', 'ticket')->where('id', $this->bookingSeat->id)->first();
-    }
-
-    public function setCustomInfo(){
-        $this->validate();
-
-        session(['userName' => [$this->userName, now()->addHour()]]);
-        Ticket::where('id', $this->bookingSeat->ticket->id)->update(['note' => $this->notes]);
-        session()->flash('success', 'Thiết lập thông tin người dùng thành công!');
-        $this->js("toggleSettings(document.querySelector('.settings-btn'));");
-
-        $this->realtimeUpdate();
-    }
-
-    public function resetCustomInfo(){
-        session()->forget('userName');
-        $this->userName = $this->booking->user->name;
-        $this->notes = $this->bookingSeat->ticket->note;
-    }
-
-    public function updateTakenStatus(){
-        $this->bookingSeat->ticket->taken = true;
-        $this->bookingSeat->ticket->save();
-        $this->realtimeUpdate();
     }
 
     #[Title('Vé xem phim - SE7ENCinema')]
     #[Layout('livewire.client.ticket.layout')]
     public function render()
     {
-        if(session()->has('userName') && isset(session('userName')[1]) && session('userName')[1]->isPast()) $this->resetCustomInfo();
+        $bookingSeatsOrigin = BookingSeat::with('ticket')
+            ->where('booking_id', $this->booking->id);
 
-        return view('livewire.client.ticket.index');
+        $bookingSeats = (clone $bookingSeatsOrigin)->when($this->statusFilter, function ($query) {
+                $query->whereHas('ticket', function ($q) {
+                    $q->where('status', $this->statusFilter);
+                });
+            })
+            ->when($this->takenFilter !== '', function ($query) {
+                $query->whereHas('ticket', function ($q) {
+                    $q->where('taken', $this->takenFilter);
+                });
+            })
+            ->get();
+
+        return view('livewire.client.ticket.index', compact('bookingSeats') + ['bookingSeatsOrigin' => $bookingSeatsOrigin->get()]);
     }
 }

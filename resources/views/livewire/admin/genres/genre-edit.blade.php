@@ -11,7 +11,7 @@
 @endassets
 <div class="scRender">
     @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="alert alert-danger alert-dismissible fade show mt-2 mx-2" role="alert">
             {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -100,7 +100,7 @@
                                             </div>
                                         </div>
                                         <div class="selected-items">
-                                            <h3>Đã chọn <span id="selectedCount">{{ count($moviesSelected) }}</span>/{{ $movies->count() }} thể loại:</h3>
+                                            <h3>Đã chọn <span id="selectedCount">{{ count($moviesSelected) }}</span>/{{ $totalMovies }} thể loại:</h3>
                                             <div class="selected-tags" id="selectedTags">
                                                 @forelse($moviesSelected as $movieId)
                                                     <div class="tag">
