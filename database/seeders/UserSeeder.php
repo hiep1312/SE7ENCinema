@@ -94,7 +94,7 @@ class UserSeeder extends Seeder
                 'name' => 'Lê Minh Tuấn',
                 'phone' => '0709128346',
                 'address' => '56 Nguyễn Văn Linh, Phường An Khánh, Quận Ninh Kiều, Cần Thơ',
-                'avatar' => 'https://scr.vn/wp-content/uploads/2020/07/H%C3%ACnh-avatar-m%C3%A8o-d%E1%BB%85-th%C6%B0%C6%A1ng.jpg',
+                'avatar' => 'https://bayotech.vn/wp-content/uploads/2025/04/Meme-Meo-Cute-1-1.jpg',
                 'birthday' => '2002-08-08',
                 'gender' => 'man',
                 'role' => 'user',
