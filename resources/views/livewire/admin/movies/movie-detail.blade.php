@@ -1,5 +1,5 @@
 <div class="scRender">
-    <div class="container-lg mb-4" wire:poll>
+    <div class="container-lg mb-4" {{-- wire:poll --}}>
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2 class="text-light">Chi tiết phim: {{ $movie->title }}</h2>
@@ -711,11 +711,12 @@
                                 <i class="fas fa-chart-pie me-2 text-warning"></i>Tỉ lệ vé đã bán so với vé chưa bán
                             </h5>
                             {{-- filter --}}
-                            <div wire:ignore class="dropdown">
+                            <div class="dropdown">
                                 <button class="btn btn-outline-warning btn-sm dropdown-toggle" type="button"
                                     data-bs-toggle="dropdown">
                                     <i class="fas fa-filter me-1"></i>
                                     <span id="checkinFilter">
+                                        {{-- {{ $dailtChart->getFilterText($this->filterDailyChart) }} --}}
                                         @switch($checkinChart)
                                         @case('3_days')
                                         3 ngày gần nhất
@@ -754,12 +755,12 @@
                                         @endswitch
                                     </span>
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
+                                <ul class="dropdown-menu dropdown-menu-dark" wire:ignore.self>
                                     <li>
                                         <h6 class="dropdown-header text-warning">Ngày</h6>
                                     </li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('checkinChart','3_days')">3 ngày gần nhất</a>
+                                            wire:click.prevent="$set('filterDailyChart','3_days')">3 ngày gần nhất</a>
                                     </li>
                                     <li><a class="dropdown-item"
                                             wire:click.prevent="$set('checkinChart','7_days')">7 ngày gần nhất</a>
@@ -842,7 +843,9 @@
 </div>
 @script
 <script>
-    {{!! $dailyChart->compileJavascript() !!}}
+    {!! $showtimeChart->compileJavascript() !!}
+    {!! $dailyChart->compileJavascript() !!}
+    {!! $ratioChart->compileJavascript() !!}
     globalThis.chartInstances = {};
     function updateFilterText(elementId, text) {
         const element = document.getElementById(elementId);
@@ -1155,19 +1158,6 @@
                 }
             }
         };
-
-        window.renderAllCharts = function() {
-            if(Object.values(chartInstances).length > 0){
-                chartInstances.showtimeChart.updateOptions(optionsShowtimeChart);
-                chartInstances.checkinChart.updateOptions(optionsCheckinChart);
-            }else{
-                const showtimeChartEl = document.querySelector("#showtimeChart");
-                const checkinChartEl = document.querySelector("#checkinChart");
-                if (showtimeChartEl) chartInstances.showtimeChart = createScChart(showtimeChartEl, optionsShowtimeChart);
-                if (checkinChartEl) chartInstances.checkinChart = createScChart(checkinChartEl, optionsCheckinChart);
-            }
-        }
-        renderAllCharts();
     });
 
 </script>

@@ -17,6 +17,7 @@ class dailyChart
     }
     protected function queryData(?string $filter = null)
     {
+        // dd($filter);
         $bookingChart = Booking::whereHas('showtime', function ($q) {
             $q->where('movie_id', $this->movie->id);
         })->with(['showtime.room'])->get();
@@ -212,14 +213,13 @@ class dailyChart
         $optionsText = "optionsdailyChart";
         $chartText = "chartdailyChart";
         echo <<<JS
-        const {$ctxText} = {$this->bindDataToElement()};
-        window.{$optionsText} = {$this->buildChartConfig()};
-
-        window.{$chartText} = createScChart({$ctxText}, {$optionsText});
-        return window.{$optionsText} = {$this->buildChartConfig()};
-        Livewire.on("{$this->getEventName()}", function ([data]){
-            window.{$optionsText} = new Function("return " + data)();
-            if(window.{$chartText}) window.{$chartText}.updateOptions(window.{$optionsText});
+        Livewire.on("{$this->getEventName()}", async function ([data]){
+            await new Promise(resolve => setTimeout(resolve));
+            const {$ctxText} = {$this->bindDataToElement()};
+            if($ctxText){
+                if(window.{$chartText} && document.contains(window.{$chartText}.getElement())) (window.{$optionsText} = new Function("return " + data)()) && (window.{$chartText}.updateOptions(window.{$optionsText}));
+                else (window.{$optionsText} = {$this->buildChartConfig()}) &&  (window.{$chartText} = createScChart({$ctxText}, {$optionsText}));
+            }
         });
         JS;
     }
