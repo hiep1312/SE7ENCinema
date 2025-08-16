@@ -17,6 +17,20 @@ class ratioChart
 
     protected function queryData(?string $filter = null)
     {
+        $fromCheckinChart = match ($filter) {
+            '3_days'    => Carbon::now()->subDays(3),
+            '7_days'    => Carbon::now()->subDays(7),
+            '15_days'   => Carbon::now()->subDays(15),
+            '30_days'   => Carbon::now()->subDays(30),
+            '3_months'  => Carbon::now()->subMonths(3)->startOfMonth(),
+            '6_months'  => Carbon::now()->subMonths(6)->startOfMonth(),
+            '9_months'  => Carbon::now()->subMonths(9)->startOfMonth(),
+            '1_years'   => Carbon::now()->subYears(1)->startOfYear(),
+            '2_years'   => Carbon::now()->subYears(2)->startOfYear(),
+            '3_years'   => Carbon::now()->subYears(3)->startOfYear(),
+            '6_years'   => Carbon::now()->subYears(6)->startOfYear(),
+            default     => null,
+        };
         $bookings = Booking::whereHas('showtime', function ($q) {
             $q->where('movie_id', $this->movie->id);
         })->with(['showtime.room', 'foodOrderItems', 'user'])
@@ -26,9 +40,12 @@ class ratioChart
             $q->where('movie_id', $this->movie->id);
         })->with(['showtime.room'])->get();
         /* Viết truy vấn CSDL tại đây */
-        $fromCheckinChart = Carbon::now()->subDays(3);
         if ($fromCheckinChart) {
-            $totalCount = (clone $bookings)->where('status', 'paid')->where('created_at', '>=', $fromCheckinChart)->count();
+            $paidBookings = (clone $bookings)->where('status', 'paid')->where('created_at', '>=', $fromCheckinChart)->get();
+            $totalCount = $paidBookings->sum(function ($booking) {
+                return $booking->seats->count();
+            });
+
             $showtime = (clone $bookingChart)->pluck('showtime')->where('start_time', '>=', $fromCheckinChart)->pluck('room');
             $caps = $showtime->sum('capacity');
             return $result = [
@@ -105,6 +122,17 @@ class ratioChart
     public function getFilterText(string $filterValue)
     {
         return match ($filterValue) {
+            '3_days' => '3 ngày gần nhất',
+            '7_days' => '7 ngày gần nhất',
+            '15_days' => '15 ngày gần nhất',
+            '30_days' => '30 ngày gần nhất',
+            '3_months' => '3 tháng gần nhất',
+            '6_months' => '6 tháng gần nhất',
+            '9_months' => '9 tháng gần nhất',
+            '1_year' => '1 năm gần nhất',
+            '2_years' => '2 năm gần nhất',
+            '3_years' => '3 năm gần nhất',
+            '6_years' => '6 năm gần nhất',
             default => "N/A"
         };
     }
@@ -135,14 +163,7 @@ class ratioChart
             const {$ctxText} = {$this->bindDataToElement()};
             if($ctxText){
                 if(window.{$chartText} && document.contains(window.{$chartText}.getElement())) (window.{$optionsText} = new Function("return " + data)()) && (window.{$chartText}.updateOptions(window.{$optionsText}));
-                else console.log(window.{$optionsText});
-                        console.log(window.{$chartText});
-                        console.log({$ctxText});
-                        console.log({$optionsText});
-                        
-                        
-                        
-                (window.{$optionsText} = {$this->buildChartConfig()}) &&  (window.{$chartText} = createScChart({$ctxText}, {$optionsText}));
+                else (window.{$optionsText} = {$this->buildChartConfig()}) &&  (window.{$chartText} = createScChart({$ctxText}, {$optionsText}));
             }
         });
         JS;

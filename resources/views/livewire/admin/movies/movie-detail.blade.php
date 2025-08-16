@@ -600,64 +600,29 @@
                             <h5 class="text-white mb-0">
                                 <i class="fas fa-ticket me-2 text-success"></i>Vé đã bán theo suất chiếu
                             </h5>
-                            <div wire:ignore class="dropdown">
+                            <div class="dropdown">
                                 <button class="btn btn-outline-success btn-sm dropdown-toggle" type="button"
                                     data-bs-toggle="dropdown">
                                     <i class="fas fa-filter me-1"></i>
                                     <span id="filterShowtimeChart">
-                                        @switch('3_days')
-                                        @case('3_days')
-                                        3 ngày gần nhất
-                                        @break
-                                        @case('7_days')
-                                        7 ngày gần nhất
-                                        @break
-                                        @case('15_days')
-                                        15 ngày gần nhất
-                                        @break
-                                        @case('30_days')
-                                        30 ngày gần nhất
-                                        @break
-                                        @case('3_months')
-                                        3 tháng gần nhất
-                                        @break
-                                        @case('6_months')
-                                        6 tháng gần nhất
-                                        @break
-                                        @case('9_months')
-                                        9 tháng gần nhất
-                                        @break
-                                        @case('1_year')
-                                        1 năm gần nhất
-                                        @break
-                                        @case('2_years')
-                                        2 năm gần nhất
-                                        @break
-                                        @case('3_years')
-                                        3 năm gần nhất
-                                        @break
-                                        @case('6_years')
-                                        6 năm gần nhất
-                                        @break
-                                        @default
-                                        @endswitch
+                                        {{ $showtimeChart->getFilterText($this->filter) }}
                                     </span>
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
+                                <ul class="dropdown-menu dropdown-menu-dark" wire:ignore.self>
                                     <li>
                                         <h6 class="dropdown-header text-success">Ngày</h6>
                                     </li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('showtimeChart','3_days')">3 ngày gần nhất</a>
+                                            wire:click.prevent="$set('filter','3_days')">3 ngày gần nhất</a>
                                     </li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('showtimeChart','7_days')">7 ngày gần nhất</a>
+                                            wire:click.prevent="$set('filter','7_days')">7 ngày gần nhất</a>
                                     </li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('showtimeChart','15_days')">15 ngày gần nhất</a>
+                                            wire:click.prevent="$set('filter','15_days')">15 ngày gần nhất</a>
                                     </li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('showtimeChart','30_days')">30 ngày gần nhất</a>
+                                            wire:click.prevent="$set('filter','30_days')">30 ngày gần nhất</a>
                                     </li>
                                     <li>
                                         <hr class="dropdown-divider">
@@ -666,15 +631,15 @@
                                         <h6 class="dropdown-header text-success">Tháng</h6>
                                     </li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('showtimeChart','3_months')">3 tháng gần
+                                            wire:click.prevent="$set('filter','3_months')">3 tháng gần
                                             nhất</a></li>
                                     <li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('showtimeChart','6_months')">6 tháng gần
+                                            wire:click.prevent="$set('filter','6_months')">6 tháng gần
                                             nhất</a></li>
                                     <li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('showtimeChart','9_months')">9 tháng gần
+                                            wire:click.prevent="$set('filter','9_months')">9 tháng gần
                                             nhất</a></li>
                                     <li>
                                         <hr class="dropdown-divider">
@@ -683,16 +648,16 @@
                                         <h6 class="dropdown-header text-success">Năm</h6>
                                     </li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('showtimeChart','1_years')">1 năm gần nhất</a>
+                                            wire:click.prevent="$set('filter','1_years')">1 năm gần nhất</a>
                                     </li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('showtimeChart','2_years')">2 năm gần nhất</a>
+                                            wire:click.prevent="$set('filter','2_years')">2 năm gần nhất</a>
                                     </li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('showtimeChart','3_years')">3 năm gần nhất</a>
+                                            wire:click.prevent="$set('filter','3_years')">3 năm gần nhất</a>
                                     </li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('showtimeChart','6_years')">6 năm gần nhất</a>
+                                            wire:click.prevent="$set('filter','6_years')">6 năm gần nhất</a>
                                     </li>
                                 </ul>
                             </div>
@@ -716,43 +681,7 @@
                                     data-bs-toggle="dropdown">
                                     <i class="fas fa-filter me-1"></i>
                                     <span id="checkinFilter">
-                                        {{-- {{ $dailtChart->getFilterText($this->filterDailyChart) }} --}}
-                                        @switch($checkinChart)
-                                        @case('3_days')
-                                        3 ngày gần nhất
-                                        @break
-                                        @case('7_days')
-                                        7 ngày gần nhất
-                                        @break
-                                        @case('15_days')
-                                        15 ngày gần nhất
-                                        @break
-                                        @case('30_days')
-                                        30 ngày gần nhất
-                                        @break
-                                        @case('3_months')
-                                        3 tháng gần nhất
-                                        @break
-                                        @case('6_months')
-                                        6 tháng gần nhất
-                                        @break
-                                        @case('9_months')
-                                        9 tháng gần nhất
-                                        @break
-                                        @case('1_year')
-                                        1 năm gần nhất
-                                        @break
-                                        @case('2_years')
-                                        2 năm gần nhất
-                                        @break
-                                        @case('3_years')
-                                        3 năm gần nhất
-                                        @break
-                                        @case('6_years')
-                                        6 năm gần nhất
-                                        @break
-                                        @default
-                                        @endswitch
+                                        {{ $ratioChart->getFilterText($this->filter) }}
                                     </span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-dark" wire:ignore.self>
@@ -760,16 +689,16 @@
                                         <h6 class="dropdown-header text-warning">Ngày</h6>
                                     </li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filterDailyChart','3_days')">3 ngày gần nhất</a>
+                                            wire:click.prevent="$set('filter','3_days')">3 ngày gần nhất</a>
                                     </li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('checkinChart','7_days')">7 ngày gần nhất</a>
+                                            wire:click.prevent="$set('filter','7_days')">7 ngày gần nhất</a>
                                     </li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('checkinChart','15_days')">15 ngày gần nhất</a>
+                                            wire:click.prevent="$set('filter','15_days')">15 ngày gần nhất</a>
                                     </li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('checkinChart','30_days')">30 ngày gần nhất</a>
+                                            wire:click.prevent="$set('filter','30_days')">30 ngày gần nhất</a>
                                     </li>
                                     <li>
                                         <hr class="dropdown-divider">
@@ -778,15 +707,15 @@
                                         <h6 class="dropdown-header text-warning">Tháng</h6>
                                     </li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('checkinChart','3_months')">3 tháng gần
+                                            wire:click.prevent="$set('filter','3_months')">3 tháng gần
                                             nhất</a></li>
                                     <li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('checkinChart','6_months')">6 tháng gần
+                                            wire:click.prevent="$set('filter','6_months')">6 tháng gần
                                             nhất</a></li>
                                     <li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('checkinChart','9_months')">9 tháng gần
+                                            wire:click.prevent="$set('filter','9_months')">9 tháng gần
                                             nhất</a></li>
                                     <li>
                                         <hr class="dropdown-divider">
@@ -795,16 +724,16 @@
                                         <h6 class="dropdown-header text-warning">Năm</h6>
                                     </li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('checkinChart','1_years')">1 năm gần nhất</a>
+                                            wire:click.prevent="$set('filter','1_years')">1 năm gần nhất</a>
                                     </li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('checkinChart','2_years')">2 năm gần nhất</a>
+                                            wire:click.prevent="$set('filter','2_years')">2 năm gần nhất</a>
                                     </li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('checkinChart','3_years')">3 năm gần nhất</a>
+                                            wire:click.prevent="$set('filter','3_years')">3 năm gần nhất</a>
                                     </li>
                                     <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('checkinChart','6_years')">6 năm gần nhất</a>
+                                            wire:click.prevent="$set('filter','6_years')">6 năm gần nhất</a>
                                     </li>
                                 </ul>
                             </div>
@@ -846,314 +775,5 @@
     {!! $showtimeChart->compileJavascript() !!}
     {!! $dailyChart->compileJavascript() !!}
     {!! $ratioChart->compileJavascript() !!}
-    globalThis.chartInstances = {};
-    function updateFilterText(elementId, text) {
-        const element = document.getElementById(elementId);
-        element.textContent = text;
-    }
-    Livewire.on('updateData', function([$bookingCountFormatted, $bookingStatByDate, $result, $totalMax,filterTexts]) {
-
-        // showtime chart
-        const showtimeDate = $bookingCountFormatted;
-        const failedCounts = Object.values(showtimeDate).map(count => count.failed);
-        const paidCounts = Object.values(showtimeDate).map(count => count.paid);
-        const capacityCounts = Object.values(showtimeDate).map(count => count.capacity);
-        const revenueShowtime = Object.values(showtimeDate).map(count => count.revenue);
-        // dayli chart
-        const stats = $bookingStatByDate;
-        const labels = Object.keys(stats);
-        const paid = labels.map(d => stats[d].paid);
-        const cancelled = labels.map(d => stats[d].cancelled);
-        const totalRevenue = labels.map(d => stats[d].totalRevenue || 0);
-
-        const optionsDailyChart = {
-            series: [{
-                name: 'Số vé đã bán',
-                data: paid
-            }],
-            chart: {
-                height: 400,
-                type: 'area',
-                background: 'transparent',
-                toolbar: {
-                    show: true,
-                    tools: {
-                        download: true, // Cho phép nút download
-                        selection: true,
-                        zoom: true,
-                        zoomin: true,
-                        zoomout: true,
-                        pan: true,
-                        reset: true,
-                        customIcons: []
-                    }
-                },
-                zoom: { enabled: false },
-                animations: {
-                    enabled: true,
-                    easing: 'easeinout',
-                    speed: 800,
-                }
-            },
-            colors: ['#4285F4'],
-            stroke: {
-                curve: 'smooth',
-                width: 3
-            },
-            fill: {
-                type: 'gradient',
-                gradient: {
-                    shade: 'dark',
-                    type: 'vertical',
-                    shadeIntensity: 0.3,
-                    gradientToColors: ['#4285F4'],
-                    inverseColors: false,
-                    opacityFrom: 0.4,
-                    opacityTo: 0.1,
-                    stops: [0, 100]
-                }
-            },
-            dataLabels: { enabled: false },
-            markers: {
-                size: 6,
-                colors: ['#4285F4'],
-                strokeColors: '#2c3034',
-                strokeWidth: 2,
-                hover: { size: 8 }
-            },
-            xaxis: {
-                categories: labels,
-                axisBorder: { show: false },
-                axisTicks: { show: false },
-                labels: {
-                    style: {
-                        colors: '#adb5bd',
-                        fontSize: '12px',
-                        fontWeight: 600
-                    }
-                }
-            },
-            yaxis: {
-                min: 0,
-                max: $totalMax,
-                tickAmount: 5,
-                labels: {
-                    style: {
-                        colors: '#adb5bd', /* Muted text color */
-                        fontSize: '12px'
-                    }
-                }
-            },
-            grid: {
-                show: true,
-                borderColor: '#495057', /* Darker grid lines */
-                strokeDashArray: 2
-            },
-            tooltip: {
-                theme: 'dark',
-                custom: function({series, seriesIndex, dataPointIndex, w}) {
-                    const value = paid[dataPointIndex];
-                    const cancelledValue = cancelled[dataPointIndex];
-                    const revenue = totalRevenue.map(n => n.toLocaleString('vi'))[dataPointIndex];
-                    return `
-                        <div style="
-                            background: linear-gradient(135deg, #4285F4 0%, #1976D2 100%);
-                            color: white;
-                            padding: 15px;
-                            border-radius: 10px;
-                            box-shadow: 0 4px 20px rgba(66, 133, 244, 0.3);
-                            min-width: 200px;
-                        ">
-                            <div style="margin-bottom: 6px;">
-                                🎟️ Vé bán: <strong>${value}</strong>
-                            </div>
-                            <div style="margin-bottom: 6px;">
-                                ❌ Hủy: <strong>${cancelledValue}</strong>
-                            </div>
-                            <div style="margin-bottom: 6px;">
-                                💵 Doanh thu: <strong>${revenue}</strong>
-                            </div>
-                        </div>
-                    `;
-                }
-            }
-        };
-
-        const optionsShowtimeChart = {
-            series: [
-                {
-                    name: 'Vé đã bán',
-                    data: paidCounts
-                },
-                {
-                    name: 'Sức chứa',
-                    data: capacityCounts
-                }
-            ],
-            chart: {
-                type: 'bar',
-                height: 400,
-                background: 'transparent',
-                toolbar: { show: true },
-                animations: {
-                    enabled: true,
-                    easing: 'easeinout',
-                    speed: 800
-                }
-            },
-            colors: ['#4285F4', '#34A853'],
-            plotOptions: {
-                bar: {
-                    horizontal: false,
-                    columnWidth: '60%',
-                    endingShape: 'rounded',
-                    borderRadius: 6
-                }
-            },
-            dataLabels: { enabled: false },
-            stroke: { show: false },
-            xaxis: {
-                categories: Object.keys(showtimeDate),
-                axisBorder: { show: false },
-                axisTicks: { show: false },
-                labels: {
-                    style: {
-                        colors: '#adb5bd',
-                        fontSize: '12px',
-                        fontWeight: 600
-                    }
-                }
-            },
-            yaxis: {
-                min: 0,
-                max: Math.max(...capacityCounts),
-                tickAmount: 7,
-                labels: {
-                    style: {
-                        colors: '#adb5bd', /* Muted text color */
-                        fontSize: '12px'
-                    }
-                }
-            },
-            grid: {
-                show: true,
-                borderColor: '#495057', /* Darker grid lines */
-                strokeDashArray: 2,
-                xaxis: { lines: { show: false } }
-            },
-            legend: {
-                show: true,
-                position: 'top',
-                horizontalAlign: 'left',
-                offsetY: -10,
-                labels: { colors: '#f8f9fa' }, /* Light text color */
-                markers: {
-                    width: 12,
-                    height: 12,
-                    fillColors: ['#4285F4', '#34A853'],
-                    radius: 3
-                }
-            },
-            tooltip: {
-                shared: true,
-                intersect: false,
-                theme: 'dark',
-                custom: function({series, seriesIndex, dataPointIndex, w}) {
-                    const time = Object.keys(showtimeDate)[dataPointIndex];
-                    const sold = paidCounts[dataPointIndex];
-                    const failed = failedCounts[dataPointIndex];
-                    const capacity = capacityCounts[dataPointIndex];
-                    const percentage = ((sold / capacity) * 100).toFixed(1);
-                    const revenue = revenueShowtime.map(n => n.toLocaleString('vi'))[dataPointIndex];
-                    return `
-                        <div style="
-                            background: #2c3034; /* Card background color */
-                            color: #f8f9fa; /* Light text color */
-                            padding: 15px;
-                            border-radius: 10px;
-                            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-                            min-width: 200px;
-                            border: 1px solid #495057; /* Darker border */
-                        ">
-                            <div style="font-weight: 600; font-size: 14px; margin-bottom: 8px;">
-                                🎬 Suất ${time}
-                            </div>
-                            <div style="margin-bottom: 6px;">
-                                🎟️ Vé bán: <strong>${sold}</strong>
-                            </div>
-                            <div style="margin-bottom: 6px;">
-                                🎟️ Sức chứa: ${capacity}
-                            </div>
-                            <div style="margin-bottom: 6px;">
-                                📊 Tỷ lệ lấp đầy: <strong>${percentage}%</strong>
-                            </div>
-                            <div style="margin-bottom: 6px;">
-                                ❌ Đã hủy: <strong>${failed}</strong>
-                            </div>
-                            <div style="margin-bottom: 6px;">
-                                💵 Doanh thu: <strong>${revenue}</strong>
-                            </div>
-                        </div>
-                    `;
-                }
-            }
-        };
-
-        const optionsCheckinChart = {
-            series: [$result.totalCount,$result.caps],
-            chart: {
-                type: 'pie',
-                height: 400,
-                background: 'transparent',
-                toolbar: { show: true },
-                animations: {
-                    enabled: false,
-                },
-            },
-            labels: ['Số vé đã bán', 'Số vé còn lại'],
-            colors: ['#34A853', '#FBBC04'],
-            stroke: { show: false },
-            dataLabels: {
-                enabled: true,
-                style: {
-                    fontSize: '14px',
-                    fontWeight: 600,
-                    colors: ['#fff']
-                },
-                formatter: function (val, opts) {
-                    return Math.round(val) + '%';
-                }
-            },
-            plotOptions: {
-                pie: {
-                    expandOnClick: false,
-                    donut: { size: '0%' }
-                }
-            },
-            legend: {
-                show: true,
-                position: 'bottom',
-                horizontalAlign: 'center',
-                offsetY: 10,
-                labels: { colors: '#f8f9fa' }, /* Light text color */
-                markers: {
-                    width: 12,
-                    height: 12,
-                    fillColors: ['#34A853', '#FBBC04'],
-                    radius: 3
-                }
-            },
-            tooltip: {
-                theme: 'dark',
-                y: {
-                    formatter: function (val) {
-                        const percentage = ((val / ($result.totalCount+$result.caps)) * 100).toFixed(1);
-                        return `${val.toLocaleString()} vé (${percentage}%)`;
-                    }
-                }
-            }
-        };
-    });
-
 </script>
 @endscript

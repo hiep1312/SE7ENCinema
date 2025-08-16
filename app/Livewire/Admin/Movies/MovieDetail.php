@@ -20,11 +20,7 @@ class MovieDetail extends Component
     use WithPagination,scChart;
     public $movie;
     public $tabCurrent = 'chart';
-    public $filterDailyChart = "3_days";
-
-    // public $dailyChart = 'monthly';
-    public $checkinChart = '3_days';
-    // public $showtimeChart = '3_days';
+    public $filter = "3_days";
 
     public function mount(int $movie)
     {
@@ -139,7 +135,7 @@ class MovieDetail extends Component
         $dailyChart = new dailyChart($this->movie);
         $showtimeChart = new showtimeChart($this->movie);
         $ratioChart = new ratioChart($this->movie);
-        $this->realtimeUpdateCharts([$dailyChart, $this->filterDailyChart], [$showtimeChart, null], $ratioChart);
+        $this->realtimeUpdateCharts([$dailyChart, $this->filter], [$showtimeChart, $this->filter], [$ratioChart,$this->filter]);
         // CHART Vé đã bán theo ngày
         // Lấy danh sách booking trong 7 ngày gần đây
 
@@ -181,7 +177,7 @@ class MovieDetail extends Component
             })
             ->sortKeys();
         // CHART tròn
-        $fromCheckinChart = $this->getFromDate($this->checkinChart);
+        $fromCheckinChart = $this->getFromDate($this->filter);
         if ($fromCheckinChart) {
             $totalCount = (clone $bookings)->where('status', 'paid')->where('created_at', '>=', $fromCheckinChart)->count();
             $showtime = (clone $bookingChart)->pluck('showtime')->where('start_time', '>=', $fromCheckinChart)->pluck('room');
@@ -191,21 +187,11 @@ class MovieDetail extends Component
                 'caps' => $caps,
             ];
         }
-
-        ($this->tabCurrent === "chart" || ($this->js('chartInstances = {}') || false)) && $this->dispatch(
-            'updateData',
-            $bookingCountFormatted,
-            $result,
-            [
-                'filterShowtimeChart' => $this->getFilterText(/* $this->showtimeChart */[]),
-                'checkinFilter' => $this->getFilterText($this->checkinChart),
-            ]
-        );
         $totalOrdersIn30Days = (clone $bookings)->whereBetween('created_at', [now()->subDays(30), now()])->count();
         $bookings = $bookings->paginate(15);
         $ratings = $this->movie->ratings()->with('user')->orderBy('created_at', 'desc')->paginate(10, ['*'], 'ratings');
         $comments = $this->movie->comments()->with('user')->orderBy('created_at', 'desc')->paginate(10, ['*'], 'comments');
 
-        return view('livewire.admin.movies.movie-detail', compact('recentShowtimes', 'upcomingShowtimes', 'ratings', 'comments', 'bookings', 'totalOrdersIn30Days', 'bookingCountFormatted', 'result','dailyChart','ratioChart','showtimeChart'));
+        return view('livewire.admin.movies.movie-detail', compact('recentShowtimes', 'upcomingShowtimes', 'ratings', 'comments', 'bookings', 'totalOrdersIn30Days','dailyChart','ratioChart','showtimeChart'));
     }
 }
