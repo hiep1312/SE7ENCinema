@@ -63,6 +63,7 @@ class FoodVariantSeeder extends Seeder
                     'limit' => fake()->numberBetween(10, 100),
                     'status' => fake()->randomElement(['available', 'out_of_stock', 'hidden']),
                 ]);
+
                 $this->call(FoodVariantAttributeValueSeeder::class, false, [$combo, $item['id'], $foodVariant->id]);
             }
         }

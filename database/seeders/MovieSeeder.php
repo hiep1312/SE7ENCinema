@@ -354,7 +354,7 @@ class MovieSeeder extends Seeder
             $poster = "movies/" . uniqid('poster_') . basename($movie['poster']);
             Storage::drive('public')->put($poster, $dataPoster);
 
-            $movie = Movie::create(array_merge($movie, ['title' => mb_convert_case($movie['title'], MB_CASE_TITLE_SIMPLE, 'UTF-8'), 'poster' => $poster, 'price' => fake()->numberBetween(50000, 150000), 'status' => $movie['release_date']->isFuture() ? 'coming_soon' : 'showing']));
+            $movie = Movie::create(array_merge($movie, ['title' => mb_convert_case($movie['title'], MB_CASE_TITLE_SIMPLE, 'UTF-8'), 'poster' => $poster, 'price' => fake()->numberBetween(10000, 80000), 'status' => $movie['release_date']->isFuture() ? 'coming_soon' : 'showing']));
 
             $movie->genres()->attach($dataGenres);
         }
