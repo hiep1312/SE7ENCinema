@@ -216,7 +216,7 @@ class dailyChart
         Livewire.on("{$this->getEventName()}", async function ([data]){
             await new Promise(resolve => setTimeout(resolve));
             const {$ctxText} = {$this->bindDataToElement()};
-            if($ctxText){
+            if($ctxText){  
                 if(window.{$chartText} && document.contains(window.{$chartText}.getElement())) (window.{$optionsText} = new Function("return " + data)()) && (window.{$chartText}.updateOptions(window.{$optionsText}));
                 else (window.{$optionsText} = {$this->buildChartConfig()}) &&  (window.{$chartText} = createScChart({$ctxText}, {$optionsText}));
             }

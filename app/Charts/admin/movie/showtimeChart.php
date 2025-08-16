@@ -60,7 +60,6 @@ class showtimeChart
     public function loadData(?string $filter = null)
     {
         $this->data = $this->queryData($filter);
-        dd($this->data);
     }
 
     protected function bindDataToElement()

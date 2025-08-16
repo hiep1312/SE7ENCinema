@@ -853,11 +853,6 @@
     }
     Livewire.on('updateData', function([$bookingCountFormatted, $bookingStatByDate, $result, $totalMax,filterTexts]) {
 
-        filterShowtimeChart = document.getElementById('filterShowtimeChart');
-        checkinFilter = document.getElementById('checkinFilter');
-        updateFilterText('filterShowtimeChart', filterTexts.filterShowtimeChart);
-        updateFilterText('checkinFilter', filterTexts.checkinFilter);
-
         // showtime chart
         const showtimeDate = $bookingCountFormatted;
         const failedCounts = Object.values(showtimeDate).map(count => count.failed);
