@@ -1,5 +1,5 @@
 <div class="scRender">
-    <div class="container-lg mb-4" {{-- wire:poll --}}>
+    <div class="container-lg mb-4" wire:poll>
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2 class="text-light">Chi tiết phim: {{ $movie->title }}</h2>
@@ -593,74 +593,54 @@
             </div>
             @elseif($tabCurrent === 'chart')
             <div class="row">
+                <div class="col-lg-12">
+                    <div class="bg-dark rounded-3 p-3">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="text-white mb-0">
+                                <i class="fa-regular fa-filter me-2"></i>Vé đã bán theo ngày
+                            </h5>
+                        </div>
+
+                        <div class="d-flex flex-wrap">
+                            <!-- Ngày bắt đầu -->
+                            <div class="me-4 mb-3" style="width:160px;">
+                                <label for="dateStart" class="form-label text-white">Chọn ngày bắt đầu</label>
+                                <input id="dateStart" type="date"
+                                    class="form-control form-control-sm bg-dark text-white border-secondary">
+                            </div>
+
+                            <!-- Khoảng ngày -->
+                            <div class="me-4 mb-3" style="width:160px;">
+                                <label for="timeFilter" class="form-label text-white">Chọn khoảng ngày</label>
+                                <select id="timeFilter"
+                                    class="form-select form-select-sm bg-dark text-white border-secondary">
+                                    <option value="1-day">1 ngày gần nhất</option>
+                                    <option value="3-days" selected>3 ngày gần nhất</option>
+                                    <option value="7-days">7 ngày gần nhất</option>
+                                    <option value="30-days">30 ngày gần nhất</option>
+                                    <option value="30-days">3 tháng gần nhất</option>
+                                    <option value="30-days">6 tháng gần nhất</option>
+                                    <option value="30-days">1 năm gần nhất</option>
+                                </select>
+                            </div>
+
+                            <!-- Ngày so sánh -->
+                            <div class="me-4 mb-3" style="width:160px;">
+                                <label for="dateCompare" class="form-label text-white">Chọn ngày so sánh</label>
+                                <input id="dateCompare" type="date"
+                                    class="form-control form-control-sm bg-dark text-white border-secondary">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 2. Bảng so sánh vé bán theo suất chiếu -->
-                <div class="col-lg-6">
+                <div class="col-lg-8">
                     <div class="bg-dark rounded-3 p-3">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="text-white mb-0">
                                 <i class="fas fa-ticket me-2 text-success"></i>Vé đã bán theo suất chiếu
                             </h5>
-                            <div class="dropdown">
-                                <button class="btn btn-outline-success btn-sm dropdown-toggle" type="button"
-                                    data-bs-toggle="dropdown">
-                                    <i class="fas fa-filter me-1"></i>
-                                    <span id="filterShowtimeChart">
-                                        {{ $showtimeChart->getFilterText($this->filter) }}
-                                    </span>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark" wire:ignore.self>
-                                    <li>
-                                        <h6 class="dropdown-header text-success">Ngày</h6>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filter','3_days')">3 ngày gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filter','7_days')">7 ngày gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filter','15_days')">15 ngày gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filter','30_days')">30 ngày gần nhất</a>
-                                    </li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li>
-                                        <h6 class="dropdown-header text-success">Tháng</h6>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filter','3_months')">3 tháng gần
-                                            nhất</a></li>
-                                    <li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filter','6_months')">6 tháng gần
-                                            nhất</a></li>
-                                    <li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filter','9_months')">9 tháng gần
-                                            nhất</a></li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li>
-                                        <h6 class="dropdown-header text-success">Năm</h6>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filter','1_years')">1 năm gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filter','2_years')">2 năm gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filter','3_years')">3 năm gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filter','6_years')">6 năm gần nhất</a>
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
                         <div>
                             <div id="showtimeChart" style="height: 400px;color:black" wire:ignore></div>
@@ -669,74 +649,12 @@
                 </div>
 
                 <!-- 3. Tỷ lệ check-in -->
-                <div class="col-lg-6">
+                <div class="col-lg-4">
                     <div class="bg-dark rounded-3 p-3">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="text-white mb-0">
-                                <i class="fas fa-chart-pie me-2 text-warning"></i>Tỉ lệ vé đã bán so với vé chưa bán
+                                <i class="fas fa-chart-pie me-2 text-warning"></i>Tỉ lệ lấp đầy phòng
                             </h5>
-                            {{-- filter --}}
-                            <div class="dropdown">
-                                <button class="btn btn-outline-warning btn-sm dropdown-toggle" type="button"
-                                    data-bs-toggle="dropdown">
-                                    <i class="fas fa-filter me-1"></i>
-                                    <span id="checkinFilter">
-                                        {{ $ratioChart->getFilterText($this->filter) }}
-                                    </span>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark" wire:ignore.self>
-                                    <li>
-                                        <h6 class="dropdown-header text-warning">Ngày</h6>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filter','3_days')">3 ngày gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filter','7_days')">7 ngày gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filter','15_days')">15 ngày gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filter','30_days')">30 ngày gần nhất</a>
-                                    </li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li>
-                                        <h6 class="dropdown-header text-warning">Tháng</h6>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filter','3_months')">3 tháng gần
-                                            nhất</a></li>
-                                    <li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filter','6_months')">6 tháng gần
-                                            nhất</a></li>
-                                    <li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filter','9_months')">9 tháng gần
-                                            nhất</a></li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li>
-                                        <h6 class="dropdown-header text-warning">Năm</h6>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filter','1_years')">1 năm gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filter','2_years')">2 năm gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filter','3_years')">3 năm gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('filter','6_years')">6 năm gần nhất</a>
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
                         <div>
                             <div id="checkinChart" style="height: 400px;color:black" wire:ignore></div>
@@ -750,15 +668,6 @@
                             <h5 class="text-white mb-0">
                                 <i class="fas fa-chart-line me-2 text-primary"></i>Vé đã bán theo ngày
                             </h5>
-                            <div class="btn-group" role="group">
-                                <button wire:click="$set('dailyChart', 'daily')" type="button"
-                                    class="btn btn-sm">Ngày
-                                </button>
-                                <button wire:click="$set('dailyChart', 'monthly')" type="button"
-                                    class="btn btn-sm">Tháng</button>
-                                <button wire:click="$set('dailyChart', 'yearly')" type="button"
-                                    class="btn btn-sm">Năm</button>
-                            </div>
                         </div>
                         <div>
                             <div id="dailyChart" style="height: 400px;color:black" wire:ignore></div>

@@ -33,24 +33,41 @@ class ratioChart
         };
         $bookings = Booking::whereHas('showtime', function ($q) {
             $q->where('movie_id', $this->movie->id);
-        })->with(['showtime.room', 'foodOrderItems', 'user'])
-            ->orderBy('status', 'asc')
-            ->orderBy('created_at', 'desc');
+        })->with(['showtime.room', 'foodOrderItems', 'user']);
         $bookingChart = Booking::whereHas('showtime', function ($q) {
             $q->where('movie_id', $this->movie->id);
         })->with(['showtime.room'])->get();
+
         /* Viết truy vấn CSDL tại đây */
         if ($fromCheckinChart) {
-            $paidBookings = (clone $bookings)->where('status', 'paid')->where('created_at', '>=', $fromCheckinChart)->get();
-            $totalCount = $paidBookings->sum(function ($booking) {
-                return $booking->seats->count();
+            $paidBookings = (clone $bookings)
+                ->where('status', 'paid')
+                ->where('created_at', '>=', $fromCheckinChart)
+                ->with('seats')
+                ->get();
+            $seatCounts = $paidBookings
+                ->flatMap->seats
+                ->groupBy('seat_type')
+                ->map->count();
+            $showtimes = (clone $bookingChart)
+                ->pluck('showtime')
+                ->unique('id')
+                ->where('start_time', '>=', $fromCheckinChart);
+            $totalCapacity = $showtimes->groupBy('room_id')->sum(function ($sts) {
+                $room = $sts->first()->room;
+                return $room->seats->count() * $sts->count();
             });
+            // tổng ghế
+            $caps = $totalCapacity;
+            // toognr ghế đã đặt
+            $totalBooked = $seatCounts->sum();
+            // số ghế còn lại
+            $remainingSeats = $caps - $totalBooked;
 
-            $showtime = (clone $bookingChart)->pluck('showtime')->where('start_time', '>=', $fromCheckinChart)->pluck('room');
-            $caps = $showtime->sum('capacity');
-            return $result = [
-                'totalCount' => $totalCount,
-                'caps' => $caps,
+            $seatCountsWithRemaining = $seatCounts->toArray();
+            $seatCountsWithRemaining['remaining'] = $remainingSeats;
+            return [
+                'seatCounts' => $seatCountsWithRemaining,
             ];
         }
     }
@@ -68,13 +85,17 @@ class ratioChart
     protected function buildChartConfig()
     {
         /* Viết cấu hình biểu đồ tại đây */
-        $totalCount = json_encode($this->data['totalCount']);
-        $caps = json_encode($this->data['caps']);
+        $vipSeats = json_encode($this->data['seatCounts']['vip']);
+        $standardSeats = json_encode($this->data['seatCounts']['standard']);
+        $disabledSeats = json_encode($this->data['seatCounts']['disabled']);
+        $coupleSeats = json_encode($this->data['seatCounts']['couple']);
+        $remainingSeats = json_encode($this->data['seatCounts']['remaining']);
         return <<<JS
         {
-            series: [$totalCount,$caps],
+            series: [$remainingSeats,$vipSeats,$standardSeats,$disabledSeats,$coupleSeats],
+            labels: ['Số vé còn lại','Vé VIP','Vé thường','Disabled','Vé đôi'],
             chart: {
-                type: 'pie',
+                type: 'donut',
                 height: 400,
                 background: 'transparent',
                 toolbar: { show: true },
@@ -82,8 +103,7 @@ class ratioChart
                     enabled: false,
                 },
             },
-            labels: ['Số vé đã bán', 'Số vé còn lại'],
-            colors: ['#34A853', '#FBBC04'],
+            colors: ['#34A853', '#FBBC04', '#898371ff', '#000000ff', '#d0069aff'],
             stroke: { show: false },
             dataLabels: {
                 enabled: true,
@@ -99,7 +119,23 @@ class ratioChart
             plotOptions: {
                 pie: {
                     expandOnClick: false,
-                    donut: { size: '0%' }
+                    donut: { 
+                        size: '65%',
+                        labels: {
+                            show: true,
+                            name: {
+                                show: true,
+                            },
+                            value:{
+                                show: true,
+                                color:['#fff']
+                            },
+                            total:{
+                                show: true,
+                                color:['#fff']
+                            }
+                        } 
+                    }
                 }
             },
             legend: {
@@ -111,7 +147,7 @@ class ratioChart
                 markers: {
                     width: 12,
                     height: 12,
-                    fillColors: ['#34A853', '#FBBC04'],
+                    fillColors: ['#34A853', '#FBBC04', '#898371ff', '#000000ff', '#d0069aff'],
                     radius: 3
                 }
             }

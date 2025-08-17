@@ -67,10 +67,8 @@ class dailyChart
                 ]
             ];
         });
-        $totalMax = $bookingStatByDate->pluck('paid')->max();
         return [
             'bookingStatByDate' => $bookingStatByDate,
-            'totalMax' => $totalMax
         ];
     }
 
@@ -90,97 +88,119 @@ class dailyChart
         $cancelled = $this->data['bookingStatByDate']->pluck('cancelled')->toArray();
         $totalRevenue = $this->data['bookingStatByDate']->pluck('totalRevenue')->toArray();
         $categories = $this->data['bookingStatByDate']->keys()->toArray();
-        $totalMax = $this->data['totalMax'];
         $paidJs = json_encode($paid);
         $cancelledJs = json_encode($cancelled);
         $totalRevenueJs = json_encode($totalRevenue);
         $categoriesJs = json_encode($categories);
-        $totalMaxJs = json_encode($totalMax);
         /* Viết cấu hình biểu đồ tại đây */
         return <<<JS
         {
-                series: [{
-                    name: 'Số vé đã bán',
-                    data: $paidJs
-                }],
-                chart: {
-                    height: 400,
-                    type: 'area',
-                    background: 'transparent',
-                    toolbar: {
-                        show: true,
-                        tools: {
-                            download: true,
-                            selection: true,
-                            zoom: true,
-                            zoomin: true,
-                            zoomout: true,
-                            pan: true,
-                            reset: true,
-                            customIcons: []
+            series: [
+                {
+                    name: $categoriesJs,
+                    data: $totalRevenueJs
+                },
+                {
+                    name: $categoriesJs,
+                    data: $totalRevenueJs
+                },
+            ],
+            chart: {
+                type: "line",
+                height: 380,
+                toolbar: { show: true },
+                zoom: { enabled: false },
+            },
+            dataLabels: { enabled: false },
+            stroke: {
+                curve: "smooth",
+                width: 4,
+            },
+            markers: {
+                size: 4,
+                strokeWidth: 2,
+                hover: { size: 7 },
+            },
+            grid: {
+                borderColor: "#495057",
+                row: { colors: ["transparent"], opacity: 0.5 },
+            },
+            xaxis: {
+                categories: $categoriesJs,
+                labels: {
+                    style: {
+                        colors: '#adb5bd',
+                        fontSize: '12px',
+                        fontWeight: 600
+                    }
+                }
+            },
+            yaxis: {
+                title: {
+                    text: "Doanh thu",
+                    style: {
+                        color: "#e4e4e4ff",
+                        fontSize: '13px',
+                        fontWeight: 500
                         }
+                },
+                labels: {
+                    formatter: function (value) {
+                    if (value >= 1000000) {
+                        return (value / 1000000).toFixed(1) + " triệu";
+                    } else if (value >= 1000) {
+                        return (value / 1000).toFixed(0) + " nghìn";
+                    }
+                    return value; // nhỏ hơn 1000 thì giữ nguyên
                     },
-                    zoom: { enabled: false },
-                    animations: {
-                        enabled: true,
-                        easing: 'easeinout',
-                        speed: 800,
+                    style: {
+                        colors: '#adb5bd', /* Muted text color */
+                        fontSize: '12px'
                     }
                 },
-                colors: ['#4285F4'],
-                stroke: {
-                    curve: 'smooth',
-                    width: 3
+            },
+            legend: {
+                fontSize:'14px',
+                labels: {
+                    colors: '#adb5bd',
+                    useSeriesColors: false
                 },
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shade: 'dark',
-                        type: 'vertical',
-                        shadeIntensity: 0.3,
-                        gradientToColors: ['#4285F4'],
-                        inverseColors: false,
-                        opacityFrom: 0.4,
-                        opacityTo: 0.1,
-                        stops: [0, 100]
-                    }
-                },
-                dataLabels: { enabled: false },
-                markers: {
-                    size: 6,
-                    colors: ['#4285F4'],
-                    strokeColors: '#2c3034',
-                    strokeWidth: 2,
-                    hover: { size: 8 }
-                },
-                xaxis: {
-                    categories: $categoriesJs,
-                    axisBorder: { show: false },
-                    axisTicks: { show: false },
-                    labels: {
-                        style: {
-                            colors: '#adb5bd',
-                            fontSize: '12px',
-                            fontWeight: 600
-                        }
-                    }
-                },
-                yaxis: {
-                    min: 0,
-                    max: $totalMaxJs,
-                    tickAmount: 5,
-                    labels: {
-                        style: {
-                            colors: '#adb5bd',
-                            fontSize: '12px'
-                        }
-                    }
-                },
-                grid: {
-                    show: true,
-                    borderColor: '#495057',
-                    strokeDashArray: 2
-                },
+                position: "top",
+                horizontalAlign: "center",
+                offsetY: 0,
+            },
+            colors: ["#008FFB", "#00E396"],
+            tooltip: {
+                theme: 'dark',
+                custom: function({series, seriesIndex, dataPointIndex, w}) {
+                    const paid = $paidJs;
+                    const cancelled = $cancelledJs;
+                    const totalRevenue = $totalRevenueJs;
+                    const value = paid[dataPointIndex];                    
+                    const cancelledValue = cancelled[dataPointIndex];
+                    const revenue = totalRevenue.map(n => n.toLocaleString('vi'))[dataPointIndex];
+                    return `
+                        <div style="
+                            background: #ffffffff;
+                            color: #000000ff;
+                            padding: 15px;
+                            border-radius: 10px;
+                            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+                            min-width: 200px;
+                        ">
+                            <div style="margin-bottom: 6px;">
+                                🎟️ Vé bán: <strong>\${value}</strong>
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                ❌ Vé lỗi: <strong>\${cancelledValue}</strong>
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                💵 Doanh thu: <strong>\${revenue}</strong>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
         }
         JS;
     }

@@ -46,14 +46,15 @@ class showtimeChart
             ->filter(fn($showtime) => $showtime->room)
             ->map(function ($showtime) use ($bookingChart) {
                 $timeKey = Carbon::parse($showtime->start_time)->format('H:i');
-                $capacity = $showtime->room->capacity;
+                $capacity = $showtime->room->seats->count();
                 $bookingsOfShowtime = $bookingChart->filter(function ($booking) use ($showtime) {
                     return $booking->showtime->id === $showtime->id;
                 });
                 return [
                     'timeKey' => $timeKey,
                     'paid' => $bookingsOfShowtime->where('status', 'paid')->count(),
-                    'failed' => $bookingsOfShowtime->where('status', 'failed')->count(),
+                    'seatsCount' => $bookingsOfShowtime->where('status', 'paid')->pluck('seats')->flatten()->count(),
+                    'failed' => $bookingsOfShowtime->whereIn('status', ['failed','expired'])->count(),
                     'capacity' => $capacity,
                     'revenue' => $bookingsOfShowtime->where('status', 'paid')->sum('total_price'),
                 ];
@@ -63,6 +64,7 @@ class showtimeChart
                 return [
                     'paid' => $items->sum('paid'),
                     'failed' => $items->sum('failed'),
+                    'seatsCount' => $items->sum('seatsCount'),
                     'capacity' => $items->sum('capacity'),
                     'revenue' => $items->sum('revenue'),
                 ];
@@ -85,6 +87,9 @@ class showtimeChart
     {
         /* Viết cấu hình biểu đồ tại đây */
         $paidCounts = json_encode($this->data->pluck('paid')->toArray());
+        $failedCounts = json_encode($this->data->pluck('failed')->toArray());
+        $revenueShowtime = json_encode($this->data->pluck('revenue')->toArray());
+        $seatsCount = json_encode($this->data->pluck('seatsCount')->toArray());
         $showtimeDate = json_encode($this->data->keys()->toArray());
         $capacityCounts = json_encode($this->data->pluck('capacity')->toArray());
         $maxCapacityCounts = json_encode($this->data->pluck('capacity')->max());
@@ -92,12 +97,16 @@ class showtimeChart
         {
             series: [
                 {
-                    name: 'Vé đã bán',
-                    data: $paidCounts
-                },
-                {
                     name: 'Sức chứa',
                     data: $capacityCounts
+                },
+                {
+                    name: 'Ghế đã bán',
+                    data: $seatsCount
+                },
+                {
+                    name: 'Ngày so sánh',
+                    data: $failedCounts
                 }
             ],
             chart: {
@@ -111,7 +120,7 @@ class showtimeChart
                     speed: 800
                 }
             },
-            colors: ['#4285F4', '#34A853'],
+            colors: ['#34A853','#4285F4', '#EA4335'],
             plotOptions: {
                 bar: {
                     horizontal: false,
@@ -160,17 +169,67 @@ class showtimeChart
                 markers: {
                     width: 12,
                     height: 12,
-                    fillColors: ['#4285F4', '#34A853'],
+                    fillColors: ['#34A853','#4285F4','#EA4335'],
                     radius: 3
                 }
             },
             tooltip: {
                 shared: true,
                 intersect: false,
+                theme: 'dark',
+                custom: function({series, seriesIndex, dataPointIndex, w}) {
+                    const times = $showtimeDate;           
+                    const soldSeats = $seatsCount;    
+                    const paid = $paidCounts;    
+                    const failed = $failedCounts;        
+                    const capacity = $capacityCounts;     
+                    const revenue = $revenueShowtime;     
+
+                    const time = times[dataPointIndex];
+                    const paidCount = paid[dataPointIndex];
+                    const sold = soldSeats[dataPointIndex];
+                    const failedCount = failed[dataPointIndex];
+                    const cap = capacity[dataPointIndex];
+                    const percentage = cap > 0 ? ((sold / cap) * 100).toFixed(1) : 0;
+                    const revenueFormatted = Number(revenue[dataPointIndex]).toLocaleString('vi');
+                    return `
+                        <div style="
+                            background: #ffffffff;
+                            color: #000000ff;
+                            padding: 15px;
+                            border-radius: 10px;
+                            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+                            min-width: 200px;
+                            border: 1px solid #495057;">
+                            <div style="font-weight: 600; font-size: 14px; margin-bottom: 8px;">
+                                🎬 Suất \${time}
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                🎟️ Ghế đã bán: <strong>\${sold}</strong>
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                🎟️ Vé đã bán: <strong>\${paidCount}</strong>
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                🪑 Sức chứa: \${cap}
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                📊 Tỷ lệ lấp đầy: <strong>\${percentage}%</strong>
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                ❌ Vé bị lỗi: <strong>\${failedCount}</strong>
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                💵 Doanh thu: <strong>\${revenueFormatted} ₫</strong>
+                            </div>
+                        </div>
+                    `;
+                }
             }
         }
         JS;
     }
+
 
     public function getFilterText(string $filterValue)
     {
