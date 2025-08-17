@@ -36,7 +36,7 @@ class Booking extends Model
 
     public function seats()
     {
-        return $this->belongsToMany(Seat::class, 'booking_seats')->withPivot('ticket_price');
+        return $this->belongsToMany(Seat::class, 'booking_seats')/* ->withPivot('ticket_price') */;
     }
 
     public function bookingSeats()

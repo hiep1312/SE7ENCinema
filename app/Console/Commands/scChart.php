@@ -91,14 +91,13 @@ class scChart extends Command
                 \$optionsText = "options{$chartName}";
                 \$chartText = "chart{$chartName}";
                 echo <<<JS
-                const {\$ctxText} = {\$this->bindDataToElement()};
-                window.{\$optionsText} = {\$this->buildChartConfig()};
-
-                window.{\$chartText} = createScChart({\$ctxText}, {\$optionsText});
-
-                Livewire.on("{\$this->getEventName()}", function ([data]){
-                    window.{\$optionsText} = new Function("return " + data)();
-                    if(window.{\$chartText}) window.{\$chartText}.updateOptions(window.{\$optionsText});
+                Livewire.on("{\$this->getEventName()}", async function ([data]){
+                    await new Promise(resolve => setTimeout(resolve));
+                    const {\$ctxText} = {\$this->bindDataToElement()};
+                    if(\$ctxText){
+                        if(window.{\$chartText} && document.contains(window.{\$chartText}.getElement())) (window.{\$optionsText} = new Function("return " + data)()) && (window.{\$chartText}.updateOptions(window.{\$optionsText}));
+                        else (window.{\$optionsText} = {\$this->buildChartConfig()}) &&  (window.{\$chartText} = createScChart({\$ctxText}, {\$optionsText}));
+                    }
                 });
                 JS;
             }
