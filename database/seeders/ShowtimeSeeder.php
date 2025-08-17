@@ -18,21 +18,37 @@ class ShowtimeSeeder extends Seeder
         /* Rải rác từ 2 tuần cho đến tháng sau | Mỗi suất chiếu không bị phòng và thời gian */
         /* Mỗi suất chiếu mỗi phòng phải cách nhau 10 phút */
 
-        /* $movies = Movie::where('status', 'showing')->pluck('id')->toArray();
-        $rooms = Room::where('status', 'active')->pluck('id')->toArray();
+        $movies = Movie::where('status', 'showing')->get();
+        $rooms  = Room::where('status', 'active')->get();
 
-        foreach (range(1, 60) as $i) {
-            $start = fake()->dateTimeBetween('-3 days', '+3 days');
-            $duration = $movie->duration ?? fake()->numberBetween(90, 150);
-            $end = (clone $start)->modify("+{$duration} minutes");
+        // 14 ngày tới 1 tháng
+        foreach ($rooms as $room) {
+            foreach (range(0, 30) as $dayOffset) {
+                $date = now()->addDays(14 + $dayOffset)->startOfDay();
 
-            Showtime::create([
-                'movie_id' => fake()->randomElement($movies),
-                'room_id' => fake()->randomElement($rooms),
-                'start_time' => $start,
-                'end_time' => $end,
-                'status' => $end > now() ? 'active' : 'completed',
-            ]);
-        } */
+                // Mỗi ngày 4-5 suất chiếu
+                $showCount = fake()->numberBetween(4, 5);
+
+                $start = $date->copy()->setTime(8, 0); // bắt đầu từ 8h sáng
+
+                for ($i = 0; $i < $showCount; $i++) {
+                    $movie    = $movies->random();
+                    $duration = $movie->duration ?? fake()->numberBetween(90, 150);
+
+                    $end = $start->copy()->addMinutes($duration);
+
+                    Showtime::create([
+                        'movie_id'   => $movie->id,
+                        'room_id'    => $room->id,
+                        'start_time' => $start,
+                        'end_time'   => $end,
+                        'status'     => $end->isFuture() ? 'active' : 'completed',
+                    ]);
+
+                    // cách nhau 10p
+                    $start = $end->copy()->addMinutes(10);
+                }
+            }
+        }
     }
 }
