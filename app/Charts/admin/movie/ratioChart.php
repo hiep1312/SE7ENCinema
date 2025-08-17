@@ -17,20 +17,7 @@ class ratioChart
 
     protected function queryData(?string $filter = null)
     {
-        $fromCheckinChart = match ($filter) {
-            '3_days'    => Carbon::now()->subDays(3),
-            '7_days'    => Carbon::now()->subDays(7),
-            '15_days'   => Carbon::now()->subDays(15),
-            '30_days'   => Carbon::now()->subDays(30),
-            '3_months'  => Carbon::now()->subMonths(3)->startOfMonth(),
-            '6_months'  => Carbon::now()->subMonths(6)->startOfMonth(),
-            '9_months'  => Carbon::now()->subMonths(9)->startOfMonth(),
-            '1_years'   => Carbon::now()->subYears(1)->startOfYear(),
-            '2_years'   => Carbon::now()->subYears(2)->startOfYear(),
-            '3_years'   => Carbon::now()->subYears(3)->startOfYear(),
-            '6_years'   => Carbon::now()->subYears(6)->startOfYear(),
-            default     => null,
-        };
+        $fromCheckinChart = '2022-08-01';
         $bookings = Booking::whereHas('showtime', function ($q) {
             $q->where('movie_id', $this->movie->id);
         })->with(['showtime.room', 'foodOrderItems', 'user']);
@@ -85,11 +72,20 @@ class ratioChart
     protected function buildChartConfig()
     {
         /* Viết cấu hình biểu đồ tại đây */
-        $vipSeats = json_encode($this->data['seatCounts']['vip']);
+        if ($this->data) {
+            $vipSeats = json_encode($this->data['seatCounts']['vip']);
         $standardSeats = json_encode($this->data['seatCounts']['standard']);
         $disabledSeats = json_encode($this->data['seatCounts']['disabled']);
         $coupleSeats = json_encode($this->data['seatCounts']['couple']);
         $remainingSeats = json_encode($this->data['seatCounts']['remaining']);
+        }else{
+        $vipSeats = 0;
+        $standardSeats = 0;
+        $disabledSeats = 0;
+        $coupleSeats = 0;
+        $remainingSeats = 0;
+        }
+        
         return <<<JS
         {
             series: [$remainingSeats,$vipSeats,$standardSeats,$disabledSeats,$coupleSeats],

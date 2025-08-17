@@ -21,7 +21,7 @@ class MovieDetail extends Component
     public $movie;
     public $tabCurrent = 'chart';
     public $filterA = "3_days";
-    public $filterAboutDay = "3_days";
+    public $rangeDays = "3_days";
     public $filterB = "3_days";
 
     public function mount(int $movie)
@@ -73,7 +73,7 @@ class MovieDetail extends Component
         $dailyChart = new dailyChart($this->movie);
         $showtimeChart = new showtimeChart($this->movie);
         $ratioChart = new ratioChart($this->movie);
-        $this->realtimeUpdateCharts([$dailyChart, $this->filterA], [$showtimeChart, $this->filterA], [$ratioChart,$this->filterA]);
+        $this->realtimeUpdateCharts([$dailyChart,null], [$showtimeChart,null], [$ratioChart,null]);
 
         $totalOrdersIn30Days = (clone $bookings)->whereBetween('created_at', [now()->subDays(30), now()])->count();
         $bookings = $bookings->paginate(15);

@@ -5,6 +5,8 @@ namespace App\Charts\admin\movie;
 use App\Models\Booking;
 use Carbon\Carbon;
 
+use function PHPUnit\Framework\isArray;
+
 class showtimeChart
 {
     protected $data;
@@ -14,66 +16,84 @@ class showtimeChart
     {
         $this->movie = $movie;
     }
-    protected function queryData(?string $filter = null)
+    protected function queryData(?array $filter = null)
     {
-        $fromShowtime = match ($filter) {
-            '3_days'    => Carbon::now()->subDays(3),
-            '7_days'    => Carbon::now()->subDays(7),
-            '15_days'   => Carbon::now()->subDays(15),
-            '30_days'   => Carbon::now()->subDays(30),
-            '3_months'  => Carbon::now()->subMonths(3)->startOfMonth(),
-            '6_months'  => Carbon::now()->subMonths(6)->startOfMonth(),
-            '9_months'  => Carbon::now()->subMonths(9)->startOfMonth(),
-            '1_years'   => Carbon::now()->subYears(1)->startOfYear(),
-            '2_years'   => Carbon::now()->subYears(2)->startOfYear(),
-            '3_years'   => Carbon::now()->subYears(3)->startOfYear(),
-            '6_years'   => Carbon::now()->subYears(6)->startOfYear(),
-            default     => null,
-        };
+        is_array($filter) && [$fromDate, $rangeDays, $compareDate] = $filter;
+        $fromDate = '2025-08-01';
+        $rangeDays = 7;
+        $compareDate = '2025-08-10';
         /* Viết truy vấn CSDL tại đây */
+        // Input: $fromDate (ngày A), $compareDate (ngày B), $rangeDays (số ngày cần lấy)
+        $fromDate = Carbon::parse($fromDate)->startOfDay();
+        $toDate = (clone $fromDate)->addDays($rangeDays)->endOfDay();
+        
+        $compareFromDate = Carbon::parse($compareDate)->startOfDay();
+        $compareToDate = (clone $compareFromDate)->addDays($rangeDays)->endOfDay();
+
+        // Query tất cả bookings có showtime thuộc phim
         $bookingChart = Booking::whereHas('showtime', function ($q) {
             $q->where('movie_id', $this->movie->id);
-        })->with(['showtime.room'])->get();
-        $showtimes = $bookingChart
-            ->pluck('showtime')
-            ->unique();
-        if ($fromShowtime) {
-            $showtimes = $showtimes->filter(function ($showtime) use ($fromShowtime) {
-                return Carbon::parse($showtime->start_time)->gte($fromShowtime);
-            })->values();
+        })
+            ->with(['showtime.room'])
+            ->get();
+
+        // Hàm xử lý chung cho 1 khoảng ngày
+        $processRange = function ($bookings, $from, $to) {
+            $showtimes = $bookings->pluck('showtime')
+                ->filter(function ($showtime) use ($from, $to) {
+                    return Carbon::parse($showtime->start_time)->between($from, $to);
+                })
+                ->unique()
+                ->values();
+
+            $bookingCountFormatted = $showtimes
+                ->filter(fn($showtime) => $showtime->room)
+                ->map(function ($showtime) use ($bookings) {
+                    $timeKey = Carbon::parse($showtime->start_time)->format('H:i');
+                    $capacity = $showtime->room->seats->count();
+                    $bookingsOfShowtime = $bookings->filter(function ($booking) use ($showtime) {
+                        return $booking->showtime->id === $showtime->id;
+                    });
+                    return [
+                        'timeKey'   => $timeKey,
+                        'paid'      => $bookingsOfShowtime->where('status', 'paid')->count(),
+                        'seatsCount' => $bookingsOfShowtime->where('status', 'paid')->pluck('seats')->flatten()->count(),
+                        'failed'    => $bookingsOfShowtime->whereIn('status', ['failed', 'expired'])->count(),
+                        'capacity'  => $capacity,
+                        'revenue'   => $bookingsOfShowtime->where('status', 'paid')->sum('total_price'),
+                    ];
+                })
+                ->groupBy('timeKey')
+                ->map(function ($items) {
+                    return [
+                        'paid'      => $items->sum('paid'),
+                        'failed'    => $items->sum('failed'),
+                        'seatsCount' => $items->sum('seatsCount'),
+                        'capacity'  => $items->sum('capacity'),
+                        'revenue'   => $items->sum('revenue'),
+                    ];
+                })
+                ->sortKeys();
+
+            return $bookingCountFormatted;
+        };
+
+        // Dataset A và B
+        $dataA = $processRange($bookingChart, $fromDate, $toDate);
+        if ($compareDate != null) {
+            $dataB = $processRange($bookingChart, $compareFromDate, $compareToDate);
+        } else {
+            $dataB = null;
         }
-        $bookingCountFormatted = $showtimes
-            ->filter(fn($showtime) => $showtime->room)
-            ->map(function ($showtime) use ($bookingChart) {
-                $timeKey = Carbon::parse($showtime->start_time)->format('H:i');
-                $capacity = $showtime->room->seats->count();
-                $bookingsOfShowtime = $bookingChart->filter(function ($booking) use ($showtime) {
-                    return $booking->showtime->id === $showtime->id;
-                });
-                return [
-                    'timeKey' => $timeKey,
-                    'paid' => $bookingsOfShowtime->where('status', 'paid')->count(),
-                    'seatsCount' => $bookingsOfShowtime->where('status', 'paid')->pluck('seats')->flatten()->count(),
-                    'failed' => $bookingsOfShowtime->whereIn('status', ['failed','expired'])->count(),
-                    'capacity' => $capacity,
-                    'revenue' => $bookingsOfShowtime->where('status', 'paid')->sum('total_price'),
-                ];
-            })
-            ->groupBy('timeKey')
-            ->map(function ($items) {
-                return [
-                    'paid' => $items->sum('paid'),
-                    'failed' => $items->sum('failed'),
-                    'seatsCount' => $items->sum('seatsCount'),
-                    'capacity' => $items->sum('capacity'),
-                    'revenue' => $items->sum('revenue'),
-                ];
-            })
-            ->sortKeys();
-        return $bookingCountFormatted;
+
+        // Kết quả: trả về cả 2 dataset để vẽ chart
+        return [
+            'rangeA' => $dataA,
+            'rangeB' => $dataB,
+        ];
     }
 
-    public function loadData(?string $filter = null)
+    public function loadData(?array $filter = null)
     {
         $this->data = $this->queryData($filter);
     }
@@ -85,143 +105,95 @@ class showtimeChart
 
     protected function buildChartConfig()
     {
-        /* Viết cấu hình biểu đồ tại đây */
-        $paidCounts = json_encode($this->data->pluck('paid')->toArray());
-        $failedCounts = json_encode($this->data->pluck('failed')->toArray());
-        $revenueShowtime = json_encode($this->data->pluck('revenue')->toArray());
-        $seatsCount = json_encode($this->data->pluck('seatsCount')->toArray());
-        $showtimeDate = json_encode($this->data->keys()->toArray());
-        $capacityCounts = json_encode($this->data->pluck('capacity')->toArray());
-        $maxCapacityCounts = json_encode($this->data->pluck('capacity')->max());
+        $dataA = $this->data['rangeA'];
+        $dataB = $this->data['rangeB'];
+        $allKeys = $dataA->keys()->merge($dataB ? $dataB->keys() : collect())->unique()->sort()->values();
+
+        // Map lại dữ liệu A và B theo categories chung
+        $mapSeries = function ($data, $keys) {
+            return $keys->map(fn($key) => $data->has($key) ? $data[$key]['seatsCount'] : 0);
+        };
+
+        $seatsA = json_encode($mapSeries($dataA, $allKeys));
+        $seatsB = json_encode($dataB ? $mapSeries($dataB, $allKeys) : $allKeys->map(fn() => 0));
+
+        $capacity = json_encode($allKeys->map(fn($key) => $dataA->has($key) ? $dataA[$key]['capacity'] : ($dataB && $dataB->has($key) ? $dataB[$key]['capacity'] : 0)));
+        $paidA = json_encode($allKeys->map(fn($key) => $dataA->has($key) ? $dataA[$key]['paid'] : 0));
+        $paidB = json_encode($allKeys->map(fn($key) => $dataB && $dataB->has($key) ? $dataB[$key]['paid'] : 0));
+        $revenueA = json_encode($allKeys->map(fn($key) => $dataA->has($key) ? $dataA[$key]['revenue'] : 0));
+        $revenueB = json_encode($allKeys->map(fn($key) => $dataB && $dataB->has($key) ? $dataB[$key]['revenue'] : 0));
+
+        $categories = json_encode($allKeys);
+
         return <<<JS
         {
             series: [
-                {
-                    name: 'Sức chứa',
-                    data: $capacityCounts
-                },
-                {
-                    name: 'Ghế đã bán',
-                    data: $seatsCount
-                },
-                {
-                    name: 'Ngày so sánh',
-                    data: $failedCounts
-                }
+                { name: 'Sức chứa', data: $capacity },
+                { name: 'Ghế đã bán (Tuần A)', data: $seatsA },
+                { name: 'Ghế đã bán (Tuần B)', data: $seatsB },
             ],
             chart: {
                 type: 'bar',
-                height: 400,
+                height: 450,
                 background: 'transparent',
                 toolbar: { show: true },
-                animations: {
-                    enabled: true,
-                    easing: 'easeinout',
-                    speed: 800
-                }
+                animations: { enabled: true, easing: 'easeinout', speed: 800 }
             },
-            colors: ['#34A853','#4285F4', '#EA4335'],
-            plotOptions: {
-                bar: {
-                    horizontal: false,
-                    columnWidth: '60%',
-                    endingShape: 'rounded',
-                    borderRadius: 6
-                }
-            },
+            colors: ['#34A853','#4285F4','#FFB300','#EA4335','#FF7043'],
+            plotOptions: { bar: { horizontal: false, columnWidth: '60%', endingShape: 'rounded', borderRadius: 6 } },
             dataLabels: { enabled: false },
             stroke: { show: false },
             xaxis: {
-                categories: $showtimeDate,
+                categories: $categories,
                 axisBorder: { show: false },
                 axisTicks: { show: false },
-                labels: {
-                    style: {
-                        colors: '#adb5bd',
-                        fontSize: '12px',
-                        fontWeight: 600
-                    }
-                }
+                labels: { style: { colors: '#adb5bd', fontSize: '12px', fontWeight: 600 } }
             },
-            yaxis: {
-                min: 0,
-                max: $maxCapacityCounts,
-                tickAmount: 7,
-                labels: {
-                    style: {
-                        colors: '#adb5bd', /* Muted text color */
-                        fontSize: '12px'
-                    }
-                }
-            },
-            grid: {
-                show: true,
-                borderColor: '#495057', /* Darker grid lines */
-                strokeDashArray: 2,
-                xaxis: { lines: { show: false } }
-            },
+            yaxis: { min: 0, tickAmount: 7, labels: { style: { colors: '#adb5bd', fontSize: '12px' } } },
+            grid: { show: true, borderColor: '#495057', strokeDashArray: 2, xaxis: { lines: { show: false } } },
             legend: {
                 show: true,
                 position: 'top',
                 horizontalAlign: 'left',
                 offsetY: -10,
-                labels: { colors: '#f8f9fa' }, /* Light text color */
-                markers: {
-                    width: 12,
-                    height: 12,
-                    fillColors: ['#34A853','#4285F4','#EA4335'],
-                    radius: 3
-                }
+                labels: { colors: '#f8f9fa' },
+                markers: { width: 12, height: 12, fillColors: ['#34A853','#4285F4','#FFB300','#EA4335','#FF7043'], radius: 3 }
             },
             tooltip: {
                 shared: true,
                 intersect: false,
                 theme: 'dark',
                 custom: function({series, seriesIndex, dataPointIndex, w}) {
-                    const times = $showtimeDate;           
-                    const soldSeats = $seatsCount;    
-                    const paid = $paidCounts;    
-                    const failed = $failedCounts;        
-                    const capacity = $capacityCounts;     
-                    const revenue = $revenueShowtime;     
+                    const times = $categories;
+                    const soldA = $seatsA;
+                    const soldB = $seatsB;
+                    const paidA = $paidA;
+                    const paidB = $paidB;
+                    const cap = $capacity;
+                    const revenueA = $revenueA;
+                    const revenueB = $revenueB;
 
                     const time = times[dataPointIndex];
-                    const paidCount = paid[dataPointIndex];
-                    const sold = soldSeats[dataPointIndex];
-                    const failedCount = failed[dataPointIndex];
-                    const cap = capacity[dataPointIndex];
-                    const percentage = cap > 0 ? ((sold / cap) * 100).toFixed(1) : 0;
-                    const revenueFormatted = Number(revenue[dataPointIndex]).toLocaleString('vi');
+                    const soldWeekA = soldA[dataPointIndex];
+                    const soldWeekB = soldB[dataPointIndex];
+                    const paidWeekA = paidA[dataPointIndex];
+                    const paidWeekB = paidB[dataPointIndex];
+                    const capacityVal = cap[dataPointIndex];
+                    const percentageA = capacityVal > 0 ? ((soldWeekA / capacityVal) * 100).toFixed(1) : 0;
+                    const percentageB = capacityVal > 0 ? ((soldWeekB / capacityVal) * 100).toFixed(1) : 0;
+                    const revenueAFormatted = Number(revenueA[dataPointIndex]).toLocaleString('vi');
+                    const revenueBFormatted = Number(revenueB[dataPointIndex]).toLocaleString('vi');
+
                     return `
-                        <div style="
-                            background: #ffffffff;
-                            color: #000000ff;
-                            padding: 15px;
-                            border-radius: 10px;
-                            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-                            min-width: 200px;
-                            border: 1px solid #495057;">
-                            <div style="font-weight: 600; font-size: 14px; margin-bottom: 8px;">
-                                🎬 Suất \${time}
-                            </div>
-                            <div style="margin-bottom: 6px;">
-                                🎟️ Ghế đã bán: <strong>\${sold}</strong>
-                            </div>
-                            <div style="margin-bottom: 6px;">
-                                🎟️ Vé đã bán: <strong>\${paidCount}</strong>
-                            </div>
-                            <div style="margin-bottom: 6px;">
-                                🪑 Sức chứa: \${cap}
-                            </div>
-                            <div style="margin-bottom: 6px;">
-                                📊 Tỷ lệ lấp đầy: <strong>\${percentage}%</strong>
-                            </div>
-                            <div style="margin-bottom: 6px;">
-                                ❌ Vé bị lỗi: <strong>\${failedCount}</strong>
-                            </div>
-                            <div style="margin-bottom: 6px;">
-                                💵 Doanh thu: <strong>\${revenueFormatted} ₫</strong>
-                            </div>
+                        <div style="background:#fff;color:#000;padding:15px;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.3);min-width:220px;border:1px solid #495057;">
+                            <div style="font-weight:600;font-size:14px;margin-bottom:8px;">🎬 Suất \${time}</div>
+                            <div style="margin-bottom:6px;">🪑 Sức chứa: \${capacityVal}</div>
+                            <div style="margin-bottom:6px;">🎟️ Ghế đã bán (Tuần A): <strong>\${soldWeekA}</strong> | Tỷ lệ: \${percentageA}%</div>
+                            <div style="margin-bottom:6px;">🎟️ Ghế đã bán (Tuần B): <strong>\${soldWeekB}</strong> | Tỷ lệ: \${percentageB}%</div>
+                            <div style="margin-bottom:6px;">🎟️ Vé đã bán (Tuần A): <strong>\${paidWeekA}</strong></div>
+                            <div style="margin-bottom:6px;">🎟️ Vé đã bán (Tuần B): <strong>\${paidWeekB}</strong></div>
+                            <div style="margin-bottom:6px;">💵 Doanh thu (Tuần A): <strong>\${revenueAFormatted} ₫</strong></div>
+                            <div style="margin-bottom:6px;">💵 Doanh thu (Tuần B): <strong>\${revenueBFormatted} ₫</strong></div>
                         </div>
                     `;
                 }
