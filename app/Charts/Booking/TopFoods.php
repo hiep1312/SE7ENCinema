@@ -39,7 +39,7 @@ class TopFoods {
         $foodLabels = $topFoodsData->map(fn($item) => $item->food_name)->toJson();
         $foodQuantities = $topFoodsData->map(fn($item) => $item->total_quantity)->toJson();
         $foodRevenues = $topFoodsData->map(fn($item) => $item->total_revenue)->toJson();
-
+        $RevenueF = $topFoodsData->map(fn($item) => $item->total_bookings)->toJson();
         return <<<JS
         {
             chart: {
@@ -109,10 +109,12 @@ class TopFoods {
                 const foodNames = $foodLabels;
                 const quantities = $foodQuantities;
                 const revenues = $foodRevenues;
+                const RevenueF = $RevenueF;
 
                 const tenMon = foodNames[dataPointIndex] || '';
                 const soLuong = quantities[dataPointIndex] || 0;
                 const doanhThu = revenues[dataPointIndex] || 0;
+                
 
                 return `
                 <div class="bg-dark border border-secondary rounded-3 p-3 shadow-lg" style="min-width: 320px;">
@@ -127,6 +129,10 @@ class TopFoods {
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <span class="text-warning">💰 Doanh thu:</span>
                         <span class="fw-bold fs-6 text-warning">\${new Intl.NumberFormat('vi-VN').format(doanhThu)}đ</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-warning">🛒 Tổng đơn hàng:</span>
+                        <span class="fw-bold fs-6 text-warning">\${RevenueF[dataPointIndex]}</span>
                     </div>
                 </div>
             `;
