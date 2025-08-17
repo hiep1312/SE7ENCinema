@@ -5,48 +5,84 @@ namespace Database\Seeders;
 use App\Models\Movie;
 use App\Models\Room;
 use App\Models\Showtime;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 
 class ShowtimeSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        /* Rải rác từ 2 tuần cho đến tháng sau | Mỗi suất chiếu không bị phòng và thời gian */
-        /* Mỗi suất chiếu mỗi phòng phải cách nhau 10 phút */
+        // Lấy tất cả phim đã phát hành
+        $movies = Movie::whereNotNull('release_date')
+            ->where('release_date', '<=', now())
+            ->get();
 
-        $movies = Movie::where('status', 'showing')->get();
         $rooms  = Room::where('status', 'active')->get();
 
-        // 14 ngày tới 1 tháng
-        foreach ($rooms as $room) {
-            foreach (range(0, 30) as $dayOffset) {
-                $date = now()->addDays(14 + $dayOffset)->startOfDay();
+        if ($movies->isEmpty() || $rooms->isEmpty()) {
+            return;
+        }
 
-                // Mỗi ngày 4-5 suất chiếu
-                $showCount = fake()->numberBetween(4, 5);
+        // Sinh suất chiếu từ 1 tháng trước → 1 tháng sau
+        $startWindow = now()->copy()->subMonth()->startOfDay();
+        $endWindow   = now()->copy()->addMonth()->endOfDay();
 
-                $start = $date->copy()->setTime(8, 0); // bắt đầu từ 8h sáng
+        for ($date = $startWindow->copy(); $date->lte($endWindow); $date->addDay()) {
 
-                for ($i = 0; $i < $showCount; $i++) {
-                    $movie    = $movies->random();
-                    $duration = $movie->duration ?? fake()->numberBetween(90, 150);
+            foreach ($movies as $movie) {
+                $releaseDate = Carbon::parse($movie->release_date);
 
-                    $end = $start->copy()->addMinutes($duration);
+                if ($releaseDate->gt($date)) {
+                    continue; // bỏ qua ngày chiếu trước khi phim ra mắt
+                }
+
+                $daysSinceRelease = $releaseDate->diffInDays($date, false);
+
+                // Giảm suất dần theo độ "hot"
+                if ($daysSinceRelease <= 7) {
+                    $dailyShows = fake()->numberBetween(6, 8); // mới ra mắt → nhiều suất
+                } elseif ($daysSinceRelease <= 14) {
+                    $dailyShows = fake()->numberBetween(4, 6);
+                } elseif ($daysSinceRelease <= 30) {
+                    $dailyShows = fake()->numberBetween(2, 4);
+                } else {
+                    $dailyShows = fake()->numberBetween(0, 2); // phim đã cũ
+                }
+
+                if ($dailyShows === 0) continue;
+
+                $duration = $movie->duration ?? 120;
+                $cursor = $date->copy()->setTime(8, 0);
+
+                for ($i = 0; $i < $dailyShows; $i++) {
+                    $startTime = $cursor->copy();
+                    $endTime   = $startTime->copy()->addMinutes($duration);
+
+                    // Tránh trùng giờ chiếu
+                    $exists = Showtime::where('movie_id', $movie->id)
+                        ->where('start_time', $startTime)
+                        ->exists();
+
+                    if ($exists) {
+                        $cursor->addMinutes(30);
+                        continue;
+                    }
+
+                    $room = $rooms->random();
 
                     Showtime::create([
                         'movie_id'   => $movie->id,
                         'room_id'    => $room->id,
-                        'start_time' => $start,
-                        'end_time'   => $end,
-                        'status'     => $end->isFuture() ? 'active' : 'completed',
+                        'start_time' => $startTime,
+                        'end_time'   => $endTime,
+                        'status'     => $endTime->isFuture() ? 'active' : 'completed',
                     ]);
 
-                    // cách nhau 10p
-                    $start = $end->copy()->addMinutes(10);
+                    $cursor = $endTime->copy()->addMinutes(10);
+
+                    if ($cursor->hour >= 23) {
+                        break;
+                    }
                 }
             }
         }
