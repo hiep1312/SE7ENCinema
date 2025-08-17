@@ -10,7 +10,7 @@ class dailyChart
     protected $data;
     protected $movie;
     protected $fromCheckinChart = '2022-08-01';
-    protected $rangeDays = 90;
+    protected $rangeDays = 1000;
 
 
     public function __construct($movie)
@@ -27,10 +27,10 @@ class dailyChart
         })->with(['showtime.room'])->get();
 
         // Xác định kiểu group dựa vào rangeDays
-        $groupType = 'daily'; // default
-        if ($this->rangeDays > 90) $groupType = 'monthly'; // > 3 tháng
+        $groupType = 'daily'; // default\
+        if ($this->rangeDays > 365) $groupType = 'yearly'; // > 1 năm
+        elseif ($this->rangeDays > 90) $groupType = 'monthly'; // > 3 tháng
         elseif ($this->rangeDays > 30) $groupType = 'weekly'; // > 1 tháng
-
         // Tạo các labels và khởi tạo collection
         $dates = collect();
         $current = $fromCheckinChart->copy();
@@ -40,27 +40,70 @@ class dailyChart
                 $dates->push($current->copy());
                 $current->addDay();
             } elseif ($groupType === 'weekly') {
-                $dates->push($current->copy());
-                $current->addWeek();
+                // Lấy ngày đầu tuần
+                $startOfWeek = $current->copy()->startOfWeek();
+                $endOfWeek = $current->copy()->endOfWeek();
+                $dates->push([
+                    'start' => $startOfWeek,
+                    'end' => $endOfWeek
+                ]);
+                // Nhảy sang tuần tiếp theo
+                $current = $endOfWeek->copy()->addDay();
             } elseif ($groupType === 'monthly') {
-                $dates->push($current->copy()->startOfMonth());
-                $current->addMonth();
+                $startOfMonth = $current->copy()->startOfMonth();
+                $endOfMonth = $current->copy()->endOfMonth();
+                $dates->push([
+                    'start' => $startOfMonth,
+                    'end' => $endOfMonth
+                ]);
+                // Nhảy sang tháng tiếp theo
+                $current = $endOfMonth->copy()->addDay();
+            } elseif ($groupType === 'yearly') {
+                $startOfYear = $current->copy()->startOfYear();
+                $endOfYear = $current->copy()->endOfYear();
+                $dates->push([
+                    'start' => $startOfYear,
+                    'end' => $endOfYear
+                ]);
+                $current = $endOfYear->copy()->addDay(); // nhảy sang năm tiếp theo
             }
         }
 
+
         // Tạo thống kê theo nhóm
         $bookingStatByDate = $dates->mapWithKeys(function ($date) use ($bookingChart, $groupType) {
-            if ($groupType === 'daily') $dateStr = $date->format('m-d');
-            elseif ($groupType === 'weekly') $dateStr = 'Tuần ' . $date->weekOfYear . '-' . $date->year;
-            elseif ($groupType === 'monthly') $dateStr = $date->format('m-Y');
-
-            // Lọc booking theo nhóm
-            $bookingsOnDate = $bookingChart->filter(function ($booking) use ($date, $groupType) {
-                $bookingDate = Carbon::parse($booking->showtime->start_time);
-                if ($groupType === 'daily') return $bookingDate->isSameDay($date);
-                elseif ($groupType === 'weekly') return $bookingDate->weekOfYear === $date->weekOfYear && $bookingDate->year === $date->year;
-                elseif ($groupType === 'monthly') return $bookingDate->month === $date->month && $bookingDate->year === $date->year;
-            });
+            if ($groupType === 'daily') {
+                $dateStr = $date->format('m-d');
+                $bookingsOnDate = $bookingChart->filter(function ($booking) use ($date) {
+                    $bookingDate = Carbon::parse($booking->showtime->start_time);
+                    return $bookingDate->isSameDay($date);
+                });
+            } elseif ($groupType === 'weekly') {
+                // $date là mảng ['start' => Carbon, 'end' => Carbon]
+                $start = $date['start'];
+                $end = $date['end'];
+                $dateStr = $start->format('d/m') . ' - ' . $end->format('d/m'); // nhãn trực quan
+                $bookingsOnDate = $bookingChart->filter(function ($booking) use ($start, $end) {
+                    $bookingDate = Carbon::parse($booking->showtime->start_time);
+                    return $bookingDate->between($start, $end);
+                });
+            } elseif ($groupType === 'monthly') {
+                $start = $date['start'];
+                $end = $date['end'];
+                $dateStr = $start->format('m-Y');
+                $bookingsOnDate = $bookingChart->filter(function ($booking) use ($start, $end) {
+                    $bookingDate = Carbon::parse($booking->showtime->start_time);
+                    return $bookingDate->between($start, $end);
+                });
+            } elseif ($groupType === 'yearly') {
+                $start = $date['start'];
+                $end = $date['end'];
+                $dateStr = $start->format('Y'); // nhãn là năm
+                $bookingsOnDate = $bookingChart->filter(function ($booking) use ($start, $end) {
+                    $bookingDate = Carbon::parse($booking->showtime->start_time);
+                    return $bookingDate->between($start, $end);
+                });
+            }
 
             $paidCount = $bookingsOnDate->where('status', 'paid')->count();
             $cancelledCount = $bookingsOnDate->whereIn('status', ['failed', 'expired'])->count();
@@ -74,6 +117,7 @@ class dailyChart
                 ]
             ];
         });
+
 
         return [
             'bookingStatByDate' => $bookingStatByDate,
