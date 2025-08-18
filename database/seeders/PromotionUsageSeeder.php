@@ -5,26 +5,27 @@ namespace Database\Seeders;
 use App\Models\Booking;
 use App\Models\Promotion;
 use App\Models\PromotionUsage;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 
 class PromotionUsageSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $promotions = Promotion::all();
-        $bookings = Booking::all();
+        $bookings   = Booking::all();
 
-        foreach (Arr::shuffle($bookings->toArray()) as $booking) {
+        foreach ($bookings as $i => $booking) {
+            if ($promotions->isEmpty()) break;
+
+            $promotion = $promotions[$i % $promotions->count()];
+
             PromotionUsage::create([
-                'promotion_id' => $promotions->random()->id,
-                'booking_id' => $booking['id'],
-                'discount_amount' => fake()->numberBetween(10000, 100000),
-                'used_at' => fake()->dateTimeBetween('-1 month', 'now'),
+                'promotion_id'    => $promotion->id,
+                'booking_id'      => $booking->id,
+                'discount_amount' => rand(5000, 20000),
+                'used_at'         => Carbon::parse($booking->start_transaction)
+                                         ->subMinutes(rand(5, 20)),
             ]);
         }
     }

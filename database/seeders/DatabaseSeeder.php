@@ -3,8 +3,11 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Booking;
+use App\Models\PromotionUsage;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -36,5 +39,19 @@ class DatabaseSeeder extends Seeder
             UserNotificationSeeder::class,
             BannerSeeder::class,
         ]);
+
+
+        // Sau khi tất cả xong, cập nhật total_price
+        
+        $bookings = Booking::all();
+        foreach ($bookings as $booking) {
+            $ticketPrice = $booking->seats()->sum('ticket_price');
+            $foodPrice   = $booking->foodOrderItems()->sum('price');
+            $discount    = PromotionUsage::where('booking_id', $booking->id)->sum('discount_amount');
+
+            $booking->update([
+                'total_price' => $ticketPrice + $foodPrice - $discount,
+            ]);
+        }
     }
 }
