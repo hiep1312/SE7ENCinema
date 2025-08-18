@@ -10,16 +10,19 @@ class BookingSeatSeeder extends Seeder
 {
     public function run(): void
     {
-        $bookings = Booking::with('showtime.room.seats')->get();
+        $bookings = Booking::with('showtime.room.seats', 'showtime.movie')->get();
+
 
         foreach ($bookings as $booking) {
             $room = $booking->showtime->room;
+            $showtime = $booking->showtime;
+            $moviePrice = $showtime->movie->price;
 
             $seats = $room->seats()->inRandomOrder()->take(rand(1, 4))->get();
 
             foreach ($seats as $seat) {
-                
-                $price = $seat->price;
+
+                $price = ($seat->price) + $moviePrice;
 
                 BookingSeat::create([
                     'booking_id' => $booking->id,
