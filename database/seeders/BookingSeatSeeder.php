@@ -18,8 +18,8 @@ class BookingSeatSeeder extends Seeder
             $seats = $room->seats()->inRandomOrder()->take(rand(1, 4))->get();
 
             foreach ($seats as $seat) {
-                $basePrice = 80000;
-                $price = $seat->type === 'VIP' ? $basePrice + 20000 : $basePrice;
+                
+                $price = $seat->price;
 
                 BookingSeat::create([
                     'booking_id' => $booking->id,
