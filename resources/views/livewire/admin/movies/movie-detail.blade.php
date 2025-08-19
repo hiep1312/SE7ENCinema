@@ -11,7 +11,7 @@
                     <i class="fas fa-arrow-left me-1"></i>Quay lại
                 </a>
             </div>
-        </div>
+        </div>  
 
         @if($movie->hasActiveShowtimes())
         <div class="alert alert-warning">

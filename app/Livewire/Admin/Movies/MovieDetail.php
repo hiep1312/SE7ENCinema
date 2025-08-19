@@ -23,7 +23,7 @@ class MovieDetail extends Component
     public $fromDate = null;
     public $rangeDays = null;
     public $compareDate = null;
-    public $rangeUnit = 'months';
+    public $rangeUnit = 'days';
 
     public function mount(int $movie)
     {
