@@ -56,6 +56,7 @@ use App\Livewire\Client\User\UserInformation;
 use App\Http\Controllers\VnpayController;
 use App\Http\Livewire\Admin\BookingManager;
 use App\Http\Livewire\Client\BookingTicket;
+use App\Livewire\Admin\Showtimes\ShowtimeDetail;
 use App\Livewire\Client\SelectMovieShowtime;
 use App\Livewire\Client\SelectSeats;
 use App\Livewire\Client\SelectFood;
@@ -129,6 +130,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->
         Route::get('/', ShowtimeIndex::class)->name('index');
         Route::get('/create', ShowtimeCreate::class)->name('create');
         Route::get('/edit/{showtime}', ShowtimeEdit::class)->name('edit');
+        Route::get('/detail/{showtime}', ShowtimeDetail::class)->name('detail');
     });
 
     /* Bookings */
