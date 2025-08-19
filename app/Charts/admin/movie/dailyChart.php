@@ -9,124 +9,141 @@ class dailyChart
 {
     protected $data;
     protected $movie;
-    protected $fromCheckinChart = '2022-08-01';
-    protected $rangeDays = 1000;
-
-
     public function __construct($movie)
     {
         $this->movie = $movie;
     }
-    protected function queryData(?string $filter = null)
+
+    protected function queryData(?array $filter = null)
     {
-        $fromCheckinChart = Carbon::parse($this->fromCheckinChart)->startOfDay();
-        $toCheckinChart = (clone $fromCheckinChart)->addDays($this->rangeDays)->endOfDay();
+        is_array($filter) && [$fromDate, $rangeDays, $compareDate, $rangeUnit] = $filter;
+        $rangeDays = (int) $rangeDays;
 
-        $bookingChart = Booking::whereHas('showtime', function ($q) {
-            $q->where('movie_id', $this->movie->id);
-        })->with(['showtime.room'])->get();
+        $fromMain = $fromDate ? Carbon::parse($fromDate)->startOfDay() : null;
+        $toMain   = ($fromMain && $rangeDays) ? $fromMain->copy()->add($rangeUnit, $rangeDays)->endOfDay() : null;
 
-        // Xác định kiểu group dựa vào rangeDays
-        $groupType = 'daily'; // default\
-        if ($this->rangeDays > 365) $groupType = 'yearly'; // > 1 năm
-        elseif ($this->rangeDays > 90) $groupType = 'monthly'; // > 3 tháng
-        elseif ($this->rangeDays > 30) $groupType = 'weekly'; // > 1 tháng
-        // Tạo các labels và khởi tạo collection
-        $dates = collect();
-        $current = $fromCheckinChart->copy();
+        $fromCmp = $compareDate ? Carbon::parse($compareDate)->startOfDay() : null;
+        $toCmp   = ($fromCmp && $rangeDays) ? $fromCmp->copy()->add($rangeUnit, $rangeDays)->endOfDay() : null;
 
-        while ($current <= $toCheckinChart) {
+        if (!($fromMain && $toMain) && !($fromCmp && $toCmp)) {
+            return ['bookingStatByDate' => collect(), 'compareStatByDate' => collect()];
+        }
+
+        $baseScope = fn($q) => $q->where('movie_id', $this->movie->id);
+
+        $mainQuery = Booking::whereHas('showtime', $baseScope)->with(['showtime.room']);
+        if ($fromMain && $toMain) {
+            $mainQuery->whereHas('showtime', function ($q) use ($fromMain, $toMain) {
+                $q->whereBetween('start_time', [$fromMain, $toMain]);
+            });
+        }
+        $mainBookings = $mainQuery->get();
+
+        $cmpBookings = collect();
+        if ($fromCmp && $toCmp) {
+            $cmpBookings = Booking::whereHas('showtime', $baseScope)
+                ->whereHas('showtime', function ($q) use ($fromCmp, $toCmp) {
+                    $q->whereBetween('start_time', [$fromCmp, $toCmp]);
+                })
+                ->with(['showtime.room'])
+                ->get();
+        }
+        switch ($rangeUnit) {
+            case 'years':
+                $totalDays = $rangeDays * 365;
+                break;
+            case 'months':
+                $totalDays = $rangeDays *30;
+                break;
+            default:
+                $totalDays = $rangeDays;
+        }
+        
+        $groupType = 'daily';
+        if ($totalDays > 365) $groupType = 'yearly';
+        elseif ($totalDays > 90) $groupType = 'monthly';
+        elseif ($totalDays > 30) $groupType = 'weekly';
+
+        // ======= UNION RANGE (bao phủ cả main lẫn compare) =======
+        // Nếu một bên null, dùng bên còn lại
+        $unionStart = collect([$fromMain, $fromCmp])->filter()->min();
+        $unionEnd   = collect([$toMain, $toCmp])->filter()->max();
+
+        // Tạo các bucket theo groupType
+        $buckets = collect();
+        $cur = $unionStart->copy();
+
+        while ($cur <= $unionEnd) {
             if ($groupType === 'daily') {
-                $dates->push($current->copy());
-                $current->addDay();
+                $start = $cur->copy()->startOfDay();
+                $end   = $cur->copy()->endOfDay();
+                $label = $cur->format('d/m'); // hiển thị
+                $buckets->push(compact('start', 'end', 'label'));
+                $cur->addDay();
             } elseif ($groupType === 'weekly') {
-                // Lấy ngày đầu tuần
-                $startOfWeek = $current->copy()->startOfWeek();
-                $endOfWeek = $current->copy()->endOfWeek();
-                $dates->push([
-                    'start' => $startOfWeek,
-                    'end' => $endOfWeek
-                ]);
-                // Nhảy sang tuần tiếp theo
-                $current = $endOfWeek->copy()->addDay();
+                $start = $cur->copy()->startOfWeek();
+                $end   = $cur->copy()->endOfWeek();
+                $label = $start->format('d/m') . ' - ' . $end->format('d/m');
+                $buckets->push(compact('start', 'end', 'label'));
+                $cur = $end->copy()->addDay();
             } elseif ($groupType === 'monthly') {
-                $startOfMonth = $current->copy()->startOfMonth();
-                $endOfMonth = $current->copy()->endOfMonth();
-                $dates->push([
-                    'start' => $startOfMonth,
-                    'end' => $endOfMonth
-                ]);
-                // Nhảy sang tháng tiếp theo
-                $current = $endOfMonth->copy()->addDay();
-            } elseif ($groupType === 'yearly') {
-                $startOfYear = $current->copy()->startOfYear();
-                $endOfYear = $current->copy()->endOfYear();
-                $dates->push([
-                    'start' => $startOfYear,
-                    'end' => $endOfYear
-                ]);
-                $current = $endOfYear->copy()->addDay(); // nhảy sang năm tiếp theo
+                $start = $cur->copy()->startOfMonth();
+                $end   = $cur->copy()->endOfMonth();
+                $label = $start->format('m-Y');
+                $buckets->push(compact('start', 'end', 'label'));
+                $cur->addMonth();
+            } else { // yearly
+                $start = $cur->copy()->startOfYear();
+                $end   = $cur->copy()->endOfYear();
+                $label = $start->format('Y');
+                $buckets->push(compact('start', 'end', 'label'));
+                $cur->addYear();
             }
         }
 
+        // Tính thống kê cho từng bucket cho MAIN & COMPARE, cùng nhãn
+        $mainStat = collect();
+        $cmpStat  = collect();
 
-        // Tạo thống kê theo nhóm
-        $bookingStatByDate = $dates->mapWithKeys(function ($date) use ($bookingChart, $groupType) {
-            if ($groupType === 'daily') {
-                $dateStr = $date->format('m-d');
-                $bookingsOnDate = $bookingChart->filter(function ($booking) use ($date) {
-                    $bookingDate = Carbon::parse($booking->showtime->start_time);
-                    return $bookingDate->isSameDay($date);
-                });
-            } elseif ($groupType === 'weekly') {
-                // $date là mảng ['start' => Carbon, 'end' => Carbon]
-                $start = $date['start'];
-                $end = $date['end'];
-                $dateStr = $start->format('d/m') . ' - ' . $end->format('d/m'); // nhãn trực quan
-                $bookingsOnDate = $bookingChart->filter(function ($booking) use ($start, $end) {
-                    $bookingDate = Carbon::parse($booking->showtime->start_time);
-                    return $bookingDate->between($start, $end);
-                });
-            } elseif ($groupType === 'monthly') {
-                $start = $date['start'];
-                $end = $date['end'];
-                $dateStr = $start->format('m-Y');
-                $bookingsOnDate = $bookingChart->filter(function ($booking) use ($start, $end) {
-                    $bookingDate = Carbon::parse($booking->showtime->start_time);
-                    return $bookingDate->between($start, $end);
-                });
-            } elseif ($groupType === 'yearly') {
-                $start = $date['start'];
-                $end = $date['end'];
-                $dateStr = $start->format('Y'); // nhãn là năm
-                $bookingsOnDate = $bookingChart->filter(function ($booking) use ($start, $end) {
-                    $bookingDate = Carbon::parse($booking->showtime->start_time);
-                    return $bookingDate->between($start, $end);
-                });
-            }
+        foreach ($buckets as $b) {
+            [$start, $end, $label] = [$b['start'], $b['end'], $b['label']];
 
-            $paidCount = $bookingsOnDate->where('status', 'paid')->count();
-            $cancelledCount = $bookingsOnDate->whereIn('status', ['failed', 'expired'])->count();
-            $totalRevenue = $bookingsOnDate->where('status', 'paid')->sum('total_price');
+            $mainIn = $mainBookings->filter(function ($bk) use ($start, $end) {
+                $t = Carbon::parse($bk->showtime->start_time);
+                return $t->between($start, $end);
+            });
+            $cmpIn = $cmpBookings->filter(function ($bk) use ($start, $end) {
+                $t = Carbon::parse($bk->showtime->start_time);
+                return $t->between($start, $end);
+            });
 
-            return [
-                $dateStr => [
-                    'paid' => $paidCount,
-                    'cancelled' => $cancelledCount,
-                    'totalRevenue' => $totalRevenue,
-                ]
+            $mainStat[$label] = [
+                'paid'         => $mainIn->where('status', 'paid')->count(),
+                'cancelled'    => $mainIn->whereIn('status', ['failed', 'expired'])->count(),
+                'totalRevenue' => $mainIn->where('status', 'paid')->sum('total_price'),
             ];
-        });
-
+            $cmpStat[$label] = [
+                'paid'         => $cmpIn->where('status', 'paid')->count(),
+                'cancelled'    => $cmpIn->whereIn('status', ['failed', 'expired'])->count(),
+                'totalRevenue' => $cmpIn->where('status', 'paid')->sum('total_price'),
+            ];
+        }
 
         return [
-            'bookingStatByDate' => $bookingStatByDate,
+            'bookingStatByDate' => collect($mainStat),
+            'compareStatByDate' => collect($cmpStat),
         ];
     }
 
-    public function loadData(?string $filter = null)
+
+
+    public function loadData(?array $filter = null)
     {
-        $this->data = $this->queryData($filter);
+        try {
+            $this->data = $this->queryData($filter);
+        } catch (\Throwable $th) {
+            dd($th);
+        }
     }
 
     protected function bindDataToElement()
@@ -140,21 +157,31 @@ class dailyChart
         $cancelled = $this->data['bookingStatByDate']->pluck('cancelled')->toArray();
         $totalRevenue = $this->data['bookingStatByDate']->pluck('totalRevenue')->toArray();
         $categories = $this->data['bookingStatByDate']->keys()->toArray();
+
+        // dữ liệu ngày so sánh
+        $paidCompare = $this->data['compareStatByDate']->pluck('paid')->toArray();
+        $cancelledCompare = $this->data['compareStatByDate']->pluck('cancelled')->toArray();
+        $totalRevenueCompare = $this->data['compareStatByDate']->pluck('totalRevenue')->toArray();
+
         $paidJs = json_encode($paid);
         $cancelledJs = json_encode($cancelled);
         $totalRevenueJs = json_encode($totalRevenue);
         $categoriesJs = json_encode($categories);
-        /* Viết cấu hình biểu đồ tại đây */
+
+        $paidCompareJs = json_encode($paidCompare);
+        $cancelledCompareJs = json_encode($cancelledCompare);
+        $totalRevenueCompareJs = json_encode($totalRevenueCompare);
+
         return <<<JS
         {
             series: [
                 {
-                    name: 'Dữ liệu ngày A',
+                    name: 'Dữ liệu ngày bắt đầu',
                     data: $totalRevenueJs
                 },
                 {
-                    name: 'Dữ liệu ngày B',
-                    data: $totalRevenueJs
+                    name: 'Dữ liệu ngày so sánh',
+                    data: $totalRevenueCompareJs
                 },
             ],
             chart: {
@@ -194,19 +221,19 @@ class dailyChart
                         color: "#e4e4e4ff",
                         fontSize: '13px',
                         fontWeight: 500
-                        }
+                    }
                 },
                 labels: {
                     formatter: function (value) {
-                    if (value >= 1000000) {
-                        return (value / 1000000).toFixed(1) + " triệu";
-                    } else if (value >= 1000) {
-                        return (value / 1000).toFixed(0) + " nghìn";
-                    }
-                    return value; // nhỏ hơn 1000 thì giữ nguyên
+                        if (value >= 1000000) {
+                            return (value / 1000000).toFixed(1) + " triệu";
+                        } else if (value >= 1000) {
+                            return (value / 1000).toFixed(0) + " nghìn";
+                        }
+                        return value; // nhỏ hơn 1000 thì giữ nguyên
                     },
                     style: {
-                        colors: '#adb5bd', /* Muted text color */
+                        colors: '#adb5bd',
                         fontSize: '12px'
                     }
                 },
@@ -224,30 +251,52 @@ class dailyChart
             colors: ["#008FFB", "#00E396"],
             tooltip: {
                 theme: 'dark',
-                custom: function({series, seriesIndex, dataPointIndex, w}) {
+                shared: true,
+                custom: function({series, dataPointIndex, w}) {
                     const paid = $paidJs;
                     const cancelled = $cancelledJs;
                     const totalRevenue = $totalRevenueJs;
-                    const value = paid[dataPointIndex];                    
-                    const cancelledValue = cancelled[dataPointIndex];
-                    const revenue = totalRevenue.map(n => n.toLocaleString('vi'))[dataPointIndex];
+
+                    const paidCompare = $paidCompareJs;
+                    const cancelledCompare = $cancelledCompareJs;
+                    const totalRevenueCompare = $totalRevenueCompareJs;
+
+                    // dữ liệu ngày bắt đầu
+                    const paidStart = paid[dataPointIndex] ?? 0;
+                    const cancelledStart = cancelled[dataPointIndex] ?? 0;
+                    const revenueStart = (totalRevenue[dataPointIndex] ?? 0).toLocaleString('vi-VN');
+
+                    // dữ liệu ngày so sánh
+                    const paidC = paidCompare[dataPointIndex] ?? 0;
+                    const cancelledC = cancelledCompare[dataPointIndex] ?? 0;
+                    const revenueC = (totalRevenueCompare[dataPointIndex] ?? 0).toLocaleString('vi-VN');
+
+                    const dateLabel = w.globals.labels[dataPointIndex];
+
                     return `
                         <div style="
-                            background: #ffffffff;
-                            color: #000000ff;
+                            background: #ffffff;
+                            color: #000000;
                             padding: 15px;
                             border-radius: 10px;
-                            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-                            min-width: 200px;
+                            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+                            min-width: 240px;
                         ">
-                            <div style="margin-bottom: 6px;">
-                                🎟️ Vé bán: <strong>\${value}</strong>
+                            <div style="font-weight:600; margin-bottom:8px; font-size:14px;">
+                                📅 Ngày \${dateLabel}
                             </div>
-                            <div style="margin-bottom: 6px;">
-                                ❌ Vé lỗi: <strong>\${cancelledValue}</strong>
+
+                            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                                <span>🎟️ Vé bán:</span>
+                                <span><strong>\${paidStart}</strong> ↔ <strong>\${paidC}</strong></span>
                             </div>
-                            <div style="margin-bottom: 6px;">
-                                💵 Doanh thu: <strong>\${revenue}</strong>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                                <span>❌ Vé lỗi:</span>
+                                <span><strong>\${cancelledStart}</strong> ↔ <strong>\${cancelledC}</strong></span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                                <span>💵 Doanh thu:</span>
+                                <span><strong>\${revenueStart}</strong> ↔ <strong>\${revenueC}</strong></span>
                             </div>
                         </div>
                     `;

@@ -20,12 +20,15 @@ class MovieDetail extends Component
     use WithPagination,scChart;
     public $movie;
     public $tabCurrent = 'chart';
-    public $filterA = "3_days";
-    public $rangeDays = "3_days";
-    public $filterB = "3_days";
+    public $fromDate = null;
+    public $rangeDays = null;
+    public $compareDate = null;
+    public $rangeUnit = 'months';
 
     public function mount(int $movie)
     {
+        $this->fromDate = Carbon::now()->subDays(2)->format('Y-m-d');
+        $this->rangeDays = 2;
         $this->movie = Movie::with('genres', 'ratings')->findOrFail($movie);
     }
     public function updateStatusMovieAndShowtimes()
@@ -73,7 +76,11 @@ class MovieDetail extends Component
         $dailyChart = new dailyChart($this->movie);
         $showtimeChart = new showtimeChart($this->movie);
         $ratioChart = new ratioChart($this->movie);
-        $this->realtimeUpdateCharts([$dailyChart,null], [$showtimeChart,null], [$ratioChart,null]);
+        $this->realtimeUpdateCharts(
+            [$dailyChart,[$this->fromDate,$this->rangeDays,$this->compareDate,$this->rangeUnit]], 
+            [$showtimeChart,[$this->fromDate,$this->rangeDays,$this->compareDate,$this->rangeUnit]], 
+            [$ratioChart,[$this->fromDate,$this->rangeDays,$this->rangeUnit]]
+        );
 
         $totalOrdersIn30Days = (clone $bookings)->whereBetween('created_at', [now()->subDays(30), now()])->count();
         $bookings = $bookings->paginate(15);

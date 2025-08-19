@@ -600,35 +600,55 @@
                                 <i class="fa-regular fa-filter me-2"></i>Vé đã bán theo ngày
                             </h5>
                         </div>
+                        <div class="container-fluid my-4">
+                            <div class="card border-0 shadow-sm">
+                                <!-- Card body with form controls -->
+                                <div class="card-body">
+                                    <div class="row g-4 mb-3">
+                                        <!-- Date range section -->
+                                        <div class="col-lg-5">
+                                            <div>
+                                                <label class="form-label fw-semibold d-flex align-items-center mb-2">
+                                                    <i class="mdi mdi-calendar-range me-2"></i>
+                                                    Thời gian bắt dầu
+                                                </label>
+                                                <div class="row g-2">
+                                                    <div class="col-md-6">
+                                                        <input wire:model.live='fromDate' type="date" class="form-control form-control-sm">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label class="form-label fw-semibold d-flex align-items-center mb-2">
+                                                    <i class="mdi mdi-calendar-range me-2"></i>
+                                                    Thời gian so sánh
+                                                </label>
+                                                <div class="row g-2">
+                                                    <div class="col-md-6">
+                                                        <input wire:model.live='compareDate' type="date" class="form-control form-control-sm">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
-                        <div class="d-flex flex-wrap">
-                            <!-- Ngày bắt đầu -->
-                            <div class="me-4 mb-3" style="width:160px;">
-                                <label for="dateStart" class="form-label text-white">Chọn ngày bắt đầu</label>
-                                <input id="dateStart" type="date"
-                                    class="form-control form-control-sm bg-dark text-white border-secondary">
-                            </div>
-
-                            <!-- Khoảng ngày -->
-                            <div class="me-4 mb-3" style="width:160px;">
-                                <label for="timeFilter" class="form-label text-white">Chọn khoảng ngày</label>
-                                <select id="timeFilter"
-                                    class="form-select form-select-sm bg-dark text-white border-secondary">
-                                    <option value="1-day">1 ngày gần nhất</option>
-                                    <option value="3-days" selected>3 ngày gần nhất</option>
-                                    <option value="7-days">7 ngày gần nhất</option>
-                                    <option value="30-days">30 ngày gần nhất</option>
-                                    <option value="30-days">3 tháng gần nhất</option>
-                                    <option value="30-days">6 tháng gần nhất</option>
-                                    <option value="30-days">1 năm gần nhất</option>
-                                </select>
-                            </div>
-
-                            <!-- Ngày so sánh -->
-                            <div class="me-4 mb-3" style="width:160px;">
-                                <label for="dateCompare" class="form-label text-white">Chọn ngày so sánh</label>
-                                <input id="dateCompare" type="date"
-                                    class="form-control form-control-sm bg-dark text-white border-secondary">
+                                        <!-- Custom time period -->
+                                        <div class="col-lg-4">
+                                            <label class="form-label fw-semibold d-flex align-items-center mb-2">
+                                                <i wire:model.live="compareDate" class="mdi mdi-clock-time-four me-2"></i>
+                                                Thời gian tùy chỉnh
+                                            </label>
+                                            <div class="input-group input-group-sm">
+                                                <input wire:model.live='rangeDays' type="number" class="form-control" placeholder="Số" min="1">
+                                                <select wire:model.live='rangeUnit' class="form-select">
+                                                    <option value="days">Ngày</option>
+                                                    <option value="months">Tháng</option>
+                                                    <option value="years">Năm</option>
+                                                </select>
+                                            </div>
+                                            <small class="text-muted mt-1 d-block">VD: 1 tháng, 6 tháng, 2 năm</small>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -18,17 +18,14 @@ class showtimeChart
     }
     protected function queryData(?array $filter = null)
     {
-        is_array($filter) && [$fromDate, $rangeDays, $compareDate] = $filter;
-        $fromDate = '2025-08-01';
-        $rangeDays = 7;
-        $compareDate = '2025-08-10';
+        is_array($filter) && [$fromDate, $rangeDays, $compareDate,$rangeUnit] = $filter;
+        $rangeDays = (int) $rangeDays;
         /* Viết truy vấn CSDL tại đây */
-        // Input: $fromDate (ngày A), $compareDate (ngày B), $rangeDays (số ngày cần lấy)
         $fromDate = Carbon::parse($fromDate)->startOfDay();
-        $toDate = (clone $fromDate)->addDays($rangeDays)->endOfDay();
+        $toDate = (clone $fromDate)->add($rangeUnit,$rangeDays)->endOfDay();
         
         $compareFromDate = Carbon::parse($compareDate)->startOfDay();
-        $compareToDate = (clone $compareFromDate)->addDays($rangeDays)->endOfDay();
+        $compareToDate = (clone $compareFromDate)->add($rangeUnit,$rangeDays)->endOfDay();
 
         // Query tất cả bookings có showtime thuộc phim
         $bookingChart = Booking::whereHas('showtime', function ($q) {
@@ -78,7 +75,6 @@ class showtimeChart
             return $bookingCountFormatted;
         };
 
-        // Dataset A và B
         $dataA = $processRange($bookingChart, $fromDate, $toDate);
         if ($compareDate != null) {
             $dataB = $processRange($bookingChart, $compareFromDate, $compareToDate);
@@ -86,7 +82,6 @@ class showtimeChart
             $dataB = null;
         }
 
-        // Kết quả: trả về cả 2 dataset để vẽ chart
         return [
             'rangeA' => $dataA,
             'rangeB' => $dataB,
@@ -129,8 +124,8 @@ class showtimeChart
         {
             series: [
                 { name: 'Sức chứa', data: $capacity },
-                { name: 'Ghế đã bán (Tuần A)', data: $seatsA },
-                { name: 'Ghế đã bán (Tuần B)', data: $seatsB },
+                { name: 'Ghế đã bán (Giá trị 1)', data: $seatsA },
+                { name: 'Ghế đã bán (Giá trị 2)', data: $seatsB },
             ],
             chart: {
                 type: 'bar',
@@ -188,12 +183,12 @@ class showtimeChart
                         <div style="background:#fff;color:#000;padding:15px;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.3);min-width:220px;border:1px solid #495057;">
                             <div style="font-weight:600;font-size:14px;margin-bottom:8px;">🎬 Suất \${time}</div>
                             <div style="margin-bottom:6px;">🪑 Sức chứa: \${capacityVal}</div>
-                            <div style="margin-bottom:6px;">🎟️ Ghế đã bán (Tuần A): <strong>\${soldWeekA}</strong> | Tỷ lệ: \${percentageA}%</div>
-                            <div style="margin-bottom:6px;">🎟️ Ghế đã bán (Tuần B): <strong>\${soldWeekB}</strong> | Tỷ lệ: \${percentageB}%</div>
-                            <div style="margin-bottom:6px;">🎟️ Vé đã bán (Tuần A): <strong>\${paidWeekA}</strong></div>
-                            <div style="margin-bottom:6px;">🎟️ Vé đã bán (Tuần B): <strong>\${paidWeekB}</strong></div>
-                            <div style="margin-bottom:6px;">💵 Doanh thu (Tuần A): <strong>\${revenueAFormatted} ₫</strong></div>
-                            <div style="margin-bottom:6px;">💵 Doanh thu (Tuần B): <strong>\${revenueBFormatted} ₫</strong></div>
+                            <div style="margin-bottom:6px;">🎟️ Ghế đã bán (Giá trị 1): <strong>\${soldWeekA}</strong> | Tỷ lệ lấp đầy: \${percentageA}%</div>
+                            <div style="margin-bottom:6px;">🎟️ Ghế đã bán (Giá trị 2): <strong>\${soldWeekB}</strong> | Tỷ lệ lấp đầy: \${percentageB}%</div>
+                            <div style="margin-bottom:6px;">🎟️ Vé đã bán (Giá trị 1): <strong>\${paidWeekA}</strong></div>
+                            <div style="margin-bottom:6px;">🎟️ Vé đã bán (Giá trị 2): <strong>\${paidWeekB}</strong></div>
+                            <div style="margin-bottom:6px;">💵 Doanh thu (Giá trị 1): <strong>\${revenueAFormatted} ₫</strong></div>
+                            <div style="margin-bottom:6px;">💵 Doanh thu (Giá trị 2): <strong>\${revenueBFormatted} ₫</strong></div>
                         </div>
                     `;
                 }
