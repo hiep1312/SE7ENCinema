@@ -41,8 +41,8 @@
                         <div class="d-flex justify-content-between">
                             <div>
                                 <h6 class="card-title">Tổng lượng vé đã bán</h6>
-                                <h3 class="mb-0">{{ number_format($totalBookings) }}</h3>
-                                <small>Vé</small>
+                                <h3 class="mb-0">{{ number_format($bookedSeats) }}</h3>
+                                <small>Vé ({{ number_format($totalBookings) }} đơn hàng)</small>
                             </div>
                             <div class="align-self-center">
                                 <i class="fas fa-ticket-alt fa-2x opacity-75"></i>

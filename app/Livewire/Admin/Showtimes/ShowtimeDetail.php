@@ -46,7 +46,7 @@ class ShowtimeDetail extends Component
         // Tính tổng số ghế thực tế của phòng
         $totalSeats = $this->showtime->room->seats()->count();
         
-        // Tính số ghế đã đặt
+        // Tính số vé đã bán (đếm từ booking_seats thông qua booking đã thanh toán)
         $totalTickets = BookingSeat::whereHas('booking', function($query) {
             $query->where('showtime_id', $this->showtime->id)
                   ->where('status', 'paid');
@@ -59,15 +59,17 @@ class ShowtimeDetail extends Component
 
         // Cập nhật các thuộc tính
         $this->totalSeats = $totalSeats;
-        $this->bookedSeats = $totalTickets;
-        $this->availableSeats = $totalSeats - $totalTickets;
+        $this->bookedSeats = $totalTickets;  // Số vé đã bán (1 ghế = 1 vé)
+        $this->availableSeats = $totalSeats - $totalTickets;  // Số ghế còn trống
+        $this->totalBookings = Booking::where('showtime_id', $this->showtime->id)
+            ->where('status', 'paid')
+            ->count();  // Số đơn hàng đã thanh toán
         
         // Tính tỉ lệ lấp đầy dựa trên số ghế thực tế
         $this->occupancyRate = $totalSeats > 0 
             ? round(($totalTickets / $totalSeats) * 100, 1) 
             : 0;
 
-        $this->totalBookings = $totalTickets;
         $this->averageTicketPrice = $totalTickets > 0 ? round($this->totalRevenue / $totalTickets) : 0;
     }
 

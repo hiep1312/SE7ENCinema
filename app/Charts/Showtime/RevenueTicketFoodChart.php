@@ -4,6 +4,7 @@ namespace App\Charts\Showtime;
 
 use App\Models\Booking;
 use App\Models\FoodOrderItem;
+use App\Models\BookingSeat;
 
 class RevenueTicketFoodChart {
     protected $data = [];
@@ -12,22 +13,34 @@ class RevenueTicketFoodChart {
     protected function queryData(?string $filter = null){
         $this->showtimeId = (int)($filter ?? 0);
 
-        // Tính doanh thu vé từ Booking (tổng giá - giá đồ ăn)
+        // Tính tổng doanh thu từ Booking
         $totalRevenue = (int) Booking::where('showtime_id', $this->showtimeId)
             ->where('status', 'paid')
             ->sum('total_price');
 
+        // Tính doanh thu đồ ăn
         $foodRevenue = (int) FoodOrderItem::whereHas('booking', function($q){
                 $q->where('showtime_id', $this->showtimeId)->where('status', 'paid');
             })->selectRaw('COALESCE(SUM(quantity * price), 0) as total')->value('total');
 
-        // Doanh thu vé = Tổng doanh thue - Doanh thu đồ ăn
+        // Doanh thu vé = Tổng doanh thu - Doanh thu đồ ăn
         $ticketRevenue = $totalRevenue - $foodRevenue;
+
+        // Tính số lượng vé và đồ ăn
+        $ticketCount = (int) BookingSeat::whereHas('booking', function($q){
+                $q->where('showtime_id', $this->showtimeId)->where('status', 'paid');
+            })->count();
+
+        $foodCount = (int) FoodOrderItem::whereHas('booking', function($q){
+                $q->where('showtime_id', $this->showtimeId)->where('status', 'paid');
+            })->sum('quantity');
 
         return [
             'labels' => ['Vé', 'Đồ ăn'],
             'series' => [ $ticketRevenue, $foodRevenue ],
             'total' => $totalRevenue,
+            'ticketCount' => $ticketCount,
+            'foodCount' => $foodCount,
         ];
     }
 
@@ -43,6 +56,9 @@ class RevenueTicketFoodChart {
         $labels = json_encode($this->data['labels'] ?? []);
         $values = json_encode($this->data['series'] ?? []);
         $total = (int)($this->data['total'] ?? 0);
+        $ticketCount = (int)($this->data['ticketCount'] ?? 0);
+        $foodCount = (int)($this->data['foodCount'] ?? 0);
+        
         return <<<JS
         {
             chart: {
@@ -62,7 +78,7 @@ class RevenueTicketFoodChart {
                 animations: { enabled: true, easing: 'easeinout', speed: 800 }
             },
             series: [{ name: 'Doanh thu', data: $values }],
-            colors: ['#8AB4F8'],
+            colors: ['#8AB4F8', '#FF6B6B'],
             plotOptions: { bar: { horizontal: false, columnWidth: '45%', borderRadius: 6 } },
             dataLabels: { enabled: false },
             xaxis: { categories: $labels, labels: { style: { colors: '#adb5bd' } } },
@@ -75,6 +91,22 @@ class RevenueTicketFoodChart {
                     const val = (series[0]||[])[dataPointIndex] || 0;
                     const total = (series[0]||[]).reduce((a,b)=>a+b,0) || $total;
                     const pct = total ? ((val/total)*100).toFixed(1) : 0;
+                    const ticketCount = $ticketCount;
+                    const foodCount = $foodCount;
+                    
+                    let countInfo = '';
+                    if (dataPointIndex === 0) {
+                        countInfo = `<div class="d-flex justify-content-between mb-2">
+                            <span class="text-info">🎫 Số lượng vé:</span>
+                            <span class="fw-bold text-info">\${ticketCount}</span>
+                        </div>`;
+                    } else {
+                        countInfo = `<div class="d-flex justify-content-between mb-2">
+                            <span class="text-info">🍽️ Số lượng món:</span>
+                            <span class="fw-bold text-info">\${foodCount}</span>
+                        </div>`;
+                    }
+                    
                     return `
                         <div class="bg-dark border border-secondary rounded-3 p-3 shadow-lg" style="min-width: 280px;">
                             <div class="d-flex justify-content-between mb-2">
@@ -82,9 +114,10 @@ class RevenueTicketFoodChart {
                                 <span class="fw-bold text-white">\${cats[dataPointIndex] || ''}</span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
-                                <span class="text-info">💰 Doanh thu</span>
-                                <span class="fw-bold text-info">\${new Intl.NumberFormat('vi-VN').format(val)}đ</span>
+                                <span class="text-warning">💰 Doanh thu</span>
+                                <span class="fw-bold text-warning">\${new Intl.NumberFormat('vi-VN').format(val)}đ</span>
                             </div>
+                            \${countInfo}
                             <hr class="text-secondary my-2">
                             <div class="d-flex justify-content-between">
                                 <span class="text-warning">📊 Tỉ trọng</span>
