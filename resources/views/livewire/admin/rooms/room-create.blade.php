@@ -1,18 +1,18 @@
 @assets
-    <link rel="stylesheet" href="{{ asset('client/assets/css/style.css') }}">
-    <script>
-        function formatPrice(element){
+<link rel="stylesheet" href="{{ asset('client/assets/css/style.css') }}">
+<script>
+    function formatPrice(element){
             const currentValue = element.value.replaceAll(/,|\./g, '');
             element.value = (isNaN(currentValue) || currentValue === '') ? currentValue : (parseInt(currentValue)).toLocaleString('vi');
         }
-    </script>
+</script>
 @endassets
 <div class="scRender scSeat">
     @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show mt-2 mx-2" role="alert">
-            {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+    <div class="alert alert-danger alert-dismissible fade show mt-2 mx-2" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
     @endif
 
     <div class="container-lg mb-4">
@@ -41,7 +41,7 @@
                                             class="form-control bg-dark text-light border-light @error('name') is-invalid @enderror"
                                             placeholder="VD: Phòng A1">
                                         @error('name')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -55,7 +55,7 @@
                                             <option value="inactive">Ngừng hoạt động</option>
                                         </select>
                                         @error('status')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -79,28 +79,29 @@
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="rows" class="form-label text-light">Số ghế mỗi cột *</label>
-                                        <input type="number" wire:model="rows"
+                                        <input type="number" wire:model="rows" id="rows-input"
                                             class="form-control bg-dark text-light border-light @error('rows') is-invalid @enderror">
                                         @error('rows')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="seatsPerRow" class="form-label text-light">Số ghế mỗi hàng *</label>
-                                        <input type="number" wire:model="seatsPerRow"
+                                        <input type="number" wire:model="seatsPerRow" id="seats-per-row-input"
                                             class="form-control bg-dark text-light border-light @error('seatsPerRow') is-invalid @enderror">
                                         @error('seatsPerRow')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="capacity" class="form-label text-light">Tổng sức chứa</label>
-                                        <input type="number" :value="$wire.rows * $wire.seatsPerRow"
-                                            class="form-control bg-dark text-light border-light" readonly>
+                                        <label for="capacity-input" class="form-label text-light">Tổng sức chứa</label>
+                                        <input id="capacity-input" type="number"
+                                            class="form-control bg-dark text-light border-light"
+                                            wire:model.live="capacity" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -111,7 +112,7 @@
                                             placeholder="VD: A,B,C">
                                         <small class="text-muted">Nhập các hàng VIP, cách nhau bằng dấu phẩy</small>
                                         @error('vipArr.*')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -123,7 +124,7 @@
                                             placeholder="VD: J,K">
                                         <small class="text-muted">Nhập các hàng Couple, cách nhau bằng dấu phẩy</small>
                                         @error('coupleArr.*')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -134,7 +135,7 @@
                                             class="form-control bg-dark text-light border-light @error('priceStandard') is-invalid @enderror"
                                             oninput="formatPrice(this)" placeholder="VD: 100.000">
                                         @error('priceStandard')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -145,7 +146,7 @@
                                             class="form-control bg-dark text-light border-light @error('priceVip') is-invalid @enderror"
                                             oninput="formatPrice(this)" placeholder="VD: 150.000">
                                         @error('priceVip')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -156,25 +157,43 @@
                                             class="form-control bg-dark text-light border-light @error('priceCouple') is-invalid @enderror"
                                             oninput="formatPrice(this)" placeholder="VD: 200.000">
                                         @error('priceCouple')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="mb-3">
-                                        <label class="form-label text-light">Cấu Hình Luật Kiểm Tra chọn ghế</label>
-                                        <div>
-                                            <input type="checkbox" wire:model="checkLonely" id="rule-lonely"> Cấm chỗ lẻ ví Dụ A1 , A3
-                                        </div>
-                                        <div>
-                                            <input type="checkbox" wire:model="checkSole" id="rule-sole"> Cấm chọn ghế lẻ góc tường , ví dụ A1 trống -> chọn A2
-                                        </div>
-                                        <div>
-                                            <input type="checkbox" wire:model="checkDiagonal" id="rule-diagonal"> Cấm chọn chéo A1 , B2
+                                        <label class="form-label text-light d-block mb-2">Cấu Hình Luật Kiểm Tra Chọn
+                                            Ghế</label>
+
+                                        <div class="d-flex flex-wrap gap-3">
+
+                                            <label class="form-switch form-switch-md">
+                                                <input type="checkbox" class="form-check-input" id="rule-lonely"
+                                                    wire:model="seatAlgorithms.check_lonely">
+                                                <span class="form-switch-label">Cấm chỗ lẻ (ví dụ A1, A3)</span>
+                                            </label>
+
+                                            <label class="form-switch form-switch-md">
+                                                <input type="checkbox" class="form-check-input" id="rule-sole"
+                                                    wire:model="seatAlgorithms.check_sole">
+                                                <span class="form-switch-label">Cấm ghế lẻ sát tường (A1 trống → chọn
+                                                    A2)</span>
+                                            </label>
+
+                                            <label class="form-switch form-switch-md">
+                                                <input type="checkbox" class="form-check-input" id="rule-diagonal"
+                                                    wire:model="seatAlgorithms.check_diagonal">
+                                                <span class="form-switch-label">Cấm chọn chéo (A1, B2)</span>
+                                            </label>
+
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
+                            <input type="hidden" id="schema-json" wire:model.live="schema">
+                            <input type="hidden" id="capacity-input" wire:model.live="capacity">
                             <div class="d-flex justify-content-between mb-3">
                                 <button type="button" class="btn btn-success" wire:click="handleGenerateSeats()">
                                     <i class="fas fa-save"></i> Tạo sơ đồ phòng chiếu
@@ -200,16 +219,14 @@
 </div>
 @script
 <script>
-    $wire.on('generateSeats', function([rows, seatsPerRow, vipRows, coupleRows , checkLonely , checkSole , checkDiagonal]) {
+    $wire.on('generateSeats', function([rows, seatsPerRow, vipRows, coupleRows , seatAlgorithms]) {
         document.querySelector('#generate-seats').innerHTML = '';
         document.querySelector('#generate-seats').append(window.generateDOMSeats({
             rows: rows,
             seatsPerRow: seatsPerRow,
             vipRows: vipRows,
             coupleRows: coupleRows,
-            checkLonely: checkLonely,
-            checkSole: checkSole,
-            checkDiagonal: checkDiagonal
+            seat_algorithms: seatAlgorithms
         }));
     });
 

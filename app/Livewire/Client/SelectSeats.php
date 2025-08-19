@@ -5,8 +5,6 @@ namespace App\Livewire\Client;
 use Livewire\Component;
 use App\Models\Showtime;
 use App\Models\Seat;
-use App\Models\SeatHold;
-use App\Models\User;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use App\Models\Booking;
@@ -16,9 +14,11 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use SE7ENCinema\scAlert;
 
 class SelectSeats extends Component
 {
+    use scAlert;
     public $showtime_id;
     public $showtime;
     public $room;
@@ -110,12 +110,12 @@ class SelectSeats extends Component
     public function updateSelectedSeats($seats)
     {
         if ($this->isBanned) {
-            $this->dispatch('sc-alert.error', $this->banInfo['reason'], $this->banInfo['details']);
+            $this->scAlert('sc-alert.error', $this->banInfo['reason'], $this->banInfo['details']);
             return;
         }
 
         if (!$this->userId) {
-            $this->dispatch('sc-alert.error', 'Chưa đăng nhập', 'Vui lòng đăng nhập để chọn ghế.');
+            $this->scAlert('sc-alert.error', 'Chưa đăng nhập', 'Vui lòng đăng nhập để chọn ghế.');
             return;
         }
 
@@ -242,6 +242,7 @@ class SelectSeats extends Component
                 'price' => $seat->price,
                 'is_booked' => $seat->is_booked,
                 'is_held' => $seat->is_held ?? false,
+                'status' => $seat->status,
             ];
         })->toArray();
 
@@ -371,15 +372,9 @@ class SelectSeats extends Component
         $this->checkCurrentHoldStatus();
 
         if ($this->isBanned) {
-            return view('livewire.client.select-seats', [
-                'banInfo' => $this->banInfo
-            ]);
+            return view('livewire.client.select-seats');
         }
 
-        return view('livewire.client.select-seats', [
-            'room' => $this->room,
-            'holdExpiresAt' => $this->holdExpiresAt,
-            'remainingSeconds' => $this->remainingSeconds
-        ]);
+        return view('livewire.client.select-seats');
     }
 }

@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 class RoomCreate extends Component
 {
     public $name = '';
-    public $status = 'active';
+    public $status = '';
     public $rows = 10;
     public $seatsPerRow = 15;
     public $vipRows = null;
@@ -26,9 +26,13 @@ class RoomCreate extends Component
     public $priceCouple = null;
     public $formattedPriceCouple = null;
     public $temp = [];
-    public $checkLonely = true;
-    public $checkSole = true;
-    public $checkDiagonal = true;
+    public $seatAlgorithms = [
+        'check_lonely'   => true,
+        'check_sole'     => true,
+        'check_diagonal' => true,
+    ];
+    public $schema = [];
+    public $capacity = 0;
 
     protected function rules() {
         $rules = [
@@ -81,16 +85,43 @@ class RoomCreate extends Component
         'priceCouple.gt' => 'Giá ghế đôi phải lớn hơn giá ghế thường',
     ];
 
-    public function updated($property){
-        if($property === 'formattedPriceStandard' || $property === 'formattedPriceVip' || $property === 'formattedPriceCouple')
+    public function mount()
+    {
+        $this->capacity = $this->rows * $this->seatsPerRow;
+    }
+
+     public function updated($property){
+        if($property === 'formattedPriceStandard' || $property === 'formattedPriceVip' || $property === 'formattedPriceCouple') {
             $this->{lcfirst(strstr($property, 'Price'))} = str_replace([',', '.'], '', $this->{$property});
-        elseif($property === 'vipRows' || $property === 'coupleRows')
+        } elseif($property === 'vipRows' || $property === 'coupleRows') {
             $this->{str_replace('Rows', 'Arr', $property)} = array_map(fn($row) => strtoupper(trim($row)), $this->{$property} ? explode(',', $this->{$property}) : []);
+        } elseif($property === 'schema') {
+            if (is_string($this->schema)) {
+                $decoded = json_decode($this->schema, true);
+                if ($decoded) {
+                    $this->schema = $decoded;
+                    $this->capacity = $decoded['capacity'] ?? 0;
+                }
+            }
+        } elseif (str_starts_with($property, 'seatAlgorithms.')) {
+            $k = explode('.', $property, 2)[1] ?? null;
+            if ($k && isset($this->seatAlgorithms[$k])) {
+                $v = $this->seatAlgorithms[$k];
+                $this->seatAlgorithms[$k] = filter_var($v, FILTER_VALIDATE_BOOLEAN);
+            }
+        }
+    }
+    protected $listeners = ['schemaUpdated'];
+
+    public function schemaUpdated($data)
+    {
+        $this->schema = $data;
+        $this->capacity = $data['capacity'] ?? 0;
     }
 
     public function updatedTemp()
     {
-        $this->temp = array_filter($this->temp, fn($item) => !Str::contains($item, ['add-column-btn', 'asile']));
+        $this->temp = array_filter($this->temp, fn($item) => !Str::contains($item, ['add-column-btn', 'aisle']));
     }
 
     public function createRoom()
@@ -99,58 +130,98 @@ class RoomCreate extends Component
 
         try {
             $room = Room::create([
-                'name' => $this->name,
-                'capacity' => $this->rows * $this->seatsPerRow,
-                'status' => $this->status,
-                'check_lonely' => $this->checkLonely,
-                'check_sole' => $this->checkSole,
-                'check_diagonal' => $this->checkDiagonal,
+                'name'           => $this->name,
+                'capacity'       => $this->capacity ?: ($this->rows * $this->seatsPerRow),
+                'status'         => $this->status,
+                'seat_algorithms' => json_encode($this->seatAlgorithms, JSON_UNESCAPED_UNICODE),
             ]);
 
-            $vipRows = collect(explode(',', strtoupper($this->vipRows)))->map(fn($v) => trim($v))->filter();
-            $coupleRows = collect(explode(',', strtoupper($this->coupleRows)))->map(fn($v) => trim($v))->filter();
+            if (!empty($this->schema['rows'])) {
+                $total = 0;
 
-            for ($i = 0; $i < $this->rows; $i++) {
-                $rowLetter = chr(65 + $i);
+                foreach ($this->schema['rows'] as $row) {
+                    $rowLetter = $row['row'] ?? null;
+                    if (!$rowLetter || empty($row['seats']) || !is_array($row['seats'])) continue;
 
-                for ($j = 1; $j <= $this->seatsPerRow; $j++) {
-                    $type = 'standard';
-                    $price = $this->priceStandard;
+                    $num = 0;
+                    foreach ($row['seats'] as $s) {
+                        if (($s['type'] ?? null) === 'aisle') continue;
 
-                    if ($vipRows->contains($rowLetter)) {
-                        $type = 'vip';
-                        $price = $this->priceVip;
+                        $num++;
+                        $typeUi = $s['uiType'] ?? $s['type'] ?? 'standard';
+                        $typeDb = $typeUi === 'double' ? 'couple' : $typeUi;
+
+                        $status = $s['status'] ?? 'active';
+
+                        $price = match ($typeDb) {
+                            'vip'    => $this->priceVip,
+                            'couple' => $this->priceCouple,
+                            default  => $this->priceStandard,
+                        };
+
+                        Seat::create([
+                            'room_id'     => $room->id,
+                            'seat_row'    => $rowLetter,
+                            'seat_number' => $num,
+                            'seat_type'   => $typeDb,
+                            'price'       => $price,
+                            'status'      => $status,
+                        ]);
+
+                        $total++;
                     }
+                }
 
-                    if ($coupleRows->contains($rowLetter)) {
-                        $type = 'couple';
-                        $price = $this->priceCouple;
+                $room->update(['capacity' => $total]);
+            } else {
+                $vipRows    = collect(explode(',', strtoupper($this->vipRows)))->map(fn($v) => trim($v))->filter();
+                $coupleRows = collect(explode(',', strtoupper($this->coupleRows)))->map(fn($v) => trim($v))->filter();
+                $status     = $this->status;
+
+                for ($i = 0; $i < $this->rows; $i++) {
+                    $rowLetter = chr(65 + $i);
+
+                    for ($j = 1; $j <= $this->seatsPerRow; $j++) {
+                        $type  = 'standard';
+                        $price = $this->priceStandard;
+
+                        if ($vipRows->contains($rowLetter)) {
+                            $type  = 'vip';
+                            $price = $this->priceVip;
+                        }
+                        if ($coupleRows->contains($rowLetter)) {
+                            $type  = 'couple';
+                            $price = $this->priceCouple;
+                        }
+
+                        Seat::create([
+                            'room_id'     => $room->id,
+                            'seat_row'    => $rowLetter,
+                            'seat_number' => $j,
+                            'seat_type'   => $type,
+                            'price'       => $price,
+                            'status'      => $status,
+                        ]);
                     }
-
-                    Seat::create([
-                        'room_id' => $room->id,
-                        'seat_row' => $rowLetter,
-                        'seat_number' => $j,
-                        'seat_type' => $type,
-                        'price' => $price,
-                        'status' => 'active',
-                    ]);
                 }
             }
 
-            return redirect()->route('admin.rooms.index')->with('success', 'Tạo phòng chiếu và sơ đồ ghế thành công!');
-        } catch (\Exception $e) {
+            return redirect()
+                ->route('admin.rooms.index')
+                ->with('success', 'Tạo phòng chiếu và sơ đồ ghế thành công!');
+        } catch (\Throwable $e) {
             session()->flash('error', 'Có lỗi xảy ra trong quá trình tạo phòng chiếu. Vui lòng thử lại!');
         }
-
     }
 
     public function handleGenerateSeats()
     {
         $this->validateOnly('vipArr.*');
         $this->validateOnly('coupleArr.*');
-        $this->dispatch('generateSeats', $this->rows, $this->seatsPerRow, $this->vipArr, $this->coupleArr, $this->checkLonely, $this->checkSole, $this->checkDiagonal);
+        $this->dispatch('generateSeats', $this->rows, $this->seatsPerRow, $this->vipArr, $this->coupleArr, $this->seatAlgorithms);
     }
+
+
 
     public function setTemp($data)
     {
