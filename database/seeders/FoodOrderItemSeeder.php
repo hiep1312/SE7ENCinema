@@ -25,7 +25,7 @@ class FoodOrderItemSeeder extends Seeder
                     'booking_id' => $booking->id,
                     'food_variant_id' => $variant->id,
                     'quantity' => $quantity,
-                    'price' => $variant->price * $quantity,
+                    'price' => $variant->price,
                 ]);
             }
         }

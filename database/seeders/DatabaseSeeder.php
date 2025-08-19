@@ -45,12 +45,16 @@ class DatabaseSeeder extends Seeder
 
         $bookings = Booking::with(['bookingSeats', 'foodOrderItems', 'promotionUsage'])->get();
 
+
         foreach ($bookings as $booking) {
             // Tính tổng giá ghế (lưu ý ticket_price ở pivot)
             $ticketPrice = $booking->bookingSeats->sum('ticket_price');
 
-            // Tính tổng giá đồ ăn
-            $foodPrice = $booking->foodOrderItems->sum('price');
+
+            // Tính tổng giá đồ ăn (price * quantity)
+            $foodPrice = $booking->foodOrderItems->sum(function ($item) {
+                return $item->price * $item->quantity;
+            });
 
             // Lấy giá trị khuyến mãi, nếu không có thì = 0
             $discount = $booking->promotionUsage?->discount_amount ?? 0;
