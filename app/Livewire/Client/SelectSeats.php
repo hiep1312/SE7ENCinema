@@ -337,6 +337,7 @@ class SelectSeats extends Component
                 BookingSeat::create([
                     'booking_id' => $booking->id,
                     'seat_id' => $seatId,
+                    'ticket_price' => 0
                 ]);
             }
 
@@ -365,7 +366,6 @@ class SelectSeats extends Component
 
     #[Title('Chọn ghế - SE7ENCinema')]
     #[Layout('components.layouts.client')]
-
     public function render()
     {
         $this->checkCurrentHoldStatus();
@@ -376,10 +376,6 @@ class SelectSeats extends Component
             ]);
         }
 
-        return view('livewire.client.select-seats', [
-            'room' => $this->room,
-            'holdExpiresAt' => $this->holdExpiresAt,
-            'remainingSeconds' => $this->remainingSeconds
-        ]);
+        return view('livewire.client.select-seats');
     }
 }

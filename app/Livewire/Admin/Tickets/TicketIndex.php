@@ -16,7 +16,9 @@ class TicketIndex extends Component
 
     public $search = '';
     public $takenFilter = '';
+    public $ticketsPage = []; // lưu page cho từng booking
     public $statusFilter = '';
+    public $selectedBookingId = null;
     public $movieFilter = '';
 
     public function resetFilters()
@@ -24,19 +26,35 @@ class TicketIndex extends Component
         $this->reset(['search', 'takenFilter', 'statusFilter', 'movieFilter']);
         $this->resetPage();
     }
+    public function loadTickets($bookingId)
+    {
+        $this->selectedBookingId = $bookingId;
+    }
 
-    public function realtimeUpdate(){
+    public function getBookingTickets($bookingId)
+    {
+        return Ticket::with('bookingSeat.seat')
+            ->whereHas('bookingSeat', fn($q) => $q->where('booking_id', $bookingId))
+            ->orderBy('created_at', 'desc')
+            ->paginate(
+                10, // số vé mỗi trang
+                ['*'],
+                'ticketsPage' . $bookingId // tên page riêng biệt
+            );
+    }
+    public function realtimeUpdate()
+    {
         Ticket::with('bookingSeat.booking.showtime')->each(function (Ticket $ticket) {
             $showtime = $ticket->bookingSeat->booking->showtime;
-            if($showtime->start_time->isFuture() && $ticket->status === 'canceled') $ticket->status = 'active';
-            elseif($showtime->end_time->isPast() && $ticket->status === 'active') $ticket->status = 'canceled';
+            if ($showtime->start_time->isFuture() && $ticket->status === 'canceled') $ticket->status = 'active';
+            elseif ($showtime->end_time->isPast() && $ticket->status === 'active') $ticket->status = 'canceled';
 
             $ticket->save();
         });
 
         Booking::where('status', 'expired')
-            ->with('showtime')->get()->each(function($booking){
-                if($booking->showtime->start_time->addMinutes(-15) <= now() || $booking->created_at->addMinutes(30) <= now()){
+            ->with('showtime')->get()->each(function ($booking) {
+                if ($booking->showtime->start_time->addMinutes(-15) <= now() || $booking->created_at->addMinutes(30) <= now()) {
                     $booking->delete();
                 }
             });
@@ -48,31 +66,33 @@ class TicketIndex extends Component
     {
         $this->realtimeUpdate();
 
-        $query = Ticket::with(['bookingSeat.booking' => function($query){
-                $query->with('user', 'showtime.room', 'showtime.movie');
-            }, 'bookingSeat.seat'])
-            ->when($this->search, function($query) {
-                $query->where(function($subQuery){
+        $query = Ticket::with(['bookingSeat.booking' => function ($query) {
+            $query->with('user', 'showtime.room', 'showtime.movie');
+        }, 'bookingSeat.seat'])
+            ->when($this->search, function ($query) {
+                $query->where(function ($subQuery) {
                     $subQuery->where('note', 'like', '%' . trim($this->search) . '%')
-                    ->orWhereHas('bookingSeat', function($q){
-                        $q->whereHas('booking', function($q){
-                            $q->where('booking_code', 'like', '%' . trim($this->search) . '%')
-                            ->orWhereHas('user', fn($q) => $q->where('name', 'like', '%' . trim($this->search) . '%'))
-                            ->orWhereHas('showtime', fn($q) => $q->whereHas('room', fn($q) => $q->whereLike('name', '%' . trim($this->search) . '%')));
-                        })
-                        ->orWhereHas('seat', fn($q) => $q->whereRaw("CONCAT(seat_row, seat_number) like ?", ['%' . trim($this->search) . '%']));
-                    });
+                        ->orWhereHas('bookingSeat', function ($q) {
+                            $q->whereHas('booking', function ($q) {
+                                $q->where('booking_code', 'like', '%' . trim($this->search) . '%')
+                                    ->orWhereHas('user', fn($q) => $q->where('name', 'like', '%' . trim($this->search) . '%'))
+                                    ->orWhereHas('showtime', fn($q) => $q->whereHas('room', fn($q) => $q->whereLike('name', '%' . trim($this->search) . '%')));
+                            })
+                                ->orWhereHas('seat', fn($q) => $q->whereRaw("CONCAT(seat_row, seat_number) like ?", ['%' . trim($this->search) . '%']));
+                        });
                 });
             })
             ->when($this->takenFilter !== '', fn($query) => $query->where('taken', $this->takenFilter))
             ->when($this->statusFilter, fn($query) => $query->where('status', $this->statusFilter));
 
         $movies = Movie::select('id', 'title')->whereIn('id', (clone $query)->get()->pluck('bookingSeat.booking.showtime.movie_id')->unique())->get();
-        $query->when($this->movieFilter, fn($query) => $query->whereHas('bookingSeat', function($query) {
-                $query->whereHas('booking', fn($query) => $query->whereHas('showtime', fn($query) => $query->where('movie_id', $this->movieFilter)));
-            }));
-        $tickets = $query->orderBy('created_at', 'desc')->paginate(20);
-
-        return view('livewire.admin.tickets.ticket-index', compact('tickets', 'movies'));
+        $query->when($this->movieFilter, fn($query) => $query->whereHas('bookingSeat', function ($query) {
+            $query->whereHas('booking', fn($query) => $query->whereHas('showtime', fn($query) => $query->where('movie_id', $this->movieFilter)));
+        }));
+        $bookings = Booking::with(['user', 'showtime.room', 'showtime.movie'])
+            ->whereIn('id', (clone $query)->get()->pluck('bookingSeat.booking.id')->unique())
+            ->paginate(10);
+        $tickets = $query->orderBy('created_at', 'desc')->paginate(10);
+        return view('livewire.admin.tickets.ticket-index',compact('tickets', 'movies', 'bookings'));
     }
 }
