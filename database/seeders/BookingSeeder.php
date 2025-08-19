@@ -15,7 +15,10 @@ class BookingSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = User::all()->pluck('id')->toArray();
+        /* Dữ liệu 3 tháng trước | Mỗi tháng ít nhất 30 dữ liệu | 30 | 1 - 5 thánh toán fail | ít nhất 30 dữ liệu thanh toán thành công */
+        /* Mỗi dữ liệu sấp xỉ 1 - 4 | 7 ghế (ít bản ghi) */
+        /* total_price | ticket_price + foodOrderItem - promotion */
+        /* $users = User::all()->pluck('id')->toArray();
         $showtimes = Showtime::all()->pluck('id')->toArray();
 
         foreach (range(1, 20) as $i) {
@@ -33,6 +36,6 @@ class BookingSeeder extends Seeder
                 'status' => fake()->randomElement(['pending', 'expired', 'paid', 'failed']),
                 'payment_method' => fake()->randomElement(['credit_card', 'bank_transfer', 'e_wallet', 'cash']),
             ]);
-        }
+        } */
     }
 }

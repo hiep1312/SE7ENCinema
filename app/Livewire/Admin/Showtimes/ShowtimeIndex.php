@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Showtimes;
 
 use App\Models\Showtime;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -14,14 +15,7 @@ class ShowtimeIndex extends Component
 
     public $search = '';
     public $statusFilter = '';
-    public $priceFilter = [];
-    public $rangePrice = [];
-
-    public function mount(){
-        $showtimes = Showtime::all();
-        $this->priceFilter = $this->rangePrice = [$showtimes->min('price'), $showtimes->max('price')];
-        $this->js('updateSlider');
-    }
+    public $sortByDate = '';
 
     public function deleteShowtime(array $status, int $showtimeId)
     {
@@ -40,8 +34,6 @@ class ShowtimeIndex extends Component
     public function resetFilters()
     {
         $this->reset(['search', 'statusFilter']);
-        $this->priceFilter = $this->rangePrice;
-        $this->js('resetSlider');
         $this->resetPage();
     }
 
@@ -61,17 +53,20 @@ class ShowtimeIndex extends Component
     {
         $this->realtimeUpdateShowtimes();
 
-        $query = Showtime::query()->whereHas('movie')
+        $query = Showtime::with('movie', 'room')->whereHas('movie')
             ->when($this->search, function($query) {
                 $query->where(function ($subQuery){
-                    $subQuery->whereHas('movie', fn($q) => $q->where('title', 'like', '%' . $this->search . '%'));
-                    $subQuery->orWhereHas('room', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'));
+                    $subQuery->whereHas('movie', fn($q) => $q->where('title', 'like', '%' . $this->search . '%'))
+                        ->orWhereHas('room', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'));
                 });
             })
             ->when($this->statusFilter, fn($query) => $query->where('status', $this->statusFilter))
-            ->when($this->priceFilter, fn($query) => $query->whereBetween('price', $this->priceFilter));
+            ->select('*', DB::raw('DATE(start_time) as show_date'));
 
-        $showtimes = $query->orderBy('status', 'asc')->orderBy('start_time', 'asc')->paginate(20);
+        if($this->sortByDate) $query->where('start_time', '>=', now()->subDays($this->sortByDate));
+        else $query->where('start_time', '>=', now()->startOfDay());
+
+        $showtimes = $query->orderBy('start_time', 'asc')->orderBy('status', 'asc')->paginate(30)->groupBy(['show_date', 'movie_id']);
 
         return view('livewire.admin.showtimes.showtime-index', compact('showtimes'));
     }

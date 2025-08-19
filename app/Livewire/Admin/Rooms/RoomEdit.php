@@ -7,6 +7,7 @@ use App\Models\Seat;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Illuminate\Support\Str;
 
 class RoomEdit extends Component
 {
@@ -16,33 +17,46 @@ class RoomEdit extends Component
     public $last_maintenance_date = null;
     public $rows = 10;
     public $seatsPerRow = 15;
-    public $vipRows = '';
-    public $coupleRows = '';
-    public $priceStandard = 0;
-    public $priceVip = 0;
-    public $priceCouple = 0;
+    public $vipRows = null;
+    public $vipArr = [];
+    public $coupleRows = null;
+    public $coupleArr = [];
+    public $priceStandard = null;
+    public $formattedPriceStandard = null;
+    public $priceVip = null;
+    public $formattedPriceVip = null;
+    public $priceCouple = null;
+    public $formattedPriceCouple = null;
+    public $temp = [];
     public $checkLonely = true;
     public $checkSole = true;
     public $checkDiagonal = true;
 
-    protected function rules(){
-        return [
+    protected function rules()
+    {
+        $rules = [
             'name' => 'required|string|max:255|unique:rooms,name,' . $this->room->id,
             'status' => 'required|in:active,maintenance,inactive',
             'last_maintenance_date' => 'nullable|date|before_or_equal:today',
             'rows' => 'required|integer|min:5|max:26',
             'seatsPerRow' => 'required|integer|min:10|max:30',
-            'vipRows' => 'nullable|string',
-            'coupleRows' => 'nullable|string',
-            'priceStandard' => 'required|numeric|min:20000',
-            'priceVip' => 'required|numeric|min:20000|gt:priceStandard',
-            'priceCouple' => 'required|numeric|min:20000|gt:priceStandard',
+            'vipArr.*' => 'string|distinct:ignore_case',
+            'coupleArr.*' => 'string|distinct:ignore_case',
+            'priceStandard' => 'required|numeric|min:0',
+            'priceVip' => 'numeric|min:0|gt:priceStandard|lt:priceCouple' . ($this->vipRows ? '|required' : '|nullable'),
+            'priceCouple' => 'numeric|min:0|gt:priceStandard' . ($this->coupleRows ? '|required' : '|nullable'),
         ];
+
+        if (!empty($this->vipArr)) $rules['coupleArr.*'] .= "|not_in:" . implode(",", $this->vipArr);
+        if (!empty($this->coupleArr)) $rules['vipArr.*'] .= "|not_in:" . implode(",", $this->coupleArr);
+
+        return $rules;
     }
 
     protected $messages = [
         'name.required' => 'Tên phòng chiếu là bắt buộc',
         'name.unique' => 'Tên phòng chiếu đã tồn tại',
+        'status.required' => 'Trạng thái là bắt buộc',
         'last_maintenance_date.before_or_equal' => 'Ngày bảo trì không được lớn hơn ngày hôm nay.',
         'rows.required' => 'Số hàng ghế là bắt buộc',
         'rows.min' => 'Số hàng ghế tối thiểu là 5',
@@ -50,15 +64,38 @@ class RoomEdit extends Component
         'seatsPerRow.required' => 'Số ghế mỗi hàng là bắt buộc',
         'seatsPerRow.min' => 'Số ghế mỗi hàng tối thiểu là 10',
         'seatsPerRow.max' => 'Số ghế mỗi hàng tối đa là 30',
+        'vipArr.*.string' => 'Mỗi giá trị trong danh sách hàng ghế VIP phải là một chuỗi ký tự.',
+        'vipArr.*.distinct' => 'Danh sách hàng ghế VIP không được chứa các giá trị trùng lặp.',
+        'vipArr.*.not_in' => 'Danh sách hàng ghế VIP không được chứa các hàng đã thuộc ghế đôi.',
+        'coupleArr.*.string' => 'Mỗi giá trị trong danh sách hàng ghế đôi phải là một chuỗi ký tự.',
+        'coupleArr.*.distinct' => 'Danh sách hàng ghế đôi không được chứa các giá trị trùng lặp.',
+        'coupleArr.*.not_in' => 'Danh sách hàng ghế đôi không được chứa các hàng đã thuộc ghế VIP.',
         'priceStandard.required' => 'Giá ghế thường là bắt buộc',
-        'priceStandard.min' => 'Giá ghế thường tối thiểu là 20.000 VNĐ',
+        'priceStandard.numeric' => 'Giá ghế thường phải là một số.',
+        'priceStandard.min' => 'Giá ghế thường tối thiểu là 0 VNĐ',
         'priceVip.required' => 'Giá ghế VIP là bắt buộc',
-        'priceVip.min' => 'Giá ghế VIP tối thiểu là 20.000 VNĐ',
+        'priceVip.numeric' => 'Giá ghế VIP phải là một số.',
+        'priceVip.min' => 'Giá ghế VIP tối thiểu là 0 VNĐ',
         'priceVip.gt' => 'Giá ghế VIP phải lớn hơn giá ghế thường',
+        'priceVip.lt' => 'Giá ghế VIP phải nhỏ hơn giá ghế đôi',
         'priceCouple.required' => 'Giá ghế đôi là bắt buộc',
-        'priceCouple.min' => 'Giá ghế đôi tối thiểu là 20.000 VNĐ',
+        'priceCouple.numeric' => 'Giá ghế đôi phải là một số.',
+        'priceCouple.min' => 'Giá ghế đôi tối thiểu là 0 VNĐ',
         'priceCouple.gt' => 'Giá ghế đôi phải lớn hơn giá ghế thường',
     ];
+
+    public function updated($property)
+    {
+        if ($property === 'formattedPriceStandard' || $property === 'formattedPriceVip' || $property === 'formattedPriceCouple')
+            $this->{lcfirst(strstr($property, 'Price'))} = str_replace([',', '.'], '', $this->{$property});
+        elseif ($property === 'vipRows' || $property === 'coupleRows')
+            $this->{str_replace('Rows', 'Arr', $property)} = array_map(fn($row) => strtoupper(trim($row)), $this->{$property} ? explode(',', $this->{$property}) : []);
+    }
+
+    public function updatedTemp()
+    {
+        $this->temp = array_filter($this->temp, fn($item) => !Str::contains($item, ['add-column-btn', 'asile']));
+    }
 
     public function mount(Room $room)
     {
@@ -68,12 +105,10 @@ class RoomEdit extends Component
         $this->checkSole = $room->check_sole;
         $this->checkDiagonal = $room->check_diagonal;
 
-        // Format date
         if ($this->last_maintenance_date) {
             $this->last_maintenance_date = $this->last_maintenance_date->format('Y-m-d');
         }
 
-        // Load seat configuration from existing seats
         $this->loadSeatConfiguration();
 
         if ($this->room->hasActiveShowtimes()) {
@@ -86,11 +121,9 @@ class RoomEdit extends Component
         $seats = $this->room->seats()->get();
 
         if ($seats->isNotEmpty()) {
-            // Tính số hàng và ghế mỗi hàng
             $this->rows = $seats->max('seat_row') ? ord($seats->max('seat_row')) - 64 : 10;
             $this->seatsPerRow = $seats->max('seat_number') ?: 15;
 
-            // Lấy giá từ ghế hiện tại
             $standardSeat = $seats->where('seat_type', 'standard')->first();
             $vipSeat = $seats->where('seat_type', 'vip')->first();
             $coupleSeat = $seats->where('seat_type', 'couple')->first();
@@ -99,17 +132,17 @@ class RoomEdit extends Component
             $this->priceVip = $vipSeat ? $vipSeat->price : 80000;
             $this->priceCouple = $coupleSeat ? $coupleSeat->price : 120000;
 
-            // Lấy danh sách hàng VIP và Couple
+            $this->formattedPriceStandard = number_format($this->priceStandard, 0, '.', '.');
+            $this->formattedPriceVip = $this->priceVip ? number_format($this->priceVip, 0, '.', '.') : null;
+            $this->formattedPriceCouple = $this->priceCouple ? number_format($this->priceCouple, 0, '.', '.') : null;
+
             $vipRows = $seats->where('seat_type', 'vip')->pluck('seat_row')->unique()->toArray();
             $coupleRows = $seats->where('seat_type', 'couple')->pluck('seat_row')->unique()->toArray();
 
             $this->vipRows = implode(',', $vipRows);
             $this->coupleRows = implode(',', $coupleRows);
-        } else {
-            // Giá trị mặc định
-            $this->priceStandard = 50000;
-            $this->priceVip = 80000;
-            $this->priceCouple = 120000;
+            $this->vipArr = $vipRows;
+            $this->coupleArr = $coupleRows;
         }
     }
 
@@ -121,8 +154,13 @@ class RoomEdit extends Component
 
         $this->validate();
 
+        if (collect($this->vipArr)->some(fn($row) => in_array($row, $this->coupleArr)) || collect($this->coupleArr)->some(fn($row) => in_array($row, $this->vipArr))) {
+            $this->addError('vipArr.*', 'Danh sách hàng ghế VIP không được chứa các hàng đã thuộc ghế đôi.');
+            $this->addError('coupleArr.*', 'Danh sách hàng ghế đôi không được chứa các hàng đã thuộc ghế VIP.');
+            return;
+        }
+
         try {
-            // Update room info
             $this->room->update([
                 'name' => $this->name,
                 'capacity' => $this->rows * $this->seatsPerRow,
@@ -133,7 +171,6 @@ class RoomEdit extends Component
                 'check_diagonal' => $this->checkDiagonal,
             ]);
 
-            // Update seats configuration
             $this->updateSeatsConfiguration();
 
             return redirect()->route('admin.rooms.index')->with('success', 'Cập nhật phòng chiếu thành công!');
@@ -144,10 +181,8 @@ class RoomEdit extends Component
 
     protected function updateSeatsConfiguration()
     {
-        // Delete existing seats
         $this->room->seats()->delete();
 
-        // Parse VIP and Couple rows
         $vipRows = collect(explode(',', strtoupper($this->vipRows)))
             ->map(fn($v) => trim($v))
             ->filter();
@@ -155,7 +190,6 @@ class RoomEdit extends Component
             ->map(fn($v) => trim($v))
             ->filter();
 
-        // Create new seats
         for ($i = 0; $i < $this->rows; $i++) {
             $rowLetter = chr(65 + $i);
 
@@ -187,8 +221,14 @@ class RoomEdit extends Component
 
     public function handleGenerateSeats()
     {
-        $this->validate();
-        $this->dispatch('generateSeats', $this->rows, $this->seatsPerRow, $this->vipRows, $this->coupleRows , $this->checkLonely, $this->checkSole, $this->checkDiagonal);
+        $this->validateOnly('vipArr.*');
+        $this->validateOnly('coupleArr.*');
+        $this->dispatch('generateSeats', $this->rows, $this->seatsPerRow, $this->vipArr, $this->coupleArr, $this->checkLonely, $this->checkSole, $this->checkDiagonal);
+    }
+
+    public function setTemp($data)
+    {
+        $this->temp = $data;
     }
 
     #[Title('Cập nhật phòng chiếu - SE7ENCinema')]

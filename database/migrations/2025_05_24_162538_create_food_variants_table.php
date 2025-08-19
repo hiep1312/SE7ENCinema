@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('food_item_id')->constrained()->onDelete('cascade');
             $table->string('sku')->unique();
-            $table->bigInteger('price')->default(0);
+            $table->unsignedBigInteger('price');
             $table->string('image')->nullable();
             $table->integer('quantity_available')->default(0);
             $table->integer('limit')->nullable();

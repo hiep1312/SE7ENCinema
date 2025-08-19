@@ -11,11 +11,15 @@ class Ticket extends Model
         'note',
         'qr_code',
         'taken',
+        'taken_at',
+        'checkin_at',
         'status',
     ];
 
     protected $casts = [
         'taken' => 'boolean',
+        'taken_at' => 'datetime',
+        'checkin_at' => 'datetime',
     ];
 
     public function bookingSeat()
@@ -27,9 +31,13 @@ class Ticket extends Model
         return $this->bookingSeat->booking->status === "paid";
     }
 
-    public function getCurrentIndex(){
+    protected function getCurrentIndexAttribute(){
         return BookingSeat::where('booking_id', $this->bookingSeat->booking_id)->get()->search(function($bookingSeat) {
             return $bookingSeat->id === $this->booking_seat_id;
         }) + 1;
+    }
+
+    protected function getBookingAttribute(){
+        return $this->bookingSeat->booking;
     }
 }

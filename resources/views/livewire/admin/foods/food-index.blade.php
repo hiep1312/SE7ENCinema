@@ -150,7 +150,7 @@
                                         @if ($variantCount > 0)
                                             <div>
                                                 <!-- Tiêu đề -->
-                                                <div class="showtime-price mb-1">
+                                                <div class="mb-1">
                                                     <i class="fa-solid fa-list me-1 text-warning"></i>
                                                     @if ($isOriginal)
                                                         <span class="text-warning">Sản phẩm gốc</span>

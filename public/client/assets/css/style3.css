@@ -1,20 +1,20 @@
 /*-------------------------------------
-    
-	Author: Webstrot 
+
+	Author: Webstrot
 	Copyright © 2018
-	
+
 ---------------------------------------
-    
+
     CSS INDEX
     ===================
-	
+
     1. BODY
 	2. CUSTOM CSS / A
 	3. PRELOADER
 	4. NAVIGATION
 	5. SLIDER
 	6. UPCOMING MOVIES
-	7. VIDEO SECTION 
+	7. VIDEO SECTION
 	8. WEB SERIES
 	9. TOP MOVIES IN THEATRES
 	10. LATEST NEWS
@@ -1831,11 +1831,6 @@ body.active #mobile-nav {
 	animation: pulse 1.2s infinite cubic-bezier(0.66, 0, 0, 1);
 }
 
-@-webkit-keyframes pulse {
-	to {
-		box-shadow: 0 0 0 40px rgba(232, 76, 61, 0);
-	}
-}
 
 @-moz-keyframes pulse {
 	to {
@@ -1984,7 +1979,7 @@ body.active #mobile-nav {
 	padding-bottom: 300px;
 }
 
-/* Container for slider. 
+/* Container for slider.
 Width set to 100% so player will fill it's parent container  */
 
 .sliderContainer {
@@ -2126,12 +2121,6 @@ Width set to 100% so player will fill it's parent container  */
 	height: 110px;
 }
 
-@-webkit-keyframes spin {
-	to {
-		-webkit-transform: rotate(360deg);
-		transform: rotate(360deg);
-	}
-}
 
 @keyframes spin {
 	to {
@@ -2150,7 +2139,7 @@ Width set to 100% so player will fill it's parent container  */
 	/* Scale down images not centered. */
 	transform: scale(0.8);
 
-	/* Get rid of blue focus border. The focus border is ugly but important for accessibility. As active states look different - i.e. change in opacity and size - think it's OK to get rid of it on this slider. 
+	/* Get rid of blue focus border. The focus border is ugly but important for accessibility. As active states look different - i.e. change in opacity and size - think it's OK to get rid of it on this slider.
 Good solution here ---> https://hackernoon.com/removing-that-ugly-focus-ring-and-keeping-it-too-6c8727fefcd2 */
 
 	outline: none;

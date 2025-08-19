@@ -379,8 +379,6 @@
                                             {{ $showtime->end_time->format('H:i') }}
                                         </small>
                                     </div>
-                                    <span class="badge bg-warning text-dark fw-bold">{{ number_format($showtime->price,
-                                        0, '.', '.') }}đ</span>
                                 </div>
                                 @endforeach
                             </div>
@@ -863,6 +861,8 @@
         // dayli chart
         const stats = $bookingStatByDate;
         const labels = Object.keys(stats);
+        console.log(labels);
+        
         const paid = labels.map(d => stats[d].paid);
         const cancelled = labels.map(d => stats[d].cancelled);
         const totalRevenue = labels.map(d => stats[d].totalRevenue || 0);
@@ -1160,6 +1160,11 @@
                 chartInstances.dailyChart.updateOptions(optionsDailyChart);
                 chartInstances.showtimeChart.updateOptions(optionsShowtimeChart);
                 chartInstances.checkinChart.updateOptions(optionsCheckinChart);
+                chartInstances.dailyChart.updateOptions({
+                    xaxis: {
+                        categories: labels
+                    }
+                });
             }else{
                 const dailyChartEl = document.querySelector("#dailyChart");
                 const showtimeChartEl = document.querySelector("#showtimeChart");

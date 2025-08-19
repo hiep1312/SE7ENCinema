@@ -62,8 +62,8 @@ use App\Livewire\Client\SelectSeats;
 use App\Livewire\Client\SelectFood;
 use App\Livewire\Client\ConfirmBooking;
 use App\Livewire\Payment\VnpayPayment;
-// use App\Livewire\Booking\BookingFood;
-use App\Livewire\Client\Bookings\BookingFood;
+use App\Livewire\Booking\BookingFood;
+// use App\Livewire\Client\Bookings\BookingFood;
 use App\Livewire\Client\Bookings\BookingPayment;
 use App\Livewire\Client\User\BookingDetail as UserBookingDetail;
 
@@ -245,10 +245,10 @@ Route::name('client.')->group(function () {
     Route::view('/faq', 'livewire.client.template.abouts.faq')->name('faq');
 
     /* Bookings */
-    Route::prefix('/booking')->name('booking.')->group(function () {
+    /* Route::prefix('/booking')->name('booking.')->group(function () {
         Route::get('/food', BookingFood::class)->name('food');
         Route::get('/payment', BookingPayment::class)->name('payment');
-    });
+    }); */
 });
 
 // Route::view('/admintest', 'clienttest')->name('welcome');

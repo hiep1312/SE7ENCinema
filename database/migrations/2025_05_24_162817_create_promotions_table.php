@@ -18,10 +18,10 @@ return new class extends Migration
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->enum('discount_type', ['percentage', 'fixed_amount']);
-            $table->bigInteger('discount_value');
+            $table->unsignedBigInteger('discount_value');
             $table->string('code')->unique();
             $table->integer('usage_limit')->nullable();
-            $table->bigInteger('min_purchase')->default(0);
+            $table->unsignedBigInteger('min_purchase')->default(0);
             $table->enum('status', ['active', 'inactive', 'expired'])->default('active');
             $table->timestamps();
         });

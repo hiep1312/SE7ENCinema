@@ -36,7 +36,12 @@ class Booking extends Model
 
     public function seats()
     {
-        return $this->belongsToMany(Seat::class, 'booking_seats');
+        return $this->belongsToMany(Seat::class, 'booking_seats')->withPivot('ticket_price');
+    }
+
+    public function bookingSeats()
+    {
+        return $this->hasMany(BookingSeat::class);
     }
 
     public function promotionUsage()
@@ -47,5 +52,10 @@ class Booking extends Model
     public function foodOrderItems()
     {
         return $this->hasMany(FoodOrderItem::class);
+    }
+
+    protected function getTicketsAttribute()
+    {
+        return BookingSeat::with('ticket')->where('booking_id', $this->id)->get()->map(fn($bookingSeat) => $bookingSeat->ticket);
     }
 }
