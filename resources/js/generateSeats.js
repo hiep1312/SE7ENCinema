@@ -358,10 +358,11 @@ document.addEventListener("livewire:init", () => {
         const layout = qs("#seats-layout", frame);
         const alg = seat_algorithms || {};
         window.seatRuleConfig = {
-            lonely: !!alg.check_lonely,
-            sole: !!alg.check_sole,
-            diagonal: !!alg.check_diagonal
+            lonely: alg.check_lonely,
+            sole: alg.check_sole,
+            diagonal: alg.check_diagonal
         };
+
         const aislesCol = calcAisles(seatsPerRow);
         const aislesRow = calcAisles(rows);
         for (let i = 1; i <= rows; i++) {
@@ -445,7 +446,7 @@ document.addEventListener("livewire:init", () => {
                     data-held="${isHeld ? "true" : "false"}"
                     data-maintenance="${isMaint ? "true" : "false"}"
                     data-type="${isCouple ? "couple" : (isVip ? "vip" : "standard")}"
-            ${isChecked} ${disabled} wire:sc-model="noop">`);
+                    ${isChecked} ${disabled} wire:sc-model="noop">`);
                 li.dataset.seat = type;
                 if (isMaint) li.classList.add("seat-maintenance");
                 else if (isBooked) li.classList.add("seat-booked");
@@ -455,7 +456,6 @@ document.addEventListener("livewire:init", () => {
                 if (isBooked || isHeld) addSeatOverlay(li, sid, isBooked ? "booked" : "held");
                 ul.appendChild(li);
                 pushAisleIf(ul, aislesCol.includes(j + 1) && j < seatsPerRow, false);
-                if (isCouple) j++;
             }
             layout.appendChild(ul);
             if (aislesRow.includes(i + 2) && i < rows) {
@@ -463,6 +463,41 @@ document.addEventListener("livewire:init", () => {
                 layout.appendChild(r);
             }
         }
+
+          const legendHtml = `
+        <div class="seat-legend" style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; padding: 15px; background: rgba(0, 0, 0, 0.1); border-radius: 8px; magin-top:100px">
+           <div class="seat-legend-item d-flex align-items-center">
+             <div class="seat seat-standard me-2"></div>
+                <span class="text-light fw-bold">Ghế thường
+            </div>
+            <div class="seat-legend-item d-flex align-items-center">
+                <div class="seat seat-vip me-2"></div>
+                <span class="text-light fw-bold">Ghế VIP
+            </div>
+             <div class="seat-legend-item d-flex align-items-center">
+                <div class="seat seat-double me-2"></div>
+                <span class="text-light fw-bold">Ghế đôi
+            </div>
+            <div class="seat-item seat-held d-flex align-items-center">
+            <div class="seat-wrapper d-flex align-items-center">
+             <div class="seat seat-standard me-2"></div>
+                <span class="text-light fw-bold">Ghế đang giữ
+            </div>
+            </div>
+             <div class="seat-legend-item seat-booked d-flex align-items-center">
+             <div class="seat-wrapper d-flex align-items-center">
+             <div class="seat seat-standard me-2"></div>
+                <span class="text-light fw-bold">Ghế đã thanh toán
+            </div>
+            </div>
+             <div class="seat-legend-item d-flex align-items-center">
+             <div class="seat seat-standard seat-maintenance me-2"></div>
+                <span class="text-light fw-bold">Ghế bảo trì
+            </div>
+        </div>
+    `;
+
+    layout.insertAdjacentHTML('beforeend', legendHtml);
 
         function addSeatOverlay(parentLi, seatCode, type) {
             const input = qs("input", parentLi);
@@ -941,5 +976,6 @@ document.addEventListener("livewire:init", () => {
             Livewire.dispatch('schemaUpdated', [data]);
         }
     }
+
 
 });

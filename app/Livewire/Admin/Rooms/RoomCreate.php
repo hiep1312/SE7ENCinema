@@ -218,7 +218,12 @@ class RoomCreate extends Component
     {
         $this->validateOnly('vipArr.*');
         $this->validateOnly('coupleArr.*');
-        $this->dispatch('generateSeats', $this->rows, $this->seatsPerRow, $this->vipArr, $this->coupleArr, $this->seatAlgorithms);
+        $algorithms = [
+            'check_lonely' => (bool)($this->seatAlgorithms['check_lonely'] ?? false),
+            'check_sole' => (bool)($this->seatAlgorithms['check_sole'] ?? false),
+            'check_diagonal' => (bool)($this->seatAlgorithms['check_diagonal'] ?? false),
+        ];
+        $this->dispatch('generateSeats', $this->rows, $this->seatsPerRow, $this->vipArr, $this->coupleArr, $algorithms);
     }
 
 

@@ -103,11 +103,9 @@
 
 .seat-row-layout::before {
     content: attr(data-row);
-    position: absolute;
+    position: relative;
     margin-top: -10px;
     margin-left: 7px;
-    top: 100;
-    left: 0;
     font-size: 18px;
     color: rgba(255, 255, 255, 0.38);
     letter-spacing: 1px;
@@ -514,8 +512,12 @@
     margin-left: 5px;
 }
 
+.add-column-btn {
+    background: #028f0c;
+}
+
 .add-column-btn:hover {
-    background: #c82333;
+    background: #025a08;
 }
 
 .delete-row-btn:hover {

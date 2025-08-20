@@ -254,59 +254,39 @@ class SelectSeats extends Component
         $isBanned = $this->isBanned ? 'true' : 'false';
         $banInfo = $this->banInfo ? json_encode($this->banInfo) : 'null';
 
+        $seatAlgorithms = $this->room->seat_algorithms ?? [];
+
         $ruleConfig = json_encode([
-            'lonely' => $this->room->check_lonely ?? true,
-            'sole' => $this->room->check_sole ?? true,
-            'diagonal' => $this->room->check_diagonal ?? true,
+            'lonely' => $seatAlgorithms['check_lonely'] ?? true,
+            'sole' => $seatAlgorithms['check_sole'] ?? true,
+            'diagonal' => $seatAlgorithms['check_diagonal'] ?? true,
         ]);
 
         $this->js(<<<JS
-            window.seatRuleConfig = {$ruleConfig};
-            const wrapper = document.getElementById('user-seat-wrapper');
-            try {
-                wrapper.innerHTML = '';
-                const dom = window.generateClientDOMSeats({
-                    seats: {$seats},
-                    selectedSeats: {$selectedSeats},
-                    userId: {$userId},
-                    holdExpiresAt: {$holdExpiresAt},
-                    remainingSeconds: {$remainingSeconds},
-                    isBanned: {$isBanned},
-                    banInfo: {$banInfo}
-                });
-                wrapper.appendChild(dom);
-                console.log('Seats generated successfully');
-            } catch (error) {
-                console.error('Error generating seats:', error);
-            }
-        JS);
+        window.seatRuleConfig = {$ruleConfig};
+        const wrapper = document.getElementById('user-seat-wrapper');
+        try {
+            wrapper.innerHTML = '';
+            const dom = window.generateClientDOMSeats({
+                seats: {$seats},
+                selectedSeats: {$selectedSeats},
+                userId: {$userId},
+                holdExpiresAt: {$holdExpiresAt},
+                remainingSeconds: {$remainingSeconds},
+                isBanned: {$isBanned},
+                banInfo: {$banInfo}
+            });
+            wrapper.appendChild(dom);
+            console.log('Seats generated successfully');
+        } catch (error) {
+            console.error('Error generating seats:', error);
+        }
+    JS);
     }
+
 
     public function goToSelectFood()
     {
-        if ($this->isBanned) {
-            $this->dispatch('sc-alert.error', $this->banInfo['reason'], $this->banInfo['details']);
-            return;
-        }
-
-        if (!$this->userId) {
-            $this->dispatch('sc-alert.error', 'Chưa đăng nhập', 'Vui lòng đăng nhập để tiếp tục.');
-            return;
-        }
-
-        if (empty($this->selectedSeats)) {
-            $this->dispatch('sc-alert.error', 'Chưa chọn ghế', 'Vui lòng chọn ít nhất một ghế.');
-            return;
-        }
-
-        if (!$this->holdExpiresAt || $this->seatHoldService->isHoldExpired($this->holdExpiresAt)) {
-            $this->dispatch('sc-alert.error', 'Hết thời gian giữ ghế', 'Thời gian giữ ghế đã hết. Vui lòng chọn lại ghế.');
-            $this->handleExpiredHold();
-            $this->loadSeats();
-            $this->generateSeatsLayout();
-            return;
-        }
-
         DB::beginTransaction();
         try {
             $seatIds = $this->getSeatIdsFromCodes($this->selectedSeats);
@@ -325,6 +305,8 @@ class SelectSeats extends Component
                 return;
             }
 
+            $moviePrice = $this->showtime->price;
+
             $booking = Booking::create([
                 'user_id' => $this->userId,
                 'showtime_id' => $this->showtime_id,
@@ -335,24 +317,21 @@ class SelectSeats extends Component
             ]);
 
             foreach ($seatIds as $seatId) {
+                $seat = Seat::find($seatId);
+                $seatPrice = $seat->price;
+
+                $ticketPrice = $seatPrice + $moviePrice;
+
                 BookingSeat::create([
                     'booking_id' => $booking->id,
                     'seat_id' => $seatId,
+                    'ticket_price' => $ticketPrice,
                 ]);
             }
-
-            $totalPrice = BookingSeat::where('booking_id', $booking->id)
-                ->with('seat')
-                ->get()
-                ->sum(fn($item) => $item->seat->price ?? 0);
-
-            $booking->update(['total_price' => $totalPrice]);
-
+            $booking->save();
             DB::commit();
-
             return redirect()->route('client.booking.select_food', [
                 'booking_id' => $booking->id,
-                'total_price_seats' => $totalPrice,
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -361,6 +340,7 @@ class SelectSeats extends Component
             $this->generateSeatsLayout();
         }
     }
+
 
     public function noop() {}
 
