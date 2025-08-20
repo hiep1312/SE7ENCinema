@@ -15,11 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->integer('capacity');
+            $table->string('seat_algorithms')->default('{"check_lonely":true,"check_sole":true,"check_diagonal":true}');
             $table->enum('status', ['active', 'maintenance', 'inactive'])->default('active');
             $table->date('last_maintenance_date')->nullable();
-            $table->boolean('check_lonely')->default(true);
-            $table->boolean('check_sole')->default(true);
-            $table->boolean('check_diagonal')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });

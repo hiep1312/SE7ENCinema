@@ -57,6 +57,7 @@ class FoodVariantCreate extends Component
         'generatedVariants.*.image.image' => 'Ảnh biến thể phải là định dạng ảnh hợp lệ.',
         'generatedVariants.*.image.max' => 'Kích thước ảnh biến thể không được vượt quá 1MB.',
     ];
+    
 
     public function addAttribute()
     {

@@ -143,7 +143,7 @@
                                             </div>
                                         </div>
                                         <div class="selected-items">
-                                            <h3>Đã chọn <span id="selectedCount">{{ count($usersSelected) }}</span>/{{ $users->count() }} người dùng:</h3>
+                                            <h3>Đã chọn <span id="selectedCount">{{ count($usersSelected) }}</span>/{{ $totalUsers }} người dùng:</h3>
                                             <div class="selected-tags" id="selectedTags">
                                                 @forelse($usersSelected as $userId)
                                                     <div class="tag">

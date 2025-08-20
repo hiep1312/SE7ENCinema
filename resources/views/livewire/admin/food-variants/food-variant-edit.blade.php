@@ -96,13 +96,20 @@
 
                             <div class="col-md-6 mb-3">
                                 <label class="form-label text-light">Giá <span class="text-danger">*</span></label>
-                                <input type="number" wire:model.defer="price"
+                                <input type="text" x-data
+                                    x-on:input="
+                                      let raw = $el.value.replace(/\D/g, '');
+                                      $el.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                                      $wire.set('price', raw);
+                                      "
+                                    value="{{ isset($price) && is_numeric($price) ? number_format((float) $price, 0, ',', '.') : '' }}"
                                     class="form-control bg-dark text-light border-secondary @error('price') is-invalid @enderror"
-                                    placeholder="VD: 25000" min="0">
+                                    placeholder="VD: 25.000">
                                 @error('price')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
 
                             <div class="col-md-6 mb-3">
                                 <label class="form-label text-light">Số lượng <span class="text-danger">*</span></label>

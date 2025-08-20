@@ -3,15 +3,11 @@
 namespace App\Livewire\Client\User;
 
 use App\Models\User;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\Booking;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use App\Models\BookingSeat;
 use Livewire\WithPagination;
 
 class BookingDetail extends Component

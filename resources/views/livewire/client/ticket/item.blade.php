@@ -25,7 +25,7 @@
         <button class="control-btn print" onclick="window.print()" title="In vé">
             <i class="fas fa-print"></i>
         </button>
-        <a class="control-btn open d-none" href="{{ route('client.ticket', [$booking->booking_code, $bookingSeat->ticket->getCurrentIndex()]) }}" title="Chi tiết vé">
+        <a class="control-btn open d-none" href="{{ route('client.ticket', [$booking->booking_code, $bookingSeat->ticket->currentIndex]) }}" title="Chi tiết vé">
             <i class="fas fa-external-link-alt"></i>
         </a>
         <button class="control-btn settings-btn" onclick="toggleSettings({{ $bookingSeat->id }})" title="Cài đặt vé" wire:ignore.self>

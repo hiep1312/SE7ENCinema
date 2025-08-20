@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('booking_id')->constrained()->onDelete('cascade');
             $table->foreignId('food_variant_id')->constrained()->onDelete('cascade');
             $table->integer('quantity')->default(1);
-            $table->bigInteger('price')->default(0);
+            $table->unsignedBigInteger('price');
             $table->timestamps();
         });
     }

@@ -37,7 +37,7 @@ class FoodVariant extends Model
         return $this->hasMany(FoodOrderItem::class);
     }
 
-    public function variantAttributes(bool $returnRecords = false){
+    public function variantAttributes(bool $returnRecords = true){
         $queryData = DB::table('food_variants as fv')
             ->join('food_variant_attribute_values as fvav', 'fvav.food_variant_id', '=', 'fv.id')
             ->join('food_attribute_values as fav', 'fav.id', '=', 'fvav.food_attribute_value_id')
@@ -51,5 +51,9 @@ class FoodVariant extends Model
 
     public static function getAttributesByVariantId(int|string $variantId, bool $returnRecords = false){
         return self::find($variantId)?->variantAttributes($returnRecords);
+    }
+
+    protected function getVariantAttributesAttribute(){
+        return $this->variantAttributes(false);
     }
 }

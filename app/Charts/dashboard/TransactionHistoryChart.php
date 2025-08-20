@@ -12,22 +12,21 @@ class TransactionHistoryChart {
         /* Viết truy vấn CSDL tại đây */
         $startDate = now()->subDays(6)->startOfDay();
         $endDate = now()->endOfDay();
-         $data = Booking::select('payment_method', DB::raw('COUNT(*) as transaction_count'))
-            ->where('status', 'paid')
+         $data = Booking::select('status', DB::raw('COUNT(*) as transaction_count'))
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->groupBy('payment_method')
+            ->groupBy('status')
             ->get();
 
-        $paymentMethodLabels = [
-            'credit_card' => 'Thẻ tín dụng',
-            'e_wallet' => 'Ví điện tử',
-            'cash' => 'Tiền mặt',
-            'bank_transfer' => 'Chuyển khoản ngân hàng',
+        $statusLabels = [
+            'pending' => 'Đang chờ xử lý',
+            'paid' => 'Đã thanh toán',
+            'expired' => 'Đã hết hạn',
+            'failed' => 'Lỗi thanh toán',
         ];
 
         $chartData = [];
         foreach ($data as $item) {
-            $label = $paymentMethodLabels[$item->payment_method] ?? ucfirst(str_replace('_', ' ', $item->payment_method));
+            $label = $statusLabels[$item->status] ?? ucfirst(str_replace('_', ' ', $item->status));
             $chartData[] = [
                 'name' => $label,
                 'value' => (int) $item->transaction_count,
@@ -152,10 +151,10 @@ class TransactionHistoryChart {
                     const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0) || 1;
                     const pct = Math.round((value / total) * 100);
                     const iconMap = {
-                        'Thẻ tín dụng': '💳',
-                        'Ví điện tử': '📱',
-                        'Tiền mặt': '💵',
-                        'Chuyển khoản ngân hàng': '🏦'
+                        'Đang chờ xử lý': '⏳',
+                        'Đã thanh toán': '✅',
+                        'Đã hết hạn': '⚠️',
+                        'Lỗi thanh toán': '❌'
                     };
                     const icon = iconMap[name] || '💠';
                     return '<div style="padding:12px;background:rgba(0,0,0,0.95);border-radius:8px;min-width:220px;">' +

@@ -337,6 +337,7 @@ class SelectSeats extends Component
                 BookingSeat::create([
                     'booking_id' => $booking->id,
                     'seat_id' => $seatId,
+                    'ticket_price' => 0,
                 ]);
             }
 

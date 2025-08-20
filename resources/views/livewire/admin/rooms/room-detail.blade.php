@@ -1,4 +1,4 @@
-<div class="scRender">
+<div class="scRender scSeat">
     <div class="container-lg mb-4" wire:poll.1s="calculateMaintenanceInfo">
         <!-- Thêm button test ngay sau header -->
         <div class="d-flex justify-content-between align-items-center my-3">
@@ -1159,8 +1159,6 @@
                                                         {{ $showtime->end_time->format('H:i') }}
                                                     </small>
                                                 </div>
-                                                <span
-                                                    class="badge bg-warning text-dark fw-bold">{{ number_format($showtime->price, 0, '.', '.') }}đ</span>
                                             </div>
                                         @endforeach
                                     </div>

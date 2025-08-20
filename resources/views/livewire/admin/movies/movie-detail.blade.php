@@ -379,8 +379,6 @@
                                             {{ $showtime->end_time->format('H:i') }}
                                         </small>
                                     </div>
-                                    <span class="badge bg-warning text-dark fw-bold">{{ number_format($showtime->price,
-                                        0, '.', '.') }}đ</span>
                                 </div>
                                 @endforeach
                             </div>

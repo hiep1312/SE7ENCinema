@@ -59,7 +59,7 @@
       <span class="nav-link">Điều hướng</span>
     </li>
     <li class="nav-item menu-items">
-      <a class="nav-link" href="{{ route('admin.dashboard') }}">
+      <a class="nav-link" href="{{ route('admin.dashboards.index') }}">
         <span class="menu-icon">
           <i class="mdi mdi-speedometer"></i>
         </span>

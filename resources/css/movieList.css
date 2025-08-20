@@ -200,6 +200,39 @@
     outline-offset: 1px !important;
 }
 
+.ICON ul{
+    margin-top: -45px;
+}
+
+/* .title-category{
+   margin-top: -40px;
+} */
+
+.title-top-event{
+    margin-top: -10px;
+}
+.title-top-event span i{
+    color: #ff4444;
+}
+
+.prs_upcom_movie_img_btn_wrapper li{
+    margin-left: -30px;
+}
+
+.title-category ul{
+    margin-left: -40px;
+}
+.title-category ul li a{
+    padding-left: 10px;
+}
+
+.booking-button-container a:hover{
+    background-color: #1781d7;
+    color: black;
+    border: none;
+    transition: all 0.3s ease;
+}
+
 /* Print styles */
 @media print {
     .badge-age {
@@ -235,7 +268,6 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     transition: all 0.18s cubic-bezier(.4, 0, .2, 1);
     cursor: pointer;
-    user-select: none;
 }
 
 .sc-page--arrow {
@@ -298,5 +330,11 @@
 
     100% {
         left: -3836px;
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1600px) {
+    .container {
+        width: 100%;
     }
 }

@@ -136,26 +136,16 @@
                                             </small>
                                         </div>
 
-                                        <div class="mb-1">
-                                            <i class="fas fa-money-bill me-1 text-warning"></i>
-                                            <span class="text-warning">
-                                                {{ number_format($booking->showtime->price, 0, '.', '.') }}đ
-                                            </span>
-                                        </div>
-
                                         @switch($booking->showtime->status)
-                                        @case('active')
-                                        <div class="badge bg-primary mb-1"><i
-                                                class="fa-solid fa-clapperboard-play me-1"></i>Đang hoạt động</div>
-                                        @break
-                                        @case('completed')
-                                        <div class="badge bg-success mb-1"><i
-                                                class="fa-solid fa-calendar-check me-1"></i>Đã hoàn thành</div>
-                                        @break
-                                        @case('canceled')
-                                        <div class="badge bg-danger mb-1"><i
-                                                class="fa-solid fa-hexagon-xmark me-1"></i>Đã bị hủy</div>
-                                        @break
+                                            @case('active')
+                                                <div class="badge bg-primary mb-1"><i class="fa-solid fa-clapperboard-play me-1"></i>Đang hoạt động</div>
+                                                @break
+                                            @case('completed')
+                                                <div class="badge bg-success mb-1"><i class="fa-solid fa-calendar-check me-1"></i>Đã hoàn thành</div>
+                                                @break
+                                            @case('canceled')
+                                                <div class="badge bg-danger mb-1"><i class="fa-solid fa-hexagon-xmark me-1"></i>Đã bị hủy</div>
+                                                @break
                                         @endswitch
 
                                         <div>

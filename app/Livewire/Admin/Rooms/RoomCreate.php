@@ -43,6 +43,11 @@ class RoomCreate extends Component
             'priceCouple' => 'numeric|min:0|gt:priceStandard' . ($this->coupleRows ? '|required' : '|nullable'),
         ];
 
+
+        if(!empty($this->vipArr)) $rules['coupleArr.*'] .= "|not_in:" . implode("," , $this->vipArr);
+        if(!empty($this->coupleArr)) $rules['vipArr.*'] .= "|not_in:" . implode(",", $this->coupleArr);
+
+    //    dd($this->vipArr , $this->coupleArr , $rules);
         return $rules;
     }
 
@@ -58,8 +63,10 @@ class RoomCreate extends Component
         'seatsPerRow.max' => 'Số ghế mỗi hàng tối đa là 30',
         'vipArr.*.string' => 'Mỗi giá trị trong danh sách hàng ghế VIP phải là một chuỗi ký tự.',
         'vipArr.*.distinct' => 'Danh sách hàng ghế VIP không được chứa các giá trị trùng lặp.',
+        'vipArr.*.not_in' => 'Danh sách hàng ghế VIP không được chứa các hàng đã thuộc ghế đôi.',
         'coupleArr.*.string' => 'Mỗi giá trị trong danh sách hàng ghế đôi phải là một chuỗi ký tự.',
         'coupleArr.*.distinct' => 'Danh sách hàng ghế đôi không được chứa các giá trị trùng lặp.',
+        'coupleArr.*.not_in' => 'Danh sách hàng ghế đôi không được chứa các hàng đã thuộc ghế VIP.',
         'priceStandard.required' => 'Giá ghế thường là bắt buộc',
         'priceStandard.numeric' => 'Giá ghế thường phải là một số.',
         'priceStandard.min' => 'Giá ghế thường tối thiểu là 0 VNĐ',
@@ -78,7 +85,7 @@ class RoomCreate extends Component
         if($property === 'formattedPriceStandard' || $property === 'formattedPriceVip' || $property === 'formattedPriceCouple')
             $this->{lcfirst(strstr($property, 'Price'))} = str_replace([',', '.'], '', $this->{$property});
         elseif($property === 'vipRows' || $property === 'coupleRows')
-            $this->{str_replace('Rows', 'Arr', $property)} = array_map(fn($row) => trim($row), $this->{$property} ? explode(',', $this->{$property}) : []);
+            $this->{str_replace('Rows', 'Arr', $property)} = array_map(fn($row) => strtoupper(trim($row)), $this->{$property} ? explode(',', $this->{$property}) : []);
     }
 
     public function updatedTemp()
@@ -90,20 +97,11 @@ class RoomCreate extends Component
     {
         $this->validate();
 
-        if(collect($this->vipArr)->some(fn($row) => in_array($row, $this->coupleArr)) || collect($this->coupleArr)->some(fn($row) => in_array($row, $this->vipArr))){
-            $this->addError('vipArr.*', 'Danh sách hàng ghế VIP không được chứa các hàng đã thuộc ghế đôi.');
-            $this->addError('coupleArr.*', 'Danh sách hàng ghế đôi không được chứa các hàng đã thuộc ghế VIP.');
-            return;
-        }
-
         try {
             $room = Room::create([
                 'name' => $this->name,
                 'capacity' => $this->rows * $this->seatsPerRow,
                 'status' => $this->status,
-                'check_lonely' => $this->checkLonely,
-                'check_sole' => $this->checkSole,
-                'check_diagonal' => $this->checkDiagonal,
             ]);
 
             $vipRows = collect(explode(',', strtoupper($this->vipRows)))->map(fn($v) => trim($v))->filter();
@@ -148,13 +146,6 @@ class RoomCreate extends Component
     {
         $this->validateOnly('vipArr.*');
         $this->validateOnly('coupleArr.*');
-
-        if(collect($this->vipArr)->some(fn($row) => in_array($row, $this->coupleArr)) || collect($this->coupleArr)->some(fn($row) => in_array($row, $this->vipArr))){
-            $this->addError('vipArr.*', 'Danh sách hàng ghế VIP không được chứa các hàng đã thuộc ghế đôi.');
-            $this->addError('coupleArr.*', 'Danh sách hàng ghế đôi không được chứa các hàng đã thuộc ghế VIP.');
-            return;
-        }
-
         $this->dispatch('generateSeats', $this->rows, $this->seatsPerRow, $this->vipArr, $this->coupleArr, $this->checkLonely, $this->checkSole, $this->checkDiagonal);
     }
 

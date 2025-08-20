@@ -15,7 +15,10 @@ class ShowtimeSeeder extends Seeder
      */
     public function run(): void
     {
-        $movies = Movie::where('status', 'showing')->pluck('id')->toArray();
+        /* Rải rác từ 2 tuần cho đến tháng sau | Mỗi suất chiếu không bị phòng và thời gian */
+        /* Mỗi suất chiếu mỗi phòng phải cách nhau 10 phút */
+
+        /* $movies = Movie::where('status', 'showing')->pluck('id')->toArray();
         $rooms = Room::where('status', 'active')->pluck('id')->toArray();
 
         foreach (range(1, 60) as $i) {
@@ -30,6 +33,6 @@ class ShowtimeSeeder extends Seeder
                 'end_time' => $end,
                 'status' => $end > now() ? 'active' : 'completed',
             ]);
-        }
+        } */
     }
 }

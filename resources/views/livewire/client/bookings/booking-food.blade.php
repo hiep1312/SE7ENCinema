@@ -1,7 +1,8 @@
 @assets
     @vite('resources/css/bookingFood.css')
+    @vite('resources/js/foodSelection.js')
 @endassets
-<div class="scRender scBookingFood" style="clear: both;">
+<div class="scRender scBookingFood" style="clear: both;" wire:poll.6s>
     <div class="booking-food-header text-light py-3">
         <div class="container-lg">
             <div class="row align-items-center g-1">
@@ -103,26 +104,25 @@
                     </h4>
                     <div class="row">
                         @forelse($foodItems as $foodItem)
-                            <div class="col-sm-6 mb-4">
-                                <div class="booking-food-item-card">
-                                    <img src="{{ asset('storage/404.webp') }}" alt="Bắp rang bơ" class="booking-food-item-image">
+                            <div class="col-sm-6 mb-4" wire:key="food-item-{{ $foodItem->id }}">
+                                <div class="booking-food-item-card" data-food-id="{{ $foodItem->id }}" wire:ignore.self>
+                                    <img src="{{ asset("storage/" . ($foodItem->image ?? '404.webp')) }}" alt="Ảnh đồ ăn & thức uống {{ $foodItem->name }}" class="booking-food-item-image">
                                     <div class="booking-food-item-content">
                                         <h5 class="booking-food-item-name">{{ $foodItem->name }}</h5>
                                         <p class="booking-food-item-desc">{{ Str::limit($foodItem->description, 100, '...') }}</p>
 
-                                        @php $foodVariants = $foodItem->getAllVariants(true); @endphp
-                                        {{-- @foreach($foodItem->)
-                                            <div class="booking-food-variant-group">
+                                        @foreach($foodItem->attributes as $foodAttribute)
+                                            <div class="booking-food-variant-group" data-attribute="{{ $foodAttribute->name }}" wire:key="food-attribute-{{ $foodAttribute->id }}" wire:ignore.self>
                                                 <label class="booking-food-variant-label">{{ $foodAttribute->name }}:</label>
                                                 <div class="booking-food-variant-options">
-                                                @foreach ($foodAttribute->values as $foodAttributeValue)
-                                                    <div class="booking-food-variant">{{ $foodAttributeValue->value }}</div>
-                                                @endforeach
+                                                    @foreach ($foodAttribute->values as $foodAttributeValue)
+                                                        <div class="booking-food-variant" data-value="{{ $foodAttributeValue->value }}" onclick="selectVariant(event)" wire:key="food-attribute-value-{{ $foodAttributeValue->id }}" wire:ignore.self>{{ $foodAttributeValue->value }}</div>
+                                                    @endforeach
                                                 </div>
                                             </div>
-                                        @endforeach --}}
+                                        @endforeach
 
-                                        <div class="booking-food-base-price">
+                                        {{-- <div class="booking-food-base-price">
                                             Giá cơ bản: <span class="booking-food-price-value" data-base-price="45000"></span>
                                         </div>
                                         <div class="booking-food-final-price">
@@ -140,7 +140,7 @@
                                             <button class="booking-food-add-more-btn" onclick="scrollToFoodMenu()">
                                                 <i class="fas fa-plus me-1"></i>Thêm
                                             </button>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                 </div>
                             </div>
