@@ -1,13 +1,13 @@
-<div>
+<div class="scRender">
     @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert" wire:ignore>
+        <div class="alert alert-success alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
             {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
     @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert" wire:ignore>
+        <div class="alert alert-danger alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
             {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -90,21 +90,36 @@
                                     <td class="text-center fw-bold">{{ $loop->iteration }}</td>
                                     <td class="text-info fw-bold">{{ $variant->foodItem->name ?? 'N/A' }}</td>
                                     <td class="text-center">
-                                        <div class="mt-1 overflow-auto d-inline-block"
-                                            style="max-height: 70px; width: 80px;">
-                                            <img src="{{ asset('storage/' . ($variant->image ?? '404.webp')) }}"
-                                                alt="Ảnh sản phẩm {{ $variant->name }}" class="rounded"
-                                                style="width: 100%; height: auto;">
+                                        <div class="d-flex justify-content-center">
+                                            <div class="food-image">
+                                                @if($variant->image)
+                                                    <img src="{{ asset('storage/' . $variant->image) }}"
+                                                        alt="Ảnh món ăn {{ $variant->name }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
+                                                @else
+                                                    <i class="fa-solid fa-bowl-food"></i>
+                                                @endif
+                                            </div>
                                         </div>
                                     </td>
-                                    <td class="text-light">
-                                        <strong>{{ $variant->name }}</strong>
-                                        @if ($variant->trashed())
-                                            <span class="badge bg-danger ms-1">Đã xóa</span>
-                                        @endif
+                                    <td class="text-center" style="max-width: 410px;">
+                                        <div class="text-light text-wrap lh-base">
+                                            <strong>{{ $variant->foodItem->name ?? '' }}</strong>
+                                            @if ($variant->attributeValues->count())
+                                                –
+                                                @foreach ($variant->attributeValues as $attr)
+                                                    {{ $attr->attribute->name }} {{ $attr->value }}@if (!$loop->last)
+                                                        ,
+                                                    @endif
+                                                @endforeach
+                                            @else
+                                                <span class="text-muted">(Chưa có thuộc tính)</span>
+                                            @endif
+                                        </div>
                                     </td>
-                                    <td class="text-center text-warning">{{ number_format($variant->price, 0, ',', '.') }}đ</td>
-                                    <td class="text-center text-light">{{ number_format($variant->quantity_available, 0, ',', '.') }}</td>
+                                    <td class="text-center text-warning">
+                                        {{ number_format($variant->price, 0, ',', '.') }}đ</td>
+                                    <td class="text-center text-light">
+                                        {{ number_format($variant->quantity_available, 0, ',', '.') }}</td>
                                     <td class="text-center text-center">
                                         @if (!$showDeleted && !$variant->trashed())
                                             @switch($variant->status)
@@ -123,7 +138,6 @@
                                         @else
                                             <span class="badge bg-secondary">Đã xóa</span>
                                         @endif
-
                                     </td>
                                     <td class="text-center">
                                         @if ($showDeleted)
@@ -170,23 +184,23 @@
                                         @endif
                                     </td>
                                 </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="9" class="text-center py-4">
-                                            <div class="text-muted">
-                                                <i class="fas fa-inbox fa-3x mb-3"></i>
-                                                <p>Không có biến thể nào</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="mt-3">
-                        {{ $foodVariants->links() }}
-                    </div>
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="text-center py-4">
+                                        <div class="text-muted">
+                                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                                            <p>Không có biến thể nào</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-3">
+                    {{ $foodVariants->links() }}
                 </div>
             </div>
         </div>
     </div>
+</div>

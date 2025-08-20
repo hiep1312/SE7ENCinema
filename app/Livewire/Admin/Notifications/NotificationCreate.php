@@ -72,6 +72,7 @@ class NotificationCreate extends Component
             $query->whereLike('name', '%' . trim($this->searchUser) . '%')
                 ->orWhereLike('email', '%' . trim($this->searchUser) . '%');
         })->get();
-        return view('livewire.admin.notifications.notification-create', compact('users'));
+        $totalUsers = User::count();
+        return view('livewire.admin.notifications.notification-create', compact('users', 'totalUsers'));
     }
 }

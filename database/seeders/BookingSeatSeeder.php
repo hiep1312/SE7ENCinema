@@ -15,6 +15,9 @@ class BookingSeatSeeder extends Seeder
      */
     public function run(): void
     {
+        /* Tạo bản ghi tùy theo số lượng booking_seats tạo ra */
+        /* ticket_price | movie + seat  */
+
         $seats = Seat::all();
 
         Booking::all()->each(function ($booking) use ($seats) {

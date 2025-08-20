@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('seat_id')->constrained()->onDelete('cascade');
             $table->foreignId('booking_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('ticket_price');
         });
     }
 

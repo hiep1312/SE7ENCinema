@@ -1,3 +1,13 @@
+@assets
+<style>
+    .time-slot::before {
+        content: "●";
+        color: #10b981;
+        margin-right: 8px;
+    }
+</style>
+@endassets
+@use("Carbon\Carbon")
 <div class="scRender">
     @if (session()->has('success'))
         <div class="alert alert-success alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
@@ -49,16 +59,14 @@
                         </select>
                     </div>
 
-                    <!-- Lọc theo giá tiền -->
-                    <div class="col-md-8 col-xl-5 mb-2 mb-md-0 d-flex align-items-center gap-2">
-                        <span id="lowerValue" x-text="$wire.priceFilter[0].toLocaleString('vi-VN') + 'đ'"></span>
-                        <div class="dual-range">
-                            <div class="range-track"></div>
-                            <div class="range-fill" id="rangeFill" wire:ignore.self></div>
-                            <input type="range" class="range-input lower" id="lowerRange" min="{{ $rangePrice[0] }}" max="{{ $rangePrice[1] }}" value="{{ $priceFilter[0] }}" wire:input="$js.updateSlider">
-                            <input type="range" class="range-input upper" id="upperRange" min="{{ $rangePrice[0] }}" max="{{ $rangePrice[1] }}" value="{{ $priceFilter[1] }}" wire:input="$js.updateSlider">
-                        </div>
-                        <span id="upperValue" x-text="$wire.priceFilter[1].toLocaleString('vi-VN') + 'đ'"></span>
+                    <!-- Lọc theo phương thức thanh toán -->
+                    <div class="col-md-3 col-lg-2">
+                        <select wire:model.live="sortByDate" class="form-select bg-dark text-light">
+                            <option disabled>Sắp xếp theo thời gian</option>
+                            <option value="">Mới nhất</option>
+                            <option value="7">7 ngày trước</option>
+                            <option value="30">30 ngày trước</option>
+                        </select>
                     </div>
 
                     <!-- Reset filters -->
@@ -71,7 +79,121 @@
             </div>
 
             <div class="card-body bg-dark">
-                <div class="table-responsive">
+                @foreach($showtimes as $date => $movies)
+                    <div class="date-info fw-bold mb-3" wire:key="date-{{ $date }}">
+                        {{ ucfirst(Carbon::parse($date)->translatedFormat('l, d/m/Y')) }} ({{ (clone $movies)->flatten()->count() }} suất chiếu - {{ $movies->count() }} phim)
+                    </div>
+                    @foreach ($movies as $movieId => $showtimes)
+                        <div class="movie-card border rounded p-3 mb-3" wire:key="movie-{{ $movieId }}">
+                            <div class="row">
+                                @php $movie = $showtimes->first()->movie; @endphp
+                                <div class="col-lg-4" data-bs-toggle="collapse" data-bs-target="#data-{{ $date }}" style="cursor: pointer;">
+                                    <div class="d-flex">
+                                        <div class="movie-poster">
+                                            @if($movie->poster)
+                                                <img src="{{ asset('storage/' . $movie->poster) }}"
+                                                    alt="Ảnh phim {{ $movie->title }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
+                                            @else
+                                                <i class="fas fa-film" style="font-size: 22px;"></i>
+                                            @endif
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h3 class="movie-title">{{ $movie->title }}</h3>
+                                            <div class="movie-genre" style="margin-bottom: 0; margin-top: 3px;">
+                                                <i class="fas fa-tags me-1"></i>
+                                                {{ $movie->genres->take(1)->implode('name', ', ') ?: 'Không có thể loại' }} • {{ $movie->duration }} phút
+                                            </div>
+                                            <div class="d-flex align-items-center mt-1">
+                                                <span class="badge text-secondary">{{ $showtimes->count() }} suất chiếu</span>
+                                                <div class="badge bg-warning text-dark px-2 py-1"
+                                                    style="font-size: 0.8rem; font-weight: 600;">
+                                                    {{ $movie->age_restriction }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-8 mt-3 mt-lg-0 collapse" id="data-{{ $date }}" wire:ignore.self>
+                                    <div class="table-responsive">
+                                        <table class="table table-dark table-hover mb-0">
+                                            <thead>
+                                                <tr style="border-color: #3a3d4a;">
+                                                    <th class="text-center" style="width: 60px;">STT</th>
+                                                    <th class="text-center">Phòng chiếu</th>
+                                                    <th class="text-center">Thời gian</th>
+                                                    <th class="text-center">Trạng thái</th>
+                                                    <th class="text-center" style="width: 100px;">Hành động</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($showtimes as $showtime)
+                                                    <tr style="border-color: #3a3d4a;">
+                                                        <td class="text-center">{{ $loop->iteration }}</td>
+                                                        <td class="text-center"><strong>{{ $showtime->room->name }}</strong></td>
+                                                        <td class="text-center">
+                                                            <span class="time-slot">{{ $showtime->start_time->format('H:i') }} - {{ $showtime->end_time->format('H:i') }}</span>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            @switch($showtime->status)
+                                                                @case('active')
+                                                                    <span class="badge bg-primary">Đang hoạt động</span>
+                                                                    @break
+                                                                @case('completed')
+                                                                    <span class="badge bg-success">Đã hoàn thành</span>
+                                                                    @break
+                                                                @case('canceled')
+                                                                    <span class="badge bg-danger">Đã bị hủy</span>
+                                                                    @break
+                                                            @endswitch
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex gap-2 justify-content-center">
+                                                                @if($showtime->status !== "completed" && $showtime->start_time->isFuture())
+                                                                    <a href="{{ route('admin.showtimes.edit', $showtime->id) }}"
+                                                                        class="btn btn-sm btn-warning"
+                                                                        title="Chỉnh sửa">
+                                                                        <i class="fas fa-edit" style="margin-right: 0"></i>
+                                                                    </a>
+                                                                @else
+                                                                    <button type="button"
+                                                                            class="btn btn-sm btn-warning"
+                                                                            wire:sc-alert.error="Không thể chỉnh sửa suất chiếu đang chiếu hoặc đã hoàn thành!"
+                                                                            wire:sc-model
+                                                                            title="Chỉnh sửa">
+                                                                        <i class="fas fa-edit" style="margin-right: 0"></i>
+                                                                    </button>
+                                                                @endif
+                                                                @if($showtime->isLockedForDeletion())
+                                                                    <button type="button"
+                                                                            class="btn btn-sm btn-danger"
+                                                                            wire:sc-alert.error="Không thể xóa suất chiếu sẽ diễn ra trong vòng 1 giờ tới hoặc đang diễn ra, hoặc đã có người đặt vé!"
+                                                                            wire:sc-model
+                                                                            title="Xóa">
+                                                                        <i class="fas fa-trash" style="margin-right: 0"></i>
+                                                                    </button>
+                                                                @else
+                                                                    <button type="button"
+                                                                            class="btn btn-sm btn-danger"
+                                                                            wire:sc-model="deleteShowtime({{ $showtime->id }})"
+                                                                            wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa suất chiếu '{{ $showtime->start_time->format('d/m/Y H:i') }} - {{ $showtime->end_time->format('H:i') }}'?"
+                                                                            title="Xóa">
+                                                                        <i class="fas fa-trash" style="margin-right: 0"></i>
+                                                                    </button>
+                                                                @endif
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                @endforeach
+                {{-- <div class="table-responsive">
                     <table class="table table-dark table-striped table-hover">
                         <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                             <tr>
@@ -80,7 +202,6 @@
                                 <th class="text-center text-light">Phim chiếu</th>
                                 <th class="text-center text-light">Phòng chiếu</th>
                                 <th class="text-center text-light">Khung giờ chiếu</th>
-                                <th class="text-center text-light">Giá khung giờ</th>
                                 <th class="text-center text-light">Trạng thái</th>
                                 <th class="text-center text-light">Ngày tạo</th>
                                 <th class="text-center text-light">Hành động</th>
@@ -122,11 +243,6 @@
                                             {{ $showtime->start_time->format('H:i') }} -
                                             {{ $showtime->end_time->format('H:i') }}
                                         </small>
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="badge bg-gradient fs-6">
-                                            {{ number_format($showtime->price, 0, '.', '.') }}đ
-                                        </span>
                                     </td>
                                     <td class="text-center">
                                         @switch($showtime->status)
@@ -186,7 +302,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="9" class="text-center py-4">
+                                    <td colspan="8" class="text-center py-4">
                                         <div class="text-muted">
                                             <i class="fas fa-inbox fa-3x mb-3"></i>
                                             <p>
@@ -198,45 +314,8 @@
                             @endforelse
                         </tbody>
                     </table>
-                </div>
-                <div class="mt-3">
-                    {{ $showtimes->links() }}
-                </div>
+                </div>--}}
             </div>
         </div>
     </div>
 </div>
-@script
-<script>
-    $js('resetSlider', function() {
-        document.getElementById('lowerRange').value = {{ $rangePrice[0] ?? 0 }};
-        document.getElementById('upperRange').value = {{ $rangePrice[1] ?? 1_000_000_000 }};
-        document.getElementById('rangeFill').style = "left: 0%; width: 100%;";
-    })
-
-    $js('updateSlider', function() {
-        // Lấy element
-        const lowerRange = document.getElementById('lowerRange');
-        const upperRange = document.getElementById('upperRange');
-        const rangeFill = document.getElementById('rangeFill');
-
-        // Lấy và phân tích giá trị
-        const lower = lowerRange?.valueAsNumber ?? parseInt(lowerRange.value);
-        const upper = upperRange?.valueAsNumber ?? parseInt(upperRange.value);
-
-        // Kiểm tra logic tránh lower >= upper && upper <= lower
-        lower >= upper && (lowerRange.value = upper - 1);
-        upper <= lower && (upperRange.value = lower + 1);
-
-        // Tính phần trăm
-        const lowerPercent = ((lowerRange.value - lowerRange.min) / (lowerRange.max - lowerRange.min)) * 100;
-        const upperPercent = ((upperRange.value - upperRange.min) / (upperRange.max - upperRange.min)) * 100;
-
-        // Cập nhật thanh fill
-        rangeFill.style.left = lowerPercent + '%';
-        rangeFill.style.width = (upperPercent - lowerPercent) + '%';
-
-        $wire.$set('priceFilter', [lower, upper], true);
-    })
-</script>
-@endscript

@@ -87,10 +87,10 @@
 }
 /* Hide the inner submenus */
 .dl-menuwrapper li .dl-submenu { display: none; }
-/* 
+/*
 When a submenu is openend, we will hide all li siblings.
 For that we give a class to the parent menu called "dl-subview".
-We also hide the submenu link. 
+We also hide the submenu link.
 The opened submenu will get the class "dl-subviewopen".
 All this is done for any sub-level being entered.
 */
@@ -125,53 +125,6 @@ All this is done for any sub-level being entered.
 .dl-menuwrapper .dl-menu.dl-animate-out-5 {
 	-webkit-animation: MenuAnimOut5 0.4s ease;
 	animation: MenuAnimOut5 0.4s ease;
-}
- @-webkit-keyframes MenuAnimOut1 {
- 0% {
-}
- 50% {
- -webkit-transform: translateZ(-250px) rotateY(30deg);
-}
- 75% {
- -webkit-transform: translateZ(-372.5px) rotateY(15deg);
- opacity: .5;
-}
- 100% {
- -webkit-transform: translateZ(-500px) rotateY(0deg);
- opacity: 0;
-}
-}
- @-webkit-keyframes MenuAnimOut2 {
- 0% {
-}
- 100% {
- -webkit-transform: translateX(-100%);
- opacity: 0;
-}
-}
- @-webkit-keyframes MenuAnimOut3 {
- 0% {
-}
- 100% {
- -webkit-transform: translateZ(300px);
- opacity: 0;
-}
-}
- @-webkit-keyframes MenuAnimOut4 {
- 0% {
-}
- 100% {
- -webkit-transform: translateZ(-300px);
- opacity: 0;
-}
-}
- @-webkit-keyframes MenuAnimOut5 {
- 0% {
-}
- 100% {
- -webkit-transform: translateY(40%);
- opacity: 0;
-}
 }
  @keyframes MenuAnimOut1 {
  0% {
@@ -246,60 +199,6 @@ All this is done for any sub-level being entered.
 .dl-menuwrapper .dl-menu.dl-animate-in-5 {
 	-webkit-animation: MenuAnimIn5 0.4s ease;
 	animation: MenuAnimIn5 0.4s ease;
-}
- @-webkit-keyframes MenuAnimIn1 {
- 0% {
- -webkit-transform: translateZ(-500px) rotateY(0deg);
- opacity: 0;
-}
- 20% {
- -webkit-transform: translateZ(-250px) rotateY(30deg);
- opacity: 0.5;
-}
- 100% {
- -webkit-transform: translateZ(0px) rotateY(0deg);
- opacity: 1;
-}
-}
- @-webkit-keyframes MenuAnimIn2 {
- 0% {
- -webkit-transform: translateX(-100%);
- opacity: 0;
-}
- 100% {
- -webkit-transform: translateX(0px);
- opacity: 1;
-}
-}
- @-webkit-keyframes MenuAnimIn3 {
- 0% {
- -webkit-transform: translateZ(300px);
- opacity: 0;
-}
- 100% {
- -webkit-transform: translateZ(0px);
- opacity: 1;
-}
-}
- @-webkit-keyframes MenuAnimIn4 {
- 0% {
- -webkit-transform: translateZ(-300px);
- opacity: 0;
-}
- 100% {
- -webkit-transform: translateZ(0px);
- opacity: 1;
-}
-}
- @-webkit-keyframes MenuAnimIn5 {
- 0% {
- -webkit-transform: translateY(40%);
- opacity: 0;
-}
- 100% {
- -webkit-transform: translateY(0);
- opacity: 1;
-}
 }
  @keyframes MenuAnimIn1 {
  0% {
@@ -386,56 +285,6 @@ All this is done for any sub-level being entered.
 	-webkit-animation: SubMenuAnimIn5 0.4s ease;
 	animation: SubMenuAnimIn5 0.4s ease;
 }
- @-webkit-keyframes SubMenuAnimIn1 {
- 0% {
- -webkit-transform: translateX(50%);
- opacity: 0;
-}
- 100% {
- -webkit-transform: translateX(0px);
- opacity: 1;
-}
-}
- @-webkit-keyframes SubMenuAnimIn2 {
- 0% {
- -webkit-transform: translateX(100%);
- opacity: 0;
-}
- 100% {
- -webkit-transform: translateX(0px);
- opacity: 1;
-}
-}
- @-webkit-keyframes SubMenuAnimIn3 {
- 0% {
- -webkit-transform: translateZ(-300px);
- opacity: 0;
-}
- 100% {
- -webkit-transform: translateZ(0px);
- opacity: 1;
-}
-}
- @-webkit-keyframes SubMenuAnimIn4 {
- 0% {
- -webkit-transform: translateZ(300px);
- opacity: 0;
-}
- 100% {
- -webkit-transform: translateZ(0px);
- opacity: 1;
-}
-}
- @-webkit-keyframes SubMenuAnimIn5 {
- 0% {
- -webkit-transform: translateZ(-200px);
- opacity: 0;
-}
- 100% {
- -webkit-transform: translateZ(0);
- opacity: 1;
-}
-}
  @keyframes SubMenuAnimIn1 {
  0% {
  -webkit-transform: translateX(50%);
@@ -516,56 +365,7 @@ All this is done for any sub-level being entered.
 	-webkit-animation: SubMenuAnimOut5 0.4s ease;
 	animation: SubMenuAnimOut5 0.4s ease;
 }
- @-webkit-keyframes SubMenuAnimOut1 {
- 0% {
- -webkit-transform: translateX(0%);
- opacity: 1;
-}
- 100% {
- -webkit-transform: translateX(50%);
- opacity: 0;
-}
-}
- @-webkit-keyframes SubMenuAnimOut2 {
- 0% {
- -webkit-transform: translateX(0%);
- opacity: 1;
-}
- 100% {
- -webkit-transform: translateX(100%);
- opacity: 0;
-}
-}
- @-webkit-keyframes SubMenuAnimOut3 {
- 0% {
- -webkit-transform: translateZ(0px);
- opacity: 1;
-}
- 100% {
- -webkit-transform: translateZ(-300px);
- opacity: 0;
-}
-}
- @-webkit-keyframes SubMenuAnimOut4 {
- 0% {
- -webkit-transform: translateZ(0px);
- opacity: 1;
-}
- 100% {
- -webkit-transform: translateZ(300px);
- opacity: 0;
-}
-}
- @-webkit-keyframes SubMenuAnimOut5 {
- 0% {
- -webkit-transform: translateZ(0);
- opacity: 1;
-}
- 100% {
- -webkit-transform: translateZ(-200px);
- opacity: 0;
-}
-}
+
  @keyframes SubMenuAnimOut1 {
  0% {
  -webkit-transform: translateX(0%);

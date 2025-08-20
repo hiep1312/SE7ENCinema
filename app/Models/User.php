@@ -3,6 +3,7 @@
 namespace App\Models;
 use App\Notifications\ScResetPassword;
 use App\Notifications\ScVerifyEmail;
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -85,5 +86,25 @@ class User extends Authenticatable implements MustVerifyEmail
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ScResetPassword($token, $this));
+    }
+
+    public function isBanned(): bool
+    {
+        return $this->status === 'banned';
+    }
+
+    public function releaseHolds(): bool
+    {
+        return SeatHold::releaseHoldsByUser($this);
+    }
+
+    public function countViolations(string|null $type = null, Carbon|int|string $start = 1, Carbon|string|null $end = null): int
+    {
+        return UserViolation::countViolations($this, $type, $start, $end);
+    }
+
+    public function addViolation(string $type, ?string $details = null): bool
+    {
+        return UserViolation::addViolation($this, $type, $details);
     }
 }

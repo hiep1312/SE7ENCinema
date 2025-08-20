@@ -247,11 +247,12 @@
                                                         @endswitch
                                                     </td>
                                                     <td class="text-center">
-                                                        <span class="text-center text-light">{{ $user->email }}
-                                                            @if ($user->phone)
-                                                                / {{ $user->phone }}
-                                                            @endif
-                                                        </span>
+                                                        <span class="text-center text-light">{{ $user->email }}</span>
+                                                        @if ($user->phone)
+                                                            <small class="text-muted d-block mt-2" style="font-size: 12px">
+                                                                SĐT: {{ $user->phone }}
+                                                            </small>
+                                                        @endif
                                                     </td>
                                                     <td class="text-center" style="max-width: 200px;">
                                                         @if($booking->foodOrderItems->isNotEmpty())

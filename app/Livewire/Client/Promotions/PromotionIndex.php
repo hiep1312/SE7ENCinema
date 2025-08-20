@@ -34,9 +34,9 @@ class PromotionIndex extends Component
         }
 
         $hotMovies = Movie::where('status', 'showing')
-            // ->whereHas('showtimes', function($q) {
-            //     $q->where('start_time', '>=', now())->where('status', 'active');
-            // })
+            ->whereHas('showtimes', function($q) {
+                $q->where('start_time', '>=', now())->where('status', 'active');
+            })
             ->where('age_restriction', '!=', 'C')
             ->orderByDesc('release_date')
             ->limit(15)

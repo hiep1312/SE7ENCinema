@@ -78,49 +78,8 @@
                         <!-- Chi tiết voucher -->
                         <div class="collapse animate__animated animate__fadeIn" id="collapsePromoModern{{ $promotion->id }}">
                             <div class="voucher-detail-modern card-body mt-2 p-2" style="background: transparent; box-shadow: none; border: none;">
-                                <div class="row mb-1">
-                                    <div class="col-5 fw-bold text-secondary" style="font-size: 0.95rem;">Tên khuyến mãi:</div>
-                                    <div class="col-7 text-dark" style="font-size: 0.95rem;">{{ $promotion->title }}</div>
-                                </div>
-                                <div class="row mb-1">
-                                    <div class="col-5 fw-bold text-secondary" style="font-size: 0.95rem;">Mã khuyến mãi:</div>
-                                    <div class="col-7"><span class="fw-bold badge bg-primary" style="font-size: 0.95rem;">{{ $promotion->code }}</span></div>
-                                </div>
-                                <div class="row mb-1">
-                                    <div class="col-5 fw-bold text-secondary" style="font-size: 0.95rem;">Mô tả:</div>
-                                    <div class="col-7 text-dark" style="font-size: 0.95rem;">{{ $promotion->description }}</div>
-                                </div>
-                                <div class="row mb-1">
-                                    <div class="col-5 fw-bold text-secondary" style="font-size: 0.95rem;">Trạng thái:</div>
-                                    <div class="col-7">
-                                        <span class="badge {{ $promotion->status === 'active' ? 'bg-success' : ($promotion->status === 'expired' ? 'bg-secondary' : 'bg-danger') }}" style="font-size: 0.75rem;">
-                                            {{ $promotion->status === 'active' ? 'Hoạt động' : ($promotion->status === 'expired' ? 'Hết hạn' : 'Ngừng hoạt động') }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="row mb-1">
-                                    <div class="col-5 fw-bold text-secondary" style="font-size: 0.95rem;">Ngày bắt đầu:</div>
-                                    <div class="col-7 text-dark" style="font-size: 0.95rem;">{{ $promotion->start_date->format('d/m/Y H:i') }}</div>
-                                </div>
-                                <div class="row mb-1">
-                                    <div class="col-5 fw-bold text-secondary" style="font-size: 0.95rem;">Ngày kết thúc:</div>
-                                    <div class="col-7 text-dark" style="font-size: 0.95rem;">{{ $promotion->end_date->format('d/m/Y H:i') }}</div>
-                                </div>
-                                <div class="row mb-1">
-                                    <div class="col-5 fw-bold text-secondary" style="font-size: 0.95rem;">Loại giảm giá:</div>
-                                    <div class="col-7 text-dark" style="font-size: 0.95rem;">{{ $promotion->discount_type === 'percentage' ? 'Phần trăm' : 'Cố định' }}</div>
-                                </div>
-                                <div class="row mb-1">
-                                    <div class="col-5 fw-bold text-secondary" style="font-size: 0.95rem;">Giá trị khuyến mãi:</div>
-                                    <div class="col-7"><span class="fw-bold badge bg-danger" style="font-size: 0.75rem;">{{ $promotion->discount_type === 'percentage' ? $promotion->discount_value . '%' : number_format($promotion->discount_value, 0, '.', '.') . 'đ' }}</span></div>
-                                </div>
-                                <div class="row mb-1">
-                                    <div class="col-5 fw-bold text-secondary" style="font-size: 0.95rem;">Giới hạn sử dụng:</div>
-                                    <div class="col-7 text-dark" style="font-size: 0.95rem;">{{ $promotion->usage_limit }}</div>
-                                </div>
-                                <div class="row mb-1">
-                                    <div class="col-5 fw-bold text-secondary" style="font-size: 0.95rem;">Giá trị tối thiểu đơn hàng:</div>
-                                    <div class="col-7 text-dark" style="font-size: 0.95rem;">{{ number_format($promotion->min_purchase, 0, '.', '.') }}đ</div>
+                                <div class="row mb-1 p-2">
+                                    <div class="text-dark" style="font-size: 0.95rem;">{!! $promotion->description !!}</div>
                                 </div>
                             </div>
                         </div>

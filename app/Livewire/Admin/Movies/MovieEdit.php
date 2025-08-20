@@ -13,10 +13,11 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use SE7ENCinema\scAlert;
 
 class MovieEdit extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, scAlert;
 
     public $movieItem;
     public $title = '';
@@ -31,6 +32,7 @@ class MovieEdit extends Component
     public $trailer_url = null;
     public $format = '2D';
     public $price = null;
+    public $formattedPrice = null;
     public $status = "showing";
 
     /* Genre */
@@ -43,30 +45,42 @@ class MovieEdit extends Component
     /* Showtime */
     public $baseShowtimeStart = null;
     public $baseShowtimeEnd = null;
+    public $baseRoom = null;
     public $showtimes = [];
 
-    protected $rules = [
-        'title' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'duration' => 'required|integer|min:1',
-        'release_date' => 'required|date',
-        'end_date' => 'nullable|date|after_or_equal:release_date',
-        'director' => 'nullable|string|max:255',
-        'actors' => 'nullable|string',
-        'age_restriction' => 'required|in:P,K,T13,T16,T18,C',
-        'poster' => 'nullable|image|max:20480',
-        'trailer_url' => 'nullable|url',
-        'format' => 'required|in:2D,3D,4DX,IMAX',
-        'price' => 'required|integer|min:0',
-        'status' => 'required|in:coming_soon,showing,ended',
+    /* Modal type */
+    public $modalType = null;
+    public $searchModal = '';
+    public $modalSelected = null;
 
-        'genresSelected.*' => 'integer|exists:genres,id',
+    protected function rules(){
+        $rules = [
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'duration' => 'required|integer|min:1',
+            'release_date' => 'required|date',
+            'end_date' => 'nullable|date|after_or_equal:release_date',
+            'director' => 'nullable|string|max:255',
+            'actors' => 'nullable|string',
+            'age_restriction' => 'required|in:P,K,T13,T16,T18,C',
+            'poster' => 'nullable|image|max:20480',
+            'trailer_url' => 'nullable|url',
+            'format' => 'required|in:2D,3D,4DX,IMAX',
+            'price' => 'required|integer|min:0',
+            'status' => 'required|in:coming_soon,showing,ended',
 
-        'showtimes.*.room_id' => 'required|integer|exists:rooms,id',
-        'showtimes.*.start_time' => 'required|date_format:Y-m-d\TH:i|after_or_equal:now',
-        'showtimes.*.price' => 'required|numeric|min:0',
-        'showtimes.*.status' => 'required|in:active,canceled',
-    ];
+            'genresSelected.*' => 'integer|exists:genres,id',
+
+            'showtimes.*.room_id' => 'required|integer|exists:rooms,id',
+            'showtimes.*.start_time' => 'required|date_format:Y-m-d\TH:i|after_or_equal:now|after_or_equal:release_date',
+            'showtimes.*.status' => 'required|in:active,canceled',
+        ];
+
+        if($this->end_date !== $this->movieItem->end_date?->format('Y-m-d\TH:i')) $rules['end_date'] .= '|after_or_equal:now';
+        if($this->duration && $this->end_date) $rules['showtimes.*.start_time'] .= "|before:" . Carbon::parse($this->end_date)->subMinutes(+$this->duration);
+
+        return $rules;
+    }
 
     protected $messages = [
         'title.required' => 'Vui lòng nhập tiêu đề phim.',
@@ -100,17 +114,15 @@ class MovieEdit extends Component
         'showtimes.*.room_id.exists' => 'Phòng chiếu được chọn không tồn tại.',
         'showtimes.*.start_time.required' => 'Vui lòng chọn khung giờ chiếu.',
         'showtimes.*.start_time.date_format' => 'Khung giờ chiếu không hợp lệ.',
-        'showtimes.*.start_time.after_or_equal' => 'Khung giờ chiếu phải lớn hơn hoặc bằng thời điểm hiện tại.',
-        'showtimes.*.price.required' => 'Vui lòng nhập giá khung giờ.',
-        'showtimes.*.price.numeric' => 'Giá khung giờ phải là một số.',
-        'showtimes.*.price.min' => 'Giá khung giờ không được nhỏ hơn 0.',
+        'showtimes.*.start_time.after_or_equal' => 'Khung giờ chiếu phải lớn hơn hoặc bằng thời điểm hiện tại, và ngày khởi chiếu phim.',
+        'showtimes.*.start_time.before' => 'Khung giờ chiếu phải trước ngày kết thúc phim.',
         'showtimes.*.status.required' => 'Vui lòng chọn trạng thái cho suất chiếu.',
         'showtimes.*.status.in' => 'Trạng thái suất chiếu không hợp lệ. Chỉ chấp nhận: đang chiếu hoặc đã huỷ.',
     ];
 
     public function mount(Movie $movie){
         $this->movieItem = $movie;
-        $this->fill($movie->only('title', 'description', 'duration', 'director', 'actors', 'age_restriction', 'trailer_url', 'format', 'price', 'status') + ['release_date' => $movie->release_date->format('Y-m-d'), 'end_date' => $movie->end_date?->format('Y-m-d')]);
+        $this->fill($movie->only('title', 'description', 'duration', 'director', 'actors', 'age_restriction', 'trailer_url', 'format', 'price', 'status') + ['release_date' => $movie->release_date->format('Y-m-d'), 'end_date' => $movie->end_date?->format('Y-m-d'), 'formattedPrice' => number_format($movie->price, 0, '.', '.')]);
 
         $this->genresSelected = $movie->genres()->pluck('genres.id')->toArray();
 
@@ -121,9 +133,12 @@ class MovieEdit extends Component
             'id' => $showtime->id,
             'room_id' => $showtime->room_id,
             'start_time' => $showtime->start_time->format('Y-m-d\TH:i'),
-            'price' => $showtime->price,
             'status' => $showtime->status,
         ])->toArray();
+    }
+
+    public function updatedFormattedPrice(){
+        $this->price = str_replace([',', '.'], '', $this->formattedPrice);
     }
 
     public function toggleShowtime(?int $index = null)
@@ -132,7 +147,6 @@ class MovieEdit extends Component
         else $this->showtimes[] = [
             'room_id' => null,
             'start_time' => '',
-            'price' => null,
             'status' => 'active',
         ];
     }
@@ -141,41 +155,56 @@ class MovieEdit extends Component
         $this->validate([
             'baseShowtimeStart' => 'required|date_format:Y-m-d\TH:i|after_or_equal:now',
             'baseShowtimeEnd' => 'nullable|date_format:Y-m-d\TH:i|after:baseShowtimeStart',
+            'baseRoom' => 'nullable|integer|exists:rooms,id',
         ], [
             'baseShowtimeStart.required' => 'Vui lòng nhập thời gian bắt đầu chiếu.',
             'baseShowtimeStart.date_format' => 'Thời gian bắt đầu chiếu phải có định dạng đúng: YYYY-MM-DDTHH:MM.',
             'baseShowtimeStart.after_or_equal' => 'Thời gian bắt đầu chiếu phải lớn hơn hoặc bằng thời điểm hiện tại.',
             'baseShowtimeEnd.date_format' => 'Thời gian kết thúc chiếu phải có định dạng đúng: YYYY-MM-DDTHH:MM.',
             'baseShowtimeEnd.after' => 'Thời gian kết thúc chiếu phải sau thời gian bắt đầu chiếu.',
+            'baseRoom.integer' => 'ID phòng chiếu không hợp lệ.',
+            'baseRoom.exists' => 'Phòng chiếu được chọn không tồn tại.',
         ]); $this->validateOnly('duration');
 
         $startTime = Carbon::parse($this->baseShowtimeStart);
         $endTime = $this->baseShowtimeEnd ? Carbon::parse($this->baseShowtimeEnd) : $startTime->copy()->endOfDay();
         $movieDuration = +$this->duration;
-        $currentShowtimes = array_map(function($showtime){
-            return date('Y-m-d\TH:i', strtotime($showtime['start_time']));
-        }, $this->showtimes);
+        $roomId = $this->baseRoom;
+        $currentShowtimes = collect(array_map(function($showtime) use ($movieDuration){
+            return array_merge($showtime, ['start_time' => ($startTimeTimestamp = strtotime($showtime['start_time'])), 'end_time' => strtotime("+{$movieDuration} minutes", $startTimeTimestamp)]);
+        }, $this->showtimes));
 
-        // Tạo danh sách suất chiếu
+        $existingShowtimes = !is_null($roomId) ? Showtime::select('room_id', 'start_time', 'end_time')->where('room_id', $roomId)
+            ->where('status', 'active')
+            ->where('start_time', '<', $endTime)
+            ->where('end_time', '>', $startTime)
+            ->get()->map(function($showtime) {
+                return [
+                    'room_id' => $showtime->room_id,
+                    'start_time' => $showtime->start_time->timestamp,
+                    'end_time' => $showtime->end_time->timestamp,
+                ];
+            })->keyBy('start_time') : [];
+
         $generatedShowtimes = [];
 
-        for ($showtimeCount = 0; $startTime->lessThan($endTime) && $showtimeCount <= 50; $showtimeCount++) {
-            // Tính thời gian kết thúc của suất chiếu này & Kiểm tra xem thời gian kết thúc của nó có vượt quá thời gian kết thúc của base thời gian không
+        while ($startTime->lessThan($endTime) && count($generatedShowtimes) < 50) {
             $showtimeEndTime = $startTime->copy()->addMinutes($movieDuration);
             if ($showtimeEndTime->greaterThan($endTime)) break;
 
-            $formattedStartTime = $startTime->format('Y-m-d\TH:i');
-            // Kiểm tra xem thời gian bắt đầu của suất chiếu này có trong danh sách hiện tại hay chưa. Nếu không có thì tạo suất chiếu mới
-            if(!in_array($formattedStartTime, $currentShowtimes)){
-                $generatedShowtimes[] = [
-                    'room_id' => null,
-                    'start_time' => $formattedStartTime,
-                    'price' => null,
-                    'status' => 'active',
-                ];
+            $query = is_null($roomId) ? $currentShowtimes->whereNull('room_id') : $currentShowtimes->where('room_id', $roomId)->merge($existingShowtimes);
+            $duplicateShowtime = $query->where(fn($showtime) => $showtime['start_time'] < $showtimeEndTime->timestamp && $showtime['end_time'] > $startTime->timestamp)->first();
+            if(isset($duplicateShowtime)){
+                $startTime = Carbon::createFromTimestamp($duplicateShowtime['start_time'], 7)->addMinutes((($duplicateShowtime['end_time'] - $duplicateShowtime['start_time']) / 60) + 10);
+                continue;
             }
 
-            // Chuyển sang suất chiếu tiếp theo (thời gian kết thúc + 10 phút)
+            $generatedShowtimes[] = [
+                'room_id' => $roomId,
+                'start_time' => $startTime->format('Y-m-d\TH:i'),
+                'status' => 'active',
+            ];
+
             $startTime = $showtimeEndTime->addMinutes(10);
         }
 
@@ -184,11 +213,10 @@ class MovieEdit extends Component
             return;
         }
 
-        // Thêm các suất chiếu đã tạo vào danh sách hiện tại & sắp xếp theo thời gian bắt đầu
         $this->showtimes = array_merge($this->showtimes, $generatedShowtimes);
         usort($this->showtimes, fn($valueA, $valueB) => strtotime($valueA['start_time']) - strtotime($valueB['start_time']));
 
-        session()->flash('successGeneratedShowtimes', "Đã tạo thành công {$showtimeCount} suất chiếu!");
+        session()->flash('successGeneratedShowtimes', "Đã tạo thành công " . count($generatedShowtimes) . " suất chiếu!");
     }
 
     public function addGenre(){
@@ -204,10 +232,18 @@ class MovieEdit extends Component
         $this->genresSelected[] = $genreAdded->id;
     }
 
+    public function setData(){
+        $modalText = $this->modalType==="director" ? 'đạo diễn' : 'diễn viên';
+        if(empty($this->modalSelected)) $this->scAlert("Chưa chọn {$modalText}", "Bạn chưa chọn {$modalText} nào. Hệ thống sẽ tiếp tục mà không cập nhật {$modalText}.", 'warning', '');
+        else $this->{$this->modalType} = $this->modalType==="director" ? $this->modalSelected : implode(', ', $this->actors ? collect(array_unique(array_merge($this->modalSelected, array_map(fn($actor) => trim($actor), explode(',', $this->actors ?? '')))))->sort()->toArray() : $this->modalSelected);
+    }
+
+    public function resetModal(){
+        $this->reset(['modalType', 'searchModal', 'modalSelected']);
+    }
+
     public function updateMovie()
     {
-        if($this->end_date !== $this->movieItem->end_date?->format('Y-m-d\TH:i')) $this->rules['end_date'] .= '|after_or_equal:now';
-
         $this->validate();
 
         $imagePath = $this->movieItem->poster;
@@ -242,7 +278,6 @@ class MovieEdit extends Component
                 'room_id' => $showtime['room_id'],
                 'start_time' => $showtime['start_time'],
                 'end_time' => Carbon::parse($showtime['start_time'])->addMinutes(+$this->duration),
-                'price' => $showtime['price'],
                 'status' => $showtime['status'],
             ];
 
@@ -263,7 +298,54 @@ class MovieEdit extends Component
     public function render()
     {
         $genres = Genre::select('id', 'name')->when($this->searchGenre, fn ($query) => $query->where('name', 'like', '%' . $this->searchGenre . '%'))->get();
+        $totalGenres = Genre::count();
         $rooms = Room::select('id', 'name')->where('status', 'active')->get();
-        return view('livewire.admin.movies.movie-edit', compact('genres', 'rooms'));
+        if(!empty($this->showtimes)){
+            $shotimesReversed = array_reverse($this->showtimes, true);
+            $existingShowtimeIds = array_map(fn($showtime) => $showtime['id'], array_filter($this->showtimes, fn($showtime) => isset($showtime['id'])));
+            $this->showtimes = array_reverse(array_map(function($showtime, $index) use ($rooms, $existingShowtimeIds){
+                $availableRooms = $rooms;
+                $roomConflict = $showtime['room_id'];
+
+                if($showtime['start_time']){
+                    $startTimeCarbon = Carbon::parse($showtime['start_time']);
+                    $endTimeCarbon = $startTimeCarbon->clone()->addMinutes(+$this->duration);
+
+                    $roomsFiltered = $rooms->toQuery()->select('id', 'name')->where('status', 'active')->whereDoesntHave('showtimes', function($query) use ($startTimeCarbon, $endTimeCarbon, $existingShowtimeIds){
+                        $query->where('start_time', '<', $endTimeCarbon)
+                            ->where('end_time', '>', $startTimeCarbon)
+                            ->whereNotIn('id', $existingShowtimeIds)
+                            ->where('status', 'active');
+                    })->get();
+
+                    (!empty($showtime['room_id']) && !$roomsFiltered->contains('id', $showtime['room_id'])) && (($roomConflict = $this->showtimes[$index]['room_id'] = null) || $this->scToast('Phòng chiếu bị trùng thời gian, lựa chọn của bạn đã bị ghi đè', 'warning', 5000, true, ''));
+                    $availableRooms = $roomsFiltered->reject(function($room) use ($startTimeCarbon, $endTimeCarbon, $showtime, &$roomConflict, $index) {
+                        return collect(array_filter($this->showtimes, fn($showtimeOther) => $showtimeOther !== $showtime && (int)$showtimeOther['room_id'] === $room->id  && !empty($showtimeOther['start_time'])))->contains(function($showtimeTemp) use ($startTimeCarbon, $endTimeCarbon, $showtime, $room, &$roomConflict, $index){
+                            $tempStartCarbon = Carbon::parse($showtimeTemp['start_time']);
+                            $tempEndCarbon = $tempStartCarbon->clone()->addMinutes(+$this->duration);
+                            $hasTimeConflict = $tempStartCarbon < $endTimeCarbon && $tempEndCarbon > $startTimeCarbon;
+                            $hasTimeConflict && ((int)$showtime['room_id'] === $room->id) && (($roomConflict = $this->showtimes[$index]['room_id'] = null) || $this->scToast('Phòng chiếu bị trùng thời gian, lựa chọn của bạn đã bị ghi đè', 'warning', 5000, true, ''));
+                            return $hasTimeConflict;
+                        });
+                    });
+                }
+
+                return array_merge($showtime, ['rooms' => $availableRooms, 'room_id' => $roomConflict]);
+            }, $shotimesReversed, array_keys($shotimesReversed)));
+        }
+
+        $modalData = [];
+        if($this->modalType){
+            $query = Movie::select("{$this->modalType} as name")
+                ->when($this->searchModal, fn ($query) => $query->whereLike($this->modalType, '%' . trim($this->searchModal) . '%'));
+            if($this->modalType === 'director'){
+                $modalData = $query->distinct()->orderBy('name')->get()->pluck('name');
+                (is_null($this->modalSelected)) && ($this->modalSelected = $modalData->contains($this->director) ? $this->director : '');
+            }else{
+                $modalData = $query->get()->pluck('name')->flatMap(fn($actors) => array_map(fn($actor) => trim($actor), explode(',', $actors)))->unique()->sort();
+                (is_null($this->modalSelected)) && ($this->modalSelected = $this->actors ? array_filter(array_map(fn($actor) => $modalData->contains(trim($actor)) ? trim($actor) : null, explode(',', $this->actors))) : []);
+            }
+        }
+        return view('livewire.admin.movies.movie-edit', compact('genres', 'rooms', 'totalGenres', 'modalData'));
     }
 }
