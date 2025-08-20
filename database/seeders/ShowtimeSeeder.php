@@ -5,34 +5,77 @@ namespace Database\Seeders;
 use App\Models\Movie;
 use App\Models\Room;
 use App\Models\Showtime;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 
 class ShowtimeSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        /* Rải rác từ 2 tuần cho đến tháng sau | Mỗi suất chiếu không bị phòng và thời gian */
-        /* Mỗi suất chiếu mỗi phòng phải cách nhau 10 phút */
+        $movies = Movie::whereNotNull('release_date')->get();
+        $rooms  = Room::where('status', 'active')->get();
 
-        $movies = Movie::where('status', 'showing')->pluck('id')->toArray();
-        $rooms = Room::where('status', 'active')->pluck('id')->toArray();
+        if ($movies->isEmpty() || $rooms->isEmpty()) return;
 
-        foreach (range(1, 60) as $i) {
-            $start = fake()->dateTimeBetween('-3 days', '+3 days');
-            $duration = $movie->duration ?? fake()->numberBetween(90, 150);
-            $end = (clone $start)->modify("+{$duration} minutes");
+        $startWindow = now()->copy()->subMonth(3)->startOfDay();
+        $endWindow = now()->copy()->addWeeks(2)->endOfDay();
 
-            Showtime::create([
-                'movie_id' => fake()->randomElement($movies),
-                'room_id' => fake()->randomElement($rooms),
-                'start_time' => $start,
-                'end_time' => $end,
-                'status' => $end > now() ? 'active' : 'completed',
-            ]);
+        for ($date = $startWindow->copy(); $date->lte($endWindow); $date->addDay()) {
+            foreach ($movies as $movie) {
+                $releaseDate = Carbon::parse($movie->release_date);
+                if ($releaseDate->gt($date)) continue;
+                $daysSinceRelease = $releaseDate->diffInDays($date, false);
+
+                if ($daysSinceRelease <= 7) {
+                    $dailyShows = fake()->numberBetween(3, 4);
+                } elseif ($daysSinceRelease <= 14) {
+                    $dailyShows = fake()->numberBetween(2, 3);
+                } elseif ($daysSinceRelease <= 30) {
+                    $dailyShows = fake()->numberBetween(1, 2);
+                } else {
+                    $dailyShows = fake()->numberBetween(0, 1);
+                }
+
+                if ($dailyShows === 0) continue;
+                $duration = $movie->duration ?? 120;
+                $cursor = $date->copy()->setTime(9, 0);
+
+                for ($i = 0; $i < $dailyShows; $i++) {
+                    $startTime = $cursor->copy();
+                    $endTime   = $startTime->copy()->addMinutes($duration);
+
+                    $exists = Showtime::where('movie_id', $movie->id)
+                        ->where(function ($q) use ($startTime, $endTime) {
+                            $q->where('start_time', '<', $endTime)
+                              ->where('end_time', '>', $startTime);
+                        })
+                        ->exists();
+
+                    if ($exists) {
+                        $cursor->addMinutes(15);
+                        continue;
+                    }
+
+                    $room = $rooms->random();
+
+                    $status = $endTime->isPast() ? 'completed' : 'active';
+                    if ($endTime->isFuture() && rand(1, 100) <= 5) {
+                        $status = 'canceled';
+                    }
+
+                    Showtime::create([
+                        'movie_id'   => $movie->id,
+                        'room_id'    => $room->id,
+                        'start_time' => $startTime,
+                        'end_time'   => $endTime,
+                        'status'     => $status,
+                    ]);
+
+                    $cursor = $endTime->copy()->addMinutes(15);
+
+                    if ($cursor->hour >= 23) break;
+                }
+            }
         }
     }
 }
