@@ -18,7 +18,7 @@ class FoodOrderItemSeeder extends Seeder
     {
         /* Tạo bản ghi tùy theo số lượng booking tạo ra */
         /*  */
-        /* $bookings = Booking::all()->toArray();
+        $bookings = Booking::all()->toArray();
         $variants = FoodVariant::all();
 
         foreach (Arr::shuffle($bookings) as $booking) {
@@ -33,6 +33,6 @@ class FoodOrderItemSeeder extends Seeder
                     'price' => $variant->price * $qty,
                 ]);
             }
-        } */
+        }
     }
 }

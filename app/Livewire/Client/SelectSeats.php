@@ -337,6 +337,7 @@ class SelectSeats extends Component
                 BookingSeat::create([
                     'booking_id' => $booking->id,
                     'seat_id' => $seatId,
+                    'ticket_price' => 0
                 ]);
             }
 
@@ -349,10 +350,7 @@ class SelectSeats extends Component
 
             DB::commit();
 
-            return redirect()->route('client.booking.select_food', [
-                'booking_id' => $booking->id,
-                'total_price_seats' => $totalPrice,
-            ]);
+            return redirect()->route('client.booking.food', ['bookingCode' => $booking->booking_code]);
         } catch (\Exception $e) {
             DB::rollBack();
             $this->dispatch('sc-alert.error', 'Lỗi tạo đặt chỗ', 'Lỗi khi tạo booking: ' . $e->getMessage());
@@ -370,16 +368,6 @@ class SelectSeats extends Component
     {
         $this->checkCurrentHoldStatus();
 
-        if ($this->isBanned) {
-            return view('livewire.client.select-seats', [
-                'banInfo' => $this->banInfo
-            ]);
-        }
-
-        return view('livewire.client.select-seats', [
-            'room' => $this->room,
-            'holdExpiresAt' => $this->holdExpiresAt,
-            'remainingSeconds' => $this->remainingSeconds
-        ]);
+        return view('livewire.client.select-seats');
     }
 }

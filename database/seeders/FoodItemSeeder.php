@@ -84,7 +84,7 @@ class FoodItemSeeder extends Seeder
             [
                 'name' => 'Nước Ngọt',
                 'description' => 'Đồ uống có ga mát lạnh, sảng khoái khi xem phim.',
-                'image' => 'https://scontent.fhan14-3.fna.fbcdn.net/v/t39.30808-6/496005105_1097458609082592_3377853819036947671_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeFr_O5A-A3MzBAzuyxQQ7mtGiKWcxLg4pEaIpZzEuDikVitvO3_zKM12Pqn5tz6vGLQs_wmBzhzbooCe108GFje&_nc_ohc=Ccwu4wTgwasQ7kNvwEFmLKA&_nc_oc=Adn1yNMYOmuEmxiVUuPuFVrrlccKanA0wnhh8oIsdYl6tgazBn-w3YsVQOw5vJUmQUI&_nc_zt=23&_nc_ht=scontent.fhan14-3.fna',
+                'image' => 'https://scontent.fhan14-3.fna.fbcdn.net/v/t39.30808-6/496005105_1097458609082592_3377853819036947671_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeFr_O5A-A3MzBAzuyxQQ7mtGiKWcxLg4pEaIpZzEuDikVitvO3_zKM12Pqn5tz6vGLQs_wmBzhzbooCe108GFje&_nc_ohc=Ccwu4wTgwasQ7kNvwEFmLKA&_nc_oc=Adn1yNMYOmuEmxiVUuPuFVrrlccKanA0wnhh8oIsdYl6tgazBn-w3YsVQOw5vJUmQUI&_nc_zt=23&_nc_ht=scontent.fhan14-3.fna&_nc_gid=jdwI5xNv6_u7fBJdq4SbWg&oh=00_AfWC9dXfSUjlzG5fXNQ1vWUG_IaE5nmdzL9hJ8MGAYqmNA&oe=68A513B6',
                 'status' => 'activate',
             ],
             [
@@ -109,7 +109,7 @@ class FoodItemSeeder extends Seeder
                 ],
             ]));
 
-            $image = "foods/" . uniqid('image_') . basename(preg_replace('/\?.*$/', '', $foodItem['image']));
+            $image = "foods/" . uniqid('image_') . urldecode(basename(preg_replace('/\?.*$/', '', $foodItem['image'])));
             Storage::drive('public')->put($image, $dataImage);
 
             FoodItem::create(array_merge($foodItem, ['image' => $image]));

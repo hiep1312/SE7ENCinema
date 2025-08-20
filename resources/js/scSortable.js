@@ -66,7 +66,7 @@ const $sc_configSortable = {
             return onMove && onMove[1];
         },
         checkFunction: function (model, $wire){
-            return (model || false) && ($wire || typeof Livewire.first()[model] === 'function') && typeof $wire[model]==='function';
+            return (model || false) && ($wire || typeof Livewire.find(document.querySelector("[wire\\:id][sc-root]")?.getAttribute('wire:id') ?? document.querySelector("[wire\\:id]")?.getAttribute('wire:id'))[model] === 'function') && typeof $wire[model]==='function';
         }
     },
     _packageObjectEvent: function (event){

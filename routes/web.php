@@ -61,10 +61,11 @@ use App\Livewire\Client\SelectSeats;
 use App\Livewire\Client\SelectFood;
 use App\Livewire\Client\ConfirmBooking;
 use App\Livewire\Payment\VnpayPayment;
-use App\Livewire\Booking\BookingFood;
-// use App\Livewire\Client\Bookings\BookingFood;
+// use App\Livewire\Booking\BookingFood;
+use App\Livewire\Client\Bookings\BookingFood;
 use App\Livewire\Client\Bookings\BookingPayment;
 use App\Livewire\Client\User\BookingDetail as UserBookingDetail;
+use App\Livewire\Test;
 
 Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->group(function () {
     /* Banners */
@@ -193,7 +194,7 @@ Route::name('client.')->group(function () {
     Route::get('/movie-list', MovieList::class)->name('movies.index');
     Route::get('/booking', SelectMovieShowtime::class)->name('booking.select_showtime');
     Route::get('/booking/seats/{showtime_id}', SelectSeats::class)->name('booking.select_seats');
-    Route::get('/booking/food/{booking_id}', SelectFood::class)->name('booking.select_food');
+    // Route::get('/booking/food/{booking_id}', SelectFood::class)->name('booking.select_food');
     Route::get('/booking/confirm/{booking_id}', ConfirmBooking::class)->name('booking.confirm');
     Route::get('/booking-food', BookingFood::class);
     Route::view('/', 'livewire.client.template.index')->name('index');
@@ -239,11 +240,13 @@ Route::name('client.')->group(function () {
     Route::view('/faq', 'livewire.client.template.abouts.faq')->name('faq');
 
     /* Bookings */
-    /* Route::prefix('/booking')->name('booking.')->group(function () {
-        Route::get('/food', BookingFood::class)->name('food');
+    Route::prefix('/booking')->name('booking.')->group(function () {
+        Route::get('/food/{bookingCode}', BookingFood::class)
+            ->whereAlphaNumeric('bookingCode')->name('food');
         Route::get('/payment', BookingPayment::class)->name('payment');
-    }); */
+    });
 });
 
+Route::get('/test', Test::class)->name('test');
 // Route::view('/admintest', 'clienttest')->name('welcome');
 // Route::view('/clienttest', 'clienttest')->name('clienttest');

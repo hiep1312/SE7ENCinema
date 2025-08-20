@@ -27,6 +27,7 @@ class BookingSeatSeeder extends Seeder
                 BookingSeat::create([
                     'booking_id' => $booking->id,
                     'seat_id' => $seat->id,
+                    'ticket_price' => fake()->numberBetween(100000, 600000),
                 ]);
             }
         });
