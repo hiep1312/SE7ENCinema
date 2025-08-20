@@ -139,11 +139,7 @@ class dailyChart
 
     public function loadData(?array $filter = null)
     {
-        try {
             $this->data = $this->queryData($filter);
-        } catch (\Throwable $th) {
-            dd($th);
-        }
     }
 
     protected function bindDataToElement()

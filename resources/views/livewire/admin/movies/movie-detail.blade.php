@@ -11,7 +11,7 @@
                     <i class="fas fa-arrow-left me-1"></i>Quay lại
                 </a>
             </div>
-        </div>  
+        </div>
 
         @if($movie->hasActiveShowtimes())
         <div class="alert alert-warning">
@@ -593,66 +593,46 @@
             </div>
             @elseif($tabCurrent === 'chart')
             <div class="row">
-                <div class="col-lg-12">
-                    <div class="bg-dark rounded-3 p-3">
+                <div class="col-12 px-4">
+                    <div class="border rounded-3 p-3 bg-dark shadow-lg">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="text-white mb-0">
                                 <i class="fa-regular fa-filter me-2"></i>Vé đã bán theo ngày
                             </h5>
                         </div>
-                        <div class="container-fluid my-4">
-                            <div class="card border-0 shadow-sm">
-                                <!-- Card body with form controls -->
-                                <div class="card-body">
-                                    <div class="row g-4 mb-3">
-                                        <!-- Date range section -->
-                                        <div class="col-lg-5">
-                                            <div>
-                                                <label class="form-label fw-semibold d-flex align-items-center mb-2">
-                                                    <i class="mdi mdi-calendar-range me-2"></i>
-                                                    Thời gian bắt dầu
-                                                </label>
-                                                <div class="row g-2">
-                                                    <div class="col-md-6">
-                                                        <input wire:model.live='fromDate' type="date" class="form-control form-control-sm">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <label class="form-label fw-semibold d-flex align-items-center mb-2">
-                                                    <i class="mdi mdi-calendar-range me-2"></i>
-                                                    Thời gian so sánh
-                                                </label>
-                                                <div class="row g-2">
-                                                    <div class="col-md-6">
-                                                        <input wire:model.live='compareDate' type="date" class="form-control form-control-sm">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
 
-                                        <!-- Custom time period -->
-                                        <div class="col-lg-4">
-                                            <label class="form-label fw-semibold d-flex align-items-center mb-2">
-                                                <i wire:model.live="compareDate" class="mdi mdi-clock-time-four me-2"></i>
-                                                Thời gian tùy chỉnh
-                                            </label>
-                                            <div class="input-group input-group-sm">
-                                                <input wire:model.live='rangeDays' type="number" class="form-control" placeholder="Số" min="1">
-                                                <select wire:model.live='rangeUnit' class="form-select">
-                                                    <option value="days">Ngày</option>
-                                                    <option value="months">Tháng</option>
-                                                    <option value="years">Năm</option>
-                                                </select>
-                                            </div>
-                                            <small class="text-muted mt-1 d-block">VD: 1 tháng, 6 tháng, 2 năm</small>
-                                        </div>
-                                    </div>
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <label class="form-label"><i class="mdi mdi-calendar-start me-2"></i>Từ ngày</label>
+                                <input wire:model.live='fromDate' type="date" class="form-control">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label"><i class="mdi mdi-calendar-end me-2"></i>Ngày so sánh</label>
+                                <input wire:model.live='compareDate' type="date" class="form-control">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">
+                                    <i class="mdi mdi-clock-time-four me-2"></i>Khoảng thời gian
+                                </label>
+                                <div class="input-group">
+                                    <input wire:model.live='rangeDays' type="text" class="form-control flex-grow-1"
+                                        placeholder="Nhập khoảng thời gian (ví dụ: 7 ngày, 1 tháng)">
+                                    <select wire:model.live='rangeUnit' class="form-select flex-grow-0"
+                                        style="width: 100px">
+                                        <option value="days">Chọn</option>
+                                        <option value="days">Ngày</option>
+                                        <option value="months">Tháng</option>
+                                        <option value="years">Năm</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+
 
                 <!-- 2. Bảng so sánh vé bán theo suất chiếu -->
                 <div class="col-lg-8">
