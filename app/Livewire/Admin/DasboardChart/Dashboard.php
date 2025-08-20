@@ -2,10 +2,13 @@
 
 namespace App\Livewire\Admin\DasboardChart;
 
-use App\Charts\dashboard\FoodManagementChart;
 use App\Charts\dashboard\RevenueChart;
 use App\Charts\dashboard\RevenueSourceChart;
 use App\Charts\dashboard\TransactionHistoryChart;
+use App\Charts\dashboard\TopMoviesChart;
+use App\Charts\dashboard\TopFoodsChart;
+use App\Charts\dashboard\SeatsAnalysisChart;
+use App\Charts\dashboard\ShowtimeTimeSlotChart;
 use App\Models\User;
 use App\Models\Booking;
 use App\Models\FoodOrderItem;
@@ -38,6 +41,8 @@ class Dashboard extends Component
     public $revenueTodayGrowthPercent = 0;
     public $totalPaidTicketsToday = 0;
     public $ticketsTodayGrowthPercent = 0;
+    public $totalActiveUsers = 0;
+    public $activeUsersGrowthPercent = 0;
 
     // Chart data properties
     public $transactionHistoryData = [];
@@ -96,92 +101,109 @@ class Dashboard extends Component
 
     private function calculateStatistics()
     {
-        // 1. Tổng số phim đang chiếu và tăng trưởng
-        $this->totalMoviesShowing = Movie::where('status', 'showing')->count();
+        // Tính toán tháng hiện tại và tháng trước
+        $currentMonthStart = Carbon::now()->startOfMonth();
+        $currentMonthEnd = Carbon::now()->endOfMonth();
+        $lastMonthStart = Carbon::now()->subMonth()->startOfMonth();
+        $lastMonthEnd = Carbon::now()->subMonth()->endOfMonth();
+
+        // 1. Tổng số phim đang chiếu (so sánh với tháng trước)
+        // Đếm phim có status = 'showing' trong tháng hiện tại
+        $this->totalMoviesShowing = Movie::where('status', 'showing')
+            ->whereBetween('created_at', [$currentMonthStart, $currentMonthEnd])
+            ->count();
+        
+        // Phim đang chiếu trong tháng trước
         $lastMonthMovies = Movie::where('status', 'showing')
-            ->where('created_at', '<', Carbon::now()->subMonth())->count();
+            ->whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])
+            ->count();
+        
         $this->moviesShowingGrowthPercent = $lastMonthMovies > 0 ?
-            round((($this->totalMoviesShowing - $lastMonthMovies) / $lastMonthMovies) * 100, 1) : 0;
+            round((($this->totalMoviesShowing - $lastMonthMovies) / $lastMonthMovies) * 100, 1) : 
+            ($this->totalMoviesShowing > 0 ? 100 : 0);
 
-        // 2. Tổng số người dùng và tăng trưởng
+        // 2. Tổng số người dùng (tất cả user đến hiện tại)
         $this->totalUsers = User::count();
-        $lastMonthUsers = User::where('created_at', '<', Carbon::now()->subMonth())->count();
-        $this->usersGrowthPercent = $lastMonthUsers > 0 ?
-            round((($this->totalUsers - $lastMonthUsers) / $lastMonthUsers) * 100, 1) : 0;
+        $lastMonthTotalUsers = User::where('created_at', '<=', $lastMonthEnd)->count();
+        
+        $this->usersGrowthPercent = $lastMonthTotalUsers > 0 ?
+            round((($this->totalUsers - $lastMonthTotalUsers) / $lastMonthTotalUsers) * 100, 1) : 
+            ($this->totalUsers > 0 ? 100 : 0);
 
-        // 3. Doanh thu năm hiện tại và so sánh với năm trước
-        $currentYear = Carbon::now()->year;
-        $lastYear = $currentYear - 1;
-
-        $currentYearTicketRevenue = Booking::where('status', 'paid')
-            ->whereYear('created_at', $currentYear)
+        // 3. Doanh thu tháng hiện tại vs tháng trước
+        $this->totalRevenueThisYear = Booking::where('status', 'paid')
+            ->whereBetween('created_at', [$currentMonthStart, $currentMonthEnd])
             ->sum('total_price');
 
-        $lastYearTicketRevenue = Booking::where('status', 'paid')
-            ->whereYear('created_at', $lastYear)
+        $lastMonthRevenue = Booking::where('status', 'paid')
+            ->whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])
             ->sum('total_price');
 
-        $currentYearFoodRevenue = FoodOrderItem::whereHas('booking', function ($query) use ($currentYear) {
-                $query->where('status', 'paid')
-                      ->whereYear('created_at', $currentYear);
-            })
-            ->sum('price');
+        $this->revenueYearGrowthPercent = $lastMonthRevenue > 0 ?
+            round((($this->totalRevenueThisYear - $lastMonthRevenue) / $lastMonthRevenue) * 100, 1) : 
+            ($this->totalRevenueThisYear > 0 ? 100 : 0);
 
-        $lastYearFoodRevenue = FoodOrderItem::whereHas('booking', function ($query) use ($lastYear) {
-                $query->where('status', 'paid')
-                      ->whereYear('created_at', $lastYear);
-            })
-            ->sum('price');
-
-        $this->totalRevenueThisYear = $currentYearTicketRevenue + $currentYearFoodRevenue;
-        $lastYearRevenue = $lastYearTicketRevenue + $lastYearFoodRevenue;
-
-        $this->revenueYearGrowthPercent = $lastYearRevenue > 0 ?
-            round((($this->totalRevenueThisYear - $lastYearRevenue) / $lastYearRevenue) * 100, 1) : 0;
-
-        // 4. Doanh thu hôm nay và so sánh với hôm qua
-        $this->totalRevenueToday = Booking::where('status', 'paid')
-            ->whereDate('created_at', Carbon::today())
-            ->sum('total_price');
-
-        $yesterdayRevenue = Booking::where('status', 'paid')
-            ->whereDate('created_at', Carbon::yesterday())
-            ->sum('total_price');
-
-        $this->revenueTodayGrowthPercent = $yesterdayRevenue > 0 ?
-            round((($this->totalRevenueToday - $yesterdayRevenue) / $yesterdayRevenue) * 100, 1) : 0;
-
-        // 5. Số vé đã thanh toán hôm nay và so sánh với hôm qua
-        $this->totalPaidTicketsToday = Booking::where('status', 'paid')
-            ->whereDate('created_at', Carbon::today())
+        // 4. Số vé đã thanh toán tháng hiện tại vs tháng trước
+        $this->totalPaidTicketsToday = DB::table('booking_seats')
+            ->join('bookings', 'booking_seats.booking_id', '=', 'bookings.id')
+            ->where('bookings.status', 'paid')
+            ->whereBetween('bookings.created_at', [$currentMonthStart, $currentMonthEnd])
             ->count();
 
-        $yesterdayTickets = Booking::where('status', 'paid')
-            ->whereDate('created_at', Carbon::yesterday())
+        $lastMonthTickets = DB::table('booking_seats')
+            ->join('bookings', 'booking_seats.booking_id', '=', 'bookings.id')
+            ->where('bookings.status', 'paid')
+            ->whereBetween('bookings.created_at', [$lastMonthStart, $lastMonthEnd])
             ->count();
 
-        $this->ticketsTodayGrowthPercent = $yesterdayTickets > 0 ?
-            round((($this->totalPaidTicketsToday - $yesterdayTickets) / $yesterdayTickets) * 100, 1) : 0;
+        $this->ticketsTodayGrowthPercent = $lastMonthTickets > 0 ?
+            round((($this->totalPaidTicketsToday - $lastMonthTickets) / $lastMonthTickets) * 100, 1) : 
+            ($this->totalPaidTicketsToday > 0 ? 100 : 0);
+
+        // 5. Người dùng mới tháng hiện tại vs tháng trước
+        $this->totalActiveUsers = User::whereBetween('created_at', [$currentMonthStart, $currentMonthEnd])
+            ->count();
+
+        $lastMonthActiveUsers = User::whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])
+            ->count();
+
+        $this->activeUsersGrowthPercent = $lastMonthActiveUsers > 0 ?
+            round((($this->totalActiveUsers - $lastMonthActiveUsers) / $lastMonthActiveUsers) * 100, 1) : 
+            ($this->totalActiveUsers > 0 ? 100 : 0);
+
+        // 6. Lưu lại cho các method khác (nếu cần)
+        $this->currentMonthRevenue = $this->totalRevenueThisYear;
+        $this->lastMonthRevenue = $lastMonthRevenue;
+        $this->currentMonthBookings = $this->totalPaidTicketsToday;
+        $this->lastMonthBookings = $lastMonthTickets;
+        $this->currentMonthUsers = $this->totalActiveUsers;
+        $this->lastMonthUsers = $lastMonthActiveUsers;
     }
 
     #[Title('Dashboard - SE7ENCinema')]
     #[Layout('components.layouts.admin')]
     public function render()
     {
-        $transactionHis = new TransactionHistoryChart;
-        $this->realtimeUpdateCharts([$transactionHis, $this->filters]);
+        // Tính toán thống kê trước
+        $this->calculateStatistics();
+
+        $transactionHistory = new TransactionHistoryChart;
+        $this->realtimeUpdateCharts([$transactionHistory, $this->filters]);
 
         $revenueSource = new RevenueSourceChart;
         $this->realtimeUpdateCharts([$revenueSource, $this->filters]);
 
-        $foodManagement = new FoodManagementChart;
-        $this->realtimeUpdateCharts([$foodManagement, $this->filters]);
-
         $revenue = new RevenueChart;
         $this->realtimeUpdateCharts([$revenue, $this->filters]);
 
-        // Tính toán thống kê trước
-        $this->calculateStatistics();
+        $topMovies = new TopMoviesChart();
+        $topFoods = new TopFoodsChart();
+        $seatsAnalysis = new SeatsAnalysisChart();
+        $showtimeTimeSlot = new ShowtimeTimeSlotChart();
+        $this->realtimeUpdateCharts([$topMovies, $this->filters]);
+        $this->realtimeUpdateCharts([$topFoods, $this->filters]);
+        $this->realtimeUpdateCharts([$seatsAnalysis, $this->filters]);
+        $this->realtimeUpdateCharts([$showtimeTimeSlot, $this->filters]);
 
         $this->dispatch('updateData',
             $this->transactionHistoryData ?? [],
@@ -191,6 +213,26 @@ class Dashboard extends Component
 
         $this->dispatch('updateRevenueChart', data: $this->chartData);
 
-        return view('livewire.admin.dasboard-chart.dashboard', compact('transactionHis', 'revenueSource', 'foodManagement', 'revenue'));
+        return view('livewire.admin.dasboard-chart.dashboard', compact(
+            'revenue',
+            'transactionHistory',
+            'revenueSource',
+            'topMovies',
+            'topFoods',
+            'seatsAnalysis',
+            'showtimeTimeSlot'
+        ))->with([
+            'totalMoviesShowing' => $this->totalMoviesShowing,
+            'moviesShowingGrowthPercent' => $this->moviesShowingGrowthPercent,
+            'totalRevenueThisYear' => $this->totalRevenueThisYear,
+            'revenueYearGrowthPercent' => $this->revenueYearGrowthPercent,
+            'totalPaidTicketsToday' => $this->totalPaidTicketsToday,
+            'ticketsTodayGrowthPercent' => $this->ticketsTodayGrowthPercent,
+            'totalActiveUsers' => $this->totalActiveUsers,
+            'activeUsersGrowthPercent' => $this->activeUsersGrowthPercent,
+            'totalUsers' => $this->totalUsers,
+            'usersGrowthPercent' => $this->usersGrowthPercent,
+            'filters' => $this->filters
+        ]);
     }
 }

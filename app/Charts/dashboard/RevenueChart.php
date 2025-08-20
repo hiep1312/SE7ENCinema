@@ -4,6 +4,7 @@ namespace App\Charts\dashboard;
 
 use App\Models\Booking;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class RevenueChart
 {
@@ -26,10 +27,35 @@ class RevenueChart
                 ->whereDate('created_at', $date)
                 ->count();
 
+            // Lấy thông tin về đồ ăn
+            $foodRevenue = DB::table('food_order_items as foi')
+                ->join('bookings as b', 'foi.booking_id', '=', 'b.id')
+                ->where('b.status', 'paid')
+                ->whereDate('b.created_at', $date)
+                ->sum(DB::raw('foi.price * foi.quantity'));
+
+            $foodOrders = DB::table('food_order_items as foi')
+                ->join('bookings as b', 'foi.booking_id', '=', 'b.id')
+                ->where('b.status', 'paid')
+                ->whereDate('b.created_at', $date)
+                ->count();
+
+            // Lấy thông tin về phim
+            $movieRevenue = $revenue - $foodRevenue;
+            $movieBookings = DB::table('bookings as b')
+                ->join('showtimes as s', 'b.showtime_id', '=', 's.id')
+                ->where('b.status', 'paid')
+                ->whereDate('b.created_at', $date)
+                ->count();
+
             $data[] = [
                 'x' => $date->format('d/m'),
                 'y' => $revenue,
-                'bookings' => $bookings
+                'bookings' => $bookings,
+                'foodRevenue' => $foodRevenue,
+                'foodOrders' => $foodOrders,
+                'movieRevenue' => $movieRevenue,
+                'movieBookings' => $movieBookings
             ];
         }
 
@@ -55,6 +81,10 @@ class RevenueChart
         $labels = $chartData->map(fn($item) => $item['x'])->toJson();
         $revenues = $chartData->map(fn($item) => $item['y'])->toJson();
         $bookings = $chartData->map(fn($item) => $item['bookings'])->toJson();
+        $foodRevenues = $chartData->map(fn($item) => $item['foodRevenue'])->toJson();
+        $foodOrders = $chartData->map(fn($item) => $item['foodOrders'])->toJson();
+        $movieRevenues = $chartData->map(fn($item) => $item['movieRevenue'])->toJson();
+        $movieBookings = $chartData->map(fn($item) => $item['movieBookings'])->toJson();
 
         return <<<JS
     {
@@ -217,10 +247,18 @@ class RevenueChart
                 const labels = {$labels};
                 const revenues = {$revenues};
                 const bookings = {$bookings};
+                const foodRevenues = {$foodRevenues};
+                const foodOrders = {$foodOrders};
+                const movieRevenues = {$movieRevenues};
+                const movieBookings = {$movieBookings};
 
                 const x = labels[dataPointIndex] || '';
                 const revenue = revenues[dataPointIndex] || 0;
                 const booking = bookings[dataPointIndex] || 0;
+                const foodRevenue = foodRevenues[dataPointIndex] || 0;
+                const foodOrder = foodOrders[dataPointIndex] || 0;
+                const movieRevenue = movieRevenues[dataPointIndex] || 0;
+                const movieBooking = movieBookings[dataPointIndex] || 0;
 
                 let phanTramTang = 0;
                 let iconTangTruong = '📊';
@@ -239,42 +277,66 @@ class RevenueChart
                     }
                 }
                 return `
-                    <div class="bg-dark border border-secondary rounded-3 p-3 shadow-lg" style="min-width: 320px; max-width: 400px;">
+                    <div class="bg-dark border border-secondary rounded-3 p-3 shadow-lg" style="min-width: 400px; max-width: 500px;">
                         <div class="d-flex align-items-center mb-3">
                             <span class="fs-4 me-2">💰</span>
                             <h6 class="mb-0 text-white fw-bold">\${x}</h6>
                         </div>
+                        
+                        <!-- Tổng quan -->
                         <div class="row g-2 mb-3">
                             <div class="col-12">
                                 <div class="d-flex justify-content-between align-items-center p-2 bg-primary bg-opacity-10 rounded">
-                                    <span class="text-primary fw-medium">
-                                        💸
-                                        Doanh thu:
-                                    </span>
-                                    <span class="fw-bold fs-6 text-primary">
-                                        \${new Intl.NumberFormat('vi-VN').format(revenue)}đ
-                                    </span>
+                                    <span class="text-primary fw-medium">💸 Tổng doanh thu:</span>
+                                    <span class="fw-bold fs-6 text-primary">\${new Intl.NumberFormat('vi-VN').format(revenue)}đ</span>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="d-flex justify-content-between align-items-center p-2 bg-success bg-opacity-10 rounded">
-                                    <span class="text-primary fw-medium">
-                                        🛒
-                                        Đơn hàng:
-                                    </span>
+                                    <span class="text-success fw-medium">🛒 Tổng đơn hàng:</span>
                                     <span class="fw-bold text-success">\${booking}</span>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="d-flex justify-content-between align-items-center p-2 bg-info bg-opacity-10 rounded">
-                                    <span class="text-info fw-medium">
-                                        ✅
-                                        TB/đơn:
-                                    </span>
+                                    <span class="text-info fw-medium">✅ TB/đơn:</span>
                                     <span class="fw-bold text-info">\${new Intl.NumberFormat('vi-VN').format(revenue / (booking || 1))}đ</span>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Chi tiết doanh thu -->
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <div class="d-flex justify-content-between align-items-center p-2 bg-warning bg-opacity-10 rounded">
+                                    <span class="text-warning fw-medium">🎬 Phim:</span>
+                                    <span class="fw-bold text-warning">\${new Intl.NumberFormat('vi-VN').format(movieRevenue)}đ</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="d-flex justify-content-between align-items-center p-2 bg-danger bg-opacity-10 rounded">
+                                    <span class="text-danger fw-medium">🍽️ Đồ ăn:</span>
+                                    <span class="fw-bold text-danger">\${new Intl.NumberFormat('vi-VN').format(foodRevenue)}đ</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chi tiết đơn hàng -->
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <div class="d-flex justify-content-between align-items-center p-2 bg-warning bg-opacity-10 rounded">
+                                    <span class="text-warning fw-medium">🎫 Vé phim:</span>
+                                    <span class="fw-bold text-warning">\${movieBooking}</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="d-flex justify-content-between align-items-center p-2 bg-danger bg-opacity-10 rounded">
+                                    <span class="text-danger fw-medium">🍔 Món ăn:</span>
+                                    <span class="fw-bold text-danger">\${foodOrder}</span>
+                                </div>
+                            </div>
+                        </div>
+
                         \${dataPointIndex > 0 ? `
                             <div class="border-top border-secondary pt-2">
                                 <div class="d-flex justify-content-between align-items-center">
