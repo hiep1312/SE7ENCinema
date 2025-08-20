@@ -1,6 +1,5 @@
-<div class="scRender scSeat">
-    <div class="container-lg mb-4" wire:poll.1s="calculateMaintenanceInfo">
-        <!-- Thêm button test ngay sau header -->
+<div class="scRender">
+    <div class="container-lg mb-4">
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2 class="text-light">Chi tiết phòng chiếu: {{ $room->name }}</h2>
             <div>
@@ -13,16 +12,12 @@
                 </a>
             </div>
         </div>
-
-        <!-- Room Status Alert -->
         @if ($room->hasActiveShowtimes())
             <div class="alert alert-warning">
                 <i class="fas fa-exclamation-triangle me-2"></i>
                 Phòng chiếu có suất chiếu đang hoạt động. Một số chức năng bị hạn chế.
             </div>
         @endif
-
-        <!-- Maintenance Countdown Card -->
         @if ($maintenanceStatus === 'overdue')
             <div class="row mb-4">
                 <div class="col-12">
@@ -92,7 +87,6 @@
             </div>
         @endif
 
-        <!-- Quick Stats Cards -->
         <div class="row mb-4 g-3">
             <div class="col-lg-3 col-md-6">
                 <div class="card text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
@@ -170,9 +164,6 @@
             </div>
         </div>
 
-        <!-- Tabs Navigation -->
-
-
         <ul class="nav nav-tabs bg-dark" role="tablist">
             <li class="nav-item">
                 <button
@@ -213,13 +204,10 @@
                 </button>
             </li>
         </ul>
-        <!-- Tab Content -->
         <div class="tab-content mt-1">
-            <!-- Analytics Tab Content -->
             @if ($tabCurrent === 'analytics')
-                <div class="container-fluid" wire:ignore>
+                <div class="container-fluid">
                     <div class="row g-4">
-                        <!-- Combined Room Statistics Chart -->
                         <div class="col-6">
                             <div class="bg-dark mb-3" style="color: black;">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -227,8 +215,7 @@
                                         <i class="fas fa-chart-bar me-2 text-primary"></i>Thống Kê Tất Cả Phòng
                                         Chiếu
                                     </h5>
-                                    {{-- Room Stats Filter --}}
-                                    <div class="dropdown" wire:ignore>
+                                    <div class="dropdown">
                                         <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
                                             data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="fas fa-filter me-1"></i>
@@ -267,7 +254,7 @@
                                                 @endswitch
                                             </span>
                                         </button>
-                                        <ul class="dropdown-menu dropdown-menu-dark">
+                                        <ul class="dropdown-menu dropdown-menu-dark" wire:ignore.self>
                                             <li>
                                                 <h6 class="dropdown-header text-primary">Ngày</h6>
                                             </li>
@@ -307,20 +294,18 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <div wire:ignore>
-                                    <div id="allRoomsStatsChart" style="height: 400px;"></div>
+                                <div >
+                                    <div id="allRoomsStatsChart" style="height: 400px;" wire:ignore></div>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Occupancy Rate Chart -->
                         <div class="col-lg-6">
                             <div class="bg-dark" style="color: black;">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h5 class="text-white mb-0">
                                         <i class="fas fa-chart-pie me-2 text-success"></i>Tỷ Lệ Lấp Đầy (%)
                                     </h5>
-                                    <div class="dropdown" wire:ignore>
+                                    <div class="dropdown">
                                         <button class="btn btn-outline-success btn-sm dropdown-toggle" type="button"
                                             data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="fas fa-filter me-1"></i>
@@ -359,7 +344,7 @@
                                                 @endswitch
                                             </span>
                                         </button>
-                                        <ul class="dropdown-menu dropdown-menu-dark">
+                                        <ul class="dropdown-menu dropdown-menu-dark"  wire:ignore.self>
                                             <li>
                                                 <h6 class="dropdown-header text-success">Ngày</h6>
                                             </li>
@@ -399,21 +384,19 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <div wire:ignore>
-                                    <div id="occupancyChart" style="height: 400px;"></div>
+                                <div>
+                                    <div id="occupancyChart" style="color:black" wire:ignore></div>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Seat Status Chart -->
-                        <div class="col-lg-6">
-                            <div class="bg-dark" style="color: black;">
+                        <div class="col-6">
+                            <div class="bg-dark rounded-3 p-3" style="color: black;">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h5 class="text-white mb-0">
                                         <i class="fas fa-chair me-2 text-warning"></i>Tình Trạng Ghế Phòng
                                         {{ $room->name }}
                                     </h5>
-                                    <div class="dropdown" wire:ignore>
+                                    <div class="dropdown">
                                         <button class="btn btn-outline-warning btn-sm dropdown-toggle" type="button"
                                             data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="fas fa-filter me-1"></i>
@@ -452,7 +435,7 @@
                                                 @endswitch
                                             </span>
                                         </button>
-                                        <ul class="dropdown-menu dropdown-menu-dark">
+                                        <ul class="dropdown-menu dropdown-menu-dark" wire:ignore.self>
                                             <li>
                                                 <h6 class="dropdown-header text-warning">Ngày</h6>
                                             </li>
@@ -492,33 +475,30 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <div wire:ignore>
-                                    <div id="seatStatusChart" style="height: 300px;"></div>
+                                <div>
+                                    <div id="seatStatusChart" style="height: 420px; width: 100%;" wire:ignore></div>
                                 </div>
-                                <!-- Seat Statistics Table -->
-                                <!-- Seat Statistics Table - FIX: Dynamic display for all seat types -->
-                                <div class="mt-3">
-                                    <div class="row text-center g-2">
-                                        @php
-                                            // FIX: Define colors for all seat types dynamically
-                                            $seatTypeColors = [
-                                                'Ghế thường' => ['bg' => 'bg-success', 'text' => 'text-white'],
-                                                'Ghế VIP' => ['bg' => 'bg-warning', 'text' => 'text-dark'],
-                                                'Ghế đôi' => ['bg' => 'bg-danger', 'text' => 'text-white'],
-                                            ];
+                                @php
+                                    $seatTypeColors = [
+                                        'Ghế thường' => ['bg' => 'bg-success', 'text' => 'text-white'],
+                                        'Ghế VIP' => ['bg' => 'bg-warning', 'text' => 'text-dark'],
+                                        'Ghế đôi' => ['bg' => 'bg-danger', 'text' => 'text-white'],
+                                    ];
 
-                                            $availableSeatTypes = $seatStatusData['seat_types'] ?? [];
-                                            $totalTypes = count($availableSeatTypes);
+                                    $availableSeatTypes = $seatStatusData['seat_types'] ?? [];
+                                    $totalTypes = count($availableSeatTypes);
 
-                                            $colClass = match (true) {
-                                                $totalTypes <= 2 => 'col-6',
-                                                $totalTypes == 3 => 'col-4',
-                                                $totalTypes == 4 => 'col-3',
-                                                default => 'col-2',
-                                            };
-                                        @endphp
+                                    $colClass = match (true) {
+                                        $totalTypes <= 2 => 'col-6',
+                                        $totalTypes == 3 => 'col-4',
+                                        $totalTypes == 4 => 'col-3',
+                                        default => 'col-2',
+                                    };
+                                @endphp
 
-                                        @if (count($availableSeatTypes) > 0)
+                                @if (count($availableSeatTypes) > 0)
+                                    <div class="mt-3">
+                                        <div class="row text-center g-2">
                                             @foreach ($availableSeatTypes as $seatType)
                                                 @php
                                                     $colorConfig = $seatTypeColors[$seatType['name']] ?? [
@@ -545,24 +525,11 @@
                                                     </div>
                                                 </div>
                                             @endforeach
-                                        @else
-                                            <div class="col-12">
-                                                <div class="card bg-secondary">
-                                                    <div class="card-body py-2">
-                                                        <p class="text-white mb-0">Không có dữ liệu ghế</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endif
+                                        </div>
                                     </div>
-
-                                    <!-- Summary Statistics -->
-
-                                </div>
+                                @endif
                             </div>
                         </div>
-
-                        <!-- Room Movies Chart -->
                         <div class="col-6">
                             <div class="bg-dark rounded-3 p-3" style="color: black;">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -570,7 +537,7 @@
                                         <i class="fas fa-film me-2 text-info"></i>Phim Được Xem Nhiều Nhất Của
                                         Phòng {{ $room->name }}
                                     </h5>
-                                    <div class="dropdown" wire:ignore>
+                                    <div class="dropdown">
                                         <button class="btn btn-outline-info btn-sm dropdown-toggle" type="button"
                                             data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="fas fa-filter me-1"></i>
@@ -609,7 +576,7 @@
                                                 @endswitch
                                             </span>
                                         </button>
-                                        <ul class="dropdown-menu dropdown-menu-dark">
+                                        <ul class="dropdown-menu dropdown-menu-dark" wire:ignore.self>
                                             <li>
                                                 <h6 class="dropdown-header text-info">Ngày</h6>
                                             </li>
@@ -649,15 +616,14 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <div wire:ignore>
-                                    <div id="roomMoviesChart" style="height: 400px;"></div>
+                                <div>
+                                    <div id="roomMoviesChart" style="height: 400px;" wire:ignore></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             @elseif($tabCurrent === 'overview')
-                <!-- Overview Tab -->
                 <div class="row">
                     <div class="col-md-6">
                         <div class="card bg-dark border-light">
@@ -785,7 +751,6 @@
                     </div>
                 </div>
             @elseif($tabCurrent === 'maintenance')
-                <!-- Maintenance Tab -->
                 <div class="row">
                     <div class="col-md-8">
                         <div class="card bg-dark border-light">
@@ -947,7 +912,6 @@
                     </div>
                 </div>
             @elseif($tabCurrent === 'seats')
-                <!-- Seats Tab -->
 
                 <div class="card bg-dark border-light">
                     <div class="card-header bg-gradient text-light"
@@ -1020,8 +984,6 @@
                                                                     </label>
                                                                 </li>
                                                             @endforeach
-
-                                                            {{-- Chèn lối đi sau nhóm 5 chỗ vật lý --}}
                                                             <li data-seat="aisle" sc-id="aisle">
                                                                 <span class="seat-helper">Lối đi</span>
                                                                 <div class="aisle"></div>
@@ -1033,8 +995,6 @@
                                                             @endphp
                                                         @endif
                                                     @endforeach
-
-                                                    {{-- Render ghế còn lại nếu chưa đủ 5 chỗ cuối hàng --}}
                                                     @foreach ($seatGroup as $gSeat)
                                                         @php
                                                             $seatClass = match ($gSeat->seat_type) {
@@ -1100,7 +1060,6 @@
 
                 </div>
             @elseif($tabCurrent === 'showtimes')
-                <!-- Showtimes Tab -->
                 <div class="row">
                     <div class="col-md-6">
                         <div class="card bg-dark border-light">
@@ -1159,6 +1118,8 @@
                                                         {{ $showtime->end_time->format('H:i') }}
                                                     </small>
                                                 </div>
+                                                <span
+                                                    class="badge bg-warning text-dark fw-bold">{{ number_format($showtime->price, 0, '.', '.') }}đ</span>
                                             </div>
                                         @endforeach
                                     </div>
@@ -1181,7 +1142,6 @@
     <script>
         globalThis.chartInstances = {};
 
-        // Function to update filter text
         function updateFilterText(elementId, text) {
             const element = document.getElementById(elementId);
             if (element) {
@@ -1189,9 +1149,13 @@
             }
         }
 
+        {!! $chartRoomStatsData->compileJavascript() !!}
+        {!! $chartRoomOccupancyData->compileJavascript() !!}
+        {!! $chartRoomSeatStatusData->compileJavascript() !!}
+        {!! $chartRoomMoviesData->compileJavascript() !!}
+
         Livewire.on('updateData', function([$occupancyData, $seatStatusData, $roomStatsData, $roomMoviesData,
         $filterTexts]) {
-            // Cập nhật filter text từ server
             if ($filterTexts) {
                 if ($filterTexts.roomStatsFilterText) {
                     updateFilterText('roomStatsFilterText', $filterTexts.roomStatsFilterText);
@@ -1206,622 +1170,6 @@
                     updateFilterText('roomMoviesFilterText', $filterTexts.roomMoviesFilterText);
                 }
             }
-
-            const occupancyRate = $occupancyData['occupancy_rate'];
-            const seatStatusData = $seatStatusData['chart_data'];
-            const seatTypeColors = {
-                'Ghế thường': '#28a745',
-                'Ghế VIP': '#ffc107',
-                'Ghế đôi': '#dc3545',
-            };
-
-            const enhancedSeries = seatStatusData.series.map((serie, statusIndex) => {
-                const statusName = serie.name;
-                const statusOpacity = statusIndex === 0 ? 0.4 : (statusIndex === 1 ? 0.8 : 0.9);
-                const statusPattern = statusIndex === 2 ? 'diagonalLines' : 'solid';
-
-                return {
-                    name: statusName,
-                    data: serie.data.map((value, categoryIndex) => {
-                        const seatType = seatStatusData.categories[categoryIndex];
-                        const baseColor = seatTypeColors[seatType] ||
-                            '#6c757d'; // Fallback to gray
-
-                        return {
-                            x: seatType,
-                            y: value,
-                            fillColor: baseColor,
-                            meta: {
-                                seatType: seatType,
-                                status: statusName,
-                                count: value,
-                                baseColor: baseColor
-                            }
-                        };
-                    }),
-                    color: undefined
-                };
-            });
-
-            const optionsAllRoomsStats = {
-                chart: {
-                    type: 'line',
-                    height: 400,
-                    background: 'transparent',
-                    toolbar: {
-                        show: true
-                    },
-                    animations: {
-                        enabled: true,
-                        easing: 'easeinout',
-                        speed: 800
-                    }
-                },
-                series: [{
-                        name: 'Vé đã bán',
-                        type: 'column',
-                        data: $roomStatsData['tickets']
-                    },
-                    {
-                        name: 'Doanh thu (VNĐ)',
-                        type: 'line',
-                        yAxisIndex: 1,
-                        data: $roomStatsData['revenue']
-                    }
-                ],
-                xaxis: {
-                    categories: $roomStatsData['labels'],
-                    labels: {
-                        style: {
-                            colors: '#ffffff',
-                            fontSize: '12px'
-                        }
-                    },
-                    axisBorder: {
-                        show: false
-                    },
-                    axisTicks: {
-                        show: false
-                    }
-                },
-                yaxis: [{
-                        title: {
-                            text: 'Số vé',
-                            style: {
-                                color: '#ffffff'
-                            }
-                        },
-                        labels: {
-                            style: {
-                                colors: '#ffffff',
-                                fontSize: '12px'
-                            }
-                        }
-                    },
-                    {
-                        opposite: true,
-                        title: {
-                            text: 'Doanh thu (VNĐ)',
-                            style: {
-                                color: '#ffffff'
-                            }
-                        },
-                        labels: {
-                            style: {
-                                colors: '#ffffff',
-                                fontSize: '12px'
-                            },
-                            formatter: function(value) {
-                                return new Intl.NumberFormat('vi-VN').format(value);
-                            }
-                        }
-                    }
-                ],
-                colors: ['#4285F4', '#FBBC04'],
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shade: 'dark',
-                        type: 'vertical',
-                        shadeIntensity: 0.3,
-                        gradientToColors: ['#1976D2', '#FF6B35'],
-                        inverseColors: false,
-                        opacityFrom: 0.9,
-                        opacityTo: 0.6,
-                        stops: [0, 100]
-                    }
-                },
-                plotOptions: {
-                    bar: {
-                        horizontal: false,
-                        columnWidth: '60%',
-                        endingShape: 'rounded',
-                        borderRadius: 8
-                    }
-                },
-                stroke: {
-                    width: [0, 4],
-                    curve: 'smooth'
-                },
-                grid: {
-                    show: true,
-                    borderColor: '#2d3748',
-                    strokeDashArray: 1
-                },
-                legend: {
-                    position: 'top',
-                    horizontalAlign: 'left',
-                    labels: {
-                        colors: '#ffffff'
-                    }
-                },
-                tooltip: {
-                    theme: 'dark',
-                    y: [{
-                            formatter: function(value) {
-                                return value + ' vé';
-                            }
-                        },
-                        {
-                            formatter: function(value) {
-                                return new Intl.NumberFormat('vi-VN', {
-                                    style: 'currency',
-                                    currency: 'VND'
-                                }).format(value);
-                            }
-                        }
-                    ]
-                }
-            }
-
-            const optionsOccupancyRate = {
-                chart: {
-                    type: 'radialBar',
-                    height: 400,
-                    background: 'transparent',
-                    toolbar: {
-                        show: true
-                    }
-                },
-                plotOptions: {
-                    radialBar: {
-                        startAngle: -135,
-                        endAngle: 135,
-                        hollow: {
-                            margin: 0,
-                            size: '70%',
-                            background: 'transparent',
-                            image: undefined,
-                            position: 'front',
-                            dropShadow: {
-                                enabled: true,
-                                top: 3,
-                                left: 0,
-                                blur: 4,
-                                opacity: 0.24
-                            }
-                        },
-                        track: {
-                            background: '#2d3748',
-                            strokeWidth: '67%',
-                            margin: 0,
-                            dropShadow: {
-                                enabled: true,
-                                top: -3,
-                                left: 0,
-                                blur: 4,
-                                opacity: 0.35
-                            }
-                        },
-                        dataLabels: {
-                            show: true,
-                            name: {
-                                offsetY: -10,
-                                show: true,
-                                color: '#ffffff',
-                                fontSize: '17px'
-                            },
-                            value: {
-                                formatter: function(val) {
-                                    return parseInt(val) + '%';
-                                },
-                                color: '#ffffff',
-                                fontSize: '36px',
-                                show: true,
-                            }
-                        }
-                    }
-                },
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shade: 'dark',
-                        type: 'horizontal',
-                        shadeIntensity: 0.5,
-                        gradientToColors: ['#34A853'],
-                        inverseColors: false,
-                        opacityFrom: 1,
-                        opacityTo: 1,
-                        stops: [0, 100]
-                    }
-                },
-                series: [occupancyRate],
-                labels: ['Tỷ lệ lấp đầy'],
-                colors: ['#34A853']
-            }
-
-            const optionsSeatStatus = {
-                chart: {
-                    type: 'bar',
-                    height: 350,
-                    background: 'transparent',
-                    toolbar: {
-                        show: true
-                    },
-                    stacked: true,
-                    animations: {
-                        enabled: true,
-                        easing: 'easeinout',
-                        speed: 800
-                    }
-                },
-                plotOptions: {
-                    bar: {
-                        horizontal: false,
-                        columnWidth: '70%',
-                        endingShape: 'rounded',
-                        borderRadius: 4,
-                        dataLabels: {
-                            total: {
-                                enabled: true,
-                                offsetX: 0,
-                                offsetY: -5,
-                                style: {
-                                    fontSize: '12px',
-                                    fontWeight: 600,
-                                    color: '#ffffff'
-                                },
-                                formatter: function(val, opts) {
-                                    const categoryIndex = opts.dataPointIndex;
-                                    const total = seatStatusData.series.reduce((sum, s) => sum +
-                                        s.data[categoryIndex], 0);
-                                    return total > 0 ? `${total} ghế` : '';
-                                }
-                            }
-                        }
-                    }
-                },
-                series: enhancedSeries,
-                xaxis: {
-                    categories: seatStatusData.categories || [],
-                    labels: {
-                        style: {
-                            colors: '#ffffff',
-                            fontSize: '12px',
-                            fontWeight: 600
-                        },
-                        rotate: seatStatusData.categories.length > 3 ? -45 : 0,
-                        maxHeight: 100
-                    },
-                    axisBorder: {
-                        show: false
-                    },
-                    axisTicks: {
-                        show: false
-                    }
-                },
-                yaxis: {
-                    title: {
-                        text: 'Số lượng ghế',
-                        style: {
-                            color: '#ffffff',
-                            fontSize: '14px'
-                        }
-                    },
-                    labels: {
-                        style: {
-                            colors: '#ffffff',
-                            fontSize: '12px'
-                        },
-                        formatter: function(value) {
-                            return Math.floor(value);
-                        }
-                    }
-                },
-                colors: ['rgba(255,255,255,0.4)', 'rgba(255,255,255,0.8)',
-                    'rgba(255,255,255,0.9)'
-                ],
-                fill: {
-                    opacity: [0.4, 0.8, 0.9],
-                    type: ['solid', 'solid', 'pattern'],
-                    pattern: {
-                        style: ['', '', 'diagonalLines'],
-                        width: 6,
-                        height: 6,
-                        strokeWidth: 2,
-                    }
-                },
-                stroke: {
-                    width: [1, 1, 2],
-                    colors: ['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.5)', '#ffffff']
-                },
-                grid: {
-                    show: true,
-                    borderColor: '#2d3748',
-                    strokeDashArray: 1,
-                    xaxis: {
-                        lines: {
-                            show: false
-                        }
-                    },
-                    yaxis: {
-                        lines: {
-                            show: true
-                        }
-                    }
-                },
-                legend: {
-                    position: 'top',
-                    horizontalAlign: 'center',
-                    labels: {
-                        colors: '#ffffff',
-                        fontSize: '12px'
-                    },
-                    markers: {
-                        width: 12,
-                        height: 12,
-                        radius: 0,
-                        fillColors: ['rgba(128,128,128,0.4)', 'rgba(128,128,128,0.8)',
-                            'rgba(128,128,128,0.9)'
-                        ]
-                    }
-                },
-                tooltip: {
-                    theme: 'dark',
-                    shared: true,
-                    intersect: false,
-                    style: {
-                        fontSize: '12px'
-                    },
-                    custom: function({
-                        series,
-                        seriesIndex,
-                        dataPointIndex,
-                        w
-                    }) {
-                        const category = seatStatusData.categories[dataPointIndex];
-                        const baseColor = seatTypeColors[category] || '#6c757d';
-                        const total = series.reduce((sum, s) => sum + s[dataPointIndex], 0);
-
-                        if (total === 0) {
-                            return `
-                                <div style="padding: 10px; background: rgba(0,0,0,0.9); border-radius: 6px; border-left: 4px solid ${baseColor};">
-                                    <div style="font-weight: bold; color: ${baseColor}; margin-bottom: 8px;">
-                                        <i class="fas fa-chair"></i> ${category}
-                                    </div>
-                                    <div style="color: #ccc; font-size: 11px;">Không có dữ liệu</div>
-                                </div>
-                            `;
-                        }
-
-                        let tooltipContent = `
-                            <div style="padding: 12px; background: rgba(0,0,0,0.95); border-radius: 8px; border-left: 4px solid ${baseColor}; min-width: 200px;">
-                                <div style="font-weight: bold; color: ${baseColor}; margin-bottom: 10px; font-size: 13px;">
-                                    <i class="fas fa-chair"></i> ${category}
-                                </div>
-                                <div style="font-size: 11px; color: #aaa; margin-bottom: 8px; border-bottom: 1px solid #333; padding-bottom: 4px;">
-                                    <strong style="color: white;">Tổng: ${total} ghế</strong>
-                                </div>
-                        `;
-
-                        // Status colors for legend
-                        const statusColors = [{
-                                color: baseColor,
-                                opacity: '0.4',
-                                name: 'Còn trống'
-                            },
-                            {
-                                color: baseColor,
-                                opacity: '0.8',
-                                name: 'Đã đặt'
-                            },
-                            {
-                                color: baseColor,
-                                opacity: '1',
-                                name: 'Bảo trì',
-                                pattern: true
-                            }
-                        ];
-
-                        series.forEach((seriesData, idx) => {
-                            const value = seriesData[dataPointIndex];
-                            if (value > 0) {
-                                const seriesName = w.config.series[idx].name;
-                                const percentage = Math.round((value / total) * 100);
-                                const statusColor = statusColors[idx];
-
-                                const patternText = statusColor.pattern ? ' (////)' :
-                                    '';
-                                const colorStyle =
-                                    `background: ${statusColor.color}; opacity: ${statusColor.opacity};`;
-                                tooltipContent += `
-                                    <div style="margin: 4px 0; display: flex; justify-content: space-between; align-items: center;">
-                                        <div style="display: flex; align-items: center;">
-                                            <div style="width: 12px; height: 12px; ${colorStyle} margin-right: 8px; border-radius: 2px; ${statusColor.pattern ? 'border: 1px dashed white;' : ''}"></div>
-                                            <span style="color: #ddd; font-size: 11px;">${seriesName}${patternText}:</span>
-                                        </div>
-                                        <strong style="color: white; font-size: 12px;">${value} ghế (${percentage}%)</strong>
-                                    </div>`;
-                            }
-                        });
-
-                        tooltipContent += `
-                            <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #333; font-size: 10px; color: #888;">
-                                💡 Màu cột thể hiện loại ghế, độ đậm thể hiện trạng thái
-                            </div>
-                            </div>`;
-                        return tooltipContent;
-                    }
-                },
-                dataLabels: {
-                    enabled: true,
-                    style: {
-                        colors: ['#ffffff'],
-                        fontSize: '10px',
-                        fontWeight: 'bold',
-                        textStroke: '1px rgba(0,0,0,0.5)'
-                    },
-                    formatter: function(val, opts) {
-                        return val > 0 ? val : '';
-                    },
-                    dropShadow: {
-                        enabled: true,
-                        top: 1,
-                        left: 1,
-                        blur: 1,
-                        opacity: 0.8
-                    }
-                },
-                // Enhanced responsive design
-                responsive: [{
-                    breakpoint: 768,
-                    options: {
-                        plotOptions: {
-                            bar: {
-                                columnWidth: '90%'
-                            }
-                        },
-                        xaxis: {
-                            labels: {
-                                rotate: -45,
-                                style: {
-                                    fontSize: '10px'
-                                }
-                            }
-                        },
-                        dataLabels: {
-                            style: {
-                                fontSize: '9px'
-                            }
-                        }
-                    }
-                }]
-            }
-
-            const optionsRoomMovies = {
-                chart: {
-                    type: 'bar',
-                    height: 400,
-                    background: 'transparent',
-                    toolbar: {
-                        show: true
-                    },
-                    animations: {
-                        enabled: true,
-                        easing: 'easeinout',
-                        speed: 800
-                    }
-                },
-                plotOptions: {
-                    bar: {
-                        horizontal: true,
-                        borderRadius: 6,
-                        dataLabels: {
-                            position: 'top'
-                        }
-                    }
-                },
-                series: [{
-                    name: 'Số vé bán',
-                    data: $roomMoviesData['tickets']
-                }],
-                xaxis: {
-                    categories: $roomMoviesData['labels'],
-                    labels: {
-                        style: {
-                            colors: '#ffffff',
-                            fontSize: '12px'
-                        }
-                    }
-                },
-                yaxis: {
-                    labels: {
-                        style: {
-                            colors: '#ffffff',
-                            fontSize: '11px'
-                        },
-                        maxWidth: 150
-                    }
-                },
-                colors: ['#17A2B8'],
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shade: 'dark',
-                        type: 'horizontal',
-                        shadeIntensity: 0.3,
-                        gradientToColors: ['#20C997'],
-                        inverseColors: false,
-                        opacityFrom: 0.9,
-                        opacityTo: 0.6,
-                        stops: [0, 100]
-                    }
-                },
-                grid: {
-                    show: true,
-                    borderColor: '#2d3748',
-                    strokeDashArray: 1
-                },
-                legend: {
-                    position: 'top',
-                    horizontalAlign: 'left',
-                    labels: {
-                        colors: '#ffffff'
-                    }
-                },
-                tooltip: {
-                    theme: 'dark',
-                    y: {
-                        formatter: function(value) {
-                            return value + ' vé';
-                        }
-                    }
-                },
-                dataLabels: {
-                    enabled: true,
-                    formatter: function(val) {
-                        return val + ' vé';
-                    },
-                    style: {
-                        colors: ['#ffffff']
-                    }
-                }
-            }
-
-            window.renderAllCharts = function() {
-                if (Object.values(chartInstances).length > 0) {
-                    chartInstances.allRoomsStatsChart.updateOptions(optionsAllRoomsStats);
-                    chartInstances.occupancyRateChart.updateOptions(optionsOccupancyRate);
-                    chartInstances.seatStatusChart.updateOptions(optionsSeatStatus);
-                    chartInstances.roomMoviesChart.updateOptions(optionsRoomMovies);
-                } else {
-                    const allRoomsStatsEl = document.querySelector("#allRoomsStatsChart");
-                    const occupancyRateEl = document.querySelector("#occupancyChart");
-                    const seatStatusEl = document.querySelector("#seatStatusChart");
-                    const roomMoviesEl = document.querySelector("#roomMoviesChart");
-
-                    if (allRoomsStatsEl) chartInstances.allRoomsStatsChart = createScChart(allRoomsStatsEl,
-                        optionsAllRoomsStats);
-                    if (occupancyRateEl) chartInstances.occupancyRateChart = createScChart(occupancyRateEl,
-                        optionsOccupancyRate);
-                    if (seatStatusEl) chartInstances.seatStatusChart = createScChart(seatStatusEl,
-                        optionsSeatStatus);
-                    if (roomMoviesEl) chartInstances.roomMoviesChart = createScChart(roomMoviesEl,
-                        optionsRoomMovies);
-                }
-            }
-
-            renderAllCharts();
         });
     </script>
 @endscript
