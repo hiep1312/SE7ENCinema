@@ -253,6 +253,5 @@ Route::name('client.')->group(function () {
     });
 });
 
-Route::get('/test', Test::class)->name('test');
 // Route::view('/admintest', 'clienttest')->name('welcome');
 // Route::view('/clienttest', 'clienttest')->name('clienttest');

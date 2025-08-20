@@ -14,8 +14,6 @@ class SeatSeeder extends Seeder
      */
     public function run(): void
     {
-        $seatTypes = ['standard', 'vip', 'couple', 'disabled'];
-
         Room::all()->each(function ($room) {
             $rows = range('A', 'E');
 

@@ -57,6 +57,7 @@ class BookingFood extends Component
         }
 
         //redirect
+        return redirect()->route('client.thanh-toan', ['booking_id' => $this->booking->id]);
     }
 
     public function realtimeUpdateCountdown(){

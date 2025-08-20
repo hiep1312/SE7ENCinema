@@ -373,7 +373,7 @@
                 </div>
                 <h3 class="section-title">Tổng thanh toán</h3>
             </div>
-            <h2 class="total-final">{{ number_format($total_amount) }}₫</h2>
+            <h2 class="total-final">{{ number_format($total_amount, 0, '.', '.') }}₫</h2>
             <p class="text-muted mb-0">Đã bao gồm VAT và phí dịch vụ</p>
         </div>
 

@@ -11,7 +11,7 @@
                         <ul>
                             <li><a href="{{ route('client.index')}}">Home</a>
                             </li>
-                            <li>&nbsp;&nbsp; >&nbsp;&nbsp; Movie Bookin</li>
+                            <li>&nbsp;&nbsp; >&nbsp;&nbsp; Movie Booking</li>
                         </ul>
                     </div>
                 </div>
