@@ -363,11 +363,19 @@ class SelectSeats extends Component
 
     #[Title('Chọn ghế - SE7ENCinema')]
     #[Layout('components.layouts.client')]
-
     public function render()
     {
         $this->checkCurrentHoldStatus();
 
+<<<<<<< HEAD
+=======
+        if ($this->isBanned) {
+            return view('livewire.client.select-seats', [
+                'banInfo' => $this->banInfo
+            ]);
+        }
+
+>>>>>>> 3d8fef4c851e024ad19f23c55404786da23eecd7
         return view('livewire.client.select-seats');
     }
 }
