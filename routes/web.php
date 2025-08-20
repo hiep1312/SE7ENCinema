@@ -56,6 +56,7 @@ use App\Livewire\Client\User\UserInformation;
 use App\Http\Controllers\VnpayController;
 use App\Http\Livewire\Admin\BookingManager;
 use App\Http\Livewire\Client\BookingTicket;
+use App\Livewire\Admin\DasboardChart\Dashboard;
 use App\Livewire\Client\SelectMovieShowtime;
 use App\Livewire\Client\SelectSeats;
 use App\Livewire\Client\SelectFood;
@@ -67,6 +68,11 @@ use App\Livewire\Client\Bookings\BookingPayment;
 use App\Livewire\Client\User\BookingDetail as UserBookingDetail;
 
 Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->group(function () {
+    /* Dashboard */
+    Route::prefix('/dashboards')->name('dashboards.')->group(function () {
+        Route::get('/', Dashboard::class)->name('index');
+    });
+
     /* Banners */
     Route::prefix('/banners')->name('banners.')->group(function () {
         Route::get('/', BannerIndex::class)->name('index');
