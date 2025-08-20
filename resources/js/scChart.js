@@ -38,6 +38,9 @@ class scChart{
             return ApexCharts.exec(chartID, method, ...args);
         }
     }
+    getElement(){
+        return this._element;
+    }
 
     async appendData(newData){
         if(!newData || !Array.isArray(newData)) throw new Error("Invalid new data: expected an array");
