@@ -65,13 +65,13 @@
                     <div style="display:flex">
                         <ul style="padding:10px 5px">
                             <li class="list-unstyled"><i style="font-size:30px" class="fa-brands fa-square-facebook"></i></li>
-                        </ul>                    
+                        </ul>
                         <ul style="padding:10px 5px">
                             <li class="list-unstyled"><i style="font-size:30px" class="fa-brands fa-instagram"></i></li>
-                        </ul>                    
+                        </ul>
                         <ul style="padding:10px 5px">
                             <li class="list-unstyled"><i style="font-size:30px" class="fa-brands fa-youtube"></i></li>
-                        </ul>            
+                        </ul>
                         <ul style="padding:10px 5px">
                             <li class="list-unstyled"><i style="font-size:30px" class="fa-brands fa-tiktok"></i></li>
                         </ul>

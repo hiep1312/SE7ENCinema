@@ -137,8 +137,7 @@
                                 <div class="prs_mcc_right_side_heading_wrapper ICON">
                                     <h2>Danh Sách Phim</h2>
                                     <ul class="nav nav-pills">
-                                        <li class="active"><a data-toggle="pill" href="#coming_soon"><i
-                                                    class="fa fa-th-large"></i></a></li>
+                                        <li class="active"><a data-toggle="pill" href="#coming_soon"><i class="fa fa-th-large"></i></a></li>
                                         <li><a data-toggle="pill" href="#list"><i class="fa fa-list"></i></a></li>
                                     </ul>
                                 </div>

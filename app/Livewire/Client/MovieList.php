@@ -7,8 +7,6 @@ use Livewire\WithPagination;
 use App\Models\Movie;
 use App\Models\Genre;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
-use Livewire\Attributes\Url;
 
 class MovieList extends Component
 {
@@ -77,7 +75,6 @@ class MovieList extends Component
             ->where('age_restriction', '!=', 'C')
             ->orderByDesc('ratings_avg_score')
             ->first() ?? $topMovies->first();
-        // Main movies với pagination
         $movies = $query->where('age_restriction', '!=', 'C')->orderBy('created_at', 'desc')->paginate(20);
 
         return view('livewire.client.movie-list', compact(
