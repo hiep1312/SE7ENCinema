@@ -1,5 +1,5 @@
 /* Overrides */
-.pagination{
+.pagination {
     margin-top: 0;
 }
 
@@ -318,19 +318,19 @@ body .menu_fixed {
     margin-bottom: 20px;
 }
 
-.spinner{
+.spinner {
     width: 20px;
     height: 20px;
-    border: 3px solid rgba(255,255,255,.3);
+    border: 3px solid rgba(255, 255, 255, 0.3);
     border-top-color: #fff;
     border-radius: 50%;
-    animation: spin .8s linear infinite;
+    animation: spin 0.8s linear infinite;
     display: inline-block;
 }
 
-@keyframes spin{
-    to{
-        transform:rotate(360deg)
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
     }
 }
 
@@ -365,42 +365,42 @@ body .menu_fixed {
 
 /* Price Information Styles */
 .booking-food-back-price-info {
-  background: #f8f9fa;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  border: 2px solid #e9ecef;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border: 2px solid #e9ecef;
 }
 
 .booking-food-back-unit-price {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 0 8px 0;
-  border-bottom: 1px solid #dee2e6;
-  font-size: 14px;
-  color: #6c757d
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0 8px 0;
+    border-bottom: 1px solid #dee2e6;
+    font-size: 14px;
+    color: #6c757d;
 }
 
 .booking-food-back-original-price {
-  font-weight: 600;
-  color: #495057;
+    font-weight: 600;
+    color: #495057;
 }
 
 .booking-food-back-total-price {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0 0 0;
-  font-size: 15px;
-  font-weight: 600;
-  color: #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0 0 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
 }
 
 .booking-food-back-final-price {
-  color: #dc3545;
-  font-size: 17px;
-  font-weight: 700;
+    color: #dc3545;
+    font-size: 17px;
+    font-weight: 700;
 }
 
 /* Auto-flip button */
@@ -440,15 +440,15 @@ body .menu_fixed {
 }
 
 .booking-food-auto-flip-btn:disabled {
-  color: #ffffff;
-  cursor: not-allowed;
-  opacity: 0.6;
+    color: #ffffff;
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
 .booking-food-auto-flip-btn:disabled:hover {
-  background: linear-gradient(135deg, #6c757d 0%, #adb5bd 100%);
-  transform: none;
-  box-shadow: none;
+    background: linear-gradient(135deg, #6c757d 0%, #adb5bd 100%);
+    transform: none;
+    box-shadow: none;
 }
 
 /* Variants */
@@ -793,7 +793,72 @@ body .menu_fixed {
     transform: translateY(-2px);
     box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
 }
+/* custom paginate */
+nav .text-muted {
+    display: none !important;
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+}
 
+.pagination .page-item {
+    list-style: none;
+}
+
+.pagination .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #6b7280;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.pagination .page-link:hover {
+    color: #ff4444;
+    background-color: #f8fafc;
+    border-color: #ff4444;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.pagination .page-item.active .page-link {
+    color: #ffffff;
+    background: #ff4444;
+    border-color: #ff4444;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #d1d5db;
+    background-color: #f9fafb;
+    border-color: #e5e7eb;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.pagination .page-item.disabled .page-link:hover {
+    color: #d1d5db;
+    background-color: #f9fafb;
+    border-color: #e5e7eb;
+    transform: none;
+    box-shadow: none;
+}
 /* Responsive Design */
 @media (max-width: 992px) and (min-width: 768px) {
     .booking-food-main {
@@ -841,7 +906,7 @@ body .menu_fixed {
 
     .booking-food-countdown {
         padding: 7px 16px;
-        font-size: calc(1.16rem + .3vw) !important;
+        font-size: calc(1.16rem + 0.3vw) !important;
     }
 
     .booking-food-variant-options {
@@ -880,12 +945,11 @@ body .menu_fixed {
 
     .booking-food-countdown {
         padding: 6px 14px;
-        font-size: calc(1rem + .3vw) !important;
+        font-size: calc(1rem + 0.3vw) !important;
     }
 }
 
 @keyframes booking-food-bounce {
-
     0%,
     20%,
     60%,

@@ -70,13 +70,12 @@ class BookingFood extends Component
     {
         $this->realtimeUpdateCountdown();
 
-        $foodItems = FoodItem::where('status', 'activate')->whereHas('variants')->paginate(10);
+        $foodItems = FoodItem::where('status', 'activate')->whereHas('variants')->paginate(6);
         $this->js("setDataFoods", $foodItems->map(function($foodItem) {
             $foodItem->variantsData = $foodItem->getAllVariants();
             $foodItem->availableAttributes = $foodItem->availableAttributes;
             return $foodItem;
         }));
-
         if(isset($this->cartTempVariant) && ($this->cartTempVariantQuantity > ($this->cartTempVariant->quantity_available - (array_key_exists($this->cartTempVariantId, $this->carts) ? $this->carts[$this->cartTempVariantId][0] : 0)))) $this->cartTempVariantQuantity = 0;
 
         return view('livewire.client.bookings.booking-food', compact('foodItems'));
