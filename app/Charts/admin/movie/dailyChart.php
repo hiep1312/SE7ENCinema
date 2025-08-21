@@ -34,32 +34,29 @@ class dailyChart
         $mainBookings = collect();
         if ($fromMain && $toMain) {
             $mainBookings = Booking::whereHas('showtime', $baseScope)
-                ->whereHas('showtime', function ($q) use ($fromMain, $toMain) {
-                    $q->whereBetween('start_time', [$fromMain, $toMain]);
-                })
-                ->with(['showtime.room'])
+                ->whereBetween('created_at', [$fromMain, $toMain])
+                ->with(['showtime'])
                 ->get();
         }
 
         $cmpBookings = collect();
         if ($fromCmp && $toCmp) {
             $cmpBookings = Booking::whereHas('showtime', $baseScope)
-                ->whereHas('showtime', function ($q) use ($fromCmp, $toCmp) {
-                    $q->whereBetween('start_time', [$fromCmp, $toCmp]);
-                })
-                ->with(['showtime.room'])
+                ->whereBetween('created_at', [$fromCmp, $toCmp])
+                ->with(['showtime'])
                 ->get();
         }
 
+
         $mainStat = [
             'paid'         => $mainBookings->where('status', 'paid')->count(),
-            'cancelled'    => $mainBookings->whereIn('status', ['failed', 'expired'])->count(),
+            'failed'    => $mainBookings->whereIn('status', ['failed', 'expired'])->count(),
             'totalRevenue' => $mainBookings->where('status', 'paid')->sum('total_price'),
         ];
 
         $cmpStat = [
             'paid'         => $cmpBookings->where('status', 'paid')->count(),
-            'cancelled'    => $cmpBookings->whereIn('status', ['failed', 'expired'])->count(),
+            'failed'    => $cmpBookings->whereIn('status', ['failed', 'expired'])->count(),
             'totalRevenue' => $cmpBookings->where('status', 'paid')->sum('total_price'),
         ];
 
