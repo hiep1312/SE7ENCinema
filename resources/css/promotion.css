@@ -928,6 +928,10 @@
   letter-spacing: 0.5px;
 }
 
+ul {
+  list-style: auto;
+}
+
 .pager_wrapper .page-item.active .page-link {
   font-weight: 800;
   box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
