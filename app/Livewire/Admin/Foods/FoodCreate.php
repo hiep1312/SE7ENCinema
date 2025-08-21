@@ -13,6 +13,7 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class FoodCreate extends Component
 {
@@ -120,6 +121,11 @@ class FoodCreate extends Component
         $this->displayBasePrice = $this->basePrice
             ? number_format($this->basePrice, 0, ',', '.')
             : '';
+
+        if (!Auth::check() || Auth::user()->role !== 'admin') {
+            session()->flash('error', 'Bạn không có quyền tạo món ăn.');
+            return redirect()->route('admin.foods.index');
+        }
     }
 
     public function updateBasePrice($value)
@@ -367,6 +373,11 @@ class FoodCreate extends Component
 
     public function createFood()
     {
+        if (!Auth::check() || Auth::user()->role !== 'admin') {
+            session()->flash('error', 'Bạn không có quyền tạo món ăn.');
+            return;
+        }
+
         if ($this->productVariants && empty($this->generatedVariants)) {
             $this->addError('generatedVariants', 'Bạn chưa tạo biến thể.');
             return;
