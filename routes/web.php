@@ -9,6 +9,10 @@ use App\Livewire\Admin\Banners\BannerEdit;
 use App\Livewire\Admin\Banners\BannerIndex;
 use App\Livewire\Admin\Bookings\BookingDetail;
 use App\Livewire\Admin\Bookings\BookingIndex;
+use App\Livewire\Admin\Comments\CommentCreate;
+use App\Livewire\Admin\Comments\CommentDetail;
+use App\Livewire\Admin\Comments\CommentEdit;
+use App\Livewire\Admin\Comments\CommentIndex;
 use App\Livewire\Admin\FoodAttributes\FoodAttributeIndex;
 use App\Livewire\Client\MovieBooking\MovieBooking;
 use Illuminate\Support\Facades\Route;
@@ -87,6 +91,14 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->
         Route::get('/create', RoomCreate::class)->name('create');
         Route::get('/edit/{room}', RoomEdit::class)->name('edit');
         Route::get('/detail/{room}', RoomDetail::class)->name('detail');
+    });
+
+    /* Comments */
+     Route::prefix('/comments')->name('comments.')->group(function () {
+        Route::get('/', CommentIndex::class)->name('index');
+        Route::get('/create', CommentCreate::class)->name('create');
+        Route::get('/edit/{comment}', CommentEdit::class)->name('edit');
+        Route::get('/detail/{comment}', CommentDetail::class)->name('detail');
     });
 
     /* Foods */
