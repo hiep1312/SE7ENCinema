@@ -16,14 +16,14 @@ class dailyChart
 
     protected function queryData(?array $filter = null)
     {
-        is_array($filter) && [$fromDate, $rangeDays, $compareDate, $rangeUnit] = $filter;
+        is_array($filter) && [$fromDate, $rangeDays, $compareDate] = $filter;
         $rangeDays = (int) $rangeDays;
 
         $fromMain = $fromDate ? Carbon::parse($fromDate)->startOfDay() : null;
-        $toMain   = ($fromMain && $rangeDays) ? $fromMain->copy()->add($rangeUnit, $rangeDays)->endOfDay() : null;
+        $toMain   = ($fromMain && $rangeDays) ? $fromMain->copy()->addDays($rangeDays)->endOfDay() : null;
 
         $fromCmp = $compareDate ? Carbon::parse($compareDate)->startOfDay() : null;
-        $toCmp   = ($fromCmp && $rangeDays) ? $fromCmp->copy()->add($rangeUnit, $rangeDays)->endOfDay() : null;
+        $toCmp   = ($fromCmp && $rangeDays) ? $fromCmp->copy()->addDays($rangeDays)->endOfDay() : null;
 
         if (!($fromMain && $toMain) && !($fromCmp && $toCmp)) {
             return ['bookingStatByDate' => collect(), 'compareStatByDate' => collect()];
@@ -31,13 +31,15 @@ class dailyChart
 
         $baseScope = fn($q) => $q->where('movie_id', $this->movie->id);
 
-        $mainQuery = Booking::whereHas('showtime', $baseScope)->with(['showtime.room']);
+        $mainBookings = collect();
         if ($fromMain && $toMain) {
-            $mainQuery->whereHas('showtime', function ($q) use ($fromMain, $toMain) {
-                $q->whereBetween('start_time', [$fromMain, $toMain]);
-            });
+            $mainBookings = Booking::whereHas('showtime', $baseScope)
+                ->whereHas('showtime', function ($q) use ($fromMain, $toMain) {
+                    $q->whereBetween('start_time', [$fromMain, $toMain]);
+                })
+                ->with(['showtime.room'])
+                ->get();
         }
-        $mainBookings = $mainQuery->get();
 
         $cmpBookings = collect();
         if ($fromCmp && $toCmp) {
@@ -48,98 +50,28 @@ class dailyChart
                 ->with(['showtime.room'])
                 ->get();
         }
-        switch ($rangeUnit) {
-            case 'years':
-                $totalDays = $rangeDays * 365;
-                break;
-            case 'months':
-                $totalDays = $rangeDays *30;
-                break;
-            default:
-                $totalDays = $rangeDays;
-        }
-        
-        $groupType = 'daily';
-        if ($totalDays > 365) $groupType = 'yearly';
-        elseif ($totalDays > 90) $groupType = 'monthly';
-        elseif ($totalDays > 30) $groupType = 'weekly';
 
-        // ======= UNION RANGE (bao phủ cả main lẫn compare) =======
-        // Nếu một bên null, dùng bên còn lại
-        $unionStart = collect([$fromMain, $fromCmp])->filter()->min();
-        $unionEnd   = collect([$toMain, $toCmp])->filter()->max();
+        $mainStat = [
+            'paid'         => $mainBookings->where('status', 'paid')->count(),
+            'cancelled'    => $mainBookings->whereIn('status', ['failed', 'expired'])->count(),
+            'totalRevenue' => $mainBookings->where('status', 'paid')->sum('total_price'),
+        ];
 
-        // Tạo các bucket theo groupType
-        $buckets = collect();
-        $cur = $unionStart->copy();
-
-        while ($cur <= $unionEnd) {
-            if ($groupType === 'daily') {
-                $start = $cur->copy()->startOfDay();
-                $end   = $cur->copy()->endOfDay();
-                $label = $cur->format('d/m'); // hiển thị
-                $buckets->push(compact('start', 'end', 'label'));
-                $cur->addDay();
-            } elseif ($groupType === 'weekly') {
-                $start = $cur->copy()->startOfWeek();
-                $end   = $cur->copy()->endOfWeek();
-                $label = $start->format('d/m') . ' - ' . $end->format('d/m');
-                $buckets->push(compact('start', 'end', 'label'));
-                $cur = $end->copy()->addDay();
-            } elseif ($groupType === 'monthly') {
-                $start = $cur->copy()->startOfMonth();
-                $end   = $cur->copy()->endOfMonth();
-                $label = $start->format('m-Y');
-                $buckets->push(compact('start', 'end', 'label'));
-                $cur->addMonth();
-            } else { // yearly
-                $start = $cur->copy()->startOfYear();
-                $end   = $cur->copy()->endOfYear();
-                $label = $start->format('Y');
-                $buckets->push(compact('start', 'end', 'label'));
-                $cur->addYear();
-            }
-        }
-
-        // Tính thống kê cho từng bucket cho MAIN & COMPARE, cùng nhãn
-        $mainStat = collect();
-        $cmpStat  = collect();
-
-        foreach ($buckets as $b) {
-            [$start, $end, $label] = [$b['start'], $b['end'], $b['label']];
-
-            $mainIn = $mainBookings->filter(function ($bk) use ($start, $end) {
-                $t = Carbon::parse($bk->showtime->start_time);
-                return $t->between($start, $end);
-            });
-            $cmpIn = $cmpBookings->filter(function ($bk) use ($start, $end) {
-                $t = Carbon::parse($bk->showtime->start_time);
-                return $t->between($start, $end);
-            });
-
-            $mainStat[$label] = [
-                'paid'         => $mainIn->where('status', 'paid')->count(),
-                'cancelled'    => $mainIn->whereIn('status', ['failed', 'expired'])->count(),
-                'totalRevenue' => $mainIn->where('status', 'paid')->sum('total_price'),
-            ];
-            $cmpStat[$label] = [
-                'paid'         => $cmpIn->where('status', 'paid')->count(),
-                'cancelled'    => $cmpIn->whereIn('status', ['failed', 'expired'])->count(),
-                'totalRevenue' => $cmpIn->where('status', 'paid')->sum('total_price'),
-            ];
-        }
+        $cmpStat = [
+            'paid'         => $cmpBookings->where('status', 'paid')->count(),
+            'cancelled'    => $cmpBookings->whereIn('status', ['failed', 'expired'])->count(),
+            'totalRevenue' => $cmpBookings->where('status', 'paid')->sum('total_price'),
+        ];
 
         return [
             'bookingStatByDate' => collect($mainStat),
             'compareStatByDate' => collect($cmpStat),
         ];
     }
-
-
-
     public function loadData(?array $filter = null)
     {
-            $this->data = $this->queryData($filter);
+        $this->data = $this->queryData($filter);
+        dd($this->data);
     }
 
     protected function bindDataToElement()

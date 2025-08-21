@@ -23,12 +23,11 @@ class MovieDetail extends Component
     public $fromDate = null;
     public $rangeDays = null;
     public $compareDate = null;
-    public $rangeUnit = 'days';
 
     public function mount(int $movie)
     {
         $this->fromDate = Carbon::now()->subDays(2)->format('Y-m-d');
-        $this->rangeDays = 2;
+        $this->rangeDays = '3 days';
         $this->movie = Movie::with('genres', 'ratings')->findOrFail($movie);
     }
     public function updateStatusMovieAndShowtimes()
@@ -77,9 +76,9 @@ class MovieDetail extends Component
         $showtimeChart = new showtimeChart($this->movie);
         $ratioChart = new ratioChart($this->movie);
         $this->realtimeUpdateCharts(
-            [$dailyChart,[$this->fromDate,$this->rangeDays,$this->compareDate,$this->rangeUnit]], 
-            [$showtimeChart,[$this->fromDate,$this->rangeDays,$this->compareDate,$this->rangeUnit]], 
-            [$ratioChart,[$this->fromDate,$this->rangeDays,$this->rangeUnit]]
+            [$dailyChart,[$this->fromDate,$this->rangeDays,$this->compareDate]], 
+            [$showtimeChart,[$this->fromDate,$this->rangeDays,$this->compareDate]], 
+            [$ratioChart,[$this->fromDate,$this->rangeDays]]
         );
 
         $totalOrdersIn30Days = (clone $bookings)->whereBetween('created_at', [now()->subDays(30), now()])->count();

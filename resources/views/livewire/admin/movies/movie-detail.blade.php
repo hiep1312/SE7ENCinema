@@ -615,14 +615,13 @@
                                     <i class="mdi mdi-clock-time-four me-2"></i>Khoảng thời gian
                                 </label>
                                 <div class="input-group">
-                                    <input wire:model.live='rangeDays' type="text" class="form-control flex-grow-1"
-                                        placeholder="Nhập khoảng thời gian (ví dụ: 7 ngày, 1 tháng)">
-                                    <select wire:model.live='rangeUnit' class="form-select flex-grow-0"
-                                        style="width: 100px">
-                                        <option value="days">Chọn</option>
-                                        <option value="days">Ngày</option>
-                                        <option value="months">Tháng</option>
-                                        <option value="years">Năm</option>
+                                    <select wire:model.live='rangeDays' class="form-select flex-grow-1">
+                                        <option value="3 days">Chọn</option>
+                                        <option value="1 days">1 ngày</option>
+                                        <option value="3 days">3 ngày</option>
+                                        <option value="7 days">7 ngày</option>
+                                        <option value="15 days">15 ngày</option>
+                                        <option value="30 days">30 ngày</option>
                                     </select>
                                 </div>
                             </div>

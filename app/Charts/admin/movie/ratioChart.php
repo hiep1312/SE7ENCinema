@@ -17,11 +17,11 @@ class ratioChart
 
     protected function queryData(?array $filter = null)
     {
-        is_array($filter) && [$fromDate, $rangeDays,$rangeUnit] = $filter;
+        is_array($filter) && [$fromDate, $rangeDays] = $filter;
         $rangeDays = (int) $rangeDays;
 
         $fromCheckinChart = Carbon::parse($fromDate)->startOfDay();
-        $toCheckinChart   = ($fromCheckinChart && $rangeDays) ? (clone $fromCheckinChart)->add($rangeUnit,$rangeDays)->endOfDay() : null;
+        $toCheckinChart   = ($fromCheckinChart && $rangeDays) ? (clone $fromCheckinChart)->addDays($rangeDays)->endOfDay() : null;
         $bookings = Booking::whereHas('showtime', function ($q) {
             $q->where('movie_id', $this->movie->id);
         })->with(['showtime.room', 'foodOrderItems', 'user']);

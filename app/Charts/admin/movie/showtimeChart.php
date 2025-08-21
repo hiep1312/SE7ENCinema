@@ -18,14 +18,14 @@ class showtimeChart
     }
     protected function queryData(?array $filter = null)
     {
-        is_array($filter) && [$fromDate, $rangeDays, $compareDate,$rangeUnit] = $filter;
+        is_array($filter) && [$fromDate, $rangeDays, $compareDate] = $filter;
         $rangeDays = (int) $rangeDays;
         /* Viết truy vấn CSDL tại đây */
         $fromDate = Carbon::parse($fromDate)->startOfDay();
-        $toDate = (clone $fromDate)->add($rangeUnit,$rangeDays)->endOfDay();
+        $toDate = (clone $fromDate)->addDays($rangeDays)->endOfDay();
         
         $compareFromDate = Carbon::parse($compareDate)->startOfDay();
-        $compareToDate = (clone $compareFromDate)->add($rangeUnit,$rangeDays)->endOfDay();
+        $compareToDate = (clone $compareFromDate)->addDays($rangeDays)->endOfDay();
 
         // Query tất cả bookings có showtime thuộc phim
         $bookingChart = Booking::whereHas('showtime', function ($q) {
