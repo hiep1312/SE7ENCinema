@@ -35,7 +35,7 @@ class dailyChart
         if ($fromMain && $toMain) {
             $mainBookings = Booking::whereHas('showtime', $baseScope)
                 ->whereBetween('created_at', [$fromMain, $toMain])
-                ->with(['showtime'])
+                ->with(['showtime.room'])
                 ->get();
         }
 
@@ -43,32 +43,69 @@ class dailyChart
         if ($fromCmp && $toCmp) {
             $cmpBookings = Booking::whereHas('showtime', $baseScope)
                 ->whereBetween('created_at', [$fromCmp, $toCmp])
-                ->with(['showtime'])
+                ->with(['showtime.room'])
                 ->get();
         }
 
+        $mainBuckets = collect();
+        if ($fromMain && $toMain) {
+            $cur = $fromMain->copy();
+            while ($cur <= $toMain) {
+                $label = $cur->format('d/m');
+                $mainBuckets->push([
+                    'start' => $cur->copy()->startOfDay(),
+                    'end'   => $cur->copy()->endOfDay(),
+                    'label' => $label
+                ]);
+                $cur->addDay();
+            }
+        }
 
-        $mainStat = [
-            'paid'         => $mainBookings->where('status', 'paid')->count(),
-            'failed'    => $mainBookings->whereIn('status', ['failed', 'expired'])->count(),
-            'totalRevenue' => $mainBookings->where('status', 'paid')->sum('total_price'),
-        ];
+        $cmpBuckets = collect();
+        if ($fromCmp && $toCmp) {
+            $cur = $fromCmp->copy();
+            while ($cur <= $toCmp) {
+                $label = $cur->format('d/m');
+                $cmpBuckets->push([
+                    'start' => $cur->copy()->startOfDay(),
+                    'end'   => $cur->copy()->endOfDay(),
+                    'label' => $label
+                ]);
+                $cur->addDay();
+            }
+        }
 
-        $cmpStat = [
-            'paid'         => $cmpBookings->where('status', 'paid')->count(),
-            'failed'    => $cmpBookings->whereIn('status', ['failed', 'expired'])->count(),
-            'totalRevenue' => $cmpBookings->where('status', 'paid')->sum('total_price'),
-        ];
+        $mainStat = collect();
+        foreach ($mainBuckets as $b) {
+            [$start, $end, $label] = [$b['start'], $b['end'], $b['label']];
+            $mainIn = $mainBookings->filter(fn($bk) => Carbon::parse($bk->created_at)->between($start, $end));
+            $mainStat[$label] = [
+                'paid' => $mainIn->where('status', 'paid')->count(),
+                'cancelled' => $mainIn->whereIn('status', ['failed', 'expired'])->count(),
+                'totalRevenue' => $mainIn->where('status', 'paid')->sum('total_price'),
+            ];
+        }
+
+        $cmpStat = collect();
+        foreach ($cmpBuckets as $b) {
+            [$start, $end, $label] = [$b['start'], $b['end'], $b['label']];
+            $cmpIn = $cmpBookings->filter(fn($bk) => Carbon::parse($bk->created_at)->between($start, $end));
+            $cmpStat[$label] = [
+                'paid' => $cmpIn->where('status', 'paid')->count(),
+                'cancelled' => $cmpIn->whereIn('status', ['failed', 'expired'])->count(),
+                'totalRevenue' => $cmpIn->where('status', 'paid')->sum('total_price'),
+            ];
+        }
 
         return [
             'bookingStatByDate' => collect($mainStat),
             'compareStatByDate' => collect($cmpStat),
         ];
     }
+
     public function loadData(?array $filter = null)
     {
         $this->data = $this->queryData($filter);
-        dd($this->data);
     }
 
     protected function bindDataToElement()
@@ -83,10 +120,10 @@ class dailyChart
         $totalRevenue = $this->data['bookingStatByDate']->pluck('totalRevenue')->toArray();
         $categories = $this->data['bookingStatByDate']->keys()->toArray();
 
-        // dữ liệu ngày so sánh
         $paidCompare = $this->data['compareStatByDate']->pluck('paid')->toArray();
         $cancelledCompare = $this->data['compareStatByDate']->pluck('cancelled')->toArray();
         $totalRevenueCompare = $this->data['compareStatByDate']->pluck('totalRevenue')->toArray();
+        $categoriesCompare = $this->data['compareStatByDate']->keys()->toArray();
 
         $paidJs = json_encode($paid);
         $cancelledJs = json_encode($cancelled);
@@ -96,16 +133,17 @@ class dailyChart
         $paidCompareJs = json_encode($paidCompare);
         $cancelledCompareJs = json_encode($cancelledCompare);
         $totalRevenueCompareJs = json_encode($totalRevenueCompare);
+        $categoriesCompareJs = json_encode($categoriesCompare);
 
         return <<<JS
         {
             series: [
                 {
-                    name: 'Dữ liệu ngày bắt đầu',
+                    name: 'Doanh thu (Khoảng chính)',
                     data: $totalRevenueJs
                 },
                 {
-                    name: 'Dữ liệu ngày so sánh',
+                    name: 'Doanh thu (Khoảng so sánh)',
                     data: $totalRevenueCompareJs
                 },
             ],
@@ -155,7 +193,7 @@ class dailyChart
                         } else if (value >= 1000) {
                             return (value / 1000).toFixed(0) + " nghìn";
                         }
-                        return value; // nhỏ hơn 1000 thì giữ nguyên
+                        return value;
                     },
                     style: {
                         colors: '#adb5bd',
@@ -185,19 +223,32 @@ class dailyChart
                     const paidCompare = $paidCompareJs;
                     const cancelledCompare = $cancelledCompareJs;
                     const totalRevenueCompare = $totalRevenueCompareJs;
+                    const compareDates = $categoriesCompareJs;
 
-                    // dữ liệu ngày bắt đầu
                     const paidStart = paid[dataPointIndex] ?? 0;
                     const cancelledStart = cancelled[dataPointIndex] ?? 0;
-                    const revenueStart = (totalRevenue[dataPointIndex] ?? 0).toLocaleString('vi-VN');
+                    const revenueStartVal = totalRevenue[dataPointIndex] ?? 0;
 
-                    // dữ liệu ngày so sánh
                     const paidC = paidCompare[dataPointIndex] ?? 0;
                     const cancelledC = cancelledCompare[dataPointIndex] ?? 0;
-                    const revenueC = (totalRevenueCompare[dataPointIndex] ?? 0).toLocaleString('vi-VN');
+                    const revenueCVal = totalRevenueCompare[dataPointIndex] ?? 0;
+
+                    const calcPercent = (current, compare) => {
+                        if (compare === 0 && current === 0) return '0%';
+                        if (compare === 0) return 'N/A';
+                        const diff = ((current - compare) / compare) * 100;
+                        return (diff > 0 ? '+' : '') + diff.toFixed(1) + '%';
+                    };
+
+                    const paidChange = calcPercent(paidStart, paidC);
+                    const cancelledChange = calcPercent(cancelledStart, cancelledC);
+                    const revenueChange = calcPercent(revenueStartVal, revenueCVal);
+
+                    const revenueStart = revenueStartVal.toLocaleString('vi-VN');
+                    const revenueC = revenueCVal.toLocaleString('vi-VN');
 
                     const dateLabel = w.globals.labels[dataPointIndex];
-
+                    const compareDateLabel = compareDates[dataPointIndex] ?? 'N/A';
                     return `
                         <div style="
                             background: #ffffff;
@@ -205,23 +256,25 @@ class dailyChart
                             padding: 15px;
                             border-radius: 10px;
                             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-                            min-width: 240px;
+                            min-width: 260px;
                         ">
                             <div style="font-weight:600; margin-bottom:8px; font-size:14px;">
                                 📅 Ngày \${dateLabel}
                             </div>
-
-                            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                                <span>🎟️ Vé bán:</span>
-                                <span><strong>\${paidStart}</strong> ↔ <strong>\${paidC}</strong></span>
+                            <div style="font-weight:500; font-size:13px; color:#555; margin-bottom:10px;">
+                                So sánh với: \${compareDateLabel}
                             </div>
-                            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                                <span>❌ Vé lỗi:</span>
-                                <span><strong>\${cancelledStart}</strong> ↔ <strong>\${cancelledC}</strong></span>
+                            <div style="display:flex; gap: 10px; margin-bottom:6px;">
+                                <span>Vé bán:</span>
+                                <span><strong>\${paidStart}</strong> ↔ <strong>\${paidC}</strong> <em>(\${paidChange})</em></span>
                             </div>
-                            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                                <span>💵 Doanh thu:</span>
-                                <span><strong>\${revenueStart}</strong> ↔ <strong>\${revenueC}</strong></span>
+                            <div style="display:flex; gap: 10px; margin-bottom:6px;">
+                                <span>Vé lỗi:</span>
+                                <span><strong>\${cancelledStart}</strong> ↔ <strong>\${cancelledC}</strong> <em>(\${cancelledChange})</em></span>
+                            </div>
+                            <div style="display:flex; gap: 10px; margin-bottom:6px;">
+                                <span>Doanh thu:</span>
+                                <span><strong>\${revenueStart}</strong> ↔ <strong>\${revenueC}</strong> <em>(\${revenueChange})</em></span>
                             </div>
                         </div>
                     `;

@@ -26,7 +26,8 @@ class MovieDetail extends Component
 
     public function mount(int $movie)
     {
-        $this->fromDate = Carbon::now()->subDays(2)->format('Y-m-d');
+        $this->fromDate = Carbon::now()->subDays(3)->format('Y-m-d');
+        $this->compareDate = Carbon::now()->subDays(3)->format('Y-m-d');
         $this->rangeDays = '3 days';
         $this->movie = Movie::with('genres', 'ratings')->findOrFail($movie);
     }

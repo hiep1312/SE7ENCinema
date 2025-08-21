@@ -3,6 +3,7 @@
 namespace App\Charts\admin\movie;
 
 use App\Models\Booking;
+use App\Models\Showtime;
 use Carbon\Carbon;
 
 class ratioChart
@@ -22,49 +23,26 @@ class ratioChart
 
         $fromCheckinChart = Carbon::parse($fromDate)->startOfDay();
         $toCheckinChart   = ($fromCheckinChart && $rangeDays) ? (clone $fromCheckinChart)->addDays($rangeDays)->endOfDay() : null;
-        $bookings = Booking::whereHas('showtime', function ($q) {
-            $q->where('movie_id', $this->movie->id);
-        })->with(['showtime.room', 'foodOrderItems', 'user']);
 
-        $bookingChart = Booking::whereHas('showtime', function ($q) {
-            $q->where('movie_id', $this->movie->id);
-        })->with(['showtime.room'])->get();
-
-        $paidBookings = (clone $bookings)
-            ->where('status', 'paid')
-            ->when($toCheckinChart, function ($query) use ($fromCheckinChart, $toCheckinChart) {
-                $query->whereBetween('created_at', [$fromCheckinChart, $toCheckinChart]);
-            }, function ($query) use ($fromCheckinChart) {
-                $query->where('created_at', '>=', $fromCheckinChart);
-            })
-            ->with('seats')
+        $showtimes = Showtime::with(['room.seats', 'booking.seats'])
+            ->where('movie_id', $this->movie->id)
+            ->whereBetween('start_time', [$fromCheckinChart, $toCheckinChart])
             ->get();
+        $totalCapacity = 0;
+        $seatCounts = collect();
+        foreach ($showtimes as $showtime) {
+            $roomSeats = $showtime->room->seats->count();
+            $totalCapacity += $roomSeats;
 
-        $seatCounts = $paidBookings
-            ->flatMap->seats
-            ->groupBy('seat_type')
-            ->map->count();
+            $paidSeats = $showtime->booking->where('status', 'paid')->flatMap->seats;
 
-        $showtimes = (clone $bookingChart)
-            ->pluck('showtime')
-            ->unique('id')
-            ->when($toCheckinChart, function ($sts) use ($fromCheckinChart, $toCheckinChart) {
-                return $sts->whereBetween('start_time', [$fromCheckinChart, $toCheckinChart]);
-            }, function ($sts) use ($fromCheckinChart) {
-                return $sts->where('start_time', '>=', $fromCheckinChart);
-            });
+            foreach ($paidSeats->groupBy('seat_type') as $type => $seats) {
+                $seatCounts[$type] = ($seatCounts[$type] ?? 0) + $seats->count();
+            }
+        }
 
-        $totalCapacity = $showtimes->groupBy('room_id')->sum(function ($sts) {
-            $room = $sts->first()->room;
-            return $room->seats->count() * $sts->count();
-        });
-
-        // tổng ghế
-        $caps = $totalCapacity;
-        // tổng ghế đã đặt
         $totalBooked = $seatCounts->sum();
-        // số ghế còn lại
-        $remainingSeats = $caps - $totalBooked;
+        $remainingSeats = $totalCapacity - $totalBooked;
 
         $seatCountsWithRemaining = $seatCounts->toArray();
         $seatCountsWithRemaining['remaining'] = $remainingSeats;
@@ -74,10 +52,13 @@ class ratioChart
         ];
     }
 
-
     public function loadData(?array $filter = null)
     {
-        $this->data = $this->queryData($filter);
+        try {
+            $this->data = $this->queryData($filter);
+        } catch (\Throwable $th) {
+            dd($th);
+        }
     }
 
     protected function bindDataToElement()
@@ -87,22 +68,20 @@ class ratioChart
 
     protected function buildChartConfig()
     {
-            $vipSeats = $this->data['seatCounts']['vip'] ?? 0;
-            $standardSeats = $this->data['seatCounts']['standard'] ?? 0;
-            $disabledSeats = $this->data['seatCounts']['disabled'] ?? 0;
-            $coupleSeats = $this->data['seatCounts']['couple'] ?? 0;
-            $remainingSeats = $this->data['seatCounts']['remaining'] ?? 0;
+        $vipSeats = $this->data['seatCounts']['vip'] ?? 0;
+        $standardSeats = $this->data['seatCounts']['standard'] ?? 0;
+        $coupleSeats = $this->data['seatCounts']['couple'] ?? 0;
+        $remainingSeats = $this->data['seatCounts']['remaining'] ?? 0;
 
-            $vipSeatsJS = json_encode($vipSeats);
-            $standardSeatsJS = json_encode($standardSeats);
-            $disabledSeatsJS = json_encode($disabledSeats);
-            $coupleSeatsJS = json_encode($coupleSeats);
-            $remainingSeatsJS = json_encode($remainingSeats);
+        $vipSeatsJS = json_encode($vipSeats);
+        $standardSeatsJS = json_encode($standardSeats);
+        $coupleSeatsJS = json_encode($coupleSeats);
+        $remainingSeatsJS = json_encode($remainingSeats);
         /* Viết cấu hình biểu đồ tại đây */
         return <<<JS
         {
-            series: [$remainingSeatsJS,$vipSeatsJS,$standardSeatsJS,$disabledSeatsJS,$coupleSeatsJS],
-            labels: ['Số vé còn lại','Vé VIP','Vé thường','Disabled','Vé đôi'],
+            series: [$remainingSeatsJS,$vipSeatsJS,$standardSeatsJS,$coupleSeatsJS],
+            labels: ['Số vé còn lại','Vé VIP','Vé thường','Vé đôi'],
             chart: {
                 type: 'donut',
                 height: 400,
@@ -112,7 +91,7 @@ class ratioChart
                     enabled: false,
                 },
             },
-            colors: ['#34A853', '#FBBC04', '#898371ff', '#000000ff', '#d0069aff'],
+            colors: ['#34A853', '#FBBC04', '#898371ff', '#d0069aff'],
             stroke: { show: false },
             dataLabels: {
                 enabled: true,
@@ -156,7 +135,7 @@ class ratioChart
                 markers: {
                     width: 12,
                     height: 12,
-                    fillColors: ['#34A853', '#FBBC04', '#898371ff', '#000000ff', '#d0069aff'],
+                    fillColors: ['#34A853', '#FBBC04', '#898371ff', '#d0069aff'],
                     radius: 3
                 }
             }

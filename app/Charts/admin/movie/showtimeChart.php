@@ -3,9 +3,8 @@
 namespace App\Charts\admin\movie;
 
 use App\Models\Booking;
+use App\Models\Showtime;
 use Carbon\Carbon;
-
-use function PHPUnit\Framework\isArray;
 
 class showtimeChart
 {
@@ -23,43 +22,46 @@ class showtimeChart
         /* Viết truy vấn CSDL tại đây */
         $fromDate = Carbon::parse($fromDate)->startOfDay();
         $toDate = (clone $fromDate)->addDays($rangeDays)->endOfDay();
-        
+
         $compareFromDate = Carbon::parse($compareDate)->startOfDay();
         $compareToDate = (clone $compareFromDate)->addDays($rangeDays)->endOfDay();
 
-        // Query tất cả bookings có showtime thuộc phim
+        $showtimesA = Showtime::where('movie_id', $this->movie->id)
+            ->whereBetween('start_time', [$fromDate, $toDate])
+            ->orderBy('start_time')
+            ->get();
+
+        $showtimesB = collect();
+        if ($compareDate != null) {
+            $showtimesB = Showtime::where('movie_id', $this->movie->id)
+                ->whereBetween('start_time', [$compareFromDate, $compareToDate])
+                ->orderBy('start_time')
+                ->get();
+        }
+
         $bookingChart = Booking::whereHas('showtime', function ($q) {
             $q->where('movie_id', $this->movie->id);
         })
-            ->with(['showtime.room'])
+            ->with(['showtime'])
             ->get();
+        $processRange = function ($showtimes, $bookings) {
+            return $showtimes->map(function ($showtime) use ($bookings) {
+                $timeKey = Carbon::parse($showtime->start_time)->format('H:i');
+                $capacity = $showtime->room ? $showtime->room->seats->count() : 0;
 
-        // Hàm xử lý chung cho 1 khoảng ngày
-        $processRange = function ($bookings, $from, $to) {
-            $showtimes = $bookings->pluck('showtime')
-                ->filter(function ($showtime) use ($from, $to) {
-                    return Carbon::parse($showtime->start_time)->between($from, $to);
-                })
-                ->unique()
-                ->values();
+                $bookingsOfShowtime = $bookings->filter(function ($booking) use ($showtime) {
+                    return $booking->showtime->id === $showtime->id;
+                });
 
-            $bookingCountFormatted = $showtimes
-                ->filter(fn($showtime) => $showtime->room)
-                ->map(function ($showtime) use ($bookings) {
-                    $timeKey = Carbon::parse($showtime->start_time)->format('H:i');
-                    $capacity = $showtime->room->seats->count();
-                    $bookingsOfShowtime = $bookings->filter(function ($booking) use ($showtime) {
-                        return $booking->showtime->id === $showtime->id;
-                    });
-                    return [
-                        'timeKey'   => $timeKey,
-                        'paid'      => $bookingsOfShowtime->where('status', 'paid')->count(),
-                        'seatsCount' => $bookingsOfShowtime->where('status', 'paid')->pluck('seats')->flatten()->count(),
-                        'failed'    => $bookingsOfShowtime->whereIn('status', ['failed', 'expired'])->count(),
-                        'capacity'  => $capacity,
-                        'revenue'   => $bookingsOfShowtime->where('status', 'paid')->sum('total_price'),
-                    ];
-                })
+                return [
+                    'timeKey'   => $timeKey,
+                    'paid'      => $bookingsOfShowtime->where('status', 'paid')->count(),
+                    'seatsCount' => $bookingsOfShowtime->where('status', 'paid')->pluck('seats')->flatten()->count(),
+                    'failed'    => $bookingsOfShowtime->whereIn('status', ['failed', 'expired'])->count(),
+                    'capacity'  => $capacity,
+                    'revenue'   => $bookingsOfShowtime->where('status', 'paid')->sum('total_price'),
+                ];
+            })
                 ->groupBy('timeKey')
                 ->map(function ($items) {
                     return [
@@ -71,16 +73,9 @@ class showtimeChart
                     ];
                 })
                 ->sortKeys();
-
-            return $bookingCountFormatted;
         };
-
-        $dataA = $processRange($bookingChart, $fromDate, $toDate);
-        if ($compareDate != null) {
-            $dataB = $processRange($bookingChart, $compareFromDate, $compareToDate);
-        } else {
-            $dataB = null;
-        }
+        $dataA = $processRange($showtimesA, $bookingChart);
+        $dataB = $compareDate ? $processRange($showtimesB, $bookingChart) : null;
 
         return [
             'rangeA' => $dataA,
@@ -104,7 +99,6 @@ class showtimeChart
         $dataB = $this->data['rangeB'];
         $allKeys = $dataA->keys()->merge($dataB ? $dataB->keys() : collect())->unique()->sort()->values();
 
-        // Map lại dữ liệu A và B theo categories chung
         $mapSeries = function ($data, $keys) {
             return $keys->map(fn($key) => $data->has($key) ? $data[$key]['seatsCount'] : 0);
         };
