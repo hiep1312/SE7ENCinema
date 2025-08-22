@@ -41,16 +41,6 @@ class RoomDetail extends Component
     public $seatStatusPeriod = '7_days';
     public $roomMoviesPeriod = '7_days';
 
-    public array $daysOfWeek = [
-        'Monday'    => 'Thứ hai',
-        'Tuesday'   => 'Thứ ba',
-        'Wednesday' => 'Thứ tư',
-        'Thursday'  => 'Thứ năm',
-        'Friday'    => 'Thứ sáu',
-        'Saturday'  => 'Thứ bảy',
-        'Sunday'    => 'Chủ nhật',
-    ];
-
     public function mount(int $room)
     {
         $this->room = Room::with([
@@ -63,35 +53,6 @@ class RoomDetail extends Component
         $this->calculateStatistics();
         $this->calculateMaintenanceInfo();
         $this->loadChartData();
-    }
-
-    public function changeRoomStatsPeriod($period)
-    {
-        $this->roomStatsPeriod = $period;
-        $this->loadChartData();
-    }
-
-    public function changeOccupancyPeriod($period)
-    {
-        $this->occupancyPeriod = $period;
-        $this->loadChartData();
-    }
-
-    public function changeSeatStatusPeriod($period)
-    {
-        $this->seatStatusPeriod = $period;
-        $this->loadChartData();
-    }
-
-    public function changeRoomMoviesPeriod($period)
-    {
-        $this->roomMoviesPeriod = $period;
-        $this->loadChartData();
-    }
-
-    public function loadChartData()
-    {
-
     }
 
     private function getFilterText($period)

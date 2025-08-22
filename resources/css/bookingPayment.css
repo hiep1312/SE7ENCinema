@@ -1,25 +1,23 @@
-/* Custom CSS với tiền tố booking-voucher */
-
 /* Header Styles */
-.booking-voucher-header {
+.booking-food-header {
     background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-.booking-voucher-header .row {
+.booking-food-header .row {
     margin: 0;
 }
 
-.booking-voucher-header .col-md-6 {
+.booking-food-header .col-md-6 {
     padding: 0 8px;
 }
 
-.booking-voucher-header p {
+.booking-food-header p {
     font-size: 13px;
     line-height: 1.4;
 }
 
-.booking-voucher-movie-poster {
+.booking-food-movie-poster {
     width: 60px;
     height: 80px;
     object-fit: cover;
@@ -28,596 +26,13 @@
     flex-shrink: 0;
 }
 
-.booking-voucher-timer {
-    text-align: center;
-}
-
-.booking-voucher-countdown {
+.booking-food-countdown {
     font-family: "Courier New", monospace;
     background: rgba(255, 193, 7, 0.1);
     padding: 8px 16px;
     border-radius: 8px;
     border: 2px solid #ffc107;
-}
-
-/* Section Titles */
-.booking-voucher-section-title {
-    color: #333;
-    font-weight: 600;
-    border-bottom: 3px solid #dc3545;
-    padding-bottom: 10px;
-}
-
-/* Voucher Input Card */
-.booking-voucher-input-card {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
-
-.booking-voucher-input-header {
-    background: #f8f9fa;
-    padding: 15px 20px;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.booking-voucher-input-header h5 {
-    color: #333;
-    margin-bottom: 5px;
-}
-
-.booking-voucher-input-body {
-    padding: 20px;
-}
-
-.booking-voucher-input {
-    width: 100%;
-    padding: 12px 15px;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    font-size: 16px;
-    transition: all 0.3s ease;
-}
-
-.booking-voucher-input:focus {
-    outline: none;
-    border-color: #dc3545;
-    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
-}
-
-.booking-voucher-btn-apply {
-    width: 100%;
-    padding: 12px 20px;
-    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.booking-voucher-btn-apply:hover {
-    background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
-    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
-}
-
-/* Applied Voucher Message */
-.booking-voucher-applied-message {
-    display: flex;
-    align-items: center;
-    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-    border: 2px solid #28a745;
-    border-radius: 8px;
-    padding: 15px;
-    margin-top: 15px;
-    animation: booking-voucher-slideIn 0.5s ease;
-}
-
-.booking-voucher-success-icon {
-    color: #28a745;
-    font-size: 24px;
-    margin-right: 15px;
-}
-
-.booking-voucher-success-content {
-    flex: 1;
-}
-
-.booking-voucher-success-content strong {
-    color: #155724;
-    display: block;
-    margin-bottom: 2px;
-}
-
-.booking-voucher-success-content p {
-    color: #155724;
-    font-size: 14px;
-}
-
-.booking-voucher-remove-btn {
-    background: none;
-    border: none;
-    color: #6c757d;
-    font-size: 18px;
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-}
-
-.booking-voucher-remove-btn:hover {
-    background: rgba(108, 117, 125, 0.1);
-    color: #495057;
-}
-
-/* Available Vouchers Card */
-.booking-voucher-available-card {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
-
-.booking-voucher-available-header {
-    background: #f8f9fa;
-    padding: 17px 20px;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.booking-voucher-available-header h5 {
-    color: #333;
-    margin-bottom: 5px;
-}
-
-.booking-voucher-available-body {
-    padding: 20px;
-}
-
-/* Voucher Cards */
-.booking-voucher-card {
-    border: 2px solid #e9ecef;
-    border-radius: 12px;
-    margin-bottom: 15px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    overflow: hidden;
-    position: relative;
-}
-
-.booking-voucher-card:hover {
-    border-color: #dc3545;
-    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.1);
-    transform: translateY(-2px);
-}
-
-.booking-voucher-card.selected {
-    border-color: #28a745;
-    background: linear-gradient(135deg, #f8fff9 0%, #e8f5e8 100%);
-}
-
-.booking-voucher-card.disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-.booking-voucher-card.disabled:hover {
-    transform: none;
-    box-shadow: none;
-    border-color: #e9ecef;
-}
-
-.booking-voucher-card-content {
-    display: flex;
-    align-items: center;
-    padding: 20px;
-}
-
-.booking-voucher-card-left {
-    flex: 1;
-}
-
-.booking-voucher-card-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.booking-voucher-code {
-    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-    color: white;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 14px;
-    margin-right: 12px;
-}
-
-.booking-voucher-discount-badge {
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-weight: 600;
-    font-size: 12px;
-}
-
-.booking-voucher-discount-badge.percentage {
-    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
-    color: #212529;
-}
-
-.booking-voucher-discount-badge.fixed_amount {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-    color: white;
-}
-
-.booking-voucher-title {
-    color: #333;
-    font-weight: 600;
-    margin-bottom: 8px;
-}
-
-.booking-voucher-desc {
-    color: #666;
-    font-size: 14px;
-    margin-bottom: 12px;
-    line-height: 1.4;
-}
-
-.booking-voucher-conditions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-.booking-voucher-condition {
-    color: #6c757d;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-}
-
-.booking-voucher-card-right {
-    margin-left: 20px;
-}
-
-.booking-voucher-select-btn {
-    padding: 10px 20px;
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-}
-
-.booking-voucher-select-btn:hover {
-    background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-}
-
-.booking-voucher-card.disabled .booking-voucher-select-btn {
-    background: #6c757d;
-    cursor: not-allowed;
-}
-
-.booking-voucher-card.disabled .booking-voucher-select-btn:hover {
-    transform: none;
-    box-shadow: none;
-}
-
-.booking-voucher-card.selected .booking-voucher-select-btn {
-    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-}
-
-.booking-voucher-card.selected .booking-voucher-select-btn:hover {
-    background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
-}
-
-/* Summary Card */
-.booking-voucher-summary-card {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    padding: 25px;
-    top: 20px;
-}
-
-.booking-voucher-summary-title {
-    color: #333;
-    font-weight: 600;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #dc3545;
-}
-
-.booking-voucher-summary-section {
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #eee;
-}
-
-.booking-voucher-summary-section:last-of-type {
-    border-bottom: none;
-}
-
-.booking-voucher-summary-subtitle {
-    color: #555;
-    font-weight: 500;
-    margin-bottom: 10px;
-}
-
-.booking-voucher-summary-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 12px;
-    padding: 8px 0;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.booking-voucher-summary-item.small {
-    font-size: 12px;
-    color: #666;
-    margin-bottom: 4px;
-}
-
-.booking-voucher-summary-item.small span:first-child {
-    font-weight: normal;
-}
-
-.booking-voucher-summary-item:last-child {
-    border-bottom: none;
-}
-
-.booking-voucher-summary-item .text-muted.small {
-    font-size: 12px;
-    line-height: 1.3;
-    margin-top: 2px;
-}
-
-/* Seat Details in Summary */
-.booking-voucher-seat-details {
-    background: #f8f9fa;
-    padding: 12px;
-    border-radius: 8px;
-    margin-top: 10px;
-}
-
-.booking-voucher-seat-details .booking-voucher-summary-item {
-    margin-bottom: 8px;
-    padding: 4px 0;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.booking-voucher-seat-details .booking-voucher-summary-item:last-child {
-    margin-bottom: 0;
-    margin-top: 8px;
-}
-
-.booking-voucher-seat-details .booking-voucher-summary-item div {
-    display: flex;
-    align-items: center;
-}
-
-/* Applied Voucher Summary */
-.booking-voucher-applied-summary {
-    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-    border: 2px solid #28a745;
-    border-radius: 8px;
-    padding: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.booking-voucher-applied-summary .booking-voucher-applied-info {
-    flex: 1;
-}
-
-.booking-voucher-applied-summary .booking-voucher-applied-code {
-    background: #28a745;
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-weight: 600;
-    font-size: 12px;
-    margin-bottom: 4px;
-    display: inline-block;
-}
-
-.booking-voucher-applied-summary .booking-voucher-applied-desc {
-    color: #155724;
-    font-size: 12px;
-    margin: 0;
-}
-
-.booking-voucher-applied-summary .booking-voucher-applied-amount {
-    color: #28a745;
-    font-weight: 600;
-}
-
-.booking-voucher-summary-total {
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-
-.booking-voucher-summary-actions {
-    display: flex;
-    gap: 10px;
-}
-
-.booking-voucher-btn-back {
-    flex: 1;
-    padding: 12px 20px;
-    border: 2px solid #6c757d;
-    background: transparent;
-    color: #6c757d;
-    border-radius: 8px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.booking-voucher-btn-back:hover {
-    background: #6c757d;
-    color: white;
-}
-
-.booking-voucher-btn-next {
-    flex: 2;
-    padding: 12px 20px;
-    border: none;
-    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-    color: white;
-    border-radius: 8px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.booking-voucher-btn-next:hover {
-    background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
-}
-
-/* Seat Info Styles */
-.booking-voucher-seat-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.booking-voucher-seat-item {
-    display: flex;
-    align-items: center;
-    font-size: 13px;
-    color: #ccc;
-}
-
-.booking-voucher-seat-type {
-    font-weight: 500;
-    margin-right: 6px;
-    min-width: 80px;
-}
-
-.booking-voucher-seat-numbers {
-    font-weight: 600;
-    color: #fff;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .booking-voucher-header .col-md-4 {
-        text-align: center !important;
-        margin-top: 15px;
-    }
-
-    .booking-voucher-header .d-flex {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .booking-voucher-movie-poster {
-        margin-bottom: 15px;
-        margin-right: 0 !important;
-    }
-
-    .booking-voucher-header .row {
-        justify-content: center;
-    }
-
-    .booking-voucher-header .col-md-6 {
-        margin-bottom: 10px;
-    }
-
-    .booking-voucher-summary-card {
-        position: relative !important;
-        top: 0 !important;
-        margin-top: 30px;
-    }
-
-    .booking-voucher-summary-actions {
-        flex-direction: column;
-    }
-
-    .booking-voucher-btn-back,
-    .booking-voucher-btn-next {
-        flex: none;
-    }
-
-    .booking-voucher-card-content {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .booking-voucher-card-right {
-        margin-left: 0;
-        margin-top: 15px;
-    }
-
-    .booking-voucher-conditions {
-        justify-content: center;
-    }
-
-    .booking-voucher-seat-info {
-        margin-top: 10px;
-    }
-
-    .booking-voucher-seat-item {
-        justify-content: center;
-        margin-bottom: 2px;
-    }
-}
-
-/* Animations */
-@keyframes booking-voucher-slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes booking-voucher-pulse {
-    0% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.05);
-    }
-
-    100% {
-        transform: scale(1);
-    }
-}
-
-.booking-voucher-card.selected {
-    animation: booking-voucher-pulse 0.6s ease;
-}
-
-/* Loading state */
-.booking-voucher-loading {
-    opacity: 0.6;
-    pointer-events: none;
-}
-
-/* Success state */
-.booking-voucher-success {
-    border-color: #28a745 !important;
-    background-color: #d4edda !important;
-    color: #155724 !important;
+    margin-top: 5px;
 }
 
 /* Section Styles */
@@ -660,6 +75,11 @@
     border-bottom: 1px solid #f0f0f0;
 }
 
+.booking-payment-order-item:nth-child(2){
+    padding-top: 0;
+    padding-bottom: 10px;
+}
+
 .booking-payment-order-item:last-child {
     border-bottom: none;
 }
@@ -688,7 +108,12 @@
     font-size: 14px;
 }
 
+.booking-payment-seat-detail-item:first-child{
+    padding-top: 0;
+}
+
 .booking-payment-seat-detail-item:last-child {
+    padding-bottom: 0;
     border-bottom: none;
 }
 
@@ -775,6 +200,27 @@
     box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
 }
 
+.booking-food-back-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    text-align: center;
+}
+
+.booking-food-back-empty h6 {
+    color: #6c757d;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.booking-food-back-empty p {
+    color: #6c757d;
+    font-size: 14px;
+    margin-bottom: 0;
+}
+
 /* Voucher Items */
 .booking-payment-voucher-item {
     background: #f8f9fa;
@@ -836,7 +282,7 @@
 }
 
 .booking-payment-method-group {
-    margin-bottom: 25px;
+    margin-bottom: 15px;
 }
 
 .booking-payment-method-group:last-child {
@@ -889,11 +335,13 @@
 
 /* Payment Summary Card */
 .booking-payment-summary-card {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 120px;
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     padding: 25px;
-    top: 20px;
 }
 
 .booking-payment-summary-title {
@@ -904,10 +352,6 @@
     border-bottom: 2px solid #dc3545;
 }
 
-.booking-payment-summary-breakdown {
-    margin-bottom: 20px;
-}
-
 .booking-payment-summary-item {
     display: flex;
     justify-content: space-between;
@@ -916,8 +360,13 @@
     border-bottom: 1px solid #f0f0f0;
 }
 
-.booking-payment-summary-item:last-child {
+.booking-payment-summary-item:first-child{
+    padding-top: 0;
+}
+
+.booking-payment-summary-item:nth-last-child(3) {
     border-bottom: none;
+    padding-bottom: 0;
 }
 
 .booking-payment-summary-item.discount {
@@ -928,13 +377,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 600;
     padding: 15px 0;
     background: #f8f9fa;
     padding: 15px;
     border-radius: 8px;
-    margin-bottom: 20px;
 }
 
 /* Selected Payment Method Display */
@@ -942,7 +390,7 @@
     background: #f8f9fa;
     padding: 15px;
     border-radius: 8px;
-    margin-bottom: 20px;
+    margin-top: 15px;
 }
 
 .booking-payment-selected-method h6 {
@@ -971,6 +419,7 @@
 
 /* Payment Actions */
 .booking-payment-actions {
+    margin-top: 20px;
     display: flex;
     gap: 10px;
 }
@@ -1014,6 +463,389 @@
 .booking-payment-btn-pay:disabled {
     background: #ccc;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.food-details .booking-food-summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.food-details .booking-food-summary-item:first-child {
+    padding-top: 0;
+}
+
+.food-details .booking-food-summary-item:last-child {
+    padding-bottom: 0;
+}
+
+.booking-food-summary-item.small {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.booking-food-summary-item.small:nth-child(2) {
+    margin-top: 4px;
+}
+
+.booking-food-summary-item.small span:first-child {
+    font-weight: normal;
+}
+
+.booking-food-summary-item:last-child {
+    border-bottom: none;
+}
+
+.booking-food-summary-item .text-muted.small {
+    font-size: 12px;
+    line-height: 1.3;
+    margin-top: 2px;
+}
+
+/* Payment Overlay */
+.booking-payment-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.booking-payment-overlay-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Payment Processing */
+.booking-payment-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #dc3545;
+    border-radius: 50%;
+    animation: booking-payment-spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes booking-payment-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.booking-payment-timer {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 6px;
+    padding: 10px;
+    margin-top: 20px;
+}
+
+/* Payment States */
+.booking-payment-timeout-actions,
+.booking-payment-success {
+    margin-top: 20px;
+}
+
+.booking-payment-btn-retry,
+.booking-payment-btn-cancel,
+.booking-payment-btn-continue {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0 5px;
+}
+
+.booking-payment-btn-retry {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+}
+
+.booking-payment-btn-cancel {
+    background: #6c757d;
+    color: white;
+}
+
+.booking-payment-btn-continue {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    padding: 12px 24px;
+}
+
+.booking-payment-btn-retry:hover,
+.booking-payment-btn-cancel:hover,
+.booking-payment-btn-continue:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Customer Info Styles */
+.booking-payment-customer-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.booking-payment-customer-item:hover {
+    border-color: #dc3545;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.1);
+}
+
+.booking-payment-customer-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    max-width: 89%;
+}
+
+.booking-payment-customer-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #6c757d;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.booking-payment-customer-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    word-break: break-word;
+}
+
+.booking-payment-customer-item i {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) and (min-width: 768px) {
+    .booking-payment-main {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .booking-food-header h5 {
+        font-size: 18px;
+    }
+
+    .booking-food-header span {
+        font-size: 16px;
+    }
+
+    .booking-food-countdown {
+        padding: 7px 16px;
+        font-size: calc(1.16rem + .3vw) !important;
+    }
+
+
+    .booking-payment-customer-item {
+        padding: 12px;
+    }
+
+    .booking-payment-customer-value {
+        font-size: 13px;
+    }
+
+    .booking-payment-summary-card {
+        position: relative !important;
+        top: 0 !important;
+        margin-top: 30px;
+    }
+
+    .booking-payment-actions {
+        flex-direction: column;
+    }
+
+    .booking-payment-btn-back,
+    .booking-payment-btn-pay {
+        flex: none;
+    }
+
+    .booking-payment-seat-info {
+        margin-top: 10px;
+    }
+
+    .booking-payment-seat-item {
+        justify-content: center;
+        margin-bottom: 2px;
+    }
+
+    .booking-payment-overlay-content {
+        padding: 30px 20px;
+    }
+
+    .booking-payment-timeout-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .booking-payment-btn-retry,
+    .booking-payment-btn-cancel {
+        margin: 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .booking-payment-customer-item i {
+        margin-right: 0;
+        margin-bottom: 8px;
+        align-self: center;
+    }
+}
+
+@media (max-width: 400px) {
+    .booking-food-header .col-sm-4 {
+        text-align: center !important;
+    }
+
+    .booking-food-header .d-flex {
+        justify-content: center;
+    }
+
+    .booking-food-movie-poster {
+        margin-right: 10px !important;
+    }
+
+    .booking-food-header .row {
+        justify-content: center;
+    }
+
+    .booking-food-header h5 {
+        font-size: 16px;
+    }
+
+    .booking-food-header span {
+        font-size: 14px;
+    }
+
+    .booking-food-countdown {
+        padding: 6px 14px;
+        font-size: calc(1rem + .3vw) !important;
+    }
+}
+
+/* Animation */
+@keyframes booking-payment-fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.booking-payment-overlay {
+    animation: booking-payment-fadeIn 0.3s ease;
+}
+
+/* custom paginate */
+nav .text-muted {
+    display: none !important;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+}
+
+.pagination .page-item {
+    list-style: none;
+}
+
+.pagination .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #6b7280;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.pagination .page-link:hover {
+    color: #ff4444;
+    background-color: #f8fafc;
+    border-color: #ff4444;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.pagination .page-item.active .page-link {
+    color: #ffffff;
+    background: #ff4444;
+    border-color: #ff4444;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #d1d5db;
+    background-color: #f9fafb;
+    border-color: #e5e7eb;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.pagination .page-item.disabled .page-link:hover {
+    color: #d1d5db;
+    background-color: #f9fafb;
+    border-color: #e5e7eb;
     transform: none;
     box-shadow: none;
 }

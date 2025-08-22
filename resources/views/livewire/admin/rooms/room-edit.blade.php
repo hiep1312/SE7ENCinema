@@ -7,7 +7,6 @@
     }
 </script>
 @endassets
-
 <div class="scRender scSeat">
     @if (session()->has('error'))
         <div class="alert alert-danger alert-dismissible fade show mt-2 mx-2" role="alert">

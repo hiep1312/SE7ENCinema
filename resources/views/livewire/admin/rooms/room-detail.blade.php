@@ -224,31 +224,24 @@
                                                     @case('3_days')
                                                         3 ngày gần nhất
                                                     @break
-
                                                     @case('7_days')
                                                         7 ngày gần nhất
                                                     @break
-
                                                     @case('30_days')
                                                         30 ngày gần nhất
                                                     @break
-
                                                     @case('1_month')
                                                         1 tháng gần nhất
                                                     @break
-
                                                     @case('3_months')
                                                         3 tháng gần nhất
                                                     @break
-
                                                     @case('1_year')
                                                         1 năm gần nhất
                                                     @break
-
                                                     @case('2_years')
                                                         2 năm gần nhất
                                                     @break
-
                                                     @default
                                                         7 ngày gần nhất
                                                 @endswitch
@@ -259,13 +252,13 @@
                                                 <h6 class="dropdown-header text-primary">Ngày</h6>
                                             </li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeRoomStatsPeriod('3_days')">3 ngày gần
+                                                    wire:click.prevent="$set('roomStatsPeriod', '3_days')">3 ngày gần
                                                     nhất</a></li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeRoomStatsPeriod('7_days')">7 ngày gần
+                                                    wire:click.prevent="$set('roomStatsPeriod', '7_days')">7 ngày gần
                                                     nhất</a></li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeRoomStatsPeriod('30_days')">30 ngày
+                                                    wire:click.prevent="$set('roomStatsPeriod', '30_days')">30 ngày
                                                     gần nhất</a></li>
                                             <li>
                                                 <hr class="dropdown-divider">
@@ -274,10 +267,10 @@
                                                 <h6 class="dropdown-header text-primary">Tháng</h6>
                                             </li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeRoomStatsPeriod('1_month')">1
+                                                    wire:click.prevent="$set('roomStatsPeriod', '1_month')">1
                                                     tháng</a></li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeRoomStatsPeriod('3_months')">3
+                                                    wire:click.prevent="$set('roomStatsPeriod', '3_months')">3
                                                     tháng</a></li>
                                             <li>
                                                 <hr class="dropdown-divider">
@@ -286,10 +279,10 @@
                                                 <h6 class="dropdown-header text-primary">Năm</h6>
                                             </li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeRoomStatsPeriod('1_year')">1 năm</a>
+                                                    wire:click.prevent="$set('roomStatsPeriod', '1_year')">1 năm</a>
                                             </li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeRoomStatsPeriod('2_years')">2 năm</a>
+                                                    wire:click.prevent="$set('roomStatsPeriod', '2_years')">2 năm</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -349,13 +342,13 @@
                                                 <h6 class="dropdown-header text-success">Ngày</h6>
                                             </li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeOccupancyPeriod('3_days')">3 ngày gần
+                                                    wire:click.prevent="$set('occupancyPeriod', '3_days')">3 ngày gần
                                                     nhất</a></li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeOccupancyPeriod('7_days')">7 ngày gần
+                                                    wire:click.prevent="$set('occupancyPeriod', '7_days')">7 ngày gần
                                                     nhất</a></li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeOccupancyPeriod('30_days')">30 ngày
+                                                    wire:click.prevent="$set('occupancyPeriod', '30_days')">30 ngày
                                                     gần nhất</a></li>
                                             <li>
                                                 <hr class="dropdown-divider">
@@ -364,10 +357,10 @@
                                                 <h6 class="dropdown-header text-success">Tháng</h6>
                                             </li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeOccupancyPeriod('1_month')">1 tháng
+                                                    wire:click.prevent="$set('occupancyPeriod', '1_month')">1 tháng
                                                     gần nhất</a></li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeOccupancyPeriod('3_months')">3 tháng
+                                                    wire:click.prevent="$set('occupancyPeriod', '3_months')">3 tháng
                                                     gần nhất</a></li>
                                             <li>
                                                 <hr class="dropdown-divider">
@@ -376,10 +369,10 @@
                                                 <h6 class="dropdown-header text-success">Năm</h6>
                                             </li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeOccupancyPeriod('1_year')">1 năm gần
+                                                    wire:click.prevent="$set('occupancyPeriod', '1_year')">1 năm gần
                                                     nhất</a></li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeOccupancyPeriod('2_years')">2 năm gần
+                                                    wire:click.prevent="$set('occupancyPeriod', '2_years')">2 năm gần
                                                     nhất</a></li>
                                         </ul>
                                     </div>
@@ -440,13 +433,13 @@
                                                 <h6 class="dropdown-header text-warning">Ngày</h6>
                                             </li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeSeatStatusPeriod('3_days')">3 ngày
+                                                    wire:click.prevent="$set('seatStatusPeriod', 3_days')">3 ngày
                                                     gần nhất</a></li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeSeatStatusPeriod('7_days')">7 ngày
+                                                    wire:click.prevent="$set('seatStatusPeriod', '7_days')">7 ngày
                                                     gần nhất</a></li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeSeatStatusPeriod('30_days')">30 ngày
+                                                    wire:click.prevent="$set('seatStatusPeriod', '30_days')">30 ngày
                                                     gần nhất</a></li>
                                             <li>
                                                 <hr class="dropdown-divider">
@@ -455,10 +448,10 @@
                                                 <h6 class="dropdown-header text-warning">Tháng</h6>
                                             </li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeSeatStatusPeriod('1_month')">1 tháng
+                                                    wire:click.prevent="$set('seatStatusPeriod', '1_month')">1 tháng
                                                     gần nhất</a></li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeSeatStatusPeriod('3_months')">3 tháng
+                                                    wire:click.prevent="$set('seatStatusPeriod', '3_months')">3 tháng
                                                     gần nhất</a></li>
                                             <li>
                                                 <hr class="dropdown-divider">
@@ -467,10 +460,10 @@
                                                 <h6 class="dropdown-header text-warning">Năm</h6>
                                             </li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeSeatStatusPeriod('1_year')">1 năm gần
+                                                    wire:click.prevent="$set('seatStatusPeriod', '1_year')">1 năm gần
                                                     nhất</a></li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeSeatStatusPeriod('2_years')">2 năm
+                                                    wire:click.prevent="$set('seatStatusPeriod', '2_years')">2 năm
                                                     gần nhất</a></li>
                                         </ul>
                                     </div>
@@ -581,13 +574,13 @@
                                                 <h6 class="dropdown-header text-info">Ngày</h6>
                                             </li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeRoomMoviesPeriod('3_days')">3 ngày
+                                                    wire:click.prevent="$set('roomMoviesPeriod', '3_days')">3 ngày
                                                     gần nhất</a></li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeRoomMoviesPeriod('7_days')">7 ngày
+                                                    wire:click.prevent="$set('roomMoviesPeriod', '7_days')">7 ngày
                                                     gần nhất</a></li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeRoomMoviesPeriod('30_days')">30 ngày
+                                                    wire:click.prevent="$set('roomMoviesPeriod', '30_days')">30 ngày
                                                     gần nhất</a></li>
                                             <li>
                                                 <hr class="dropdown-divider">
@@ -596,10 +589,10 @@
                                                 <h6 class="dropdown-header text-info">Tháng</h6>
                                             </li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeRoomMoviesPeriod('1_month')">1 tháng
+                                                    wire:click.prevent="$set('roomMoviesPeriod', '1_month')">1 tháng
                                                     gần nhất</a></li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeRoomMoviesPeriod('3_months')">3 tháng
+                                                    wire:click.prevent="$set('roomMoviesPeriod', '3_months')">3 tháng
                                                     gần nhất</a></li>
                                             <li>
                                                 <hr class="dropdown-divider">
@@ -608,10 +601,10 @@
                                                 <h6 class="dropdown-header text-info">Năm</h6>
                                             </li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeRoomMoviesPeriod('1_year')">1 năm gần
+                                                    wire:click.prevent="$set('roomMoviesPeriod', '1_year')">1 năm gần
                                                     nhất</a></li>
                                             <li><a class="dropdown-item" href="#"
-                                                    wire:click.prevent="changeRoomMoviesPeriod('2_years')">2 năm
+                                                    wire:click.prevent="$set('roomMoviesPeriod', '2_years')">2 năm
                                                     gần nhất</a></li>
                                         </ul>
                                     </div>
@@ -778,7 +771,7 @@
                                                 <td>
                                                     {{ $nextMaintenanceDate->format('d/m/Y') }}
                                                     <br><small
-                                                        class="text-muted">{{ $daysOfWeek[$nextMaintenanceDate->format('l')] }}</small>
+                                                        class="text-muted">{{ $nextMaintenanceDate->translatedFormat('l') }}</small>
                                                 </td>
                                             </tr>
                                             <tr>

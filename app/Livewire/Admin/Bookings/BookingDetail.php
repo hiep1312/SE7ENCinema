@@ -40,6 +40,7 @@ class BookingDetail extends Component
 
         $this->cleanupBookingsAndUpdateData(['isConfirmed' => true]);
     }
+
     public function cleanupBookingsAndUpdateData(?array $status = null){
         if($this->booking->status === 'expired' && ($this->booking->showtime->start_time->addMinutes(-15) <= now() || $this->booking->created_at->addMinutes(30) <= now())){
             if(is_array($status) && isset($status['isConfirmed'])):
@@ -89,7 +90,6 @@ class BookingDetail extends Component
 
         $tickets = BookingSeat::where('booking_id', $this->booking->id)->with('ticket')->get()->map(fn($bookingSeat) => $bookingSeat->ticket);
 
-        // $this->loadChartData();
         ($this->tabCurrent === "information" || ($this->js('chartInstances = {}') || false)) && $this->dispatch('updateData',
             $this->revenueData ?? [],
             $this->topMovies ?? [],
@@ -97,7 +97,6 @@ class BookingDetail extends Component
             $this->foodsData ?? [],
             $this->topFoods ?? []
         );
-
 
         return view('livewire.admin.bookings.booking-detail', compact('tickets', 'topFoods', 'Revenue', 'moviesSummary', 'foodChart', 'seatsChart'));
     }

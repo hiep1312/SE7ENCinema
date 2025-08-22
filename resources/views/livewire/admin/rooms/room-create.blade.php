@@ -2,9 +2,9 @@
 <link rel="stylesheet" href="{{ asset('client/assets/css/style.css') }}">
 <script>
     function formatPrice(element){
-            const currentValue = element.value.replaceAll(/,|\./g, '');
-            element.value = (isNaN(currentValue) || currentValue === '') ? currentValue : (parseInt(currentValue)).toLocaleString('vi');
-        }
+        const currentValue = element.value.replaceAll(/,|\./g, '');
+        element.value = (isNaN(currentValue) || currentValue === '') ? currentValue : (parseInt(currentValue)).toLocaleString('vi');
+    }
 </script>
 @endassets
 <div class="scRender scSeat">

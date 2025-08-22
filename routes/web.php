@@ -249,7 +249,8 @@ Route::name('client.')->group(function () {
     Route::prefix('/booking')->name('booking.')->group(function () {
         Route::get('/food/{bookingCode}', BookingFood::class)
             ->whereAlphaNumeric('bookingCode')->name('food');
-        Route::get('/payment', BookingPayment::class)->name('payment');
+        Route::get('/payment/{bookingCode}', BookingPayment::class)
+            ->whereAlphaNumeric('bookingCode')->name('payment');
     });
 });
 
