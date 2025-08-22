@@ -103,8 +103,7 @@
                                                     class="btn btn-warning w-100">
                                                     <i class="fas fa-edit me-1"></i> Cập nhật
                                                 </button>
-                                                <button type="button"
-                                                    wire:click="resetEditing"
+                                                <button type="button" wire:click="resetEditing"
                                                     class="btn btn-secondary w-100 mt-2">
                                                     <i class="fas fa-undo me-1"></i> Hủy
                                                 </button>
@@ -137,8 +136,7 @@
                                                             class="btn btn-sm btn-danger" title="Xóa thuộc tính">
                                                             <i class="fas fa-trash-alt"></i>
                                                         </button>
-                                                        <button type="button"
-                                                            wire:click="moveUp({{ $index }})"
+                                                        <button type="button" wire:click="moveUp({{ $index }})"
                                                             class="btn btn-sm btn-outline-light"
                                                             @if ($index == 0) disabled @endif
                                                             title="Di chuyển lên">
@@ -246,8 +244,10 @@
                                                             <div class="row">
                                                                 @if ($variant['image'])
                                                                     <div class="col-md-3 col-xl-2 col-6 mb-3">
-                                                                        <div class="mt-1 food-image w-100" style="height: auto;">
-                                                                            <img src="{{ $variant['image']->temporaryUrl() }}" alt="Ảnh biến thể mới"
+                                                                        <div class="mt-1 food-image w-100"
+                                                                            style="height: auto;">
+                                                                            <img src="{{ $variant['image']->temporaryUrl() }}"
+                                                                                alt="Ảnh biến thể mới"
                                                                                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
                                                                         </div>
                                                                     </div>
@@ -256,15 +256,25 @@
                                                                 <div class="col-md-4 mb-3">
                                                                     <label class="form-label">Giá <span
                                                                             class="text-danger">*</span></label>
-                                                                    <input type="number"
-                                                                        wire:model.defer="generatedVariants.{{ $index }}.price"
+                                                                    <input type="text" x-data
+                                                                        x-on:input="
+                                                                          let raw = $el.value.replace(/\D/g, '');
+                                                                          $el.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                                                                          $wire.set('generatedVariants.{{ $index }}.price', raw);
+                                                                            "
+                                                                        value="{{ isset($generatedVariants[$index]['price']) && is_numeric($generatedVariants[$index]['price'])
+                                                                            ? number_format((float) $generatedVariants[$index]['price'], 0, ',', '.')
+                                                                            : '' }}"
                                                                         class="form-control bg-dark text-light border-secondary @error('generatedVariants.' . $index . '.price') is-invalid @enderror"
                                                                         placeholder="Giá biến thể">
+
                                                                     @error('generatedVariants.' . $index . '.price')
                                                                         <div class="invalid-feedback d-block">
                                                                             {{ $message }}</div>
                                                                     @enderror
                                                                 </div>
+
+
                                                                 <div class="col-md-4 mb-3">
                                                                     <label class="form-label">Số lượng tồn kho <span
                                                                             class="text-danger">*</span></label>
@@ -315,39 +325,41 @@
                                                                             {{ $message }}</div>
                                                                     @enderror
                                                                 </div>
-                                                                @if ($variant['image']) </div> @endif
+                                                                @if ($variant['image'])
                                                             </div>
-                                                            <div class="d-flex justify-content-end mt-3">
-                                                                <button type="button"
-                                                                    wire:click="removeGeneratedVariant({{ $index }})"
-                                                                    class="btn btn-outline-danger btn-sm">
-                                                                    <i class="fas fa-times-circle me-1"></i> Xóa biến
-                                                                    thể này
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endforeach
+                                            @endif
                                         </div>
-                                    @else
-                                        <p class="text-light-50">Vui lòng thêm thuộc tính ở tab "Quản lý thuộc tính" và
-                                            nhấn "Tái tạo biến thể" để sinh ra các biến thể.</p>
-                                    @endif
-                                @endif
+                                        <div class="d-flex justify-content-end mt-3">
+                                            <button type="button"
+                                                wire:click="removeGeneratedVariant({{ $index }})"
+                                                class="btn btn-outline-danger btn-sm">
+                                                <i class="fas fa-times-circle me-1"></i> Xóa biến
+                                                thể này
+                                            </button>
+                                        </div>
                             </div>
-                            <div class="d-flex justify-content-between mt-3">
-                                <button type="submit" class="btn btn-success">
-                                    <i class="fas fa-save"></i> Tạo biến thể
-                                </button>
-                                <a href="{{ route('admin.food_variants.index') }}" class="btn btn-outline-danger">
-                                    Hủy bỏ
-                                </a>
-                            </div>
-                        </form>
                     </div>
                 </div>
+                @endforeach
             </div>
+        @else
+            <p class="text-light-50">Vui lòng thêm thuộc tính ở tab "Quản lý thuộc tính" và
+                nhấn "Tái tạo biến thể" để sinh ra các biến thể.</p>
+            @endif
+            @endif
         </div>
+        <div class="d-flex justify-content-between mt-3">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-save"></i> Tạo biến thể
+            </button>
+            <a href="{{ route('admin.food_variants.index') }}" class="btn btn-outline-danger">
+                Hủy bỏ
+            </a>
+        </div>
+        </form>
     </div>
+</div>
+</div>
+</div>
+</div>
 </div>

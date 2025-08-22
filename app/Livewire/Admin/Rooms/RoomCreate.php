@@ -127,7 +127,6 @@ class RoomCreate extends Component
     public function createRoom()
     {
         $this->validate();
-
         try {
             $room = Room::create([
                 'name'           => $this->name,

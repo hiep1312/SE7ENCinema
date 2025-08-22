@@ -39,15 +39,10 @@ class MovieList extends Component
         $this->updateStatusMovies();
 
         $query = Movie::query()->where('status', $this->tabCurrent)
-            ->when($this->genreFilter, function ($query) {
-                $query->whereHas('genres', function ($q) {
-                    $q->where('genres.id', $this->genreFilter);
-                });
-            })
-            ->when($this->search, fn($query) => $query->where(function ($q) {
-                $q->where('title', 'like', '%' . $this->search . '%')
-                ->orWhere('description', 'like', '%' . $this->search . '%');
-            }));
+        ->when($this->search, fn($query) => $query->where(function ($q) {
+            $q->where('title', 'like', '%' . $this->search . '%')
+            ->orWhere('description', 'like', '%' . $this->search . '%');
+        }));
 
         $genres = Genre::with('movies')->whereHas('movies', function ($q) use ($query) {
             $q->whereIn('movies.id', $query->get('id'));
@@ -69,19 +64,18 @@ class MovieList extends Component
             ->limit(7)
             ->get();
 
-        // Top Event Movie
         $topEventMovie = Movie::withAvg('ratings', 'score')
             ->where('status', 'showing')
             ->where('age_restriction', '!=', 'C')
             ->orderByDesc('ratings_avg_score')
             ->first() ?? $topMovies->first();
-        $movies = $query->where('age_restriction', '!=', 'C')->orderBy('created_at', 'desc')->paginate(20);
 
-        return view('livewire.client.movie-list', compact(
-            'movies',
-            'genres',
-            'topMovies',
-            'topEventMovie'
-        ));
+        $movies = $query->when($this->genreFilter, function ($query) {
+            $query->whereHas('genres', function ($q) {
+                $q->where('genres.id', $this->genreFilter);
+            });
+        })->where('age_restriction', '!=', 'C')->orderBy('created_at', 'desc')->paginate(20);
+
+        return view('livewire.client.movie-list', compact('movies', 'genres', 'topMovies', 'topEventMovie'));
     }
 }
