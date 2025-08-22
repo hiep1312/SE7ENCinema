@@ -195,17 +195,6 @@ class showtimeChart
     public function getFilterText(string $filterValue)
     {
         return match ($filterValue) {
-            '3_days' => '3 ngày gần nhất',
-            '7_days' => '7 ngày gần nhất',
-            '15_days' => '15 ngày gần nhất',
-            '30_days' => '30 ngày gần nhất',
-            '3_months' => '3 tháng gần nhất',
-            '6_months' => '6 tháng gần nhất',
-            '9_months' => '9 tháng gần nhất',
-            '1_year' => '1 năm gần nhất',
-            '2_years' => '2 năm gần nhất',
-            '3_years' => '3 năm gần nhất',
-            '6_years' => '6 năm gần nhất',
             default => "N/A"
         };
     }
