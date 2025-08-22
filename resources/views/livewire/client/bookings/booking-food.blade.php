@@ -1,4 +1,12 @@
 @assets
+    <script>
+        Object.defineProperty(window, 'expiredAt', {
+            configurable: false,
+            enumerable: false,
+            value: new Date(@json($seatHold->expires_at->toIso8601String())),
+            writable: false
+        });
+    </script>
     @vite('resources/css/bookingFood.css')
     @vite('resources/js/foodSelection.js')
 @endassets
@@ -28,7 +36,7 @@
                     <div class="booking-food-timer" wire:ignore>
                         <i class="fas fa-clock text-warning"></i>
                         <span class="text-warning">Thời gian giữ ghế:</span>
-                        <div class="booking-food-countdown text-warning fw-bold fs-4" id="countdown"></div>
+                        <div class="booking-food-countdown text-warning fw-bold fs-4" id="countdown">00:00</div>
                     </div>
                 </div>
             </div>
@@ -194,7 +202,7 @@
                         @endforelse
                     </div>
                     @if($foodItems->hasPages())
-                        <div class="mt-2">
+                        <div class="d-flex justify-content-center mt-2">
                             {{ $foodItems->links() }}
                         </div>
                     @endif
@@ -322,18 +330,12 @@
 </div>
 @script
 <script>
-    const expiredAt = new Date(@json($seatHold->expires_at->toIso8601String()));
     const countdownEl = document.getElementById('countdown');
     const timer = () => {
         const now = Date.now();
         const diffMs = expiredAt - now;
 
-        if(diffMs <= 0){
-            const redirectUrl = "{{ route('client.movieBooking.movie', $booking->showtime->movie->id) }}";
-            const redirectEl = document.createElement('a');
-            redirectEl.href = redirectUrl;
-            redirectEl.click();
-        }
+        if(diffMs <= 0) $wire.dispatch('reservationExpired', @json(route('client.movieBooking.movie', $booking->showtime->movie->id)));
 
         const diffSeconds = Math.floor(diffMs / 1000);
         const minutes = Math.floor(diffSeconds / 60);

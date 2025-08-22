@@ -64,11 +64,11 @@ class ShowtimeSeeder extends Seeder
                     }
 
                     Showtime::create([
-                        'movie_id'   => $movie->id,
-                        'room_id'    => $room->id,
+                        'movie_id' => $movie->id,
+                        'room_id' => $room->id,
                         'start_time' => $startTime,
-                        'end_time'   => $endTime,
-                        'status'     => $status,
+                        'end_time' => $endTime,
+                        'status' => $status,
                     ]);
 
                     $cursor = $endTime->copy()->addMinutes(15);

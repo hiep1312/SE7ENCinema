@@ -305,7 +305,7 @@ class SelectSeats extends Component
                 return;
             }
 
-            $moviePrice = $this->showtime->price;
+            $moviePrice = $this->showtime->movie->price;
 
             $booking = Booking::create([
                 'user_id' => $this->userId,

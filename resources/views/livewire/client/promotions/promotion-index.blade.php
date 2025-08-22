@@ -68,8 +68,7 @@
                                     }}đ</b></span>
                             <div class="text-secondary small" style="margin:10px 0px !important ">HSD: <b
                                     class="text-dark">{{ $promotion->end_date->format('d/m/Y') }}</b></div>
-                            <div class="my-1 text-secondary small">Mô tả: <span class="fw-medium text-dark">{{
-                                    Str::limit($promotion->description, 50) }}</span></div>
+                            <div class="my-1 text-secondary small">Mô tả: <span class="fw-medium text-dark">{{ $promotion->title }}</span></div>
                             <div class="d-flex justify-content-between align-items-center mt-2" style="gap: 0.5rem;">
                                 <div>
                                     <button
@@ -108,8 +107,7 @@
                                     <div class="row mb-1">
                                         <div class="col-5 fw-bold text-secondary" style="font-size: 0.95rem;">Mô tả:
                                         </div>
-                                        <div class="col-7 text-dark" style="font-size: 0.95rem;">{{
-                                            $promotion->description }}</div>
+                                        <div class="col-7 text-dark" style="font-size: 0.95rem;">{!! $promotion->description !!}</div>
                                     </div>
                                     <div class="row mb-1">
                                         <div class="col-5 fw-bold text-secondary" style="font-size: 0.95rem;">Trạng

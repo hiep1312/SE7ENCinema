@@ -1,10 +1,35 @@
+import Swal from "sweetalert2";
+
 let dataFoods = [];
 let currentSelection = {};
 let cartTempVariantId = null;
 
-function updateAvailableVariants(clearOldSelection = false){
+function getCurrentSelection(){
     const dataFoodId = Object.keys(currentSelection)[0];
-    const dataAttr = clearOldSelection ? [] : Object.keys(currentSelection[dataFoodId]);
+    const dataAttr = Object.keys(currentSelection[dataFoodId] ?? []);
+
+    return [dataFoodId, dataAttr];
+}
+
+function filterInvalidVariantAttributes(){
+    const [dataFoodId, dataAttr] = getCurrentSelection();
+    let dataFood;
+
+    if(dataFoodId && dataAttr.length > 0 && (dataFood = dataFoods.find(food => food.id === +dataFoodId)))
+        dataAttr.forEach(attr => {
+            if(!dataFood.availableAttributes[attr]) delete currentSelection[dataFoodId][attr];
+
+            const attrValue = currentSelection[dataFoodId][attr];
+            if(!attrValue || !dataFood.availableAttributes[attr].includes(attrValue)) delete currentSelection[dataFoodId][attr];
+        });
+    else currentSelection = {};
+}
+
+function updateAvailableVariants(clearOldSelection = false){
+    filterInvalidVariantAttributes();
+
+    let [dataFoodId, dataAttr] = getCurrentSelection();
+    clearOldSelection && (dataAttr = []);
     let availableListAttrValues = {};
 
     /* Setup data */
@@ -28,14 +53,21 @@ function updateAvailableVariants(clearOldSelection = false){
             return true;
         });
 
-        variants.forEach(variant => {
-            for(const [attr, value] of Object.entries(variant.attributes)){
-                !availableListAttrValues[attr] && (availableListAttrValues[attr] = new Set());
-                availableListAttrValues[attr].add(value);
-            }
-        });
-        variants.length === 1 && (document.querySelector(`[data-food-id='${dataFoodId}'] .booking-food-auto-flip-btn`).classList.add('show') || (document.querySelector(`[data-food-id='${dataFoodId}'] .booking-food-auto-flip-btn`).disabled = !Boolean(variants[0].quantity_available)) || (cartTempVariantId = variants[0].id));
-        updatePrice(variants.length === 1 ? variants[0].price : variants);
+        if(variants.length > 0){
+            variants.forEach(variant => {
+                for(const [attr, value] of Object.entries(variant.attributes)){
+                    !availableListAttrValues[attr] && (availableListAttrValues[attr] = new Set());
+                    availableListAttrValues[attr].add(value);
+                }
+            });
+            variants.length === 1 && (document.querySelector(`[data-food-id='${dataFoodId}'] .booking-food-auto-flip-btn`).classList.add('show') || (document.querySelector(`[data-food-id='${dataFoodId}'] .booking-food-auto-flip-btn`).disabled = !Boolean(variants[0].quantity_available)) || (cartTempVariantId = variants[0].id));
+            updatePrice(variants.length === 1 ? variants[0].price : variants);
+        }else{
+            delete currentSelection[dataFoodId][dataAttr.at(-1)];
+            Swal.fire('Xin lỗi!', 'Sản phẩm với thuộc tính đã chọn hiện không khả dụng.', 'error');
+            updateAvailableVariants();
+            return;
+        }
     }else{
         const dataFood = dataFoods.find(food => food.id === +dataFoodId);
         availableListAttrValues = dataFood?.availableAttributes;
@@ -44,7 +76,10 @@ function updateAvailableVariants(clearOldSelection = false){
 
     for(const [attr, values] of Object.entries(availableListAttrValues)){
         const attrValues = document.querySelectorAll(`[data-food-id='${dataFoodId}'] [data-attribute='${attr}'] [data-value]`);
-        attrValues.forEach(attrValue =>  attrValue.classList.toggle('unavailable', Array.isArray(values) ? !values.includes(attrValue.dataset.value) : !values.has(attrValue.dataset.value)));
+        attrValues.forEach(attrValue => {
+            attrValue.classList.toggle('unavailable', Array.isArray(values) ? !values.includes(attrValue.dataset.value) : !values.has(attrValue.dataset.value));
+            attrValue.style.display = ((values?.length > 1 && !values.includes(attrValue.dataset.value)) || (values?.size > 1 && !values.has(attrValue.dataset.value))) ? "none" : "flex";
+        });
     }
 }
 
@@ -84,4 +119,17 @@ document.addEventListener('livewire:init', () => {
         if(Object.keys(currentSelection)?.[0] === card.dataset.foodId) $wire.$set('cartTempVariantId', addCart ? cartTempVariantId : null, true);
         card.classList.toggle('flipped', addCart);
     }
+
+    Livewire.on('reservationExpired', function(redirectUrl){
+        Swal.fire({
+            title: "Hết thời gian giữ ghế",
+            html: "Vui lòng chọn lại suất chiếu và ghế để tiếp tục đặt vé",
+            icon: 'info',
+            iconColor: '#ffbb33',
+        }).then(() => {
+            const redirectEl = document.createElement('a');
+            redirectEl.href = redirectUrl;
+            redirectEl.click();
+        });
+    });
 });
