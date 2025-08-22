@@ -10,7 +10,8 @@
                     <div class="prs_title_heading_wrapper">
                         <h2>Danh Sách Phim</h2>
                         <ul>
-                            <li><a href="{{ route('client.index') }}">Home <i class="fa fa-chevron-right"></i></a></li>
+                            <li><a href="{{ route('client.index') }}">Trang chủ <i class="fa fa-chevron-right"></i></a>
+                            </li>
                             <li> <i class="fa fa-chevron-right"></i> Danh Sách Phim</li>
                         </ul>
                     </div>
@@ -76,7 +77,7 @@
     </div>
 
     <div class="prs_mc_category_sidebar_main_wrapper">
-        <div class="container" >
+        <div class="container">
             <div class="row">
                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 hidden-sm hidden-xs">
                     <div class="prs_mcc_left_side_wrapper">
@@ -145,9 +146,10 @@
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="tab-content">
                                     <div id="coming_soon" class="tab-pane fade in active">
-                                        <div class="row">
+                                        <div class="row-list">
                                             @forelse ($movies as $movie)
-                                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 prs_upcom_slide_first">
+                                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 prs_upcom_slide_first"
+                                                    style="float: none;">
                                                     <div class="prs_upcom_movie_box_wrapper prs_mcc_movie_box_wrapper">
                                                         <div class="prs_upcom_movie_img_box movie-img-wrapper">
                                                             <img src="{{ asset('storage/' . $movie->poster) }}"
@@ -162,22 +164,23 @@
 
                                                             <div class="prs_upcom_movie_img_overlay"></div>
                                                             <div class="prs_upcom_movie_img_btn_wrapper">
-                                                <ul>
-                                                    @if ($movie->trailer_url)
-                                                        <li><a href="{{ $movie->trailer_url }}" target="_blank">Xem trailer</a></li>
-                                                    @endif
-                                                    <li><a href="{{ route('client.movie_detail', $movie->id) }}">Xem chi tiết</a></li>
-                                                </ul>
+                                                                <ul>
+                                                                    @if ($movie->trailer_url)
+                                                                        <li><a href="{{ $movie->trailer_url }}"
+                                                                                target="_blank">Xem trailer</a></li>
+                                                                    @endif
+                                                                    <li><a href="{{ route('client.movie_detail', $movie->id) }}">Xem
+                                                                            chi tiết</a></li>
+                                                                </ul>
                                                             </div>
                                                         </div>
                                                         <div class="prs_upcom_movie_content_box">
                                                             <div class="prs_upcom_movie_content_box_inner"
-                                                                style="max-width: 100% !important;">
-                                                                <h2><a style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; display: block;"
-                                                                        href="#">{{ $movie->title }}</a></h2>
-                                                                <p>Thể loại:
-                                                                    {{ Str::limit($movie->genres->pluck('name')->implode(', '), 20) }}
-                                                                </p>
+                                                                style="width: 100% !important;">
+                                                                <h2 style="margin-top: 0;"><a
+                                                                        href="{{ route('client.movie_detail', $movie->id) }}">{{ $movie->title }}</a>
+                                                                </h2>
+                                                                <p>Thể loại: {{ Str::limit($movie->genres->pluck('name')->implode(', '), 20) }}</p>
                                                                 <p>Thời lượng: {{ $movie->duration }} phút</p>
                                                                 <p>Giá vé:
                                                                     {{ number_format($movie->price, 0, ',', '.') }} VND
@@ -231,37 +234,45 @@
                                                 <li>
                                                     <button class="sc-page sc-page--arrow"
                                                         wire:click="gotoPage({{ max(1, $movies->currentPage() - 1) }})">
-                                                        <span style=" display: flex; align-items: center; justify-content: center;">&larr;</span>
+                                                        <span
+                                                            style=" display: flex; align-items: center; justify-content: center;">&larr;</span>
                                                     </button>
                                                 </li>
                                                 @php
                                                     $start = max(1, $movies->currentPage() - 2);
                                                     $end = min($movies->lastPage(), $movies->currentPage() + 2);
                                                 @endphp
-                                                @if($start > 1)
-                                                    <li><button class="sc-page" wire:click="gotoPage(1)">1</button></li>
-                                                    @if($start > 2)
-                                                        <li><span class="sc-page sc-page--disabled" style="cursor: default;">...</span></li>
+                                                @if ($start > 1)
+                                                    <li><button class="sc-page" wire:click="gotoPage(1)">1</button>
+                                                    </li>
+                                                    @if ($start > 2)
+                                                        <li><span class="sc-page sc-page--disabled"
+                                                                style="cursor: default;">...</span></li>
                                                     @endif
                                                 @endif
                                                 @for ($page = $start; $page <= $end; $page++)
                                                     <li>
-                                                        <button class="sc-page{{ $page == $movies->currentPage() ? ' sc-page--active' : '' }}"
+                                                        <button
+                                                            class="sc-page{{ $page == $movies->currentPage() ? ' sc-page--active' : '' }}"
                                                             wire:click="gotoPage({{ $page }})">
                                                             {{ $page }}
                                                         </button>
                                                     </li>
                                                 @endfor
-                                                @if($end < $movies->lastPage())
-                                                    @if($end < $movies->lastPage() - 1)
-                                                        <li><span class="sc-page sc-page--disabled" style="cursor: default;">...</span></li>
+                                                @if ($end < $movies->lastPage())
+                                                    @if ($end < $movies->lastPage() - 1)
+                                                        <li><span class="sc-page sc-page--disabled"
+                                                                style="cursor: default;">...</span></li>
                                                     @endif
-                                                    <li><button class="sc-page" wire:click="gotoPage({{ $movies->lastPage() }})">{{ $movies->lastPage() }}</button></li>
+                                                    <li><button class="sc-page"
+                                                            wire:click="gotoPage({{ $movies->lastPage() }})">{{ $movies->lastPage() }}</button>
+                                                    </li>
                                                 @endif
                                                 <li>
                                                     <button class="sc-page sc-page--arrow"
                                                         wire:click="gotoPage({{ min($movies->lastPage(), $movies->currentPage() + 1) }})">
-                                                        <span style="font-size: 1.3em; display: flex; align-items: center; justify-content: center;">&rarr;</span>
+                                                        <span
+                                                            style="font-size: 1.3em; display: flex; align-items: center; justify-content: center;">&rarr;</span>
                                                     </button>
                                                 </li>
                                             </ul>
@@ -322,7 +333,7 @@
                                             </div>
                                         </div>
                                         <div class="prs_upcom_movie_content_box">
-                                            <div class="prs_upcom_movie_content_box_inner">
+                                            <div class="prs_upcom_movie_content_box_inner" style="width: 100%;">
                                                 <h2><a style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; display: block; width: 100%;"
                                                         href="{{ route('client.movieBooking.movie', $movie->id) }}">{{ $movie->title }}</a>
                                                 </h2>
@@ -343,7 +354,8 @@
                                             </div>
                                             <div class="prs_upcom_movie_content_box_inner_icon">
                                                 <ul>
-                                                    <li><a href="{{ route('client.movieBooking.movie', $movie->id) }}"><i
+                                                    <li><a
+                                                            href="{{ route('client.movieBooking.movie', $movie->id) }}"><i
                                                                 class="flaticon-cart-of-ecommerce"></i></a></li>
                                                 </ul>
                                             </div>

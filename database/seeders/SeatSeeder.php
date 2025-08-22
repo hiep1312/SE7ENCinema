@@ -14,19 +14,34 @@ class SeatSeeder extends Seeder
      */
     public function run(): void
     {
-        $seatTypes = ['standard', 'vip', 'couple', 'disabled'];
+        Room::all()->each(function ($room) {
+            $rows = range('A', 'E');
 
-        Room::all()->each(function ($room) use ($seatTypes) {
-            $rows = range('A', chr(ord('A') + 4)); // A to E
             foreach ($rows as $row) {
-                foreach (range(1, 10) as $num) {
+                for ($num = 1; $num <= 10; $num++) {
+                    $seatType = 'standard';
+                    $price = 80000;
+
+                    if (in_array($row, ['C', 'D'])) {
+                        $seatType = 'vip';
+                        $price = 120000;
+                    } elseif ($row === 'E' && in_array($num, [4, 5, 6, 7])) {
+                        $seatType = 'couple';
+                        $price = 150000;
+                    }
+
+                    if ($num == 1 || $num == 10) {
+                        $seatType = 'disabled';
+                        $price = 60000;
+                    }
+
                     Seat::create([
                         'room_id' => $room->id,
                         'seat_row' => $row,
                         'seat_number' => $num,
-                        'price' => fake()->numberBetween(50000, 200000),
-                        'seat_type' => fake()->randomElement($seatTypes),
-                        'status' => fake()->randomElement(['active', 'maintenance', 'selected']),
+                        'price' => $price,
+                        'seat_type' => $seatType,
+                        'status' => 'active',
                     ]);
                 }
             }

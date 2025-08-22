@@ -4,9 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\FoodAttribute;
 use App\Models\FoodAttributeValue;
+use App\Models\FoodItem;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Arr;
 
 class FoodAttributeValueSeeder extends Seeder
 {
@@ -15,25 +15,96 @@ class FoodAttributeValueSeeder extends Seeder
      */
     public function run(): void
     {
-        $valueOptions = [
-            'Size' => ['S', 'M', 'L'],
-            'Vị' => ['Mặn', 'Ngọt', 'Phô mai', 'Bơ'],
-            'Kiểu gói' => ['Hộp giấy', 'Túi nhựa', 'Túi giấy', 'Ly nhựa'],
-            'Đá' => ['Không đá', 'Ít đá', 'Vừa đá', 'Nhiều đá'],
-            'Hương vị' => ['Dâu', 'Cam', 'Xoài', 'Chanh dây', 'Kiwi'],
-            'Loại đồ uống' => ['Trà sữa', 'Trà trái cây', 'Nước ngọt', 'Nước khoáng']
+        $data = [
+            [
+                'food' => 'Bắp Rang Bơ',
+                'attributeValues' => [
+                    'Size' => ['S', 'M', 'L'],
+                    'Vị' => ['Nguyên bản (Bơ)', 'Phô mai', 'Mặn', 'Caramel', 'Socola', 'Matcha'],
+                ],
+            ],
+            [
+                'food' => 'Gà Vòng Chiên',
+                'attributeValues' => [
+                    'Size' => ['S', 'M', 'L'],
+                    'Vị' => ['Nguyên bản', 'Cay', 'Phô mai'],
+                    'Sốt' => ['Tương cà', 'Tương ớt', 'Mayonnaise', 'BBQ', 'Cà chua', 'Mù tạt']
+                ]
+            ],
+            [
+                'food' => 'Xúc Xích',
+                'attributeValues' => [
+                    'Vị' => ['Nguyên bản', 'Cay', 'Phô mai', 'Xông khói'],
+                    'Sốt' => ['Không sốt', 'Tương cà', 'Tương ớt', 'Mayonnaise', 'BBQ', 'Mù tạt']
+                ]
+            ],
+            [
+                'food' => 'Bánh Bao',
+                'attributeValues' => [
+                    'Nhân' => ['Nguyên bản (Thịt heo)', 'Đậu đỏ', 'Xá xíu', 'Phô mai', 'Chay'],
+                    'Sốt' => ['Không sốt', 'Mayonnaise', 'BBQ', 'Xì dầu']
+                ]
+            ],
+            [
+                'food' => 'Bánh Mì',
+                'attributeValues' => [
+                    'Nhân' => ['Thịt heo', 'Xá xíu', 'Trứng', 'Chay', 'Patê'],
+                    'Topping' => ['Nộm', 'Dưa leo', 'Rau thơm', 'Phô mai'],
+                    'Sốt' => ['Không sốt', 'Tương ớt', 'Tương cà', 'Mayonnaise', 'BBQ']
+                ]
+            ],
+            [
+                'food' => 'Snack (Bim Bim)',
+                'attributeValues' => [
+                    'Size' => ['S', 'M', 'L'],
+                    'Vị' => ['Rong biển', 'Phô mai', 'Gà nướng', 'Bò nướng', 'Sườn nướng', 'Tôm', 'Cay', 'Rau quả']
+                ]
+            ],
+            [
+                'food' => 'Trà Trái Cây',
+                'attributeValues' => [
+                    'Size' => ['S', 'M', 'L'],
+                    'Vị' => ['Đào', 'Vải', 'Dâu tây', 'Chanh', 'Cam', 'Táo', 'Bưởi', 'Ổi'],
+                    'Topping' => ['Trân châu đen', 'Trân châu trắng', 'Thạch rau câu', 'Thạch phô mai', 'Thạch trân châu', 'Bánh flan'],
+                    'Đá' => ['Không đá', 'Ít đá', 'Vừa đá', 'Nhiều đá'],
+                    'Đường' => ['Đường 30%', 'Đường 50%', 'Đường 70%', 'Đường 100%'],
+                ]
+            ],
+            [
+                'food' => 'Nước Ngọt',
+                'attributeValues' => [
+                    'Size' => ['S', 'M', 'L'],
+                    'Loại' => ['Coca Cola', 'Pepsi', '7Up', 'Sprite', 'Mirinda', 'Sting', 'Fanta'],
+                    'Đá' => ['Không đá', 'Ít đá', 'Vừa đá', 'Nhiều đá'],
+                ]
+            ],
+            [
+                'food' => 'Nước Ép',
+                'attributeValues' => [
+                    'Size' => ['S', 'M', 'L'],
+                    'Vị' => ['Đào', 'Vải', 'Dâu tây', 'Chanh leo', 'Cam', 'Táo', 'Dứa', 'Dưa hấu'],
+                    'Topping' => ['Trân châu đen', 'Trân châu trắng', 'Thạch rau câu', 'Thạch phô mai', 'Thạch trân châu', 'Pudding'],
+                    'Đá' => ['Không đá', 'Ít đá', 'Vừa đá', 'Nhiều đá'],
+                    'Đường' => ['Không đường', 'Đường 30%', 'Đường 50%', 'Đường 70%', 'Đường 100%'],
+                ]
+            ],
+            [
+                'food' => 'Cà Phê',
+                'attributeValues' => [
+                    'Size' => ['S', 'M', 'L'],
+                    'Loại' => ['Cà phê đen', 'Cà phê sữa', 'Latte', 'Cappuccino', 'Mocha'],
+                    'Nhiệt độ' => ['Nóng', 'Đá (Lạnh)'],
+                    'Đường' => ['Không đường', 'Đường 30%', 'Đường 50%', 'Đường 70%', 'Đường 100%'],
+                ]
+            ],
         ];
 
-        $attributes = FoodAttribute::all();
+        foreach($data as $id => $attributeValue) {
+            $foodId = FoodItem::where('name', $attributeValue['food'])->first()->id;
+            foreach($attributeValue['attributeValues'] as $name => $values) {
+                $food_attribute_id = FoodAttribute::where('food_item_id', $foodId)->where('name', $name)->first()->id;
 
-        foreach ($attributes as $attribute) {
-            $values = Arr::shuffle($valueOptions[$attribute->name] ?? fake()->words(4));
-
-            foreach (range(0, rand(1, 2)) as $i) {
-                FoodAttributeValue::create([
-                    'food_attribute_id' => $attribute->id,
-                    'value' => $values[$i],
-                ]);
+                FoodAttributeValue::insert(array_map(fn($value) => ['food_attribute_id' => $food_attribute_id, 'value' => $value], $values));
             }
         }
     }

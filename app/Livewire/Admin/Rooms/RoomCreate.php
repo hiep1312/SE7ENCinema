@@ -129,9 +129,9 @@ class RoomCreate extends Component
         $this->validate();
         try {
             $room = Room::create([
-                'name'           => $this->name,
-                'capacity'       => $this->capacity ?: ($this->rows * $this->seatsPerRow),
-                'status'         => $this->status,
+                'name' => $this->name,
+                'capacity' => $this->capacity ?: ($this->rows * $this->seatsPerRow),
+                'status' => $this->status,
                 'seat_algorithms' => json_encode($this->seatAlgorithms, JSON_UNESCAPED_UNICODE),
             ]);
 

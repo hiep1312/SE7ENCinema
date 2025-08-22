@@ -303,7 +303,7 @@ class SelectSeats extends Component
                 return;
             }
 
-            $moviePrice = $this->showtime->price;
+            $moviePrice = $this->showtime->movie->price;
 
             $booking = Booking::create([
                 'user_id' => $this->userId,
@@ -328,10 +328,12 @@ class SelectSeats extends Component
             }
             $booking->save();
             DB::commit();
-            return redirect()->route('client.booking.select_food', [
-                'booking_id' => $booking->id,
+
+            return redirect()->route('client.booking.food', [
+                'bookingCode' => $booking->booking_code,
             ]);
         } catch (\Exception $e) {
+            dd($e);
             DB::rollBack();
             $this->dispatch('sc-alert.error', 'Lỗi tạo đặt chỗ', 'Lỗi khi tạo booking: ' . $e->getMessage());
             $this->loadSeats();
@@ -344,14 +346,9 @@ class SelectSeats extends Component
 
     #[Title('Chọn ghế - SE7ENCinema')]
     #[Layout('components.layouts.client')]
-
     public function render()
     {
         $this->checkCurrentHoldStatus();
-
-        if ($this->isBanned) {
-            return view('livewire.client.select-seats');
-        }
 
         return view('livewire.client.select-seats');
     }

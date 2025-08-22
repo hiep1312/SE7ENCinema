@@ -4,28 +4,28 @@ namespace Database\Seeders;
 
 use App\Models\Booking;
 use App\Models\BookingSeat;
-use App\Models\Seat;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class BookingSeatSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $seats = Seat::all();
+        $bookings = Booking::with('showtime.room.seats', 'showtime.movie')->get();
 
-        Booking::all()->each(function ($booking) use ($seats) {
-            $selectedSeats = $seats->random(rand(1, 3));
+        foreach ($bookings as $booking) {
+            $room = $booking->showtime->room;
+            $moviePrice = $booking->showtime->movie->price;
+            $seats = $room->seats()->inRandomOrder()->take(rand(1, 4))->get();
 
-            foreach ($selectedSeats as $seat) {
+            foreach ($seats as $seat) {
+                $price = ($seat->price) + $moviePrice;
+
                 BookingSeat::create([
                     'booking_id' => $booking->id,
                     'seat_id' => $seat->id,
+                    'ticket_price' => $price,
                 ]);
             }
-        });
+        }
     }
 }

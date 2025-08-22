@@ -29,8 +29,8 @@ class RoomEdit extends Component
     public $formattedPriceCouple = null;
     public $temp = [];
     public $seatAlgorithms = [
-        'check_lonely'   => true,
-        'check_sole'     => true,
+        'check_lonely' => true,
+        'check_sole' => true,
         'check_diagonal' => true,
     ];
     public $schema = [];
@@ -99,9 +99,7 @@ class RoomEdit extends Component
         }
 
         if (!empty($room->seat_algorithms)) {
-            $decoded = is_array($room->seat_algorithms)
-                ? $room->seat_algorithms
-                : json_decode($room->seat_algorithms, true);
+            $decoded = is_array($room->seat_algorithms) ? $room->seat_algorithms : json_decode($room->seat_algorithms, true);
 
             if (is_array($decoded)) {
                 $this->seatAlgorithms = array_merge($this->seatAlgorithms, $decoded);
@@ -132,19 +130,19 @@ class RoomEdit extends Component
             $coupleSeat   = $seats->where('seat_type', 'couple')->first();
 
             $this->priceStandard = $standardSeat ? $standardSeat->price : 50000;
-            $this->priceVip      = $vipSeat      ? $vipSeat->price      : 80000;
-            $this->priceCouple   = $coupleSeat   ? $coupleSeat->price   : 120000;
+            $this->priceVip = $vipSeat ? $vipSeat->price : 80000;
+            $this->priceCouple = $coupleSeat ? $coupleSeat->price : 120000;
 
             $this->formattedPriceStandard = number_format($this->priceStandard, 0, '.', '.');
             $this->formattedPriceVip      = $this->priceVip    ? number_format($this->priceVip, 0, '.', '.') : null;
             $this->formattedPriceCouple   = $this->priceCouple ? number_format($this->priceCouple, 0, '.', '.') : null;
 
-            $vipRows    = $seats->where('seat_type', 'vip')->pluck('seat_row')->unique()->values()->all();
+            $vipRows = $seats->where('seat_type', 'vip')->pluck('seat_row')->unique()->values()->all();
             $coupleRows = $seats->where('seat_type', 'couple')->pluck('seat_row')->unique()->values()->all();
 
-            $this->vipRows    = implode(',', $vipRows);
+            $this->vipRows = implode(',', $vipRows);
             $this->coupleRows = implode(',', $coupleRows);
-            $this->vipArr     = $vipRows;
+            $this->vipArr = $vipRows;
             $this->coupleArr  = $coupleRows;
         }
     }
@@ -203,9 +201,9 @@ class RoomEdit extends Component
 
         try {
             $this->room->update([
-                'name'             => $this->name,
-                'capacity'         => $this->capacity ?: ($this->rows * $this->seatsPerRow),
-                'status'           => $this->status,
+                'name' => $this->name,
+                'capacity' => $this->capacity ?: ($this->rows * $this->seatsPerRow),
+                'status' => $this->status,
                 'last_maintenance_date' => $this->last_maintenance_date ?: null,
                 'seat_algorithms'  => json_encode($this->seatAlgorithms, JSON_UNESCAPED_UNICODE),
             ]);
@@ -242,18 +240,18 @@ class RoomEdit extends Component
                     $status = $s['status'] ?? 'active';
 
                     $price = match ($typeDb) {
-                        'vip'    => $this->priceVip,
+                        'vip' => $this->priceVip,
                         'couple' => $this->priceCouple,
-                        default  => $this->priceStandard,
+                        default => $this->priceStandard,
                     };
 
                     Seat::create([
-                        'room_id'     => $this->room->id,
-                        'seat_row'    => $rowLetter,
+                        'room_id' => $this->room->id,
+                        'seat_row' => $rowLetter,
                         'seat_number' => $num,
-                        'seat_type'   => $typeDb,
-                        'price'       => $price,
-                        'status'      => $status,
+                        'seat_type' => $typeDb,
+                        'price' => $price,
+                        'status' => $status,
                     ]);
 
                     $total++;
@@ -273,21 +271,21 @@ class RoomEdit extends Component
                     $price = $this->priceStandard;
 
                     if ($vipRows->contains($rowLetter)) {
-                        $type  = 'vip';
+                        $type = 'vip';
                         $price = $this->priceVip;
                     }
                     if ($coupleRows->contains($rowLetter)) {
-                        $type  = 'couple';
+                        $type = 'couple';
                         $price = $this->priceCouple;
                     }
 
                     Seat::create([
-                        'room_id'     => $this->room->id,
-                        'seat_row'    => $rowLetter,
+                        'room_id' => $this->room->id,
+                        'seat_row' => $rowLetter,
                         'seat_number' => $j,
-                        'seat_type'   => $type,
-                        'price'       => $price,
-                        'status'      => 'active',
+                        'seat_type' => $type,
+                        'price' => $price,
+                        'status' => 'active',
                     ]);
                 }
             }

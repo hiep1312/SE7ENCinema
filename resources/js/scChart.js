@@ -25,6 +25,10 @@ class scChart{
         })
     }
 
+    getElement(){
+        return this._element;
+    }
+
     static callMethod(chartID, method, ...args){
         if(!chartID) chartID = this._options.chart?.id ?? this._element.id;
         if(!method) throw new Error("No method specified");
@@ -34,6 +38,9 @@ class scChart{
         }else{
             return ApexCharts.exec(chartID, method, ...args);
         }
+    }
+    getElement(){
+        return this._element;
     }
 
     async appendData(newData){
