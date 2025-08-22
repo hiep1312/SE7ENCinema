@@ -136,6 +136,7 @@ class RoomSeatStatusData
         $roomSeatStatusData = $this->data['chart_data'];
         $roomSeatStatusDataJS = json_encode($roomSeatStatusData);
 
+
         return <<<JS
         (function() {
             const seatStatusData = {$roomSeatStatusDataJS};
