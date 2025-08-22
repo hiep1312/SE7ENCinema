@@ -38,8 +38,8 @@ class VNPaymentService {
     public function createPaymentUrl(int|string|array $vnp_Amount, ?string $vnp_TxnRef = null, ?string $vnp_OrderInfo = null, ?string $vnp_BankCode = null, ?string $vnp_ReturnUrl = null, Carbon|string|int|null $vnp_CreateDate = null, Carbon|string|int|null $vnp_ExpireDate = null, ?string $vnp_IpAddr = null): self
     {
         is_numeric($vnp_Amount) && $vnp_Amount = (int)$vnp_Amount * 100;
-        !is_null($vnp_CreateDate) && $vnp_CreateDate = Carbon::parse($vnp_CreateDate)->format('YmdHis');
-        !is_null($vnp_ExpireDate) && $vnp_ExpireDate = Carbon::parse($vnp_ExpireDate)->format('YmdHis');
+        !is_null($vnp_CreateDate) && $vnp_CreateDate = is_int($vnp_CreateDate) ? date('YmdHis', $vnp_CreateDate) : Carbon::parse($vnp_CreateDate)->format('YmdHis');
+        !is_null($vnp_ExpireDate) && $vnp_ExpireDate = is_int($vnp_ExpireDate) ? date('YmdHis', $vnp_ExpireDate) : Carbon::parse($vnp_ExpireDate)->format('YmdHis');
 
         $this->config = array_merge($this->configDefault(), $this->buildPaymentConfig((is_array($vnp_Amount) && func_num_args() === 1) ? $vnp_Amount : compact('vnp_Amount', 'vnp_TxnRef', 'vnp_OrderInfo', 'vnp_BankCode', 'vnp_ReturnUrl', 'vnp_CreateDate', 'vnp_ExpireDate', 'vnp_IpAddr')));
 
@@ -93,7 +93,7 @@ class VNPaymentService {
         $configInput = is_array($configInput) ? $configInput : $configInput->toArray();
 
         $config = [
-            'vnp_RequestId' => Str::upper(Str::random(15)),
+            'vnp_RequestId' => Str::upper(uniqid('SE7ENCinema')),
             'vnp_Version' => $configInput['vnp_Version'] ?? '2.1.0',
             'vnp_Command' => 'querydr',
             'vnp_TmnCode' => $configInput['vnp_TmnCode'] ?? config('services.vnpay.vnp_TmnCode'),
@@ -121,7 +121,7 @@ class VNPaymentService {
             'vnp_Amount' => fn(): never => throw new InvalidArgumentException('vnp_Amount is required and must be a positive integer (in VND multiplied by 100).'),
             'vnp_TxnRef' => function (): string{
                 do {
-                    $txnRef = Str::upper(Str::random(20));
+                    $txnRef = Str::upper(Str::random(30));
                 }while(Booking::where('transaction_code', $txnRef)->exists());
                 return $txnRef;
             },

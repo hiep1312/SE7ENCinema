@@ -3,39 +3,48 @@
 namespace Database\Seeders;
 
 use App\Models\Booking;
+use App\Models\BookingSeat;
+use App\Models\FoodOrderItem;
 use App\Models\Showtime;
+use App\Models\PromotionUsage;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class BookingSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        /* Dữ liệu 3 tháng trước | Mỗi tháng ít nhất 30 dữ liệu | 30 | 1 - 5 thánh toán fail | ít nhất 30 dữ liệu thanh toán thành công */
-        /* Mỗi dữ liệu sấp xỉ 1 - 4 | 7 ghế (ít bản ghi) */
-        /* total_price | ticket_price + foodOrderItem - promotion */
-        /* $users = User::all()->pluck('id')->toArray();
-        $showtimes = Showtime::all()->pluck('id')->toArray();
+        $showtimes = Showtime::where('status', 'completed')
+            ->orderBy('start_time')
+            ->get()
+            ->unique(fn($item) => Carbon::parse($item->start_time)->toDateString())
+            ->values();
 
-        foreach (range(1, 20) as $i) {
-            $start = fake()->dateTimeBetween('-7 days', 'now');
-            $end = (clone $start)->modify('+15 minutes');
+        $users = User::pluck('id')->toArray();
+
+        foreach ($showtimes as $i => $showtime) {
+
+            $startTime = Carbon::parse($showtime->start_time);
+
+            $startTransaction = $startTime->copy()->subMinutes(30);
+            $endTransaction   = $startTime->copy()->addMinutes(15);
 
             Booking::create([
-                'user_id' => fake()->randomElement($users),
-                'showtime_id' => fake()->randomElement($showtimes),
-                'booking_code' => strtoupper(fake()->unique()->bothify('BK####??')),
-                'total_price' => fake()->numberBetween(100000, 600000),
-                'transaction_code' => strtoupper(fake()->unique()->bothify('TX####??')),
-                'start_transaction' => $start,
-                'end_transaction' => $end,
-                'status' => fake()->randomElement(['pending', 'expired', 'paid', 'failed']),
-                'payment_method' => fake()->randomElement(['credit_card', 'bank_transfer', 'e_wallet', 'cash']),
+                'user_id' => $users[array_rand($users)],
+                'showtime_id' => $showtime->id,
+                'booking_code' => 'BKG' . strtoupper(Str::random(6)),
+                'total_price' => 0, // tạm thời 0, sẽ update ngay
+                'transaction_code' => 'TXN' . strtoupper(Str::random(6)),
+                'start_transaction' => $startTransaction,
+                'end_transaction'   => $endTransaction,
+                'status' => $i % 9 == 0 ? 'failed' : 'paid',
+                'payment_method' => 'e_wallet',
+                'created_at' => $endTransaction,
+                'updated_at' => $endTransaction,
             ]);
-        } */
+        }
     }
 }

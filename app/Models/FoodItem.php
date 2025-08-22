@@ -55,4 +55,27 @@ class FoodItem extends Model
     {
         return self::find($foodId)?->getAllVariants($attributeGroups, $columns);
     }
+
+    public function getAvailableAttributesAttribute()
+    {
+        $queryUniqueAttributeValues = DB::table('food_attributes as fa')
+            ->join('food_attribute_values as fav', 'fav.food_attribute_id', '=', 'fa.id')
+            ->join('food_variant_attribute_values as fvav', 'fvav.food_attribute_value_id', '=', 'fav.id')
+            ->join('food_variants as fv', 'fv.id', '=', 'fvav.food_variant_id')
+            ->where('fa.food_item_id', $this->id)->where('fv.food_item_id', $this->id)
+            ->selectRaw('DISTINCT fav.value as attributeValues, fa.food_item_id, fa.name');
+
+        $queryAttributeValuesArray = DB::query()
+            ->fromSub($queryUniqueAttributeValues, "fa")
+            ->select('fa.food_item_id', 'fa.name', DB::raw('JSON_ARRAYAGG(fa.attributeValues) as attributeValues'))
+            ->groupBy('fa.food_item_id', 'fa.name');
+
+        $queryAtributesObject = DB::query()
+            ->fromSub($queryAttributeValuesArray, "fa")
+            ->select('fa.food_item_id', DB::raw('JSON_OBJECTAGG(fa.name, fa.attributeValues) as attributes'))
+            ->groupBy('fa.food_item_id');
+
+        $result = $queryAtributesObject->first()?->attributes;
+        return empty($result) ? null : collect(json_decode($result, true, 512, JSON_INVALID_UTF8_SUBSTITUTE));
+    }
 }

@@ -1,13 +1,28 @@
 let dataFoods = [];
 let currentSelection = {};
+let cartTempVariantId = null;
 
 function updateAvailableVariants(clearOldSelection = false){
     const dataFoodId = Object.keys(currentSelection)[0];
     const dataAttr = clearOldSelection ? [] : Object.keys(currentSelection[dataFoodId]);
     let availableListAttrValues = {};
 
-    if(dataAttr.length > 1){
-        const variants = dataFoods.find((food) => food.id === Number(dataFoodId)).variants.filter((variant) => {
+    /* Setup data */
+    document.querySelectorAll(`[data-food-id] .booking-food-auto-flip-btn.show`).forEach(button => button.classList.remove('show'));
+    document.querySelectorAll(`[data-food-id].flipped`).forEach(card => card.classList.remove('flipped'));
+    cartTempVariantId && (cartTempVariantId = null);
+    const updatePrice = (priceOrVariants) => {
+        let priceText = Array.isArray(priceOrVariants) ? '' : priceOrVariants?.toLocaleString('vi').concat('đ');
+        if(Array.isArray(priceOrVariants)){
+            const listPrice = priceOrVariants.map(variant => variant?.price);
+            priceText = `${Math.min(...listPrice).toLocaleString('vi').concat('đ')} - ${Math.max(...listPrice).toLocaleString('vi').concat('đ')}`;
+        }
+
+        document.querySelector(`[data-food-id='${dataFoodId}'] .booking-food-price-value`).textContent = priceText;
+    };
+
+    if(dataAttr.length > 0){
+        const variants = dataFoods.find(food => food.id === +dataFoodId).variantsData.filter(variant => {
             for(const attr of dataAttr) if(variant.attributes[attr] !== currentSelection[dataFoodId][attr]) return false;
 
             return true;
@@ -19,19 +34,21 @@ function updateAvailableVariants(clearOldSelection = false){
                 availableListAttrValues[attr].add(value);
             }
         });
+        variants.length === 1 && (document.querySelector(`[data-food-id='${dataFoodId}'] .booking-food-auto-flip-btn`).classList.add('show') || (document.querySelector(`[data-food-id='${dataFoodId}'] .booking-food-auto-flip-btn`).disabled = !Boolean(variants[0].quantity_available)) || (cartTempVariantId = variants[0].id));
+        updatePrice(variants.length === 1 ? variants[0].price : variants);
     }else{
-        for(const attr of dataFoods.find((food) => food.id === Number(dataFoodId)).attributes) availableListAttrValues[attr.name] = new Set(attr.values.map(value => value.value));
+        const dataFood = dataFoods.find(food => food.id === +dataFoodId);
+        availableListAttrValues = dataFood?.availableAttributes;
+        updatePrice(dataFood.variantsData);
     }
-
-    console.log(currentSelection);
 
     for(const [attr, values] of Object.entries(availableListAttrValues)){
         const attrValues = document.querySelectorAll(`[data-food-id='${dataFoodId}'] [data-attribute='${attr}'] [data-value]`);
-        attrValues.forEach(attrValue =>  attrValue.classList.toggle('unavailable', !values.has(attrValue.dataset.value)));
+        attrValues.forEach(attrValue =>  attrValue.classList.toggle('unavailable', Array.isArray(values) ? !values.includes(attrValue.dataset.value) : !values.has(attrValue.dataset.value)));
     }
 }
 
-document.addEventListener('livewire:init', async () => {
+document.addEventListener('livewire:init', () => {
     window.setDataFoods = function (foods){
         dataFoods = foods;
     };
@@ -58,5 +75,13 @@ document.addEventListener('livewire:init', async () => {
 
             updateAvailableVariants();
         }
+    }
+
+    window.toggleTempCartItem = function(buttonAction, addCart = false){
+        const $wire = Livewire.find(document.querySelector("[wire\\:id][sc-root]")?.getAttribute('wire:id'));
+        const card = buttonAction.closest('.booking-food-item-card');
+
+        if(Object.keys(currentSelection)?.[0] === card.dataset.foodId) $wire.$set('cartTempVariantId', addCart ? cartTempVariantId : null, true);
+        card.classList.toggle('flipped', addCart);
     }
 });

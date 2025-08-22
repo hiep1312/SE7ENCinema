@@ -230,7 +230,7 @@ body {
 .ticket-container {
     width: 210mm;
     height: 140mm;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: #ffffff;
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     overflow: hidden;
@@ -264,7 +264,7 @@ body {
 /* Stub Section */
 .ticket-stub {
     width: 120px;
-    background: linear-gradient(180deg, #2d1b69 0%, #11047a 100%);
+    background: #FF4444;
     border-left: 2px dashed rgba(255,255,255,0.3);
     padding: 20px 15px;
     display: flex;
@@ -283,12 +283,12 @@ body {
     right: 20px;
     width: 60px;
     height: 60px;
-    background: rgba(255,255,255,0.1);
+    background: rgb(0 0 0 / 10%);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid rgba(255,255,255,0.2);
+    border: 2px solid rgb(0 0 0 / 20%);
 }
 
 .cinema-logo i {
@@ -299,17 +299,19 @@ body {
 /* Movie Title */
 .movie-title {
     font-size: 28px;
+    width: 570px;
     font-weight: 900;
+    font-family: system-ui;
     margin-bottom: 8px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: #00d4ff;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    color: #000000;
+    /* /* text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); */
 }
 
 .movie-genres {
     font-size: 14px;
-    color: rgba(255,255,255,0.8);
+    color:#000000;
     margin-bottom: 20px;
 }
 
@@ -330,17 +332,17 @@ body {
 .info-item i {
     margin-right: 6px;
     width: 16px;
-    color: #00d4ff;
+    color: #000000;
 }
 
 .info-label {
     font-weight: 600;
     margin-right: 6px;
-    color: rgba(255,255,255,0.9);
+    color: #000000;
 }
 
 .info-value {
-    color: white;
+    color: #000000;
     font-weight: 500;
 }
 
@@ -352,7 +354,7 @@ body {
     gap: 20px;
     margin-bottom: 20px;
     padding: 15px;
-    background: rgba(255,255,255,0.1);
+    background:#ede9e9;
     border-radius: 10px;
     backdrop-filter: blur(10px);
 }
@@ -365,13 +367,13 @@ body {
     font-size: 24px;
     font-weight: 900;
     margin-bottom: 5px;
-    color: #00d4ff;
+    color: #FF4444;
 }
 
 .seat-info p, .cinema-info p, .time-info p {
     font-size: 12px;
     margin: 0;
-    color: rgba(255,255,255,0.8);
+    color: #000000;
 }
 
 /* Customer Info */
@@ -440,7 +442,7 @@ body {
     font-size: 14px;
     font-weight: 700;
     letter-spacing: 2px;
-    color: #00d4ff;
+    color: #000000;
     margin-top: 10px;
 }
 
@@ -461,31 +463,31 @@ body {
 
 /* Notes Section */
 .notes-section {
-    background: rgba(255,255,255,0.05);
+    background: #ede9e9;
     padding: 10px;
     border-radius: 8px;
-    border-left: 4px solid #00d4ff;
+    border-left: 4px solid #FF4444;
 }
 
 .notes-section.staff{
-    border-color: #f59e0b;
+    border-color: #FF4444;
 }
 
 .notes-section h6 {
     font-size: 12px;
     margin-bottom: 5px;
-    color: #00d4ff;
+    color: #000000;
     font-weight: 600;
 }
 
 .notes-section.staff h6{
-    color: #f59e0b;
+    color: #000000;
 }
 
 .notes-section p {
     font-size: 11px;
     margin: 0;
-    color: rgba(255,255,255,0.8);
+    color: #000000;
     line-height: 1.4;
 }
 
