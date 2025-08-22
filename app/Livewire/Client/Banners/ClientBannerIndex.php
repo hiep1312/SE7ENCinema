@@ -84,8 +84,6 @@ class ClientBannerIndex extends Component
             ->orderBy('created_at', 'desc')
             ->get();
 
-        sleep(0.5);
-
       return view('livewire.client.template.banners.client-banner-index', compact('banners' , 'movies', 'genres', 'topMovies' , 'topEventMovie'));
   }
 }
