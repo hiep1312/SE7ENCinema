@@ -1,11 +1,10 @@
 @assets
-    <link rel="stylesheet" href="{{ asset('client/assets/css/chatbot.css') }}">
     @vite('resources/css/chatbot.css')
 @endassets
      <div class="scRender scChatbot">
     <div class="chatbox-container">
         <div id="chat-icon" class="chat-icon">
-            <i class="fas fa-robot" style="color: white; font-size: 28px;"></i>
+            <i class="fas fa-robot" style="color: white; font-size:  28px;"></i>
             <div class="chat-notification">1</div>
         </div>
 
@@ -15,7 +14,7 @@
                     🤖
                 </div>
                 <div class="chat-info" style="flex: 1;">
-                    <div style="font-weight: bold; font-size: 16px;" id="chat-title">SE7EN AI Assistant</div>
+                    <div style="font-weight: bold; font-size: 16px;" id="chat-title">Trợ lý SE7EN</div>
                     <div style="font-size: 12px; opacity: 0.9;" id="chat-subtitle">Tư vấn phim & đặt vé thông minh</div>
                 </div>
                 <div class="chat-controls" style="display: flex; gap: 10px; align-items: center;">
