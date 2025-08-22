@@ -14,21 +14,25 @@ class RoomMoviesData {
     }
 
     protected function queryData(?string $filter = null){
-        $data = Seat::select(
-                'seats.seat_type',
-                DB::raw('COUNT(booking_seats.id) as tickets_sold'),
-                DB::raw('COALESCE(SUM(booking_seats.ticket_price), 0) as revenue'),
-                DB::raw('COUNT(seats.id) as total_seats')
-            )
-            ->leftJoin('booking_seats', 'seats.id', '=', 'booking_seats.seat_id')
-            ->leftJoin('bookings', function ($join) {
-                $join->on('booking_seats.booking_id', '=', 'bookings.id')
-                    ->where('bookings.status', '=', 'paid');
-            })
-            ->where('seats.room_id', $this->room->id)
-            ->groupBy('seats.seat_type')
-            ->orderBy('revenue', 'desc')
-            ->get();
+        $startDate = now()->subDays(2)->startOfDay();
+    $endDate = now()->endOfDay();
+
+    $data = Seat::select(
+            'seats.seat_type',
+            DB::raw('COUNT(booking_seats.id) as tickets_sold'),
+            DB::raw('COALESCE(SUM(booking_seats.ticket_price), 0) as revenue'),
+            DB::raw('COUNT(seats.id) as total_seats')
+        )
+        ->leftJoin('booking_seats', 'seats.id', '=', 'booking_seats.seat_id')
+        ->leftJoin('bookings', function ($join) use ($startDate, $endDate) {
+            $join->on('booking_seats.booking_id', '=', 'bookings.id')
+                ->where('bookings.status', '=', 'paid')
+                ->whereBetween('bookings.created_at', [$startDate, $endDate]);
+        })
+        ->where('seats.room_id', $this->room->id)
+        ->groupBy('seats.seat_type')
+        ->orderBy('revenue', 'desc')
+        ->get();
 
         if ($data->isEmpty()) {
             return [
@@ -49,9 +53,6 @@ class RoomMoviesData {
                 'standard' => 'Ghế thường',
                 'vip' => 'Ghế VIP',
                 'couple' => 'Ghế đôi',
-                '4dx' => 'Ghế 4DX',
-                'imax' => 'Ghế IMAX',
-                'premium' => 'Ghế Premium',
                 default => 'Ghế ' . ucfirst($item->seat_type)
             };
 
