@@ -7,44 +7,49 @@ use App\Models\Booking;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-class RoomStatsData {
+class RoomStatsData
+{
     protected $data;
     protected $room;
 
-    public function __construct($room) {
+    public function __construct($room)
+    {
         $this->room = $room;
     }
 
-    protected function queryData(?string $filter = null){
-        // Lấy ngày hôm nay
-        $today = Carbon::today();
+    protected function queryData(?string $filter = null)
+    {
+        $startDate = now()->subDays(2)->startOfDay();
+        $endDate = now()->endOfDay();
 
-        // Lấy doanh thu theo từng suất chiếu của phòng hiện tại trong ngày hôm nay
         $data = Showtime::select(
-                'showtimes.id',
-                'showtimes.start_time',
-                'movies.title as movie_title',
-                DB::raw('COUNT(booking_seats.id) as tickets_sold'),
-                DB::raw('COALESCE(SUM(bookings.total_price), 0) as revenue')
-            )
+            'showtimes.id',
+            'showtimes.start_time',
+            'movies.title as movie_title',
+            DB::raw('COUNT(booking_seats.id) as tickets_sold'),
+            DB::raw('COALESCE(SUM(bookings.total_price), 0) as revenue')
+        )
             ->join('movies', 'showtimes.movie_id', '=', 'movies.id')
-            ->leftJoin('bookings', function ($join) {
+            ->leftJoin('bookings', function ($join) use ($startDate, $endDate) {
                 $join->on('showtimes.id', '=', 'bookings.showtime_id')
-                    ->where('bookings.status', '=', 'paid');
+                    ->where('bookings.status', '=', 'paid')
+                    ->whereBetween('bookings.created_at', [$startDate, $endDate]);
             })
             ->leftJoin('booking_seats', 'bookings.id', '=', 'booking_seats.booking_id')
             ->where('showtimes.room_id', $this->room->id)
-            // Chỉ lấy các suất chiếu trong ngày hôm nay
-            ->whereDate('showtimes.start_time', $today)
-            // Chỉ lấy suất chiếu đã diễn ra (đã qua giờ bắt đầu)
+            ->whereBetween('showtimes.start_time', [$startDate, $endDate])
             ->where('showtimes.start_time', '<=', now())
             ->groupBy('showtimes.id', 'showtimes.start_time', 'movies.title')
-            ->orderBy('showtimes.start_time', 'asc') // Sắp xếp theo thời gian tăng dần
+            ->orderBy('showtimes.start_time', 'asc')
             ->get();
 
-        if ($data->isEmpty()) {
+        $filtered = $data->filter(function ($item) {
+            return $item->tickets_sold > 0 || $item->revenue > 0;
+        });
+
+        if ($filtered->isEmpty()) {
             return [
-                'labels' => ['Không có dữ liệu hôm nay'],
+                'labels' => ['Không có dữ liệu'],
                 'tickets' => [0],
                 'revenue' => [0]
             ];
@@ -54,11 +59,10 @@ class RoomStatsData {
         $ticketsData = [];
         $revenueData = [];
 
-        foreach ($data as $item) {
-            // Hiển thị tên phim và giờ chiếu
+        foreach ($filtered as $item) {
             $labels[] = $item->movie_title . ' (' . $item->start_time->format('H:i') . ')';
-            $ticketsData[] = max((int)$item->tickets_sold, 0);
-            $revenueData[] = max((int)$item->revenue, 0);
+            $ticketsData[] = (int) $item->tickets_sold;
+            $revenueData[] = (int) $item->revenue;
         }
 
         return [
@@ -68,15 +72,19 @@ class RoomStatsData {
         ];
     }
 
-    public function loadData(?string $filter = null){
+
+    public function loadData(?string $filter = null)
+    {
         $this->data = $this->queryData($filter);
     }
 
-    protected function bindDataToElement(){
+    protected function bindDataToElement()
+    {
         return "document.getElementById('allRoomsStatsChart')";
     }
 
-    protected function buildChartConfig(){
+    protected function buildChartConfig()
+    {
         $roomLabels = $this->data['labels'];
         $roomLabelsJS = json_encode($roomLabels);
 
@@ -222,23 +230,30 @@ class RoomStatsData {
         JS;
     }
 
-    public function getFilterText(string $filterValue){
-        return "Dữ liệu hôm nay";
+    public function getFilterText(string $filterValue)
+    {
+        return match ($filterValue) {
+            default => "N/A"
+        };
     }
 
-    public function getChartConfig(){
+    public function getChartConfig()
+    {
         return $this->buildChartConfig();
     }
 
-    public function getData(){
+    public function getData()
+    {
         return $this->data;
     }
 
-    public function getEventName(){
+    public function getEventName()
+    {
         return "updateDataChartRoom";
     }
 
-    public function compileJavascript(){
+    public function compileJavascript()
+    {
         $ctxText = "ctxChartRoom";
         $optionsText = "optionsChartRoom";
         $chartText = "chartRoom";

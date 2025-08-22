@@ -5,34 +5,37 @@ namespace App\Charts\ChartRooms;
 use App\Models\Seat;
 use Illuminate\Support\Facades\DB;
 
-class RoomMoviesData {
+class RoomMoviesData
+{
     protected $data;
     protected $room;
 
-    public function __construct($room) {
+    public function __construct($room)
+    {
         $this->room = $room;
     }
 
-    protected function queryData(?string $filter = null){
+    protected function queryData(?string $filter = null)
+    {
         $startDate = now()->subDays(2)->startOfDay();
-    $endDate = now()->endOfDay();
+        $endDate = now()->endOfDay();
 
-    $data = Seat::select(
+        $data = Seat::select(
             'seats.seat_type',
             DB::raw('COUNT(booking_seats.id) as tickets_sold'),
             DB::raw('COALESCE(SUM(booking_seats.ticket_price), 0) as revenue'),
             DB::raw('COUNT(seats.id) as total_seats')
         )
-        ->leftJoin('booking_seats', 'seats.id', '=', 'booking_seats.seat_id')
-        ->leftJoin('bookings', function ($join) use ($startDate, $endDate) {
-            $join->on('booking_seats.booking_id', '=', 'bookings.id')
-                ->where('bookings.status', '=', 'paid')
-                ->whereBetween('bookings.created_at', [$startDate, $endDate]);
-        })
-        ->where('seats.room_id', $this->room->id)
-        ->groupBy('seats.seat_type')
-        ->orderBy('revenue', 'desc')
-        ->get();
+            ->leftJoin('booking_seats', 'seats.id', '=', 'booking_seats.seat_id')
+            ->leftJoin('bookings', function ($join) use ($startDate, $endDate) {
+                $join->on('booking_seats.booking_id', '=', 'bookings.id')
+                    ->where('bookings.status', '=', 'paid')
+                    ->whereBetween('bookings.created_at', [$startDate, $endDate]);
+            })
+            ->where('seats.room_id', $this->room->id)
+            ->groupBy('seats.seat_type')
+            ->orderBy('revenue', 'desc')
+            ->get();
 
         if ($data->isEmpty()) {
             return [
@@ -49,7 +52,7 @@ class RoomMoviesData {
         $totalSeatsData = [];
 
         foreach ($data as $item) {
-            $seatTypeName = match($item->seat_type) {
+            $seatTypeName = match ($item->seat_type) {
                 'standard' => 'Ghế thường',
                 'vip' => 'Ghế VIP',
                 'couple' => 'Ghế đôi',
@@ -70,15 +73,18 @@ class RoomMoviesData {
         ];
     }
 
-    public function loadData(?string $filter = null){
+    public function loadData(?string $filter = null)
+    {
         $this->data = $this->queryData($filter);
     }
 
-    protected function bindDataToElement(){
+    protected function bindDataToElement()
+    {
         return "document.getElementById('roomMoviesChart')";
     }
 
-    protected function buildChartConfig(){
+    protected function buildChartConfig()
+    {
         $roomLabels = $this->data['labels'];
         $roomLabelsJS = json_encode($roomLabels);
 
@@ -225,23 +231,30 @@ class RoomMoviesData {
         JS;
     }
 
-    public function getFilterText(string $filterValue){
-        return "Không hỗ trợ filter";
+    public function getFilterText(string $filterValue)
+    {
+        return match ($filterValue) {
+            default => "N/A"
+        };
     }
 
-    public function getChartConfig(){
+    public function getChartConfig()
+    {
         return $this->buildChartConfig();
     }
 
-    public function getData(){
+    public function getData()
+    {
         return $this->data;
     }
 
-    public function getEventName(){
+    public function getEventName()
+    {
         return "updateDataRoomMoviesData";
     }
 
-    public function compileJavascript(){
+    public function compileJavascript()
+    {
         $ctxText = "ctxRoomMoviesData";
         $optionsText = "optionsRoomMoviesData";
         $chartText = "chartRoomMoviesData";
