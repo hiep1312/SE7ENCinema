@@ -7,8 +7,6 @@ use Livewire\WithPagination;
 use App\Models\Movie;
 use App\Models\Genre;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
-use Livewire\Attributes\Url;
 
 class MovieList extends Component
 {

@@ -1,5 +1,6 @@
 @assets
 <link rel="stylesheet" href="{{ asset('client/assets/css/style.css') }}">
+@endassets
 <script>
     function formatPrice(element){
         const currentValue = element.value.replaceAll(/,|\./g, '');

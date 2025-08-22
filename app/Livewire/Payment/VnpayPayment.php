@@ -76,7 +76,7 @@ class VnpayPayment extends Component
         $booking->update(['total_price' => $this->total_amount, 'transaction_code' => strtoupper(Str::random(10))]);
 
         $vnp_TmnCode = 'P8QX0KGT'; // Mã website VNPay
-        $vnp_HashSecret = 'ITBJ2BGWRYTN5J2Z2QMXMXVAEEK5WBVA'; // Secret key
+        $vnp_HashSecret = 'ITBJ2BGWRYTN5J2Z2QMXMXVAEEK5WBVA';
         $vnp_Url = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
         $vnp_Returnurl = route('client.vnpay.return');
 

@@ -65,13 +65,13 @@
                     <div style="display:flex">
                         <ul style="padding:10px 5px">
                             <li class="list-unstyled"><i style="font-size:30px" class="fa-brands fa-square-facebook"></i></li>
-                        </ul>                    
+                        </ul>
                         <ul style="padding:10px 5px">
                             <li class="list-unstyled"><i style="font-size:30px" class="fa-brands fa-instagram"></i></li>
-                        </ul>                    
+                        </ul>
                         <ul style="padding:10px 5px">
                             <li class="list-unstyled"><i style="font-size:30px" class="fa-brands fa-youtube"></i></li>
-                        </ul>            
+                        </ul>
                         <ul style="padding:10px 5px">
                             <li class="list-unstyled"><i style="font-size:30px" class="fa-brands fa-tiktok"></i></li>
                         </ul>
@@ -81,14 +81,12 @@
         </div>
     </div>
 </div>
-<div class="prs_bottom_footer_wrapper"> <a href="javascript:" id="return-to-top"><i
-            class="flaticon-play-button"></i></a>
+<div class="prs_bottom_footer_wrapper">
     <div class="container">
         <div class="row">
             <div class="col-lg-6 col-md-6 col-sm-8 col-xs-12" style="width:100%">
                 <div class="prs_bottom_footer_cont_wrapper">
-                    <p>Bản Quyền Thuộc về nhóm <a href="#">SE7VEN CINEMA</a> Thiết kế , Sáng Tạo và Bảo Trì Hỗ trợ kĩ thuật bởi <a
-                            href="#">SE7VEN CINEMA</a>
+                    <p>Bản Quyền Thuộc về nhóm <a href="#">SE7VEN CINEMA</a> Thiết kế , Sáng Tạo và Bảo Trì Hỗ trợ kĩ thuật bởi <a href="#">SE7VEN CINEMA</a>
                     </p>
                 </div>
             </div>
