@@ -15,6 +15,7 @@ class TopFoodsChart {
         
         $query = FoodOrderItem::select([
             DB::raw('DATE(bookings.created_at) as order_date'),
+            'food_items.name as food_name',
             DB::raw('SUM(food_order_items.quantity) as total_quantity'),
             DB::raw('SUM(food_order_items.price * food_order_items.quantity) as total_revenue'),
             DB::raw('COUNT(DISTINCT food_order_items.booking_id) as total_bookings')
@@ -25,8 +26,9 @@ class TopFoodsChart {
             ->where('bookings.status', 'paid')
             ->whereBetween('bookings.created_at', [$startDate, $endDate]);
 
-        return $query->groupBy(DB::raw('DATE(bookings.created_at)'))
+        return $query->groupBy(DB::raw('DATE(bookings.created_at)'), 'food_items.name')
             ->orderBy('order_date')
+            ->orderBy('total_quantity', 'desc')
             ->get();
     }
 
@@ -45,8 +47,9 @@ class TopFoodsChart {
         $foodRevenues = $topFoodsData->map(fn($item) => $item->total_revenue)->toJson();
         $RevenueF = $topFoodsData->map(fn($item) => $item->total_bookings)->toJson();
         
-        // Lấy ngày đầy đủ cho tooltip
+        // Lấy ngày và tên món ăn cho tooltip
         $fullDates = $topFoodsData->map(fn($item) => \Carbon\Carbon::parse($item->order_date)->format('d/m/Y'))->toJson();
+        $foodNames = $topFoodsData->map(fn($item) => $item->food_name)->toJson();
 
         return <<<JS
         {
@@ -116,8 +119,10 @@ class TopFoodsChart {
                     const revenues = $foodRevenues;
                     const bookings = $RevenueF;
                     const fullDates = $fullDates;
+                    const foodNames = $foodNames;
 
                     const ngay = fullDates[dataPointIndex] || '';
+                    const tenMon = foodNames[dataPointIndex] || '';
                     const soLuong = quantities[dataPointIndex] || 0;
                     const doanhThu = revenues[dataPointIndex] || 0;
                     const donHang = bookings[dataPointIndex] || 0;
@@ -127,6 +132,10 @@ class TopFoodsChart {
                         <div class="d-flex align-items-center mb-3">
                             <span class="fs-5 me-2">📅</span>
                             <h6 class="mb-0 text-white fw-bold">Ngày \${ngay}</h6>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="fs-5 me-2">🍽️</span>
+                            <h6 class="mb-0 text-white fw-bold">\${tenMon}</h6>
                         </div>
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-danger">📦 Số lượng bán:</span>

@@ -16,6 +16,7 @@ class TopMoviesChart {
         
         $query = Booking::select([
             DB::raw('DATE(bookings.created_at) as booking_date'),
+            'movies.title as movie_title',
             DB::raw('SUM(bookings.total_price) as total_revenue'),
             DB::raw('COUNT(*) as total_bookings'),
             DB::raw('SUM(booking_seats_count) as total_tickets')
@@ -26,8 +27,9 @@ class TopMoviesChart {
             ->whereBetween('bookings.created_at', [$startDate, $endDate])
             ->join(DB::raw('(SELECT booking_id, COUNT(*) as booking_seats_count FROM booking_seats GROUP BY booking_id) as seat_counts'), 'bookings.id', '=', 'seat_counts.booking_id');
 
-        return $query->groupBy(DB::raw('DATE(bookings.created_at)'))
+        return $query->groupBy(DB::raw('DATE(bookings.created_at)'), 'movies.title')
             ->orderBy('booking_date')
+            ->orderBy('total_revenue', 'desc')
             ->get();
     }
 
@@ -46,8 +48,9 @@ class TopMoviesChart {
         $ticketsData = $topMoviesData->map(fn($item) => $item->total_tickets)->toJson();
         $bookingsData = $topMoviesData->map(fn($item) => $item->total_bookings)->toJson();
         
-        // Lấy ngày đầy đủ cho tooltip
+        // Lấy ngày và tên phim cho tooltip
         $fullDates = $topMoviesData->map(fn($item) => \Carbon\Carbon::parse($item->booking_date)->format('d/m/Y'))->toJson();
+        $movieTitles = $topMoviesData->map(fn($item) => $item->movie_title)->toJson();
 
         return <<<JS
         {
@@ -117,8 +120,10 @@ class TopMoviesChart {
                     const ticketsData = $ticketsData;
                     const bookingsData = $bookingsData;
                     const fullDates = $fullDates;
+                    const movieTitles = $movieTitles;
 
                     const ngay = fullDates[dataPointIndex] || '';
+                    const tenPhim = movieTitles[dataPointIndex] || '';
                     const doanhThu = revenueData[dataPointIndex] || 0;
                     const veBan = ticketsData[dataPointIndex] || 0;
                     const donHang = bookingsData[dataPointIndex] || 0;
@@ -128,6 +133,10 @@ class TopMoviesChart {
                         <div class="d-flex align-items-center mb-3">
                             <span class="fs-5 me-2">📅</span>
                             <h6 class="mb-0 text-white fw-bold">Ngày \${ngay}</h6>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="fs-5 me-2">🎬</span>
+                            <h6 class="mb-0 text-white fw-bold">\${tenPhim}</h6>
                         </div>
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-warning">💰 Doanh thu:</span>
