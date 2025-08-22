@@ -212,8 +212,87 @@
                             <div class="bg-dark mb-3" style="color: black;">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h5 class="text-white mb-0">
-                                        <i class="fas fa-chart-bar me-2 text-primary"></i>Doanh thu suất chiếu theo phòng(xem xét)
+                                        <i class="fas fa-chart-bar me-2 text-primary"></i>Thống Kê Tất Cả Phòng
+                                        Chiếu
                                     </h5>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-filter me-1"></i>
+                                            <span id="roomStatsFilterText">
+                                                @switch($roomStatsPeriod)
+                                                    @case('3_days')
+                                                        3 ngày gần nhất
+                                                    @break
+
+                                                    @case('7_days')
+                                                        7 ngày gần nhất
+                                                    @break
+
+                                                    @case('30_days')
+                                                        30 ngày gần nhất
+                                                    @break
+
+                                                    @case('1_month')
+                                                        1 tháng gần nhất
+                                                    @break
+
+                                                    @case('3_months')
+                                                        3 tháng gần nhất
+                                                    @break
+
+                                                    @case('1_year')
+                                                        1 năm gần nhất
+                                                    @break
+
+                                                    @case('2_years')
+                                                        2 năm gần nhất
+                                                    @break
+
+                                                    @default
+                                                        7 ngày gần nhất
+                                                @endswitch
+                                            </span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-dark" wire:ignore.self>
+                                            <li>
+                                                <h6 class="dropdown-header text-primary">Ngày</h6>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeRoomStatsPeriod('3_days')">3 ngày gần
+                                                    nhất</a></li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeRoomStatsPeriod('7_days')">7 ngày gần
+                                                    nhất</a></li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeRoomStatsPeriod('30_days')">30 ngày
+                                                    gần nhất</a></li>
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            <li>
+                                                <h6 class="dropdown-header text-primary">Tháng</h6>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeRoomStatsPeriod('1_month')">1
+                                                    tháng</a></li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeRoomStatsPeriod('3_months')">3
+                                                    tháng</a></li>
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            <li>
+                                                <h6 class="dropdown-header text-primary">Năm</h6>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeRoomStatsPeriod('1_year')">1 năm</a>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeRoomStatsPeriod('2_years')">2 năm</a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                                 <div >
                                     <div id="allRoomsStatsChart" style="height: 400px;" wire:ignore></div>
@@ -226,6 +305,84 @@
                                     <h5 class="text-white mb-0">
                                         <i class="fas fa-chart-pie me-2 text-success"></i>Tỷ Lệ Lấp Đầy (%)
                                     </h5>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-success btn-sm dropdown-toggle" type="button"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-filter me-1"></i>
+                                            <span id="occupancyFilterText">
+                                                @switch($occupancyPeriod)
+                                                    @case('3_days')
+                                                        3 ngày gần nhất
+                                                    @break
+
+                                                    @case('7_days')
+                                                        7 ngày gần nhất
+                                                    @break
+
+                                                    @case('30_days')
+                                                        30 ngày gần nhất
+                                                    @break
+
+                                                    @case('1_month')
+                                                        1 tháng gần nhất
+                                                    @break
+
+                                                    @case('3_months')
+                                                        3 tháng gần nhất
+                                                    @break
+
+                                                    @case('1_year')
+                                                        1 năm gần nhất
+                                                    @break
+
+                                                    @case('2_years')
+                                                        2 năm gần nhất
+                                                    @break
+
+                                                    @default
+                                                        7 ngày gần nhất
+                                                @endswitch
+                                            </span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-dark"  wire:ignore.self>
+                                            <li>
+                                                <h6 class="dropdown-header text-success">Ngày</h6>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeOccupancyPeriod('3_days')">3 ngày gần
+                                                    nhất</a></li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeOccupancyPeriod('7_days')">7 ngày gần
+                                                    nhất</a></li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeOccupancyPeriod('30_days')">30 ngày
+                                                    gần nhất</a></li>
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            <li>
+                                                <h6 class="dropdown-header text-success">Tháng</h6>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeOccupancyPeriod('1_month')">1 tháng
+                                                    gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeOccupancyPeriod('3_months')">3 tháng
+                                                    gần nhất</a></li>
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            <li>
+                                                <h6 class="dropdown-header text-success">Năm</h6>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeOccupancyPeriod('1_year')">1 năm gần
+                                                    nhất</a></li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeOccupancyPeriod('2_years')">2 năm gần
+                                                    nhất</a></li>
+                                        </ul>
+                                    </div>
                                 </div>
                                 <div>
                                     <div id="occupancyChart" style="color:black" wire:ignore></div>
@@ -239,6 +396,84 @@
                                         <i class="fas fa-chair me-2 text-warning"></i>Tình Trạng Ghế Phòng
                                         {{ $room->name }}
                                     </h5>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-warning btn-sm dropdown-toggle" type="button"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-filter me-1"></i>
+                                            <span id="seatStatusFilterText">
+                                                @switch($seatStatusPeriod)
+                                                    @case('3_days')
+                                                        3 ngày gần nhất
+                                                    @break
+
+                                                    @case('7_days')
+                                                        7 ngày gần nhất
+                                                    @break
+
+                                                    @case('30_days')
+                                                        30 ngày gần nhất
+                                                    @break
+
+                                                    @case('1_month')
+                                                        1 tháng gần nhất
+                                                    @break
+
+                                                    @case('3_months')
+                                                        3 tháng gần nhất
+                                                    @break
+
+                                                    @case('1_year')
+                                                        1 năm gần nhất
+                                                    @break
+
+                                                    @case('2_years')
+                                                        2 năm gần nhất
+                                                    @break
+
+                                                    @default
+                                                        7 ngày gần nhất
+                                                @endswitch
+                                            </span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-dark" wire:ignore.self>
+                                            <li>
+                                                <h6 class="dropdown-header text-warning">Ngày</h6>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeSeatStatusPeriod('3_days')">3 ngày
+                                                    gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeSeatStatusPeriod('7_days')">7 ngày
+                                                    gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeSeatStatusPeriod('30_days')">30 ngày
+                                                    gần nhất</a></li>
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            <li>
+                                                <h6 class="dropdown-header text-warning">Tháng</h6>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeSeatStatusPeriod('1_month')">1 tháng
+                                                    gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeSeatStatusPeriod('3_months')">3 tháng
+                                                    gần nhất</a></li>
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            <li>
+                                                <h6 class="dropdown-header text-warning">Năm</h6>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeSeatStatusPeriod('1_year')">1 năm gần
+                                                    nhất</a></li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeSeatStatusPeriod('2_years')">2 năm
+                                                    gần nhất</a></li>
+                                        </ul>
+                                    </div>
                                 </div>
                                 <div>
                                     <div id="seatStatusChart" style="height: 420px; width: 100%;" wire:ignore></div>
@@ -299,8 +534,87 @@
                             <div class="bg-dark rounded-3 p-3" style="color: black;">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h5 class="text-white mb-0">
-                                        <i class="fas fa-film me-2 text-info"></i>Doanh thu theo loại ghế
+                                        <i class="fas fa-film me-2 text-info"></i>Phim Được Xem Nhiều Nhất Của
+                                        Phòng {{ $room->name }}
                                     </h5>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-info btn-sm dropdown-toggle" type="button"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-filter me-1"></i>
+                                            <span id="roomMoviesFilterText">
+                                                @switch($roomMoviesPeriod)
+                                                    @case('3_days')
+                                                        3 ngày gần nhất
+                                                    @break
+
+                                                    @case('7_days')
+                                                        7 ngày gần nhất
+                                                    @break
+
+                                                    @case('30_days')
+                                                        30 ngày gần nhất
+                                                    @break
+
+                                                    @case('1_month')
+                                                        1 tháng gần nhất
+                                                    @break
+
+                                                    @case('3_months')
+                                                        3 tháng gần nhất
+                                                    @break
+
+                                                    @case('1_year')
+                                                        1 năm gần nhất
+                                                    @break
+
+                                                    @case('2_years')
+                                                        2 năm gần nhất
+                                                    @break
+
+                                                    @default
+                                                        7 ngày gần nhất
+                                                @endswitch
+                                            </span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-dark" wire:ignore.self>
+                                            <li>
+                                                <h6 class="dropdown-header text-info">Ngày</h6>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeRoomMoviesPeriod('3_days')">3 ngày
+                                                    gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeRoomMoviesPeriod('7_days')">7 ngày
+                                                    gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeRoomMoviesPeriod('30_days')">30 ngày
+                                                    gần nhất</a></li>
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            <li>
+                                                <h6 class="dropdown-header text-info">Tháng</h6>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeRoomMoviesPeriod('1_month')">1 tháng
+                                                    gần nhất</a></li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeRoomMoviesPeriod('3_months')">3 tháng
+                                                    gần nhất</a></li>
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            <li>
+                                                <h6 class="dropdown-header text-info">Năm</h6>
+                                            </li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeRoomMoviesPeriod('1_year')">1 năm gần
+                                                    nhất</a></li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    wire:click.prevent="changeRoomMoviesPeriod('2_years')">2 năm
+                                                    gần nhất</a></li>
+                                        </ul>
+                                    </div>
                                 </div>
                                 <div>
                                     <div id="roomMoviesChart" style="height: 400px;" wire:ignore></div>
@@ -826,9 +1140,191 @@
 </div>
 @script
     <script>
+        globalThis.chartInstances = {};
+
+        function updateFilterText(elementId, text) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = text;
+            }
+        }
+
+        const maintenanceData = {
+            referenceDate: new Date('{{ $referenceDate->toISOString() }}'),
+            nextMaintenanceDate: new Date('{{ $nextMaintenanceDate->toISOString() }}'),
+            totalDaysIn3Months: {{ $totalDaysIn3Months }},
+            isOverdue: {{ $maintenanceStatus === 'overdue' ? 'true' : 'false' }}
+        };
+
+        function calculateMaintenanceScore(daysSinceMaintenance, totalDaysIn3Months) {
+            const score = Math.max(0, 100 - ((daysSinceMaintenance / totalDaysIn3Months) * 100));
+            return Math.round(score);
+        }
+
+        function updateMaintenanceDisplay() {
+            const now = new Date();
+            const daysSinceLastMaintenance = Math.floor((now - maintenanceData.referenceDate) / (1000 * 60 * 60 * 24));
+            const maintenanceScore = calculateMaintenanceScore(daysSinceLastMaintenance, maintenanceData.totalDaysIn3Months);
+
+            const totalSecondsUntilMaintenance = Math.floor((maintenanceData.nextMaintenanceDate - now) / 1000);
+            const isOverdue = totalSecondsUntilMaintenance < 0;
+            const absSeconds = Math.abs(totalSecondsUntilMaintenance);
+
+            const days = Math.floor(absSeconds / 86400);
+            const hours = Math.floor((absSeconds % 86400) / 3600);
+            const minutes = Math.floor((absSeconds % 3600) / 60);
+            const seconds = absSeconds % 60;
+
+            const maintenanceScoreElement = document.querySelector('.card.bg-warning .card-body h3');
+            if (maintenanceScoreElement) {
+                maintenanceScoreElement.textContent = maintenanceScore + '/100';
+            }
+
+            const maintenanceStatusText = document.querySelector('.card.bg-warning .card-body small');
+            if (maintenanceStatusText) {
+                let statusText = 'Cần bảo trì';
+                if (maintenanceScore >= 80) statusText = 'Tốt';
+                else if (maintenanceScore >= 60) statusText = 'Khá';
+                else if (maintenanceScore >= 40) statusText = 'Trung bình';
+
+                maintenanceStatusText.textContent = statusText;
+            }
+
+            const progressBar = document.querySelector('.progress-bar');
+            if (progressBar) {
+                progressBar.style.width = maintenanceScore + '%';
+                progressBar.textContent = Math.round(maintenanceScore) + '/100';
+
+                progressBar.className = 'progress-bar';
+                if (maintenanceScore >= 60) {
+                    progressBar.classList.add('bg-success');
+                } else if (maintenanceScore >= 40) {
+                    progressBar.classList.add('bg-warning');
+                } else {
+                    progressBar.classList.add('bg-danger');
+                }
+            }
+
+            const countdownElements = {
+                days: document.getElementById('realtime-days') ||
+                      document.getElementById('realtime-overdue-days') ||
+                      document.getElementById('overdue-days'),
+                hours: document.getElementById('realtime-hours') ||
+                       document.getElementById('realtime-overdue-hours') ||
+                       document.getElementById('overdue-hours'),
+                minutes: document.getElementById('realtime-minutes') ||
+                         document.getElementById('realtime-overdue-minutes') ||
+                         document.getElementById('overdue-minutes'),
+                seconds: document.getElementById('realtime-seconds') ||
+                         document.getElementById('realtime-overdue-seconds') ||
+                         document.getElementById('overdue-seconds')
+            };
+
+            const formatNumber = (num) => new Intl.NumberFormat('vi-VN').format(num);
+
+            if (countdownElements.days) {
+                countdownElements.days.textContent = formatNumber(days);
+            }
+            if (countdownElements.hours) {
+                countdownElements.hours.textContent = hours;
+            }
+            if (countdownElements.minutes) {
+                countdownElements.minutes.textContent = minutes;
+            }
+            if (countdownElements.seconds) {
+                countdownElements.seconds.textContent = seconds;
+            }
+
+            const maintenanceTableRows = document.querySelectorAll('table.table-borderless tr');
+            maintenanceTableRows.forEach(row => {
+                const strongElement = row.querySelector('strong');
+                if (strongElement && strongElement.textContent.includes('Bảo trì lần cuối:')) {
+                    const smallElement = row.querySelector('td:last-child small');
+                    if (smallElement) {
+                        smallElement.textContent = `(${formatNumber(daysSinceLastMaintenance)} ngày trước)`;
+                    }
+                }
+            });
+
+            const totalHoursElements = document.querySelectorAll('li');
+            totalHoursElements.forEach(li => {
+                const strongText = li.querySelector('strong');
+                if (strongText && strongText.textContent === 'Tổng giờ:') {
+                    const totalHours = Math.floor(Math.abs(totalSecondsUntilMaintenance) / 3600);
+                    li.innerHTML = `<strong>Tổng giờ:</strong> ${formatNumber(totalHours)} giờ`;
+                } else if (strongText && strongText.textContent === 'Tổng phút:') {
+                    const totalMinutes = Math.floor(Math.abs(totalSecondsUntilMaintenance) / 60);
+                    li.innerHTML = `<strong>Tổng phút:</strong> ${formatNumber(totalMinutes)} phút`;
+                } else if (strongText && strongText.textContent === 'Tổng giây:') {
+                    li.innerHTML = `<strong>Tổng giây:</strong> ${formatNumber(Math.abs(totalSecondsUntilMaintenance))} giây`;
+                }
+            });
+
+            const timeRemainingRow = Array.from(maintenanceTableRows).find(row => {
+                const strongElement = row.querySelector('strong');
+                return strongElement && strongElement.textContent.includes('Thời gian còn lại:');
+            });
+
+            if (timeRemainingRow) {
+                const spanElement = timeRemainingRow.querySelector('td:last-child span');
+                if (spanElement) {
+                    spanElement.className = `text-${isOverdue ? 'danger' : 'success'}`;
+                    spanElement.textContent = `${formatNumber(days)} ngày`;
+                }
+            }
+        }
+
+        let maintenanceTimer;
+
+        function startMaintenanceTimer() {
+            if (maintenanceTimer) {
+                clearInterval(maintenanceTimer);
+            }
+
+            updateMaintenanceDisplay();
+
+            maintenanceTimer = setInterval(updateMaintenanceDisplay, 1000);
+        }
+
+        function stopMaintenanceTimer() {
+            if (maintenanceTimer) {
+                clearInterval(maintenanceTimer);
+                maintenanceTimer = null;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', startMaintenanceTimer);
+        document.addEventListener('livewire:navigated', startMaintenanceTimer);
+        document.addEventListener('beforeunload', stopMaintenanceTimer);
+
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                stopMaintenanceTimer();
+            } else {
+                startMaintenanceTimer();
+            }
+        });
+
         {!! $chartRoomStatsData->compileJavascript() !!}
         {!! $chartRoomOccupancyData->compileJavascript() !!}
         {!! $chartRoomSeatStatusData->compileJavascript() !!}
         {!! $chartRoomMoviesData->compileJavascript() !!}
+
+        Livewire.on('updateData', function([$occupancyData, $seatStatusData, $roomStatsData, $roomMoviesData, $filterTexts]) {
+            if ($filterTexts) {
+                if ($filterTexts.roomStatsFilterText) {
+                    updateFilterText('roomStatsFilterText', $filterTexts.roomStatsFilterText);
+                }
+                if ($filterTexts.occupancyFilterText) {
+                    updateFilterText('occupancyFilterText', $filterTexts.occupancyFilterText);
+                }
+                if ($filterTexts.seatStatusFilterText) {
+                    updateFilterText('seatStatusFilterText', $filterTexts.seatStatusFilterText);
+                }
+                if ($filterTexts.roomMoviesFilterText) {
+                    updateFilterText('roomMoviesFilterText', $filterTexts.roomMoviesFilterText);
+                }
+            }
+        });
     </script>
 @endscript
