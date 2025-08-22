@@ -187,9 +187,11 @@ class Dashboard extends Component
         // Tính toán thống kê trước
         $this->calculateStatistics();
 
+        // Chart cơ cấu khách hàng theo giới tính và độ tuổi
         $transactionHistory = new TransactionHistoryChart;
         $this->realtimeUpdateCharts([$transactionHistory, $this->filters]);
 
+        // Chart xu hướng doanh thu vé và đồ ăn theo thời gian
         $revenueSource = new RevenueSourceChart;
         $this->realtimeUpdateCharts([$revenueSource, $this->filters]);
 

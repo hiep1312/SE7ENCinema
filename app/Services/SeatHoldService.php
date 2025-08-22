@@ -135,7 +135,7 @@ class SeatHoldService
                 ->exists();
 
             if ($bookedSeats) {
-                throw new \Exception('Một số ghế đã được đặt.');
+                throw new \Exception('Một số ghế đã được đặt !');
             }
 
             foreach ($seatIds as $seatId) {

@@ -10222,7 +10222,7 @@ i:before {
 
 .st_seatlayout_main_wrapper {
 	padding-top: 40px;
-	padding-bottom: 100px;
+	padding-bottom: 10px;
 	background: #333545;
 }
 
@@ -10413,7 +10413,7 @@ i:before {
 }
 
 .st_seat_lay_economy_wrapperexicutive {
-	margin-top: 50px;
+	margin-top: 10px;
 }
 
 .st_seat_full_container {

@@ -49,7 +49,7 @@ class RevenueChart
                 ->count();
 
             $data[] = [
-                'x' => $date->format('d/m'),
+                'x' => $date->format('d/m/Y'),
                 'y' => $revenue,
                 'bookings' => $bookings,
                 'foodRevenue' => $foodRevenue,
@@ -336,19 +336,6 @@ class RevenueChart
                                 </div>
                             </div>
                         </div>
-
-                        \${dataPointIndex > 0 ? `
-                            <div class="border-top border-secondary pt-2">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span style="color: \${mauTangTruong}" class="fw-medium">
-                                        \${iconTangTruong} So với trước:
-                                    </span>
-                                    <span class="fw-bold" style="color: \${mauTangTruong}">
-                                        \${phanTramTang >= 0 ? '+' : ''}\${phanTramTang}%
-                                    </span>
-                                </div>
-                            </div>
-                        ` : ''}
                     </div>
                 `;
             }

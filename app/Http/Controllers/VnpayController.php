@@ -60,10 +60,8 @@ class VnpayController extends Controller
                     SeatHold::cleanupExpired();
 
                     $booking->status = 'paid';
-                    $booking->transaction_code = strtoupper(Str::random(10));
                     $booking->end_transaction = now();
                     $booking->payment_method = 'bank_transfer';
-                    $booking->total_price = $total_amount;
                     $booking->save();//lưu booking
 
                     //  Nếu có món ăn thì mới lưu FoodOrderItem

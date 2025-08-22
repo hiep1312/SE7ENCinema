@@ -94,7 +94,7 @@ class UserSeeder extends Seeder
                 'name' => 'Lê Minh Tuấn',
                 'phone' => '0709128346',
                 'address' => '56 Nguyễn Văn Linh, Phường An Khánh, Quận Ninh Kiều, Cần Thơ',
-                'avatar' => 'https://bayotech.vn/wp-content/uploads/2025/04/Meme-Meo-Cute-1-1.jpg',
+                'avatar' => 'https://scr.vn/wp-content/uploads/2020/07/H%C3%ACnh-avatar-m%C3%A8o-d%E1%BB%85-th%C6%B0%C6%A1ng.jpg',
                 'birthday' => '2002-08-08',
                 'gender' => 'man',
                 'role' => 'user',
@@ -266,7 +266,7 @@ class UserSeeder extends Seeder
                 ],
             ]));
 
-            $avatar = "users/" . uniqid('avatar_') . basename($user['avatar']);
+            $avatar = "users/" . uniqid('avatar_') . urldecode(basename($user['avatar']));
             Storage::drive('public')->put($avatar, $dataAvatar);
 
             User::create(array_merge($user, ['avatar' => $avatar]));

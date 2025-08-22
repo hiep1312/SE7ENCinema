@@ -28,9 +28,13 @@ class RoomEdit extends Component
     public $priceCouple = null;
     public $formattedPriceCouple = null;
     public $temp = [];
-    public $checkLonely = true;
-    public $checkSole = true;
-    public $checkDiagonal = true;
+    public $seatAlgorithms = [
+        'check_lonely' => true,
+        'check_sole' => true,
+        'check_diagonal' => true,
+    ];
+    public $schema = [];
+    public $capacity = 0;
 
     protected function rules()
     {
@@ -84,35 +88,31 @@ class RoomEdit extends Component
         'priceCouple.gt' => 'Giá ghế đôi phải lớn hơn giá ghế thường',
     ];
 
-    public function updated($property)
-    {
-        if ($property === 'formattedPriceStandard' || $property === 'formattedPriceVip' || $property === 'formattedPriceCouple')
-            $this->{lcfirst(strstr($property, 'Price'))} = str_replace([',', '.'], '', $this->{$property});
-        elseif ($property === 'vipRows' || $property === 'coupleRows')
-            $this->{str_replace('Rows', 'Arr', $property)} = array_map(fn($row) => strtoupper(trim($row)), $this->{$property} ? explode(',', $this->{$property}) : []);
-    }
-
-    public function updatedTemp()
-    {
-        $this->temp = array_filter($this->temp, fn($item) => !Str::contains($item, ['add-column-btn', 'asile']));
-    }
-
     public function mount(Room $room)
     {
         $this->room = $room;
+
         $this->fill($room->only('name', 'status', 'last_maintenance_date'));
-        $this->checkLonely = $room->check_lonely;
-        $this->checkSole = $room->check_sole;
-        $this->checkDiagonal = $room->check_diagonal;
 
         if ($this->last_maintenance_date) {
             $this->last_maintenance_date = $this->last_maintenance_date->format('Y-m-d');
         }
 
+        if (!empty($room->seat_algorithms)) {
+            $decoded = is_array($room->seat_algorithms) ? $room->seat_algorithms : json_decode($room->seat_algorithms, true);
+
+            if (is_array($decoded)) {
+                $this->seatAlgorithms = array_merge($this->seatAlgorithms, $decoded);
+            }
+        }
+
+        $this->capacity = $room->capacity ?: ($this->rows * $this->seatsPerRow);
+
         $this->loadSeatConfiguration();
 
         if ($this->room->hasActiveShowtimes()) {
-            return to_route('admin.rooms.index')->with('error', "Không thể chỉnh sửa phòng đang có suất chiếu đang hoạt động!");
+            return to_route('admin.rooms.index')
+                ->with('error', "Không thể chỉnh sửa phòng đang có suất chiếu đang hoạt động!");
         }
     }
 
@@ -121,29 +121,66 @@ class RoomEdit extends Component
         $seats = $this->room->seats()->get();
 
         if ($seats->isNotEmpty()) {
-            $this->rows = $seats->max('seat_row') ? ord($seats->max('seat_row')) - 64 : 10;
+            $maxRow = $seats->max('seat_row');
+            $this->rows = $maxRow ? (ord($maxRow) - 64) : 10;
             $this->seatsPerRow = $seats->max('seat_number') ?: 15;
 
             $standardSeat = $seats->where('seat_type', 'standard')->first();
-            $vipSeat = $seats->where('seat_type', 'vip')->first();
-            $coupleSeat = $seats->where('seat_type', 'couple')->first();
+            $vipSeat      = $seats->where('seat_type', 'vip')->first();
+            $coupleSeat   = $seats->where('seat_type', 'couple')->first();
 
             $this->priceStandard = $standardSeat ? $standardSeat->price : 50000;
             $this->priceVip = $vipSeat ? $vipSeat->price : 80000;
             $this->priceCouple = $coupleSeat ? $coupleSeat->price : 120000;
 
             $this->formattedPriceStandard = number_format($this->priceStandard, 0, '.', '.');
-            $this->formattedPriceVip = $this->priceVip ? number_format($this->priceVip, 0, '.', '.') : null;
-            $this->formattedPriceCouple = $this->priceCouple ? number_format($this->priceCouple, 0, '.', '.') : null;
+            $this->formattedPriceVip      = $this->priceVip    ? number_format($this->priceVip, 0, '.', '.') : null;
+            $this->formattedPriceCouple   = $this->priceCouple ? number_format($this->priceCouple, 0, '.', '.') : null;
 
-            $vipRows = $seats->where('seat_type', 'vip')->pluck('seat_row')->unique()->toArray();
-            $coupleRows = $seats->where('seat_type', 'couple')->pluck('seat_row')->unique()->toArray();
+            $vipRows = $seats->where('seat_type', 'vip')->pluck('seat_row')->unique()->values()->all();
+            $coupleRows = $seats->where('seat_type', 'couple')->pluck('seat_row')->unique()->values()->all();
 
             $this->vipRows = implode(',', $vipRows);
             $this->coupleRows = implode(',', $coupleRows);
             $this->vipArr = $vipRows;
-            $this->coupleArr = $coupleRows;
+            $this->coupleArr  = $coupleRows;
         }
+    }
+
+    public function updated($property)
+    {
+        if ($property === 'formattedPriceStandard' || $property === 'formattedPriceVip' || $property === 'formattedPriceCouple') {
+            $this->{lcfirst(strstr($property, 'Price'))} = str_replace([',', '.'], '', $this->{$property});
+        } elseif ($property === 'vipRows' || $property === 'coupleRows') {
+            $this->{str_replace('Rows', 'Arr', $property)} = array_map(fn($row) => strtoupper(trim($row)), $this->{$property} ? explode(',', $this->{$property}) : []);
+        } elseif ($property === 'schema') {
+            if (is_string($this->schema)) {
+                $decoded = json_decode($this->schema, true);
+                if ($decoded) {
+                    $this->schema = $decoded;
+                    $this->capacity = $decoded['capacity'] ?? ($this->rows * $this->seatsPerRow);
+                }
+            }
+        } elseif (str_starts_with($property, 'seatAlgorithms.')) {
+            $k = explode('.', $property, 2)[1] ?? null;
+            if ($k && isset($this->seatAlgorithms[$k])) {
+                $v = $this->seatAlgorithms[$k];
+                $this->seatAlgorithms[$k] = filter_var($v, FILTER_VALIDATE_BOOLEAN);
+            }
+        }
+    }
+
+    protected $listeners = ['schemaUpdated'];
+
+    public function schemaUpdated($data)
+    {
+        $this->schema = $data;
+        $this->capacity = $data['capacity'] ?? ($this->rows * $this->seatsPerRow);
+    }
+
+    public function updatedTemp()
+    {
+        $this->temp = array_filter($this->temp, fn($item) => !Str::contains($item, ['add-column-btn', 'aisle']));
     }
 
     public function updateRoom()
@@ -153,8 +190,10 @@ class RoomEdit extends Component
         }
 
         $this->validate();
-
-        if (collect($this->vipArr)->some(fn($row) => in_array($row, $this->coupleArr)) || collect($this->coupleArr)->some(fn($row) => in_array($row, $this->vipArr))) {
+        if (
+            collect($this->vipArr)->some(fn($row) => in_array($row, $this->coupleArr)) ||
+            collect($this->coupleArr)->some(fn($row) => in_array($row, $this->vipArr))
+        ) {
             $this->addError('vipArr.*', 'Danh sách hàng ghế VIP không được chứa các hàng đã thuộc ghế đôi.');
             $this->addError('coupleArr.*', 'Danh sách hàng ghế đôi không được chứa các hàng đã thuộc ghế VIP.');
             return;
@@ -163,18 +202,18 @@ class RoomEdit extends Component
         try {
             $this->room->update([
                 'name' => $this->name,
-                'capacity' => $this->rows * $this->seatsPerRow,
+                'capacity' => $this->capacity ?: ($this->rows * $this->seatsPerRow),
                 'status' => $this->status,
                 'last_maintenance_date' => $this->last_maintenance_date ?: null,
-                'check_lonely' => $this->checkLonely,
-                'check_sole' => $this->checkSole,
-                'check_diagonal' => $this->checkDiagonal,
+                'seat_algorithms'  => json_encode($this->seatAlgorithms, JSON_UNESCAPED_UNICODE),
             ]);
 
             $this->updateSeatsConfiguration();
 
-            return redirect()->route('admin.rooms.index')->with('success', 'Cập nhật phòng chiếu thành công!');
-        } catch (\Exception $e) {
+            return redirect()
+                ->route('admin.rooms.index')
+                ->with('success', 'Cập nhật phòng chiếu thành công!');
+        } catch (\Throwable $e) {
             session()->flash('error', 'Có lỗi xảy ra trong quá trình cập nhật phòng chiếu. Vui lòng thử lại!');
         }
     }
@@ -183,39 +222,74 @@ class RoomEdit extends Component
     {
         $this->room->seats()->delete();
 
-        $vipRows = collect(explode(',', strtoupper($this->vipRows)))
-            ->map(fn($v) => trim($v))
-            ->filter();
-        $coupleRows = collect(explode(',', strtoupper($this->coupleRows)))
-            ->map(fn($v) => trim($v))
-            ->filter();
+        if (!empty($this->schema['rows'])) {
+            $total = 0;
 
-        for ($i = 0; $i < $this->rows; $i++) {
-            $rowLetter = chr(65 + $i);
+            foreach ($this->schema['rows'] as $row) {
+                $rowLetter = $row['row'] ?? null;
+                if (!$rowLetter || empty($row['seats']) || !is_array($row['seats'])) continue;
 
-            for ($j = 1; $j <= $this->seatsPerRow; $j++) {
-                $type = 'standard';
-                $price = $this->priceStandard;
+                $num = 0;
+                foreach ($row['seats'] as $s) {
+                    if (($s['type'] ?? null) === 'aisle') continue;
 
-                if ($vipRows->contains($rowLetter)) {
-                    $type = 'vip';
-                    $price = $this->priceVip;
+                    $num++;
+                    $typeUi = $s['uiType'] ?? $s['type'] ?? 'standard';
+                    $typeDb = $typeUi === 'double' ? 'couple' : $typeUi;
+
+                    $status = $s['status'] ?? 'active';
+
+                    $price = match ($typeDb) {
+                        'vip' => $this->priceVip,
+                        'couple' => $this->priceCouple,
+                        default => $this->priceStandard,
+                    };
+
+                    Seat::create([
+                        'room_id' => $this->room->id,
+                        'seat_row' => $rowLetter,
+                        'seat_number' => $num,
+                        'seat_type' => $typeDb,
+                        'price' => $price,
+                        'status' => $status,
+                    ]);
+
+                    $total++;
                 }
-
-                if ($coupleRows->contains($rowLetter)) {
-                    $type = 'couple';
-                    $price = $this->priceCouple;
-                }
-
-                Seat::create([
-                    'room_id' => $this->room->id,
-                    'seat_row' => $rowLetter,
-                    'seat_number' => $j,
-                    'seat_type' => $type,
-                    'price' => $price,
-                    'status' => 'active',
-                ]);
             }
+
+            $this->room->update(['capacity' => $total]);
+        } else {
+            $vipRows    = collect(explode(',', strtoupper($this->vipRows)))->map(fn($v) => trim($v))->filter();
+            $coupleRows = collect(explode(',', strtoupper($this->coupleRows)))->map(fn($v) => trim($v))->filter();
+
+            for ($i = 0; $i < $this->rows; $i++) {
+                $rowLetter = chr(65 + $i);
+
+                for ($j = 1; $j <= $this->seatsPerRow; $j++) {
+                    $type  = 'standard';
+                    $price = $this->priceStandard;
+
+                    if ($vipRows->contains($rowLetter)) {
+                        $type = 'vip';
+                        $price = $this->priceVip;
+                    }
+                    if ($coupleRows->contains($rowLetter)) {
+                        $type = 'couple';
+                        $price = $this->priceCouple;
+                    }
+
+                    Seat::create([
+                        'room_id' => $this->room->id,
+                        'seat_row' => $rowLetter,
+                        'seat_number' => $j,
+                        'seat_type' => $type,
+                        'price' => $price,
+                        'status' => 'active',
+                    ]);
+                }
+            }
+            $this->room->update(['capacity' => $this->rows * $this->seatsPerRow]);
         }
     }
 
@@ -223,7 +297,15 @@ class RoomEdit extends Component
     {
         $this->validateOnly('vipArr.*');
         $this->validateOnly('coupleArr.*');
-        $this->dispatch('generateSeats', $this->rows, $this->seatsPerRow, $this->vipArr, $this->coupleArr, $this->checkLonely, $this->checkSole, $this->checkDiagonal);
+
+        $this->dispatch(
+            'generateSeats',
+            $this->rows,
+            $this->seatsPerRow,
+            $this->vipArr,
+            $this->coupleArr,
+            $this->seatAlgorithms
+        );
     }
 
     public function setTemp($data)

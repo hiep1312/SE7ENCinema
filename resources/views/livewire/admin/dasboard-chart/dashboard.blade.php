@@ -206,12 +206,29 @@
 
         <!-- Các biểu đồ -->
         <div class="row">
-            <!-- Trạng thái đơn hàng -->
+            <!-- Biểu đồ doanh thu -->
+
+            <div class="col-12 mb-3">
+                <div class="card bg-dark border-secondary shadow-sm">
+                    <div class="card-header bg-transparent border-secondary">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0 text-white">
+                                <i class="fas fa-chart-area me-2 text-primary" style="font-size: 16px;"></i>
+                                Biểu đồ doanh thu
+                            </h5>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div wire:ignore id="revenueChart" style="height: 450px;"></div>
+                    </div>
+                </div>
+            </div>
+
             <div class="col-md-4 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="card-title mb-0">Trạng thái đơn hàng</h5>
+                            <h5 class="card-title mb-0">Cơ cấu khách hàng: Giới tính & Độ tuổi</h5>
                         </div>
                         <div wire:ignore>
                             <div id="transactionHistoryChart" style="height: 300px;"></div>
@@ -219,12 +236,15 @@
                     </div>
                 </div>
             </div>
-            <!-- Nguồn doanh thu -->
+            <!-- Biểu đồ doanh thu vé và đồ ăn -->
             <div class="col-md-8 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="card-title mb-0">Xu hướng doanh thu vé & đồ ăn</h5>
+                        </div>
                         <div wire:ignore>
-                            <div id="revenueSourceChart" style="height: 300px;"></div>
+                            <div id="revenueSourceChart" style="height: 350px;"></div>
                         </div>
                     </div>
                 </div>
@@ -291,24 +311,6 @@
                 </div>
             </div>
         </div>
-        <!-- Biểu đồ doanh thu -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card bg-dark border-secondary shadow-sm">
-                    <div class="card-header bg-transparent border-secondary">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0 text-white">
-                                <i class="fas fa-chart-area me-2 text-primary" style="font-size: 16px;"></i>
-                                Biểu đồ doanh thu
-                            </h5>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div wire:ignore id="revenueChart" style="height: 450px;"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <style>
@@ -328,11 +330,6 @@
          {!! $topFoods->compileJavascript() !!}
          {!! $seatsAnalysis->compileJavascript() !!}
          {!! $showtimeTimeSlot->compileJavascript() !!}
-        
-        
-        
-        
-        
 
     globalThis.chartInstances = globalThis.chartInstances || {};
 

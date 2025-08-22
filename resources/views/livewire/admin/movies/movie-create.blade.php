@@ -9,7 +9,7 @@
     }
 
     function updateEndTime(index) {
-        const $wire = Livewire.first();
+        const $wire = Livewire.find(document.querySelector("[wire\\:id][sc-root]")?.getAttribute('wire:id'));
 
         const start_time = $wire.showtimes[index].start_time && Date.parse($wire.showtimes[index].start_time);
         const duration = parseInt($wire.duration || 0) * 60000;

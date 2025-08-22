@@ -507,6 +507,6 @@ class PromotionSeeder extends Seeder
             ]);
         }
 
-        Promotion::insert(array_map(fn($promotion) => array_merge($promotion, ['description' => str_replace("    ", "", trim($promotion['description'])), 'code' => Str::random(8)]), $data));
+        Promotion::insert(array_map(fn($promotion) => array_merge($promotion, ['description' => str_replace("    ", "", trim($promotion['description'])), 'code' => Str::random(8), 'created_at' => now()]), $data));
     }
 }

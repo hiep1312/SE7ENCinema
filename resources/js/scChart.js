@@ -24,6 +24,7 @@ class scChart{
             (this.chartLive[1] || console.warn("scChart: The value of chartLive[1] is invalid")) && this.updateOptions(this.chartLive[1], false);
         })
     }
+
     getElement(){
         return this._element;
     }
