@@ -37,11 +37,6 @@ class RoomDetail extends Component
     public $seatStatusData = [];
     public $roomMoviesData = [];
 
-    public $roomStatsPeriod = '7_days';
-    public $occupancyPeriod = '7_days';
-    public $seatStatusPeriod = '7_days';
-    public $roomMoviesPeriod = '7_days';
-
     public array $daysOfWeek = [
         'Monday'    => 'Thứ hai',
         'Tuesday'   => 'Thứ ba',
@@ -66,55 +61,13 @@ class RoomDetail extends Component
         $this->loadChartData();
     }
 
-    public function changeRoomStatsPeriod($period)
-    {
-        $this->roomStatsPeriod = $period;
-        $this->loadChartData();
-    }
-
-    public function changeOccupancyPeriod($period)
-    {
-        $this->occupancyPeriod = $period;
-        $this->loadChartData();
-    }
-
-    public function changeSeatStatusPeriod($period)
-    {
-        $this->seatStatusPeriod = $period;
-        $this->loadChartData();
-    }
-
-    public function changeRoomMoviesPeriod($period)
-    {
-        $this->roomMoviesPeriod = $period;
-        $this->loadChartData();
-    }
-
     public function loadChartData()
     {
-
-    }
-
-    private function getFilterText($period)
-    {
-        switch ($period) {
-            case '3_days':
-                return '3 ngày gần nhất';
-            case '7_days':
-                return '7 ngày gần nhất';
-            case '30_days':
-                return '30 ngày gần nhất';
-            case '1_month':
-                return '1 tháng gần nhất';
-            case '3_months':
-                return '3 tháng gần nhất';
-            case '1_year':
-                return '1 năm gần nhất';
-            case '2_years':
-                return '2 năm gần nhất';
-            default:
-                return '7 ngày gần nhất';
-        }
+        // Không cần filter theo thời gian nữa
+        $this->roomStatsData = [];
+        $this->occupancyData = [];
+        $this->seatStatusData = [];
+        $this->roomMoviesData = [];
     }
 
     public function calculateMaintenanceInfo()
@@ -182,13 +135,18 @@ class RoomDetail extends Component
     #[Layout('components.layouts.admin')]
     public function render()
     {
-        $chartRoomStatsData = new RoomStatsData();
+        $chartRoomStatsData = new RoomStatsData($this->room);
+        $chartRoomStatsData->loadData();
         $this->realtimeUpdateCharts($chartRoomStatsData);
+
         $chartRoomOccupancyData = new RoomOccupancyData($this->room);
         $this->realtimeUpdateCharts($chartRoomOccupancyData);
+
         $chartRoomSeatStatusData = new RoomSeatStatusData($this->room);
         $this->realtimeUpdateCharts($chartRoomSeatStatusData);
+
         $chartRoomMoviesData = new RoomMoviesData($this->room);
+        $chartRoomMoviesData->loadData();
         $this->realtimeUpdateCharts($chartRoomMoviesData);
 
         $recentShowtimes = $this->room->showtimes()
@@ -212,13 +170,7 @@ class RoomDetail extends Component
             $this->occupancyData ?? [],
             $this->seatStatusData ?? [],
             $this->roomStatsData ?? [],
-            $this->roomMoviesData ?? [],
-            [
-                'roomStatsFilterText' => $this->getFilterText($this->roomStatsPeriod),
-                'occupancyFilterText' => $this->getFilterText($this->occupancyPeriod),
-                'seatStatusFilterText' => $this->getFilterText($this->seatStatusPeriod),
-                'roomMoviesFilterText' => $this->getFilterText($this->roomMoviesPeriod)
-            ]
+            $this->roomMoviesData ?? []
         );
 
         return view('livewire.admin.rooms.room-detail', compact('recentShowtimes', 'upcomingShowtimes', 'chartRoomStatsData', 'chartRoomOccupancyData', 'chartRoomSeatStatusData', 'chartRoomMoviesData'));
