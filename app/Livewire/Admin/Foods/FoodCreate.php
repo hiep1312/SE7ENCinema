@@ -121,11 +121,6 @@ class FoodCreate extends Component
         $this->displayBasePrice = $this->basePrice
             ? number_format($this->basePrice, 0, ',', '.')
             : '';
-
-        if (!Auth::check() || Auth::user()->role !== 'admin') {
-            session()->flash('error', 'Bạn không có quyền tạo món ăn.');
-            return redirect()->route('admin.foods.index');
-        }
     }
 
     public function updateBasePrice($value)

@@ -57,7 +57,7 @@ class CommentSeeder extends Seeder
             'Hiệu ứng tốt nhưng cảm xúc chưa tới lắm với mình.',
             'Đoạn cao trào làm mình nổi da gà.',
             'Mình thấy phần build nhân vật rất ổn.',
-            'Tổng thể đáng tiền vé.',
+            'Tổng thể đáng tiền vé',
             'Xem IMAX chắc còn phê hơn.',
             'Mọi người nghĩ bản OST thế nào?',
         ];
@@ -121,7 +121,7 @@ class CommentSeeder extends Seeder
                     [Arr::random($softContra), Arr::random($scenes)],
                     $tpl
                 );
-                $tails = ['', '', ' 👍', ' 🤔', ' 😅', ' — xem ổn phết!', ' — đáng để rủ bạn đi xem!'];
+                $tails = ['', '', ' 👍', ' 🤔', ' 😅', ' xem ổn phết!', ' đáng để rủ bạn đi xem!'];
                 $content = $this->humanize($text . Arr::random($tails));
 
                 Comment::create([

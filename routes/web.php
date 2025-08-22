@@ -85,7 +85,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->
     /* Foods */
     Route::prefix('/foods')->name('foods.')->group(function () {
         Route::get('/', FoodIndex::class)->name('index');
-        Route::get('/create', FoodCreate::class)->name('create');
+        Route::get('/create', FoodCreate::class)->name('create')->middleware('role:admin');
         Route::get('/edit/{food}', FoodEdit::class)->name('edit');
         Route::get('/detail/{food}', FoodDetail::class)->name('detail');
     });

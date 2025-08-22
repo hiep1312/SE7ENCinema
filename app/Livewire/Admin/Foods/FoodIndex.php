@@ -19,16 +19,9 @@ class FoodIndex extends Component
     public $showDeleted = false;
     public $statusFilter = '';
     public $sortDateFilter = 'desc';
-    public $checkrole;
-
-    public function mount()
-    {
-        $this->checkrole = Auth::user()->role;
-
-    }
 
     public function deleteFood(array $status, int $foodId, bool $statusDeleteVariants = false)
-    {
+    {   
         if (!$status['isConfirmed']) return;
         $food = FoodItem::find($foodId);
 

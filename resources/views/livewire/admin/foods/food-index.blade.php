@@ -18,17 +18,11 @@
             <h2 class="text-light">Quản lý món ăn</h2>
             <div>
                 @if (!$showDeleted)
-                    @if ($checkrole === 'admin')
+                    @role('admin')
                         <a href="{{ route('admin.foods.create') }}" class="btn btn-success me-2">
                             <i class="fas fa-plus me-1"></i>Thêm món ăn
                         </a>
-                    @else
-                        <button type="button" class="btn btn-success me-2"
-                            wire:sc-alert.error="Bạn không có quyền truy cập vào trang này. Vui lòng liên hệ quản trị viên để được hỗ trợ."
-                            wire:sc-model>
-                            <i class="fas fa-plus me-1"></i>Thêm món ăn
-                        </button>
-                    @endif
+                    @endrole
                 @endif
                 <button wire:click="$toggle('showDeleted')" class="btn btn-outline-danger">
                     @if ($showDeleted)
@@ -216,20 +210,14 @@
                                                     class="btn btn-sm btn-success" title="Khôi phục">
                                                     <i class="fas fa-undo" style="margin-right: 0"></i>
                                                 </button>
-                                                @if ($checkrole === 'admin')
+                                                @role('admin')
                                                     <button type="button" class="btn btn-sm btn-danger"
                                                         wire:sc-model="deleteFood({{ $food->id }})"
                                                         wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa món ăn '{{ $food->name }}'?"
                                                         title="Xóa">
                                                         <i class="fas fa-trash" style="margin-right: 0"></i>
                                                     </button>
-                                                @else
-                                                    <button type="button" class="btn btn-sm btn-danger"
-                                                        wire:sc-alert.error="Bạn không có quyền xoá món ăn này!"
-                                                        wire:sc-model title="Xóa">
-                                                        <i class="fas fa-trash" style="margin-right: 0"></i>
-                                                    </button>
-                                                @endif
+                                                @endrole
                                             </div>
                                         @else
                                             <div class="d-flex gap-2 justify-content-center">
@@ -241,20 +229,14 @@
                                                     class="btn btn-sm btn-warning" title="Chỉnh sửa">
                                                     <i class="fas fa-edit" style="margin-right: 0"></i>
                                                 </a>
-                                                @if ($checkrole === 'admin')
+                                                @role('admin')
                                                     <button type="button" class="btn btn-sm btn-danger"
                                                         wire:sc-model="deleteFood({{ $food->id }})"
                                                         wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa món ăn '{{ $food->name }}'?"
                                                         title="Xóa">
                                                         <i class="fas fa-trash" style="margin-right: 0"></i>
                                                     </button>
-                                                @else
-                                                    <button type="button" class="btn btn-sm btn-danger"
-                                                        wire:sc-alert.error="Bạn không có quyền xoá món ăn này!"
-                                                        wire:sc-model title="Xóa">
-                                                        <i class="fas fa-trash" style="margin-right: 0"></i>
-                                                    </button>
-                                                @endif
+                                                @endrole
                                             </div>
                                         @endif
                                     </td>
