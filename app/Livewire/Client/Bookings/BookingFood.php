@@ -48,7 +48,7 @@ class BookingFood extends Component
         if($this->carts){
             foreach($this->carts as $cart){
                 $foodVariantCurrent = FoodVariant::where('id', $cart[2]->id)->first();
-                if($foodVariantCurrent && $foodVariantCurrent->quantity_available <= 0){
+                if($foodVariantCurrent && $foodVariantCurrent->quantity_available > 0){
                     $orderQuantity = $foodVariantCurrent->quantity_available > $cart[0] ? $cart[0] : $foodVariantCurrent->quantity_available;
                     FoodOrderItem::create([
                         'booking_id' => $this->booking->id,

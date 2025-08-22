@@ -28,7 +28,7 @@
                         <h2>Trang Danh Sách Phim</h2>
                     </div>
                 </div>
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                {{-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="prs_mc_slider_wrapper">
                         <div class="owl-carousel owl-theme">
                             <div class="item">
@@ -45,7 +45,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="prs_upcome_tabs_wrapper" style="text-align: center; margin-bottom: 20px;">
                         <ul class="nav nav-tabs" role="tablist"
@@ -146,10 +146,9 @@
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="tab-content">
                                     <div id="coming_soon" class="tab-pane fade in active">
-                                        <div class="row-list">
+                                        <div class="row">
                                             @forelse ($movies as $movie)
-                                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 prs_upcom_slide_first"
-                                                    style="float: none;">
+                                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 prs_upcom_slide_first">
                                                     <div class="prs_upcom_movie_box_wrapper prs_mcc_movie_box_wrapper">
                                                         <div class="prs_upcom_movie_img_box movie-img-wrapper">
                                                             <img src="{{ asset('storage/' . $movie->poster) }}"
@@ -177,7 +176,7 @@
                                                         <div class="prs_upcom_movie_content_box">
                                                             <div class="prs_upcom_movie_content_box_inner"
                                                                 style="width: 100% !important;">
-                                                                <h2 style="margin-top: 0;"><a
+                                                                <h2 style="margin-top: 0;"><a style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; display: block;"
                                                                         href="{{ route('client.movie_detail', $movie->id) }}">{{ $movie->title }}</a>
                                                                 </h2>
                                                                 <p>Thể loại: {{ Str::limit($movie->genres->pluck('name')->implode(', '), 20) }}</p>

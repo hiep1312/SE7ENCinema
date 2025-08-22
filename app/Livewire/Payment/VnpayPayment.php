@@ -40,11 +40,6 @@ class VnpayPayment extends Component
         }
     }
 
-    public function testdeletesession()
-    {
-        session()->forget('payment_deadline_' . $this->booking_id);
-    }
-
     public function redirectToVnpay()
     {
         $deadlineKey = 'payment_deadline_' . $this->booking_id;
@@ -53,10 +48,10 @@ class VnpayPayment extends Component
         // Check hết hạn cũ trước
         $deadline = session()->get($deadlineKey);
 
-        if (!$deadline || now()->timestamp * 1000 > $deadline) {
+        /* if (!$deadline || now()->timestamp * 1000 > $deadline) {
             session()->flash('error', 'Đã hết thời gian thanh toán. Vui lòng đặt lại vé.');
             return redirect()->route('client.index');
-        }
+        } */
 
         // 👉 THÊM: chỉ cộng thêm 1 lần
         if (!session()->has($extendedKey)) {
