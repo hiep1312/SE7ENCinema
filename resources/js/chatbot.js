@@ -1,12 +1,12 @@
 let isAIMode = true;
 let isMinimized = false;
 let currentBookingData = null;
-
+let GEMINI_API_KEY = "AIzaSyBbDvx7IhSwKJHutMdMEKNIlOxAytku0HU";
 // Sửa API Configuration
 const API_CONFIG = {
     gemini: {
-        endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
-        apiKey: 'AIzaSyAzOjROqj4FpL7P0YBVZ0j_OxHMbcy0Oh0'
+        endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+        apiKey: 'AIzaSyBbDvx7IhSwKJHutMdMEKNIlOxAytku0HU'
     }
 };
 
@@ -146,13 +146,47 @@ function hideTyping() {
 async function handleAIResponse(message) {
     showTyping();
 
-    // Simulate API delay
-    setTimeout(() => {
+    const requestBody = {
+        contents: [{
+            parts: [{
+                text: message
+            }]
+        }]
+    };
+
+    try {
+        const response = await fetch(`${API_CONFIG.gemini.endpoint}?key=${GEMINI_API_KEY}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+        });
+
+        if (!response.ok) {
+            throw new Error(`API Error: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
         hideTyping();
-        const aiResponse = generateSmartResponse(message);
-        processAIResponse(aiResponse, message);
-    }, 1500);
+
+        // Kiểm tra và xử lý phản hồi từ Gemini
+        const aiResponse = data.candidates[0].content.parts[0].text;
+
+        // Dù có API, bạn vẫn có thể giữ logic xử lý các tùy chọn sau đó
+        addMessage('bot', aiResponse, `
+      <button class="action-btn" onclick="suggestMovies()">🎥 Xem phim hay</button>
+      <button class="action-btn" onclick="showBookingOptions()">🎫 Đặt vé</button>
+      <button class="action-btn" onclick="toggleMode()">👨‍💼 Chuyển nhân viên</button>
+    `);
+
+    } catch (error) {
+        hideTyping();
+        console.error('Lỗi khi gọi API Gemini:', error);
+        addMessage('bot', '🤖 Xin lỗi, tôi không thể kết nối với hệ thống. Vui lòng thử lại sau hoặc chuyển sang chế độ nhân viên hỗ trợ.');
+    }
 }
+
 
 // Hàm tạo response thông minh dựa trên từ khóa
 function generateSmartResponse(message) {

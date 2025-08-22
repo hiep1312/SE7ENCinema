@@ -21,3 +21,5 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+/resources/views/testaichatbox.html
+/resources/js/chatbot.js
