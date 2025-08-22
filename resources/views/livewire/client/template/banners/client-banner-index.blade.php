@@ -1,7 +1,6 @@
 @assets
     @vite('resources/css/movieList.css')
 @endassets
-
 <div class="scRender">
     <div class="prs_main_slider_wrapper">
         <div id="rev_slider_41_1_wrapper" class="rev_slider_wrapper fullwidthbanner-container"
