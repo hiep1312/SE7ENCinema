@@ -312,7 +312,6 @@ Hôm nay bạn muốn xem phim gì? Hay cần tôi tư vấn phim hay nhất? �
 Bạn muốn tôi hỗ trợ điều gì cụ thể? 😊`;
 }
 
-// Xóa hàm getFallbackResponse vì đã không dùng nữa
 
 function processAIResponse(aiResponse, userMessage) {
     const lowerResponse = aiResponse.toLowerCase();
@@ -591,28 +590,6 @@ function generateSessionId() {
     return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 }
 
-// Sửa hàm setupWebSocket để xử lý lỗi tốt hơn
-function setupWebSocket() {
-    try {
-        // Chỉ thử kết nối WebSocket nếu có server
-        // Bỏ qua WebSocket nếu không cần thiết
-        console.log('WebSocket feature disabled for demo');
-    } catch (error) {
-        console.log('WebSocket not available:', error);
-    }
-}
-
-function loadChatHistory() {
-    console.log('Loading chat history...');
-}
-
-function trackChatbotUsage() {
-    console.log('Tracking chatbot usage...');
-}
-
-function sendBookingNotification(result) {
-    console.log('Sending booking notification:', result);
-}
 
 function simulateStaffActivity() {
     if (!isAIMode && Math.random() > 0.7) {
@@ -658,7 +635,4 @@ function initializeApp() {
 
 document.addEventListener('DOMContentLoaded', function () {
     initializeApp();
-    setupWebSocket();
-    loadChatHistory();
-    trackChatbotUsage();
 });
