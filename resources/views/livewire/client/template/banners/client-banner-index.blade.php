@@ -113,12 +113,12 @@
 
                                                             <div class="prs_upcom_movie_img_overlay"></div>
                                                             <div class="prs_upcom_movie_img_btn_wrapper">
-                                                <ul>
-                                                    @if ($movie->trailer_url)
-                                                        <li><a href="{{ $movie->trailer_url }}" target="_blank">Xem trailer</a></li>
-                                                    @endif
-                                                    <li><a href="{{ route('client.movie_detail', $movie->id) }}">Xem chi tiết</a></li>
-                                                </ul>
+                                                                <ul>
+                                                                    @if ($movie->trailer_url)
+                                                                        <li><a href="{{ $movie->trailer_url }}" target="_blank">Xem trailer</a></li>
+                                                                    @endif
+                                                                    <li><a href="{{ route('client.movie_detail', $movie->id) }}">Xem chi tiết</a></li>
+                                                                </ul>
                                                             </div>
                                                         </div>
                                                         <div class="prs_upcom_movie_content_box">

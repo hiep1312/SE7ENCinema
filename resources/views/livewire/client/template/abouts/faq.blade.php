@@ -93,7 +93,7 @@
 
                                             <div class="faq__step">
                                                 <h5>Bước 1: Đăng nhập tài khoản thành viên</h5>
-                                                <p>Nếu Quý khách chưa có tài khoản, vui lòng điền thông tin đăng ký <a href="{{ route('admin.register') }}">TẠI ĐÂY!</a></p>
+                                                <p>Nếu Quý khách chưa có tài khoản, vui lòng điền thông tin đăng ký <a href="{{ route('login') }}">TẠI ĐÂY!</a></p>
                                             </div>
 
                                             <div class="faq__step">
