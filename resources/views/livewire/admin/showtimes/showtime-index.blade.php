@@ -1,5 +1,5 @@
 @assets
-    @vite('resources/css/showtimeIndexAdmin.css')
+    <link rel="stylesheet" href="{{ asset('css/showtimeIndexAdmin.css') }}">
 @endassets
 @use("Carbon\Carbon")
 <div class="scRender">
