@@ -203,7 +203,7 @@
                     </div>
                     @if($foodItems->hasPages())
                         <div class="d-flex justify-content-center mt-2">
-                            {{ $foodItems->links() }}
+                            {{ $foodItems->links(data: ['scrollTo' => false]) }}
                         </div>
                     @endif
                 </div>

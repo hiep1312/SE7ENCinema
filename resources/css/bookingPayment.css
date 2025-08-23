@@ -75,7 +75,7 @@
     border-bottom: 1px solid #f0f0f0;
 }
 
-.booking-payment-order-item:nth-child(2){
+.booking-payment-order-item:nth-child(2) {
     padding-top: 0;
     padding-bottom: 10px;
 }
@@ -108,7 +108,7 @@
     font-size: 14px;
 }
 
-.booking-payment-seat-detail-item:first-child{
+.booking-payment-seat-detail-item:first-child {
     padding-top: 0;
 }
 
@@ -139,14 +139,16 @@
     border-radius: 4px;
     font-weight: 600;
     font-size: 12px;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
     display: inline-block;
+    text-transform: uppercase;
 }
 
 .booking-payment-applied-voucher-desc {
     color: #155724;
     font-size: 14px;
     margin: 0;
+    font-weight: 600;
 }
 
 .booking-payment-applied-voucher-amount {
@@ -164,12 +166,12 @@
 }
 
 .booking-payment-voucher-input {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .booking-payment-input {
     width: 100%;
-    padding: 12px 16px;
+    padding: 10px 16px;
     border: 2px solid #e9ecef;
     border-radius: 8px;
     font-size: 16px;
@@ -184,7 +186,7 @@
 
 .booking-payment-btn-apply {
     width: 100%;
-    padding: 12px 20px;
+    padding: 10px 20px;
     background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
     color: white;
     border: none;
@@ -196,7 +198,7 @@
 
 .booking-payment-btn-apply:hover {
     background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
 }
 
@@ -223,17 +225,19 @@
 
 /* Voucher Items */
 .booking-payment-voucher-item {
-    background: #f8f9fa;
+    background: #fff;
     border: 2px solid #e9ecef;
-    border-radius: 8px;
-    padding: 15px;
+    border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
-.booking-payment-voucher-item:hover {
+.booking-payment-voucher-item:hover:not(.disabled) {
     border-color: #dc3545;
     transform: translateY(-2px);
     box-shadow: 0 4px 15px rgba(220, 53, 69, 0.1);
@@ -244,33 +248,154 @@
     background: linear-gradient(135deg, #f8fff9 0%, #e8f5e8 100%);
 }
 
+.booking-payment-voucher-item.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: #f8f9fa;
+}
+
+.booking-payment-voucher-item.disabled:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: #e9ecef;
+}
+
+/* Voucher Header */
+.booking-payment-voucher-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 15px 0 15px;
+}
+
 .booking-payment-voucher-code {
     background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
     color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
+    padding: 6px 12px;
+    border-radius: 6px;
     font-weight: 600;
-    font-size: 12px;
-    margin-bottom: 8px;
-    display: inline-block;
-}
-
-.booking-payment-voucher-desc {
-    color: #666;
-    font-size: 14px;
-    margin-bottom: 8px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .booking-payment-voucher-discount {
-    position: absolute;
-    top: 10px;
-    right: 10px;
     background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
     color: #212529;
-    padding: 4px 8px;
-    border-radius: 4px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+/* Voucher Content */
+.booking-payment-voucher-content {
+    padding: 15px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.booking-payment-voucher-title {
+    font-size: 16px;
     font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+/* Voucher Conditions */
+.booking-payment-voucher-conditions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 5px;
+}
+
+.booking-payment-voucher-condition {
+    display: flex;
+    align-items: center;
     font-size: 12px;
+    color: #6c757d;
+}
+
+.booking-payment-voucher-condition i {
+    width: 14px;
+    text-align: center;
+    color: #adb5bd;
+}
+
+.booking-payment-voucher-condition span {
+    font-weight: 500;
+}
+
+/* Voucher Status */
+.booking-payment-voucher-status {
+    padding: 10px 15px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: auto;
+}
+
+.booking-payment-voucher-status.available {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724;
+    border-top: 1px solid #c3e6cb;
+}
+
+.booking-payment-voucher-status.insufficient {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    color: #856404;
+    border-top: 1px solid #ffeaa7;
+}
+
+.booking-payment-voucher-status.expired {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+    border-top: 1px solid #f5c6cb;
+}
+
+/* Disabled voucher styles */
+.booking-payment-voucher-item.disabled .booking-payment-voucher-code {
+    background: #6c757d;
+}
+
+.booking-payment-voucher-item.disabled .booking-payment-voucher-discount {
+    background: #adb5bd;
+    color: #fff;
+}
+
+.booking-payment-voucher-item.disabled .booking-payment-voucher-title {
+    color: #6c757d;
+}
+
+/* Selected voucher styles */
+.booking-payment-voucher-item.selected
+    .booking-payment-voucher-status.available {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border-top-color: #28a745;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .booking-payment-voucher-header {
+        gap: 10px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .booking-payment-voucher-conditions {
+        gap: 6px;
+    }
+
+    .booking-payment-voucher-condition {
+        font-size: 11px;
+    }
 }
 
 /* Payment Methods Card */
@@ -360,7 +485,7 @@
     border-bottom: 1px solid #f0f0f0;
 }
 
-.booking-payment-summary-item:first-child{
+.booking-payment-summary-item:first-child {
     padding-top: 0;
 }
 
@@ -573,7 +698,7 @@
 .booking-payment-btn-retry,
 .booking-payment-btn-cancel,
 .booking-payment-btn-continue {
-    padding: 10px 20px;
+    padding: 10px 11px;
     border: none;
     border-radius: 6px;
     font-weight: 500;
@@ -674,9 +799,8 @@
 
     .booking-food-countdown {
         padding: 7px 16px;
-        font-size: calc(1.16rem + .3vw) !important;
+        font-size: calc(1.16rem + 0.3vw) !important;
     }
-
 
     .booking-payment-customer-item {
         padding: 12px;
@@ -761,7 +885,7 @@
 
     .booking-food-countdown {
         padding: 6px 14px;
-        font-size: calc(1rem + .3vw) !important;
+        font-size: calc(1rem + 0.3vw) !important;
     }
 }
 
@@ -782,18 +906,25 @@
     animation: booking-payment-fadeIn 0.3s ease;
 }
 
+/* Payment Method Logo */
+.booking-payment-method-logo {
+    width: 32px;
+    height: 32px;
+}
+
 /* custom paginate */
 nav .text-muted {
     display: none !important;
 }
 
 .pagination {
+    padding-top: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 8px;
-    margin: 2rem 0;
     flex-wrap: wrap;
+    margin-bottom: 0.5rem;
 }
 
 .pagination .page-item {

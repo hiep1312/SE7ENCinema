@@ -28,6 +28,7 @@ export default defineConfig({
                 'resources/css/movieBooking.css',
                 'resources/css/movieList.css',
                 'resources/css/seat.css',
+                'resources/css/handlePayment.css',
             ],
             refresh: true,
         }),

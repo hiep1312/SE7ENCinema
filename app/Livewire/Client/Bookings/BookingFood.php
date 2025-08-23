@@ -62,7 +62,7 @@ class BookingFood extends Component
             }
         }
 
-        return redirect()->route('client.thanh-toan', ['booking_id' => $this->booking->id]);
+        return redirect()->route('client.booking.payment', ['bookingCode' => $this->booking->booking_code]);
     }
 
     public function updateCartAndStatusCountdown(){

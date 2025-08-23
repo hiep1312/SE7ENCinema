@@ -65,6 +65,7 @@ use App\Livewire\Payment\VnpayPayment;
 // use App\Livewire\Booking\BookingFood;
 use App\Livewire\Client\Bookings\BookingFood;
 use App\Livewire\Client\Bookings\BookingPayment;
+use App\Livewire\Client\Bookings\HandlePayment;
 use App\Livewire\Client\User\BookingDetail as UserBookingDetail;
 use App\Livewire\Test;
 
@@ -251,6 +252,8 @@ Route::name('client.')->group(function () {
             ->whereAlphaNumeric('bookingCode')->name('food');
         Route::get('/payment/{bookingCode}', BookingPayment::class)
             ->whereAlphaNumeric('bookingCode')->name('payment');
+        Route::get('/handle-payment/{bookingCode}', HandlePayment::class)
+            ->whereAlphaNumeric('bookingCode')->name('handle-payment');
     });
 });
 
