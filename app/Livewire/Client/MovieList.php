@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Movie;
 use App\Models\Genre;
+use App\Models\Banner;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Url;
@@ -78,6 +79,14 @@ class MovieList extends Component
             });
         })->where('age_restriction', '!=', 'C')->orderBy('created_at', 'desc')->paginate(20);
 
-        return view('livewire.client.movie-list', compact('movies', 'genres', 'topMovies', 'topEventMovie'));
+        // Lấy banner theo logic từ ClientBannerIndex
+        $banners = Banner::where('status', 'active')
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->orderBy('priority', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('livewire.client.movie-list', compact('movies', 'genres', 'topMovies', 'topEventMovie', 'banners'));
     }
 }

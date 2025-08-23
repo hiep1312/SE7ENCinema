@@ -2,23 +2,26 @@
     @vite('resources/css/movieList.css')
 @endassets
 <div class="scMovieList prz_main_wrapper scMovieList">
-    <div class="prs_title_main_sec_wrapper">
-        <div class="prs_title_img_overlay"></div>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <div class="prs_title_heading_wrapper">
-                        <h2>Danh Sách Phim</h2>
-                        <ul>
-                            <li><a href="{{ route('client.index') }}">Trang chủ <i class="fa fa-chevron-right"></i></a>
-                            </li>
-                            <li> <i class="fa fa-chevron-right"></i> Danh Sách Phim</li>
-                        </ul>
-                    </div>
+    <div class="prs_title_main_sec_wrapper" 
+     style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+             url('https://media.canva.com/v2/files/uri:ifs%3A%2F%2FM%2Fc36b55c4-973f-4678-ba6b-0e00cac174e8?csig=AAAAAAAAAAAAAAAAAAAAACCDi1HIF3Jm9xVDvPb6UH_cs-DSur6gvhsvWewSeOaE&exp=1755948760&signer=media-rpc&token=AAIAAU0AJGMzNmI1NWM0LTk3M2YtNDY3OC1iYTZiLTBlMDBjYWMxNzRlOAAAAAABmNazu8BsfuW98ebf4Hxzx2jEWQuz-OGpVkvsoEP5cvfeC8gmSw'); 
+            background-size: cover; 
+            background-position: center; 
+            padding: 50px 0;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="prs_title_heading_wrapper text-center text-white">
+                    <h2>Danh Sách Phim</h2>
+                    <ul>
+                        <li><a href="{{ route('client.index') }}">Trang chủ <i class="fa fa-chevron-right"></i></a></li>
+                        <li><i class="fa fa-chevron-right"></i> Danh Sách Phim</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
     <div class="prs_mc_slider_main_wrapper">
         <div class="container">
@@ -30,20 +33,32 @@
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="prs_mc_slider_wrapper">
-                        <div class="owl-carousel owl-theme">
-                            <div class="item">
-                                <img src="{{ asset('client/assets/images/content/movie_category/slider_img1.jpg') }}"
-                                    alt="about_img">
+                        @if($banners && $banners->count() > 0)
+                            <div class="owl-carousel owl-theme">
+                                @foreach($banners as $banner)
+                                    <div class="item">
+                                        <img src="{{ asset('storage/' . $banner->image) }}" 
+                                             alt="{{ $banner->title ?? 'Banner' }}"
+                                             style="width: 85%; height: 400px; object-fit: confit; margin: 0 auto;"> 
+                                    </div>
+                                @endforeach
                             </div>
-                            <div class="item">
-                                <img src="{{ asset('client/assets/images/content/movie_category/slider_img2.jpg') }}"
-                                    alt="about_img">
+                        @else
+                            <div class="owl-carousel owl-theme">
+                                <div class="item">
+                                    <img src="{{ asset('client/assets/images/content/movie_category/slider_img1.jpg') }}"
+                                        alt="about_img">
+                                </div>
+                                <div class="item">
+                                    <img src="{{ asset('client/assets/images/content/movie_category/slider_img2.jpg') }}"
+                                        alt="about_img">
+                                </div>
+                                <div class="item">
+                                    <img src="{{ asset('client/assets/images/content/movie_category/slider_img3.jpg') }}"
+                                        alt="about_img">
+                                </div>
                             </div>
-                            <div class="item">
-                                <img src="{{ asset('client/assets/images/content/movie_category/slider_img3.jpg') }}"
-                                    alt="about_img">
-                            </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -77,7 +92,7 @@
     </div>
 
     <div class="prs_mc_category_sidebar_main_wrapper">
-        <div class="container">
+        <div class="container" >
             <div class="row">
                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 hidden-sm hidden-xs">
                     <div class="prs_mcc_left_side_wrapper">
@@ -86,15 +101,15 @@
                                 class="border rounded-lg px-4 py-2 w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
                             <button><i class="flaticon-tool"></i></button>
                         </div>
-                        <div style="padding-top: 90px;" class="prs_mcc_bro_title_wrapper title-category">
+                        <div class="prs_mcc_bro_title_wrapper title-category">
                             <h2>Danh Mục Phim</h2>
                             <ul>
-                                <li><i class="fa fa-caret-right"></i> <a href="#"
+                                <li><i class="fa fa-caret-right"></i> <a href=""
                                         wire:click="$set('genreFilter', '')">Tất Cả
                                         <span>{{ $genres->count() }}</span></a></li>
                                 @foreach ($genres as $genre)
                                     <li><i class="fa fa-caret-right"></i> <a href="javascript:void(0)"
-                                            wire:click="$set('genreFilter', '{{ $genre->id }}')">{{ Str::limit($genre->name, 15) }}
+                                            wire:click="$set('genreFilter', '{{ $genre->id }}')">{{ $genre->name }}
                                             <span>{{ $genre->movies->count() ?? 0 }}</span></a>
                                     </li>
                                 @endforeach
@@ -138,96 +153,129 @@
                                 <div class="prs_mcc_right_side_heading_wrapper ICON">
                                     <h2>Danh Sách Phim</h2>
                                     <ul class="nav nav-pills">
-                                        <li class="active"><a data-toggle="pill" href="#coming_soon"><i
+                                        <li class="active"><a data-toggle="pill" href="javascrip:void(0)"><i
                                                     class="fa fa-th-large"></i></a></li>
-                                        <li><a data-toggle="pill" href="#list"><i class="fa fa-list"></i></a></li>
+                                        <li><a data-toggle="pill" href="javascrip:void(0)"><i class="fa fa-list"></i></a></li>
                                     </ul>
                                 </div>
                             </div>
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="tab-content">
-                                    <div id="coming_soon" class="tab-pane fade in active">
-                                        <div class="row-list">
-                                            @forelse ($movies as $movie)
-                                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 prs_upcom_slide_first"
-                                                    style="float: none;">
-                                                    <div class="prs_upcom_movie_box_wrapper prs_mcc_movie_box_wrapper">
-                                                        <div class="prs_upcom_movie_img_box movie-img-wrapper">
-                                                            <img src="{{ asset('storage/' . $movie->poster) }}"
-                                                                alt="{{ $movie->title }}"
-                                                                style="aspect-ratio: 4 / 5; object-fit: cover;">
-                                                            @php
-                                                                $age = strtoupper($movie->age_restriction);
-                                                            @endphp
-                                                            <span class="badge-age badge-age-{{ $age }}">
-                                                                {{ $age }}
-                                                            </span>
-
-                                                            <div class="prs_upcom_movie_img_overlay"></div>
-                                                            <div class="prs_upcom_movie_img_btn_wrapper">
-                                                                <ul>
-                                                                    @if ($movie->trailer_url)
-                                                                        <li><a href="{{ $movie->trailer_url }}"
-                                                                                target="_blank">Xem trailer</a></li>
-                                                                    @endif
-                                                                    <li><a href="{{ route('client.movie_detail', $movie->id) }}">Xem
-                                                                            chi tiết</a></li>
-                                                                </ul>
+                                    <div id="coming_soon" class="cinema-tab__content cinema-tab__content--active">
+                                        <div class="cinema-movie-list">
+                                           
+                                            <div class="movie-grid">
+                                                @forelse ($movies as $movie)
+                                                    <div class="movie-card">
+                                                        <div class="movie-card__container">
+                                                            <div class="movie-poster movie-img-wrapper">
+                                                                <img src="{{ asset('storage/' . $movie->poster) }}"
+                                                                     alt="{{ $movie->title }}"
+                                                                     class="movie-poster__image">
+                                                                @php
+                                                                    $age = strtoupper($movie->age_restriction);
+                                                                @endphp
+                                                                <span class="badge-age badge-age-{{ $age }}">
+                                                                    {{ $age }}
+                                                                </span>
+                                    
+                                                                <div class="movie-poster__overlay">
+                                                                    <div class="movie-actions">
+                                                                        <div class="movie-actions__list">
+                                                                            @if ($movie->trailer_url)
+                                                                                <a href="{{ $movie->trailer_url }}" 
+                                                                                   target="_blank" 
+                                                                                   class="movie-actions__button movie-actions__button--trailer">
+                                                                                    <i class="fas fa-play"></i>
+                                                                                    Trailer
+                                                                                </a>
+                                                                            @endif
+                                                                            <a href="{{ route('client.movie_detail', $movie->id) }}" 
+                                                                               class="movie-actions__button movie-actions__button--details">
+                                                                                <i class="fas fa-info-circle"></i>
+                                                                                Chi tiết
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="prs_upcom_movie_content_box">
-                                                            <div class="prs_upcom_movie_content_box_inner"
-                                                                style="width: 100% !important;">
-                                                                <h2 style="margin-top: 0;"><a
-                                                                        href="{{ route('client.movie_detail', $movie->id) }}">{{ $movie->title }}</a>
-                                                                </h2>
-                                                                <p>Thể loại: {{ Str::limit($movie->genres->pluck('name')->implode(', '), 20) }}</p>
-                                                                <p>Thời lượng: {{ $movie->duration }} phút</p>
-                                                                <p>Giá vé:
-                                                                    {{ number_format($movie->price, 0, ',', '.') }} VND
-                                                                </p>
-                                                                <p>
-                                                                    @for ($i = 1; $i <= 5; $i++)
-                                                                        @if ($movie->rating >= $i)
-                                                                            <i class="fa-solid fa-star-sharp"></i>
-                                                                        @elseif ($movie->rating >= $i - 0.5)
-                                                                            <i
-                                                                                class="fa-solid fa-star-half-stroke"></i>
-                                                                        @else
-                                                                            <i class="fa-regular fa-star-sharp"></i>
-                                                                        @endif
-                                                                    @endfor
-                                                                    ({{ number_format($movie->rating, 1) }}/5)
-                                                                </p>
+                                                            
+                                                            <div class="movie-info">
+                                                                <div class="movie-info__header">
+                                                                    <h3 class="movie-info__title">
+                                                                        <a href="{{ route('client.movie_detail', $movie->id) }}" 
+                                                                           class="movie-info__title-link">
+                                                                            {{ $movie->title }}
+                                                                        </a>
+                                                                    </h3>
+                                                                </div>
+                                                                
+                                                                <div class="movie-info__details">
+                                                                    <div class="movie-detail">
+                                                                        <span class="movie-detail__label">Thể loại:</span>
+                                                                        <span class="movie-detail__value">{{ $movie->genres->pluck('name')->implode(', ') }}</span>
+                                                                    </div>
+                                                                    
+                                                                    <div class="movie-detail">
+                                                                        <span class="movie-detail__label">Thời lượng:</span>
+                                                                        <span class="movie-detail__value">{{ $movie->duration }} phút</span>
+                                                                    </div>
+                                                                    
+                                                                    <div class="movie-detail">
+                                                                        <span class="movie-detail__label">Giá vé:</span>
+                                                                        <span class="movie-detail__value movie-detail__value--price">
+                                                                            {{ number_format($movie->price, 0, ',', '.') }} VND
+                                                                        </span>
+                                                                    </div>
+                                                                    
+                                                                    <div class="movie-rating">
+                                                                        <div class="movie-rating__stars">
+                                                                            @for ($i = 1; $i <= 5; $i++)
+                                                                                @if ($movie->rating >= $i)
+                                                                                    <i class="fas fa-star movie-rating__star movie-rating__star--filled"></i>
+                                                                                @elseif ($movie->rating >= $i - 0.5)
+                                                                                    <i class="fas fa-star-half-alt movie-rating__star movie-rating__star--half"></i>
+                                                                                @else
+                                                                                    <i class="far fa-star movie-rating__star movie-rating__star--empty"></i>
+                                                                                @endif
+                                                                            @endfor
+                                                                        </div>
+                                                                        <span class="movie-rating__score">({{ number_format($movie->rating, 1) }}/5)</span>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                <div class="booking-section">
+                                                                    @auth
+                                                                        <a href="{{ route('client.movieBooking.movie', $movie->id) }}"
+                                                                           class="booking-button booking-button--primary">
+                                                                            <i class="fas fa-ticket-alt"></i>
+                                                                            Mua Vé Ngay
+                                                                        </a>
+                                                                    @else
+                                                                        <a href="{{ route('login') }}"
+                                                                           wire:confirm.confirm="Vui lòng đăng nhập để mua vé"
+                                                                           class="booking-button booking-button--primary">
+                                                                            <i class="fas fa-sign-in-alt"></i>
+                                                                            Đăng Nhập Để Mua Vé
+                                                                        </a>
+                                                                    @endauth
+                                                                </div>
                                                             </div>
-                                                            <div class="booking-button-container"
-                                                                style="text-align: center; margin-top: 20px;">
-                                                                @auth
-                                                                    <a href="{{ route('client.movieBooking.movie', $movie->id) }}"
-                                                                        class="btn btn-primary"
-                                                                        style="background-color: #e50914; border: none; padding: 10px 20px; font-size: 14px; color: white; text-transform: uppercase; width: 100%; border-radius: 5px; font-weight: bold; margin-top: 10px;">
-                                                                        Mua Vé Ngay
-                                                                    </a>
-                                                                @else
-                                                                    <a href="{{ route('login') }}"
-                                                                        wire:confirm.confirm="Vui lòng đăng nhập để mua vé"
-                                                                        class="btn btn-primary"
-                                                                        style="background-color: #e50914; border: none; padding: 10px 20px; font-size: 16px; color: white; text-transform: uppercase;">
-                                                                        Mua Vé Ngay
-                                                                    </a>
-                                                                @endauth
-                                                            </div>
-
                                                         </div>
                                                     </div>
-                                                </div>
-                                            @empty
-                                                <div
-                                                    class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center text-gray-500 py-8">
-                                                    Không có phim nào phù hợp với bộ lọc hiện tại.
-                                                </div>
-                                            @endforelse
+                                                @empty
+                                                    <div class="empty-state">
+                                                        <div class="empty-state__icon">
+                                                            <i class="fas fa-film"></i>
+                                                        </div>
+                                                        <p class="empty-state__message">
+                                                            Không có phim nào phù hợp với bộ lọc hiện tại.
+                                                        </p>
+                                                    </div>
+                                                @endforelse
+                                            </div>
                                         </div>
+                                        
                                         {{-- <div style="clear: both;"></div> --}}
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <ul class="sc-pagination ">
@@ -235,45 +283,37 @@
                                                 <li>
                                                     <button class="sc-page sc-page--arrow"
                                                         wire:click="gotoPage({{ max(1, $movies->currentPage() - 1) }})">
-                                                        <span
-                                                            style=" display: flex; align-items: center; justify-content: center;">&larr;</span>
+                                                        <span style=" display: flex; align-items: center; justify-content: center;">&larr;</span>
                                                     </button>
                                                 </li>
                                                 @php
                                                     $start = max(1, $movies->currentPage() - 2);
                                                     $end = min($movies->lastPage(), $movies->currentPage() + 2);
                                                 @endphp
-                                                @if ($start > 1)
-                                                    <li><button class="sc-page" wire:click="gotoPage(1)">1</button>
-                                                    </li>
-                                                    @if ($start > 2)
-                                                        <li><span class="sc-page sc-page--disabled"
-                                                                style="cursor: default;">...</span></li>
+                                                @if($start > 1)
+                                                    <li><button class="sc-page" wire:click="gotoPage(1)">1</button></li>
+                                                    @if($start > 2)
+                                                        <li><span class="sc-page sc-page--disabled" style="cursor: default;">...</span></li>
                                                     @endif
                                                 @endif
                                                 @for ($page = $start; $page <= $end; $page++)
                                                     <li>
-                                                        <button
-                                                            class="sc-page{{ $page == $movies->currentPage() ? ' sc-page--active' : '' }}"
+                                                        <button class="sc-page{{ $page == $movies->currentPage() ? ' sc-page--active' : '' }}"
                                                             wire:click="gotoPage({{ $page }})">
                                                             {{ $page }}
                                                         </button>
                                                     </li>
                                                 @endfor
-                                                @if ($end < $movies->lastPage())
-                                                    @if ($end < $movies->lastPage() - 1)
-                                                        <li><span class="sc-page sc-page--disabled"
-                                                                style="cursor: default;">...</span></li>
+                                                @if($end < $movies->lastPage())
+                                                    @if($end < $movies->lastPage() - 1)
+                                                        <li><span class="sc-page sc-page--disabled" style="cursor: default;">...</span></li>
                                                     @endif
-                                                    <li><button class="sc-page"
-                                                            wire:click="gotoPage({{ $movies->lastPage() }})">{{ $movies->lastPage() }}</button>
-                                                    </li>
+                                                    <li><button class="sc-page" wire:click="gotoPage({{ $movies->lastPage() }})">{{ $movies->lastPage() }}</button></li>
                                                 @endif
                                                 <li>
                                                     <button class="sc-page sc-page--arrow"
                                                         wire:click="gotoPage({{ min($movies->lastPage(), $movies->currentPage() + 1) }})">
-                                                        <span
-                                                            style="font-size: 1.3em; display: flex; align-items: center; justify-content: center;">&rarr;</span>
+                                                        <span style="font-size: 1.3em; display: flex; align-items: center; justify-content: center;">&rarr;</span>
                                                     </button>
                                                 </li>
                                             </ul>
@@ -334,8 +374,8 @@
                                             </div>
                                         </div>
                                         <div class="prs_upcom_movie_content_box">
-                                            <div class="prs_upcom_movie_content_box_inner" style="width: 100%;">
-                                                <h2><a style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; display: block; width: 100%;"
+                                            <div class="prs_upcom_movie_content_box_inner">
+                                                <h2><a style="display: block; width: 100%; line-clamp: 10px;"
                                                         href="{{ route('client.movieBooking.movie', $movie->id) }}">{{ $movie->title }}</a>
                                                 </h2>
                                                 <p
@@ -355,8 +395,7 @@
                                             </div>
                                             <div class="prs_upcom_movie_content_box_inner_icon">
                                                 <ul>
-                                                    <li><a
-                                                            href="{{ route('client.movieBooking.movie', $movie->id) }}"><i
+                                                    <li><a href="{{ route('client.movieBooking.movie', $movie->id) }}"><i
                                                                 class="flaticon-cart-of-ecommerce"></i></a></li>
                                                 </ul>
                                             </div>

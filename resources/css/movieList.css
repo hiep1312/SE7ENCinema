@@ -1,179 +1,179 @@
 /* Modern Age Restriction Badges - Professional Design */
 .badge-age {
-    display: inline-block !important;
-    min-width: 46px !important;
-    max-width: 70px !important;
-    height: 32px !important;
-    padding: 0 !important;
-    font-size: 0.95rem !important;
-    font-weight: 900 !important;
-    border-radius: 4px !important;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
-    border: none !important;
-    letter-spacing: 0.3px !important;
-    text-align: center !important;
-    vertical-align: middle !important;
-    color: #fff !important;
-    background: #bdbdbd !important;
-    position: relative !important;
-    z-index: 15 !important;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    text-transform: uppercase !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    line-height: 1 !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    display: inline-block ;
+    min-width: 46px ;
+    max-width: 70px ;
+    height: 32px ;
+    padding: 0 ;
+    font-size: 0.95rem ;
+    font-weight: 900 ;
+    border-radius: 4px ;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) ;
+    border: none ;
+    letter-spacing: 0.3px ;
+    text-align: center ;
+    vertical-align: middle ;
+    color: #fff ;
+    background: #bdbdbd ;
+    position: relative ;
+    z-index: 15 ;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) ;
+    text-transform: uppercase ;
+    display: flex ;
+    align-items: center ;
+    justify-content: center ;
+    line-height: 1 ;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) ;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif ;
 }
 
 /* Hover Effects */
 .badge-age:hover {
-    transform: translateY(-1px) scale(1.03) !important;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
+    transform: translateY(-1px) scale(1.03) ;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) ;
 }
 
 /* P - All Ages - Deep Blue */
 .badge-age-P {
-    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
-    box-shadow: 0 2px 6px rgba(25, 118, 210, 0.35) !important;
+    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) ;
+    box-shadow: 0 2px 6px rgba(25, 118, 210, 0.35) ;
 }
 
 .badge-age-P:hover {
-    background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%) !important;
-    box-shadow: 0 4px 10px rgba(25, 118, 210, 0.5) !important;
+    background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%) ;
+    box-shadow: 0 4px 10px rgba(25, 118, 210, 0.5) ;
 }
 
 /* K - Kids with Adult - Light Blue */
 .badge-age-K {
-    background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%) !important;
-    box-shadow: 0 2px 6px rgba(100, 181, 246, 0.35) !important;
+    background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%) ;
+    box-shadow: 0 2px 6px rgba(100, 181, 246, 0.35) ;
 }
 
 .badge-age-K:hover {
-    background: linear-gradient(135deg, #42a5f5 0%, #2196f3 100%) !important;
-    box-shadow: 0 4px 10px rgba(100, 181, 246, 0.5) !important;
+    background: linear-gradient(135deg, #42a5f5 0%, #2196f3 100%) ;
+    box-shadow: 0 4px 10px rgba(100, 181, 246, 0.5) ;
 }
 
 /* T13 - 13+ Years - Orange */
 .badge-age-T13 {
-    background: linear-gradient(135deg, #e22ca6 0%, #e22ca6 100%) !important;
-    box-shadow: 0 2px 6px rgba(255, 179, 0, 0.35) !important;
+    background: linear-gradient(135deg, #e22ca6 0%, #e22ca6 100%) ;
+    box-shadow: 0 2px 6px rgba(255, 179, 0, 0.35) ;
 }
 
 .badge-age-T13:hover {
-    background: linear-gradient(135deg, #e22ca6 0%, #e22ca6 100%) !important;
-    box-shadow: 0 4px 10px rgba(255, 179, 0, 0.5) !important;
+    background: linear-gradient(135deg, #e22ca6 0%, #e22ca6 100%) ;
+    box-shadow: 0 4px 10px rgba(255, 179, 0, 0.5) ;
 }
 
 /* T16 - 16+ Years - Golden Yellow like image */
 .badge-age-T16 {
-    background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%) !important;
-    box-shadow: 0 2px 6px rgba(255, 193, 7, 0.35) !important;
-    color: #fff !important;
+    background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%) ;
+    box-shadow: 0 2px 6px rgba(255, 193, 7, 0.35) ;
+    color: #fff ;
 }
 
 .badge-age-T16:hover {
-    background: linear-gradient(135deg, #ffb300 0%, #ffa000 100%) !important;
-    box-shadow: 0 4px 10px rgba(255, 193, 7, 0.5) !important;
+    background: linear-gradient(135deg, #ffb300 0%, #ffa000 100%) ;
+    box-shadow: 0 4px 10px rgba(255, 193, 7, 0.5) ;
 }
 
 /* T18 - 18+ Years - Pink/Rose like image */
 .badge-age-T18 {
-    background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%) !important;
-    box-shadow: 0 2px 6px rgba(233, 30, 99, 0.35) !important;
-    color: #fff !important;
+    background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%) ;
+    box-shadow: 0 2px 6px rgba(233, 30, 99, 0.35) ;
+    color: #fff ;
 }
 
 .badge-age-T18:hover {
-    background: linear-gradient(135deg, #c2185b 0%, #ad1457 100%) !important;
-    box-shadow: 0 4px 10px rgba(233, 30, 99, 0.5) !important;
+    background: linear-gradient(135deg, #c2185b 0%, #ad1457 100%) ;
+    box-shadow: 0 4px 10px rgba(233, 30, 99, 0.5) ;
 }
 
 /* C - Banned Content - Gray with Warning */
 .badge-age-C {
-    background: linear-gradient(135deg, #9e9e9e 0%, #757575 100%) !important;
-    box-shadow: 0 2px 6px rgba(158, 158, 158, 0.35) !important;
-    color: #fff !important;
-    text-decoration: line-through !important;
-    position: relative !important;
+    background: linear-gradient(135deg, #9e9e9e 0%, #757575 100%) ;
+    box-shadow: 0 2px 6px rgba(158, 158, 158, 0.35) ;
+    color: #fff ;
+    text-decoration: line-through ;
+    position: relative ;
 }
 
 .badge-age-C:hover {
-    background: linear-gradient(135deg, #757575 0%, #616161 100%) !important;
-    box-shadow: 0 4px 10px rgba(158, 158, 158, 0.5) !important;
+    background: linear-gradient(135deg, #757575 0%, #616161 100%) ;
+    box-shadow: 0 4px 10px rgba(158, 158, 158, 0.5) ;
 }
 
 /* Warning icon for C rating */
 .badge-age-C::after {
-    content: "⚠" !important;
-    position: absolute !important;
-    top: -4px !important;
-    right: -4px !important;
-    font-size: 0.6rem !important;
-    background: #ff5722 !important;
-    border-radius: 50% !important;
-    width: 12px !important;
-    height: 12px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    box-shadow: 0 1px 3px rgba(255, 87, 34, 0.4) !important;
-    text-decoration: none !important;
+    content: "⚠" ;
+    position: absolute ;
+    top: -4px ;
+    right: -4px ;
+    font-size: 0.6rem ;
+    background: #ff5722 ;
+    border-radius: 50% ;
+    width: 12px ;
+    height: 12px ;
+    display: flex ;
+    align-items: center ;
+    justify-content: center ;
+    box-shadow: 0 1px 3px rgba(255, 87, 34, 0.4) ;
+    text-decoration: none ;
 }
 
 /* Enhanced positioning for movie cards */
 .movie-img-wrapper .badge-age {
-    position: absolute !important;
-    top: 8px !important;
-    left: 8px !important;
-    z-index: 20 !important;
-    margin: 0 !important;
+    position: absolute ;
+    top: 8px ;
+    left: 8px ;
+    z-index: 20 ;
+    margin: 0 ;
 }
 
 /* Premium shine effect */
 .badge-age::before {
-    content: "" !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: -100% !important;
-    width: 100% !important;
-    height: 100% !important;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent) !important;
-    transition: left 0.5s !important;
-    border-radius: 4px !important;
+    content: "" ;
+    position: absolute ;
+    top: 0 ;
+    left: -100% ;
+    width: 100% ;
+    height: 100% ;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent) ;
+    transition: left 0.5s ;
+    border-radius: 4px ;
 }
 
 .badge-age:hover::before {
-    left: 100% !important;
+    left: 100% ;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .badge-age {
-        min-width: 32px !important;
-        max-width: 44px !important;
-        height: 20px !important;
-        font-size: 0.8rem !important;
+        min-width: 32px ;
+        max-width: 44px ;
+        height: 20px ;
+        font-size: 0.8rem ;
     }
 
     .movie-img-wrapper .badge-age {
-        top: 6px !important;
-        left: 6px !important;
+        top: 6px ;
+        left: 6px ;
     }
 }
 
 @media (max-width: 480px) {
     .badge-age {
-        min-width: 30px !important;
-        max-width: 40px !important;
-        height: 18px !important;
-        font-size: 0.75rem !important;
+        min-width: 30px ;
+        max-width: 40px ;
+        height: 18px ;
+        font-size: 0.75rem ;
     }
 
     .movie-img-wrapper .badge-age {
-        top: 5px !important;
-        left: 5px !important;
+        top: 5px ;
+        left: 5px ;
     }
 }
 
@@ -191,13 +191,13 @@
 }
 
 .badge-age {
-    animation: badgeSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    animation: badgeSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) ;
 }
 
 /* Focus states for accessibility */
 .badge-age:focus {
-    outline: 2px solid rgba(255, 255, 255, 0.6) !important;
-    outline-offset: 1px !important;
+    outline: 2px solid rgba(255, 255, 255, 0.6) ;
+    outline-offset: 1px ;
 }
 
 .ICON ul{
@@ -236,10 +236,10 @@
 /* Print styles */
 @media print {
     .badge-age {
-        background: #333 !important;
-        color: #fff !important;
-        box-shadow: none !important;
-        border: 1px solid #333 !important;
+        background: #333 ;
+        color: #fff ;
+        box-shadow: none ;
+        border: 1px solid #333 ;
     }
 }
 
@@ -338,3 +338,391 @@
         width: 100%;
     }
 }
+/* Cinema Tab Content */
+.cinema-tab__content {
+    padding: 2rem 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .cinema-tab__content--active {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  /* Movie Grid */
+  .movie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 0 1rem;
+  }
+  
+  @media (max-width: 768px) {
+    .movie-grid {
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .movie-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+  }
+  
+  /* Movie Card */
+  .movie-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+  }
+  
+  .movie-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  }
+  
+  .movie-card__container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Movie Poster */
+  .movie-poster {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  
+  .movie-poster__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .movie-card:hover .movie-poster__image {
+    transform: scale(1.05);
+  }
+  
+  /* Age Badge */
+  .age-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+    z-index: 2;
+    text-transform: uppercase;
+  }
+  
+  .age-badge--p {
+    background: linear-gradient(135deg, #4caf50, #45a049);
+  }
+  
+  .age-badge--k {
+    background: linear-gradient(135deg, #2196f3, #1976d2);
+  }
+  
+  .age-badge--t13 {
+    background: linear-gradient(135deg, #ff9800, #f57c00);
+  }
+  
+  .age-badge--t16 {
+    background: linear-gradient(135deg, #ff5722, #d84315);
+  }
+  
+  .age-badge--t18 {
+    background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+  }
+  
+  /* Movie Poster Overlay */
+  .movie-poster__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.8) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  
+  .movie-card:hover .movie-poster__overlay {
+    opacity: 1;
+  }
+  
+  /* Movie Actions */
+  .movie-actions__list {
+    display: flex;
+    gap: 0.75rem;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+  }
+  
+  .movie-card:hover .movie-actions__list {
+    transform: translateY(0);
+  }
+  
+  .movie-actions__button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+  
+  .movie-actions__button:hover {
+    background: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    color: #333;
+    text-decoration: none;
+  }
+  
+  .movie-actions__button--trailer:hover {
+    color: #e50914;
+  }
+  
+  .movie-actions__button--details:hover {
+    color: #1976d2;
+  }
+  
+  /* Movie Info */
+  .movie-info {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .movie-info__header {
+    margin-bottom: 1rem;
+  }
+  
+  .movie-info__title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #1a1a1a;
+  }
+  
+  .movie-info__title-link {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .movie-info__title-link:hover {
+    color: #e50914;
+    text-decoration: none;
+  }
+  
+  /* Movie Details */
+  .movie-info__details {
+    flex: 1;
+    margin-bottom: 1.5rem;
+  }
+  
+  .movie-detail {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+    font-size: 14px;
+  }
+  
+  .movie-detail__label {
+    color: #666;
+    font-weight: 500;
+    min-width: 80px;
+  }
+  
+  .movie-detail__value {
+    color: #333;
+    font-weight: 600;
+    text-align: right;
+    flex: 1;
+  }
+  
+  .movie-detail__value--price {
+    color: #e50914;
+    font-weight: 700;
+    font-size: 16px;
+  }
+  
+  /* Movie Rating */
+  .movie-rating {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f0f0f0;
+  }
+  .prs_mc_slider_main_wrapper{
+    padding: 10px;
+  }
+  .prs_heading_section_wrapper{
+    padding-top: 30px;
+  }
+  .prs_upcome_tabs_wrapper{
+    padding-bottom: 40px;
+  }
+  .movie-rating__stars {
+    display: flex;
+    gap: 2px;
+  }
+  
+  .movie-rating__star {
+    font-size: 16px;
+    transition: transform 0.2s ease;
+  }
+  
+  .movie-rating__star--filled {
+    color: #ffc107;
+  }
+  
+  .movie-rating__star--half {
+    color: #ffc107;
+  }
+  
+  .movie-rating__star--empty {
+    color: #ff4444;
+  }
+  
+  .movie-rating__score {
+    font-size: 14px;
+    color: #666;
+    font-weight: 600;
+  }
+  
+  /* Booking Section */
+  .booking-section {
+    margin-top: auto;
+  }
+  
+  .booking-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .booking-button--primary {
+    background: linear-gradient(135deg, #e50914 0%, #b8070f 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(229, 9, 20, 0.3);
+  }
+  
+  .booking-button--primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(229, 9, 20, 0.4);
+    color: white;
+    text-decoration: none;
+  }
+  
+  .booking-button--primary:active {
+    transform: translateY(0);
+  }
+  
+  /* Empty State */
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #666;
+  }
+  
+  .empty-state__icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+  
+  .empty-state__message {
+    font-size: 1.125rem;
+    margin: 0;
+    font-weight: 500;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 480px) {
+    .movie-info {
+      padding: 1rem;
+    }
+  
+    .movie-info__title {
+      font-size: 1.125rem;
+    }
+  
+    .movie-detail {
+      font-size: 13px;
+    }
+  
+    .booking-button {
+      padding: 0.875rem;
+      font-size: 14px;
+    }
+  
+    .movie-actions__list {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  
+    .movie-actions__button {
+      padding: 0.5rem 0.75rem;
+      font-size: 13px;
+    }
+  }
+  
+  /* Loading Animation */
+  @keyframes shimmer {
+    0% {
+      background-position: -200px 0;
+    }
+    100% {
+      background-position: calc(200px + 100%) 0;
+    }
+  }
+  
+  .movie-card.loading {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200px 100%;
+    animation: shimmer 1.5s infinite;
+  }
+  
