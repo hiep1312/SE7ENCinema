@@ -95,7 +95,7 @@
                         <div class="row">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="tab-content">
-                                    <div id="coming_soon" class="tab-pane fade in active">
+                                    <div id="coming_soon" class="tab-pane in active">
                                         <div class="row">
                                             @forelse ($movies as $movie)
                                                 <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 prs_upcom_slide_first">
