@@ -208,6 +208,36 @@
             @if ($tabCurrent === 'analytics')
                 <div class="container-fluid">
                     <div class="row g-4">
+                        <div class="col-12 px-4">
+                    <div class="border rounded-3 p-3 bg-dark shadow-lg">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="text-white mb-0">
+                                <i class="fa-regular fa-filter me-2"></i>Bộ lọc
+                            </h5>
+                        </div>
+
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label class="form-label"><i class="mdi mdi-calendar-start me-2"></i>Từ ngày</label>
+                                <input wire:model.live='fromDate' type="date" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="mdi mdi-clock-time-four me-2"></i>Khoảng thời gian
+                                </label>
+                                <div class="input-group">
+                                    <select wire:model.live='rangeDays' class="form-select flex-grow-1">
+                                        <option value="3 days">Chọn</option>
+                                        <option value="2 days">2 ngày</option>
+                                        <option value="3 days">3 ngày</option>
+                                        <option value="7 days">7 ngày</option>
+                                        <option value="15 days">15 ngày</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                         <div class="col-6">
                             <div class="bg-dark mb-3" style="color: black;">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -995,8 +1025,5 @@
         {!! $chartRoomOccupancyData->compileJavascript() !!}
         {!! $chartRoomSeatStatusData->compileJavascript() !!}
         {!! $chartRoomMoviesData->compileJavascript() !!}
-
-        Livewire.on('updateData', function([$occupancyData, $seatStatusData, $roomStatsData, $roomMoviesData]) {
-        });
     </script>
 @endscript

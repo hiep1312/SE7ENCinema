@@ -90,13 +90,9 @@ class Dashboard extends Component
         $lastMonthStart = Carbon::now()->subMonth()->startOfMonth();
         $lastMonthEnd = Carbon::now()->subMonth()->endOfMonth();
 
-        $rangeDays = (int) $this->rangeDays;
-        $fromDate = $this->fromDate ? Carbon::parse($this->fromDate) : Carbon::now()->subDays($rangeDays);
-        $toDate = $fromDate->copy()->addDays($rangeDays);
-
         // Đếm phim có status = 'showing'
         $this->totalMoviesShowing = Movie::where('status', 'showing')
-            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->whereBetween('created_at', [$currentMonthStart, $currentMonthEnd])
             ->count();
 
         // Phim đang chiếu trong tháng trước
@@ -196,6 +192,7 @@ class Dashboard extends Component
                 'topFoods' => $topFoods,
                 'seatsAnalysis' => $seatsAnalysis,
                 'showtimeTimeSlot' => $showtimeTimeSlot,
+
                 'totalMoviesShowing' => $this->totalMoviesShowing,
                 'moviesShowingGrowthPercent' => $this->moviesShowingGrowthPercent,
                 'totalRevenueThisYear' => $this->totalRevenueThisYear,

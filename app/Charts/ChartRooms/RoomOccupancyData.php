@@ -4,6 +4,7 @@ namespace App\Charts\ChartRooms;
 
 use App\Models\BookingSeat;
 use App\Models\Showtime;
+use Carbon\Carbon;
 
 class RoomOccupancyData
 {
@@ -14,10 +15,16 @@ class RoomOccupancyData
     {
         $this->room = $room;
     }
-    protected function queryData(?string $filter = null)
+    protected function queryData(?array $filter = null)
     {
-        $startDate = now()->subDays(2)->startOfDay();
-        $endDate = now()->endOfDay();
+        is_array($filter) && [$fromDate, $rangeDays] = $filter;
+        $rangeDays = (int) $rangeDays;
+        $fromDate = $fromDate ? Carbon::parse($fromDate) : Carbon::now()->subDays($rangeDays);
+        $toDate = $fromDate->copy()->addDays($rangeDays);
+
+        $startDate = $fromDate->copy()->startOfDay();
+        $endDate = $toDate->copy()->endOfDay();
+
 
         $totalBooked = BookingSeat::join('bookings', 'booking_seats.booking_id', '=', 'bookings.id')
             ->join('showtimes', 'bookings.showtime_id', '=', 'showtimes.id')
@@ -41,7 +48,7 @@ class RoomOccupancyData
         ];
     }
 
-    public function loadData(?string $filter = null)
+    public function loadData(?array $filter = null)
     {
         $this->data = $this->queryData($filter);
     }

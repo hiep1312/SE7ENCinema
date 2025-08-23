@@ -19,6 +19,8 @@ class RoomDetail extends Component
     use WithPagination, scChart;
     public $room;
     public $tabCurrent = 'analytics';
+    public $fromDate;
+    public $rangeDays;
 
     public $totalShowtimes = 0;
     public $averageUtilization = 0;
@@ -49,6 +51,8 @@ class RoomDetail extends Component
 
     public function mount(int $room)
     {
+        $this->fromDate = Carbon::now()->subDays(3)->format('Y-m-d');
+        $this->rangeDays = '3 days';
         $this->room = Room::with([
             'seats',
             'showtimes' => function ($query) {
@@ -136,19 +140,17 @@ class RoomDetail extends Component
     public function render()
     {
         $chartRoomStatsData = new RoomStatsData($this->room);
-        $chartRoomStatsData->loadData();
-        $this->realtimeUpdateCharts($chartRoomStatsData);
-
         $chartRoomOccupancyData = new RoomOccupancyData($this->room);
-        $this->realtimeUpdateCharts($chartRoomOccupancyData);
-
         $chartRoomSeatStatusData = new RoomSeatStatusData($this->room);
-        $this->realtimeUpdateCharts($chartRoomSeatStatusData);
-
         $chartRoomMoviesData = new RoomMoviesData($this->room);
-        $chartRoomMoviesData->loadData();
-        $this->realtimeUpdateCharts($chartRoomMoviesData);
 
+        $this->realtimeUpdateCharts(
+            [$chartRoomStatsData, [$this->fromDate, $this->rangeDays]],
+            [$chartRoomOccupancyData, [$this->fromDate, $this->rangeDays]],
+            [$chartRoomSeatStatusData, [$this->fromDate, $this->rangeDays]],
+            [$chartRoomMoviesData, [$this->fromDate, $this->rangeDays]]
+        );
+        
         $recentShowtimes = $this->room->showtimes()
             ->with('movie')
             ->where('start_time', '<=', now())
@@ -165,13 +167,6 @@ class RoomDetail extends Component
         $this->loadChartData();
 
         $this->calculateMaintenanceInfo();
-
-        ($this->tabCurrent === "analytics" || ($this->js('chartInstances = {}') || false)) && $this->dispatch('updateData',
-            $this->occupancyData ?? [],
-            $this->seatStatusData ?? [],
-            $this->roomStatsData ?? [],
-            $this->roomMoviesData ?? []
-        );
 
         return view('livewire.admin.rooms.room-detail', compact('recentShowtimes', 'upcomingShowtimes', 'chartRoomStatsData', 'chartRoomOccupancyData', 'chartRoomSeatStatusData', 'chartRoomMoviesData'));
     }

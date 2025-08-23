@@ -3,6 +3,7 @@
 namespace App\Charts\ChartRooms;
 
 use App\Models\Seat;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class RoomMoviesData
@@ -15,10 +16,15 @@ class RoomMoviesData
         $this->room = $room;
     }
 
-    protected function queryData(?string $filter = null)
+    protected function queryData(?array $filter = null)
     {
-        $startDate = now()->subDays(2)->startOfDay();
-        $endDate = now()->endOfDay();
+        is_array($filter) && [$fromDate, $rangeDays] = $filter;
+        $rangeDays = (int) $rangeDays;
+        $fromDate = $fromDate ? Carbon::parse($fromDate) : Carbon::now()->subDays($rangeDays);
+        $toDate = $fromDate->copy()->addDays($rangeDays);
+
+        $startDate = $fromDate->copy()->startOfDay();
+        $endDate = $toDate->copy()->endOfDay();
 
         $data = Seat::select(
             'seats.seat_type',
@@ -36,7 +42,6 @@ class RoomMoviesData
             ->groupBy('seats.seat_type')
             ->orderBy('revenue', 'desc')
             ->get();
-
         if ($data->isEmpty()) {
             return [
                 'labels' => ['Không có dữ liệu'],
@@ -73,7 +78,7 @@ class RoomMoviesData
         ];
     }
 
-    public function loadData(?string $filter = null)
+    public function loadData(?array $filter = null)
     {
         $this->data = $this->queryData($filter);
     }

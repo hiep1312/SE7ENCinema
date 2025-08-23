@@ -278,45 +278,9 @@
                                         
                                         {{-- <div style="clear: both;"></div> --}}
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <ul class="sc-pagination ">
-                                                {{-- Previous Page --}}
-                                                <li>
-                                                    <button class="sc-page sc-page--arrow"
-                                                        wire:click="gotoPage({{ max(1, $movies->currentPage() - 1) }})">
-                                                        <span style=" display: flex; align-items: center; justify-content: center;">&larr;</span>
-                                                    </button>
-                                                </li>
-                                                @php
-                                                    $start = max(1, $movies->currentPage() - 2);
-                                                    $end = min($movies->lastPage(), $movies->currentPage() + 2);
-                                                @endphp
-                                                @if($start > 1)
-                                                    <li><button class="sc-page" wire:click="gotoPage(1)">1</button></li>
-                                                    @if($start > 2)
-                                                        <li><span class="sc-page sc-page--disabled" style="cursor: default;">...</span></li>
-                                                    @endif
-                                                @endif
-                                                @for ($page = $start; $page <= $end; $page++)
-                                                    <li>
-                                                        <button class="sc-page{{ $page == $movies->currentPage() ? ' sc-page--active' : '' }}"
-                                                            wire:click="gotoPage({{ $page }})">
-                                                            {{ $page }}
-                                                        </button>
-                                                    </li>
-                                                @endfor
-                                                @if($end < $movies->lastPage())
-                                                    @if($end < $movies->lastPage() - 1)
-                                                        <li><span class="sc-page sc-page--disabled" style="cursor: default;">...</span></li>
-                                                    @endif
-                                                    <li><button class="sc-page" wire:click="gotoPage({{ $movies->lastPage() }})">{{ $movies->lastPage() }}</button></li>
-                                                @endif
-                                                <li>
-                                                    <button class="sc-page sc-page--arrow"
-                                                        wire:click="gotoPage({{ min($movies->lastPage(), $movies->currentPage() + 1) }})">
-                                                        <span style="font-size: 1.3em; display: flex; align-items: center; justify-content: center;">&rarr;</span>
-                                                    </button>
-                                                </li>
-                                            </ul>
+                                            <div class="prs_pagination_wrapper">
+                                                {{ $movies->links() }}
+                                            </div>
                                         </div>
                                     </div>
                                     <!-- List View (Placeholder) -->

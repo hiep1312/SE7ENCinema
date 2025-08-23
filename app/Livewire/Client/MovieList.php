@@ -77,9 +77,8 @@ class MovieList extends Component
             $query->whereHas('genres', function ($q) {
                 $q->where('genres.id', $this->genreFilter);
             });
-        })->where('age_restriction', '!=', 'C')->orderBy('created_at', 'desc')->paginate(20);
+        })->where('age_restriction', '!=', 'C')->orderBy('created_at', 'desc')->paginate(12);
 
-        // Lấy banner theo logic từ ClientBannerIndex
         $banners = Banner::where('status', 'active')
             ->where('start_date', '<=', now())
             ->where('end_date', '>=', now())

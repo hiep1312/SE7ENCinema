@@ -611,7 +611,7 @@
                                 <div class="input-group">
                                     <select wire:model.live='rangeDays' class="form-select flex-grow-1">
                                         <option value="3 days">Chọn</option>
-                                        <option value="1 days">1 ngày</option>
+                                        <option value="2 days">2 ngày</option>
                                         <option value="3 days">3 ngày</option>
                                         <option value="7 days">7 ngày</option>
                                         <option value="15 days">15 ngày</option>

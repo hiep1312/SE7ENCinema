@@ -165,74 +165,83 @@
                                 $visibleComments = $comments->slice($start, $commentsPerPage);
                             @endphp
                             <div class="comments-list">
-                            @forelse($visibleComments as $comment)
-                                <div class="comment-item">
-                                    <div class="comment-row">
-                                        <div class="comment-avatar-col">
-                                        @if(!empty($comment->user->avatar_url))
-                                            <img class="comment-avatar" src="{{ $comment->user->avatar_url }}" alt="">
-                                        @else
-                                            <div class="comment-avatar">
-                                                <svg viewBox="0 0 24 24" width="100%" height="100%" fill="#bbb" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="5"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7"/></svg>
+                                @forelse($visibleComments as $comment)
+                                    <div class="comment-item">
+                                        <div class="comment-row">
+                                            <div class="comment-avatar-col">
+                                                @if(!empty($comment->user->avatar))
+                                                    <img class="comment-avatar" src="{{ asset('storage/' . $comment->user->avatar) }}" alt="{{ $comment->user->name }}">
+                                                @else
+                                                    <div class="comment-avatar">
+                                                        <svg viewBox="0 0 24 24" width="100%" height="100%" fill="#bbb" xmlns="http://www.w3.org/2000/svg">
+                                                            <circle cx="12" cy="8" r="5"/>
+                                                            <path d="M4 20c0-4 4-7 8-7s8 3 8 7"/>
+                                                        </svg>
+                                                    </div>
+                                                @endif
                                             </div>
-                                        @endif
-                                        </div>
-                                        <div class="comment-main-col">
-                                            <div class="comment-user-row">
-                                            <span class="comment-user">{{ $comment->user->name ?? 'Ẩn danh' }}</span>
-                                            @if(str_contains(strtolower($comment->user->name ?? ''), 'love'))
-                                                <span class="comment-user-icon">💕</span>
-                                            @endif
-                                        </div>
-                                            @php
-                                                $commentWords = str_word_count(strip_tags($comment->content));
-                                                $showFull = $showMoreComments[$comment->id] ?? false;
-                                            @endphp
-                                    @if($editingComment === $comment->id)
-                                                <form wire:submit.prevent="updateComment" style="margin-top:12px;">
-                                            <textarea wire:model.defer="editCommentContent" rows="2" class="form-control comment-input" placeholder="Sửa bình luận..." style="resize: none;"></textarea>
-                                            @error('editCommentContent') <div class="text-danger">{{ $message }}</div> @enderror
-                                            <div style="margin-top:8px;">
-                                                <button type="submit" class="btn-edit" style="background:none;border:none;color:#888;font-size:1rem;padding:0 12px 0 0;cursor:pointer;">Cập nhật</button>
-                                                <button type="button" class="btn-delete" style="background:none;border:none;color:#888;font-size:1rem;padding:0;cursor:pointer;" wire:click="cancelEditComment">Hủy</button>
-                                            </div>
-                                        </form>
-                                    @else
-                                                <div class="comment-content">
-                                                    @if($commentWords > 50 && !$showFull)
-                                                        {{ \Illuminate\Support\Str::words(strip_tags($comment->content), 50, '...') }}
-                                                    @else
-                                                        {!! nl2br(e($comment->content)) !!}
+                                            
+                                            <div class="comment-main-col">
+                                                <div class="comment-user-row">
+                                                    <span class="comment-user">{{ $comment->user->name ?? 'Ẩn danh' }}</span>
+                                                    @if(str_contains(strtolower($comment->user->name ?? ''), 'love'))
+                                                        <span class="comment-user-icon">💕</span>
                                                     @endif
                                                 </div>
-                                                @if($commentWords > 50)
-                                                    <button class="btn btn-link" style="padding:0;" wire:click="{{ $showFull ? 'showLess' : 'showMore' }}({{ $comment->id }})">
-                                                        {{ $showFull ? 'Ẩn bớt' : 'Xem thêm' }}
-                                                    </button>
+                                                
+                                                @php
+                                                    $commentWords = str_word_count(strip_tags($comment->content));
+                                                    $showFull = $showMoreComments[$comment->id] ?? false;
+                                                @endphp
+                                                
+                                                @if($editingComment === $comment->id)
+                                                    <form wire:submit.prevent="updateComment" class="comment-edit-form">
+                                                        <textarea wire:model.defer="editCommentContent" rows="2" class="form-control comment-input" placeholder="Sửa bình luận..." style="resize: none;"></textarea>
+                                                        @error('editCommentContent') <div class="text-danger">{{ $message }}</div> @enderror
+                                                        <div class="comment-edit-actions">
+                                                            <button type="submit" class="btn-edit">Cập nhật</button>
+                                                            <button type="button" class="btn-delete" wire:click="cancelEditComment">Hủy</button>
+                                                        </div>
+                                                    </form>
+                                                @else
+                                                    <div class="comment-content">
+                                                        @if($commentWords > 50 && !$showFull)
+                                                            {{ \Illuminate\Support\Str::words(strip_tags($comment->content), 50, '...') }}
+                                                        @else
+                                                            {!! nl2br(e($comment->content)) !!}
+                                                        @endif
+                                                    </div>
+                                                    @if($commentWords > 50)
+                                                        <button class="btn btn-link comment-toggle-btn" wire:click="{{ $showFull ? 'showLess' : 'showMore' }}({{ $comment->id }})">
+                                                            {{ $showFull ? 'Ẩn bớt' : 'Xem thêm' }}
+                                                        </button>
+                                                    @endif
                                                 @endif
-                                    @endif
-                                    <div class="comment-footer">
-                                                <span class="comment-date">{{ $comment->created_at->format('d/m/Y') }}</span>
-                                        @if($editingComment !== $comment->id && $replyingTo !== $comment->id)
-                                            <button class="btn-reply" wire:click="startReply({{ $comment->id }})">Trả lời</button>
-                                            @if(Auth::check() && Auth::user()->id == $comment->user_id)
-                                                <button class="btn-edit" wire:click="startEditComment({{ $comment->id }})">Sửa</button>
-                                            @endif
-                                            @if(Auth::check() && (Auth::user()->id == $comment->user_id || Auth::user()->role == 'admin'))
-                                                <button class="btn-delete" wire:click="confirmDelete({{ $comment->id }}, 'comment')">Xóa</button>
-                                            @endif
-                                        @endif
-                                    </div>
-                                    @if($replyingTo === $comment->id)
-                                                <form wire:submit.prevent="submitReply" style="margin-top: 12px;">
-                                            <textarea wire:model.defer="replyContent" rows="2" class="form-control comment-input" placeholder="Nhập phản hồi..." style="resize: none;"></textarea>
-                                            @error('replyContent') <div class="text-danger">{{ $message }}</div> @enderror
-                                            <div style="margin-top: 8px;">
-                                                <button type="submit" class="btn-edit" style="background:none;border:none;color:#888;font-size:1rem;padding:0 12px 0 0;cursor:pointer;">Gửi phản hồi</button>
-                                                <button type="button" class="btn-delete" style="background:none;border:none;color:#888;font-size:1rem;padding:0;cursor:pointer;" wire:click="cancelReply">Hủy</button>
-                                            </div>
-                                        </form>
-                                    @endif
+                                                
+                                                <div class="comment-footer">
+                                                    <span class="comment-date">{{ $comment->created_at->format('d/m/Y') }}</span>
+                                                    @if($editingComment !== $comment->id && $replyingTo !== $comment->id)
+                                                        <button class="btn-reply" wire:click="startReply({{ $comment->id }})">Trả lời</button>
+                                                        @if(Auth::check() && Auth::user()->id == $comment->user_id)
+                                                            <button class="btn-edit" wire:click="startEditComment({{ $comment->id }})">Sửa</button>
+                                                        @endif
+                                                        @if(Auth::check() && (Auth::user()->id == $comment->user_id || Auth::user()->role == 'admin'))
+                                                            <button class="btn-delete" wire:click="confirmDelete({{ $comment->id }}, 'comment')">Xóa</button>
+                                                        @endif
+                                                    @endif
+                                                </div>
+                                                
+                                                <!-- Reply Form - Hiển thị ngay dưới comment cha -->
+                                                @if($replyingTo === $comment->id)
+                                                    <form wire:submit.prevent="submitReply" class="reply-form">
+                                                        <textarea wire:model.defer="replyContent" rows="2" class="form-control comment-input" placeholder="Nhập phản hồi..." style="resize: none;"></textarea>
+                                                        @error('replyContent') <div class="text-danger">{{ $message }}</div> @enderror
+                                                        <div class="reply-form-actions">
+                                                            <button type="submit" class="btn-edit">Gửi phản hồi</button>
+                                                            <button type="button" class="btn-delete" wire:click="cancelReply">Hủy</button>
+                                                        </div>
+                                                    </form>
+                                                @endif
                                     @php
                                         $replies = $comment->replies;
                                         $replyCount = $replies->count();
@@ -244,58 +253,112 @@
                                         <div class="reply-list">
                                             @foreach($visibleReplies as $reply)
                                                 <div class="reply-item">
-                                                            <div class="comment-row">
-                                                                <div class="comment-avatar-col">
-                                                        @if(!empty($reply->user->avatar_url))
-                                                            <img class="comment-avatar" src="{{ $reply->user->avatar_url }}" alt="">
-                                                        @else
-                                                            <div class="comment-avatar">
-                                                                <svg viewBox="0 0 24 24" width="100%" height="100%" fill="#bbb" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="5"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7"/></svg>
-                                                            </div>
-                                                        @endif
+                                                    <div class="comment-row">
+                                                        <div class="comment-avatar-col">
+                                                            @if(!empty($reply->user->avatar))
+                                                                <img class="comment-avatar" src="{{ asset('storage/' . $reply->user->avatar) }}" alt="{{ $reply->user->name }}">
+                                                            @else
+                                                                <div class="comment-avatar">
+                                                                    <svg viewBox="0 0 24 24" width="100%" height="100%" fill="#bbb" xmlns="http://www.w3.org/2000/svg">
+                                                                        <circle cx="12" cy="8" r="5"/>
+                                                                        <path d="M4 20c0-4 4-7 8-7s8 3 8 7"/>
+                                                                    </svg>
                                                                 </div>
-                                                                <div class="comment-main-col">
-                                                                    <div class="comment-user-row">
-                                                            <span class="comment-user">{{ $reply->user->name ?? 'Ẩn danh' }}</span>
-                                                    </div>
-                                                    @if($editingComment === $reply->id)
-                                                                        <form wire:submit.prevent="updateComment" style="margin-top:12px;">
-                                                            <textarea wire:model.defer="editCommentContent" rows="2" class="form-control comment-input" placeholder="Sửa phản hồi..." style="resize: none;"></textarea>
-                                                            @error('editCommentContent') <div class="text-danger">{{ $message }}</div> @enderror
-                                                            <div style="margin-top:8px;">
-                                                                <button type="submit" class="btn-edit" style="background:none;border:none;color:#888;font-size:1rem;padding:0 12px 0 0;cursor:pointer;">Cập nhật</button>
-                                                                <button type="button" class="btn-delete" style="background:none;border:none;color:#888;font-size:1rem;padding:0;cursor:pointer;" wire:click="cancelEditComment">Hủy</button>
+                                                            @endif
+                                                        </div>
+                                                        <div class="comment-main-col">
+                                                            <div class="comment-user-row">
+                                                                <span class="comment-user">{{ $reply->user->name ?? 'Ẩn danh' }}</span>
                                                             </div>
-                                                        </form>
-                                                    @else
-                                                        <div class="comment-content">{!! nl2br(e($reply->content)) !!}</div>
-                                                    @endif
-                                                    <div class="comment-footer">
-                                                                        <span class="comment-date">{{ $reply->created_at->format('d/m/Y') }}</span>
-                                                        @if($editingComment !== $reply->id && $replyingTo !== $comment->id)
-                                                            <button class="btn-reply" wire:click="startReply({{ $comment->id }})">Trả lời</button>
-                                                            @if(Auth::check() && Auth::user()->id == $reply->user_id)
-                                                                <button class="btn-edit" wire:click="startEditComment({{ $reply->id }})">Sửa</button>
-                                                            @endif
-                                                            @if(Auth::check() && (Auth::user()->id == $reply->user_id || Auth::user()->role == 'admin'))
-                                                                <button class="btn-delete" wire:click="confirmDelete({{ $reply->id }}, 'comment')">Xóa</button>
-                                                            @endif
-                                                        @endif
+                                                            @if($editingComment === $reply->id)
+                                                                <form wire:submit.prevent="updateComment" class="comment-edit-form">
+                                                                    <textarea wire:model.defer="editCommentContent" rows="2" class="form-control comment-input" placeholder="Sửa phản hồi..." style="resize: none;"></textarea>
+                                                                    @error('editCommentContent') <div class="text-danger">{{ $message }}</div> @enderror
+                                                                    <div class="comment-edit-actions">
+                                                                        <button type="submit" class="btn-edit">Cập nhật</button>
+                                                                        <button type="button" class="btn-delete" wire:click="cancelEditComment">Hủy</button>
                                                                     </div>
+                                                                </form>
+                                                            @else
+                                                                <div class="comment-content">{!! nl2br(e($reply->content)) !!}</div>
+                                                            @endif
+                                                            <div class="comment-footer">
+                                                                <span class="comment-date">{{ $reply->created_at->format('d/m/Y') }}</span>
+                                                                @if($editingComment !== $reply->id && $replyingTo !== $reply->id)
+                                                                    <button class="btn-reply" wire:click="startReply({{ $reply->id }})">Trả lời</button>
+                                                                    @if(Auth::check() && Auth::user()->id == $reply->user_id)
+                                                                        <button class="btn-edit" wire:click="startEditComment({{ $reply->id }})">Sửa</button>
+                                                                    @endif
+                                                                    @if(Auth::check() && (Auth::user()->id == $reply->user_id || Auth::user()->role == 'admin'))
+                                                                        <button class="btn-delete" wire:click="confirmDelete({{ $reply->id }}, 'comment')">Xóa</button>
+                                                                    @endif
+                                                                @endif
+                                                            </div>
+                                                            
+                                                            <!-- Reply Form cho comment con -->
+                                                            @if($replyingTo === $reply->id)
+                                                                <form wire:submit.prevent="submitReply" class="reply-form reply-form-nested">
+                                                                    <textarea wire:model.defer="replyContent" rows="2" class="form-control comment-input" placeholder="Nhập phản hồi..." style="resize: none;"></textarea>
+                                                                    @error('replyContent') <div class="text-danger">{{ $message }}</div> @enderror
+                                                                    <div class="reply-form-actions">
+                                                                        <button type="submit" class="btn-edit">Gửi phản hồi</button>
+                                                                        <button type="button" class="btn-delete" wire:click="cancelReply">Hủy</button>
+                                                                    </div>
+                                                                </form>
+                                                            @endif
+                                                            
+                                                            <!-- Nested Replies -->
+                                                            @if($reply->nested_replies && $reply->nested_replies->count() > 0)
+                                                                <div class="nested-replies">
+                                                                    @foreach($reply->nested_replies as $nestedReply)
+                                                                        <div class="nested-reply-item">
+                                                                            <div class="comment-row">
+                                                                                <div class="comment-avatar-col">
+                                                                                    @if(!empty($nestedReply->user->avatar))
+                                                                                        <img class="comment-avatar" src="{{ asset('storage/' . $nestedReply->user->avatar) }}" alt="{{ $nestedReply->user->name }}">
+                                                                                    @else
+                                                                                        <div class="comment-avatar">
+                                                                                            <svg viewBox="0 0 24 24" width="100%" height="100%" fill="#bbb" xmlns="http://www.w3.org/2000/svg">
+                                                                                                <circle cx="12" cy="8" r="5"/>
+                                                                                                <path d="M4 20c0-4 4-7 8-7s8 3 8 7"/>
+                                                                                            </svg>
+                                                                                        </div>
+                                                                                    @endif
+                                                                                </div>
+                                                                                <div class="comment-main-col">
+                                                                                    <div class="comment-user-row">
+                                                                                        <span class="comment-user">{{ $nestedReply->user->name ?? 'Ẩn danh' }}</span>
+                                                                                    </div>
+                                                                                    <div class="comment-content">{!! nl2br(e($nestedReply->content)) !!}</div>
+                                                                                    <div class="comment-footer">
+                                                                                        <span class="comment-date">{{ $nestedReply->created_at->format('d/m/Y') }}</span>
+                                                                                        @if(Auth::check() && Auth::user()->id == $nestedReply->user_id)
+                                                                                            <button class="btn-edit" wire:click="startEditComment({{ $nestedReply->id }})">Sửa</button>
+                                                                                        @endif
+                                                                                        @if(Auth::check() && (Auth::user()->id == $nestedReply->user_id || Auth::user()->role == 'admin'))
+                                                                                            <button class="btn-delete" wire:click="confirmDelete({{ $nestedReply->id }}, 'comment')">Xóa</button>
+                                                                                        @endif
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    @endforeach
                                                                 </div>
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 </div>
                                             @endforeach
                                             @if($remaining > 0 || $visibleCount > 3)
-                                                <div style="text-align:left; margin-top: 8px; display: flex; align-items: center; gap: 16px;">
+                                                <div class="reply-toggle-actions">
                                                     @if($remaining > 0)
-                                                        <button class="btn btn-link text-primary" style="text-decoration:none;padding:0;color:#888;" wire:click="showMoreReplies({{ $comment->id }})">
-                                                            Xem thêm {{ $remaining }} câu trả lời <span style="font-size:1.2em;">&#9660;</span>
+                                                        <button class="btn btn-link reply-toggle-btn" wire:click="showMoreReplies({{ $comment->id }})">
+                                                            Xem thêm {{ $remaining }} câu trả lời <span class="toggle-icon">&#9660;</span>
                                                         </button>
                                                     @endif
                                                     @if($visibleCount > 3)
-                                                        <button class="btn btn-link text-primary" style="text-decoration:none;padding:0;color:#888;" wire:click="hideReplies({{ $comment->id }})">
-                                                            Ẩn <span style="font-size:1.2em;">&#9650;</span>
+                                                        <button class="btn btn-link reply-toggle-btn" wire:click="hideReplies({{ $comment->id }})">
+                                                            Ẩn <span class="toggle-icon">&#9650;</span>
                                                         </button>
                                                     @endif
                                                 </div>
@@ -308,7 +371,7 @@
                             @empty
                                 <div class="no-data">Chưa có bình luận nào</div>
                             @endforelse
-                            </div>
+                        </div>
                             @if($totalCommentPages > 1)
                                 <div class="comment-pagination">
                                     <button class="comment-pagination-arrow" wire:click="setCommentPage({{ $currentCommentPage - 1 }})" @if($currentCommentPage == 1) disabled @endif>&#x2039;</button>
@@ -481,8 +544,8 @@
                                     <div class="rating-item rating-box">
                                         <div class="rating-box-header">
                                             <div class="rating-box-avatar">
-                                                @if(!empty($rating->user->avatar_url))
-                                                    <img class="comment-avatar" src="{{ $rating->user->avatar_url }}" alt="">
+                                                @if(!empty($rating->user->avatar))
+                                                    <img class="comment-avatar" src="{{ asset('storage/' . $rating->user->avatar) }}" alt="{{ $rating->user->name }}">
                                                 @else
                                                     <div class="comment-avatar">
                                                         <svg viewBox="0 0 24 24" width="100%" height="100%" fill="#bbb" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="5"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7"/></svg>
