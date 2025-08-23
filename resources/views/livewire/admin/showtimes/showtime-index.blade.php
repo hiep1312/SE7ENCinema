@@ -1,6 +1,7 @@
 @assets
-    <link rel="stylesheet" href="{{ asset('css/showtimeIndexAdmin.css') }}">
+    @vite('resources/css/showtimeIndexAdmin.css')
 @endassets
+
 @use("Carbon\Carbon")
 <div class="scRender">
     @if (session()->has('success'))
