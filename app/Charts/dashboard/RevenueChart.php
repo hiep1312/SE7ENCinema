@@ -10,34 +10,36 @@ class RevenueChart
 {
     protected $data;
 
-    protected function queryData(?string $filter = null)
+    protected function queryData(?array $filter = null)
     {
-        /* Viết truy vấn CSDL tại đây */
+        is_array($filter) && [$fromDate, $rangeDays] = $filter;
+        $rangeDays = (int) $rangeDays;
+        $fromDate = $fromDate ? Carbon::parse($fromDate) : Carbon::now()->subDays($rangeDays);
+        $toDate = $fromDate->copy()->addDays($rangeDays);
 
-        $now = Carbon::now();
         $data = [];
 
-        for ($i = 6; $i >= 0; $i--) {
-            $date = $now->copy()->subDays($i);
-
+        $currentDate = $fromDate->copy();
+        while ($currentDate->lte($toDate)) {
             $revenue = Booking::where('status', 'paid')
-                ->whereDate('created_at', $date)
+                ->whereDate('created_at', $currentDate)
                 ->sum('total_price');
+
             $bookings = Booking::where('status', 'paid')
-                ->whereDate('created_at', $date)
+                ->whereDate('created_at', $currentDate)
                 ->count();
 
             // Lấy thông tin về đồ ăn
             $foodRevenue = DB::table('food_order_items as foi')
                 ->join('bookings as b', 'foi.booking_id', '=', 'b.id')
                 ->where('b.status', 'paid')
-                ->whereDate('b.created_at', $date)
+                ->whereDate('b.created_at', $currentDate)
                 ->sum(DB::raw('foi.price * foi.quantity'));
 
             $foodOrders = DB::table('food_order_items as foi')
                 ->join('bookings as b', 'foi.booking_id', '=', 'b.id')
                 ->where('b.status', 'paid')
-                ->whereDate('b.created_at', $date)
+                ->whereDate('b.created_at', $currentDate)
                 ->count();
 
             // Lấy thông tin về phim
@@ -45,11 +47,11 @@ class RevenueChart
             $movieBookings = DB::table('bookings as b')
                 ->join('showtimes as s', 'b.showtime_id', '=', 's.id')
                 ->where('b.status', 'paid')
-                ->whereDate('b.created_at', $date)
+                ->whereDate('b.created_at', $currentDate)
                 ->count();
 
             $data[] = [
-                'x' => $date->format('d/m'),
+                'x' => $currentDate->format('d/m/Y'),
                 'y' => $revenue,
                 'bookings' => $bookings,
                 'foodRevenue' => $foodRevenue,
@@ -57,12 +59,12 @@ class RevenueChart
                 'movieRevenue' => $movieRevenue,
                 'movieBookings' => $movieBookings
             ];
+            $currentDate->addDay();
         }
-
         return $data;
     }
 
-    public function loadData(?string $filter = null)
+    public function loadData(?array $filter = null)
     {
         $this->data = $this->queryData($filter);
     }
@@ -136,7 +138,7 @@ class RevenueChart
                 }
             },
             zoom: {
-                enabled: true,
+                enabled: false,
                 type: 'x',
                 autoScaleYaxis: true,
             }
@@ -336,19 +338,6 @@ class RevenueChart
                                 </div>
                             </div>
                         </div>
-
-                        \${dataPointIndex > 0 ? `
-                            <div class="border-top border-secondary pt-2">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span style="color: \${mauTangTruong}" class="fw-medium">
-                                        \${iconTangTruong} So với trước:
-                                    </span>
-                                    <span class="fw-bold" style="color: \${mauTangTruong}">
-                                        \${phanTramTang >= 0 ? '+' : ''}\${phanTramTang}%
-                                    </span>
-                                </div>
-                            </div>
-                        ` : ''}
                     </div>
                 `;
             }

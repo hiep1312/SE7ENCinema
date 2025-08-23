@@ -16,6 +16,12 @@ class ShowtimeIndex extends Component
     public $search = '';
     public $statusFilter = '';
     public $sortByDate = '';
+    public $activeDate = null;
+
+    public function setActiveDate(string $date): void
+    {
+        $this->activeDate = $date;
+    }
 
     public function deleteShowtime(array $status, int $showtimeId)
     {
@@ -67,6 +73,18 @@ class ShowtimeIndex extends Component
         else $query->where('start_time', '>=', now()->startOfDay());
 
         $showtimes = $query->orderBy('start_time', 'asc')->orderBy('status', 'asc')->paginate(30)->groupBy(['show_date', 'movie_id']);
+
+        $dateKeys = $showtimes->keys();
+        if ($dateKeys->isNotEmpty()) {
+            $today = now()->toDateString();
+            if ($this->activeDate === null) {
+                $this->activeDate = $dateKeys->contains($today) ? $today : $dateKeys->first();
+            } elseif (!$dateKeys->contains($this->activeDate)) {
+                $this->activeDate = $dateKeys->contains($today) ? $today : $dateKeys->first();
+            }
+        } else {
+            $this->activeDate = null;
+        }
 
         return view('livewire.admin.showtimes.showtime-index', compact('showtimes'));
     }

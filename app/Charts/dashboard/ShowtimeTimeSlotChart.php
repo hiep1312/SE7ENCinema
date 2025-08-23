@@ -4,15 +4,23 @@ namespace App\Charts\dashboard;
 
 use App\Models\Booking;
 use App\Models\Showtime;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class ShowtimeTimeSlotChart {
+class ShowtimeTimeSlotChart
+{
     protected $data;
 
-    protected function queryData(?string $filter = null){
-        $startDate = now()->subDays(30)->startOfDay();
-        $endDate = now()->endOfDay();
+    protected function queryData(?array $filter = null)
+    {
+        is_array($filter) && [$fromDate, $rangeDays] = $filter;
+        $rangeDays = (int) $rangeDays;
+        $fromDate = $fromDate ? Carbon::parse($fromDate) : Carbon::now()->subDays($rangeDays);
+        $toDate = $fromDate->copy()->addDays($rangeDays);
         
+        $startDate = $fromDate->copy()->startOfDay();
+        $endDate = $toDate->copy()->endOfDay();
+
         $query = Showtime::select([
             DB::raw('HOUR(start_time) as hour'),
             DB::raw('COUNT(DISTINCT showtimes.id) as total_showtimes'),
@@ -30,15 +38,18 @@ class ShowtimeTimeSlotChart {
         return $query;
     }
 
-    public function loadData(?string $filter = null){
+    public function loadData(?array $filter = null)
+    {
         $this->data = $this->queryData($filter);
     }
 
-    protected function bindDataToElement(){
+    protected function bindDataToElement()
+    {
         return "document.getElementById('showtimeTimeSlotChart')";
     }
 
-    protected function buildChartConfig(){
+    protected function buildChartConfig()
+    {
         $timeData = $this->data;
         $labels = $timeData->map(fn($item) => $item->hour . 'h')->toJson();
         $showtimes = $timeData->map(fn($item) => $item->total_showtimes)->toJson();
@@ -49,59 +60,33 @@ class ShowtimeTimeSlotChart {
         return <<<JS
         {
             chart: {
-                height: 300,
-                type: 'line',
+                height: 350,
+                type: 'bar',
                 background: 'transparent',
                 toolbar: {
                     show: true,
-                    offsetX: 0,
-                    offsetY: 0,
                     tools: {
                         download: true,
-                        selection: true,
+                        selection: false,
+                        zoom: true,
+                        zoomin: true,
+                        zoomout: true,
                         pan: true,
                         reset: true
-                    },
-                    export: {
-                        csv: {
-                            filename: 'khung-gio-suat-chieu',
-                            columnDelimiter: ',',
-                            headerCategory: 'Giờ',
-                            headerValue: 'Số lượng',
-                            categoryFormatter: function(x) {
-                                return x;
-                            },
-                            valueFormatter: function(y) {
-                                return new Intl.NumberFormat('vi-VN').format(y);
-                            }
-                        },
-                        svg: {
-                            filename: 'khung-gio-suat-chieu',
-                        },
-                        png: {
-                            filename: 'khung-gio-suat-chieu',
-                        }
-                    },
-                },
-                zoom: {
-                    enabled: false,
+                    }
                 },
                 animations: {
                     enabled: true,
                     easing: 'easeinout',
-                    speed: 800,
-                    animateGradually: {
-                        enabled: true,
-                        delay: 150
-                    },
-                    dynamicAnimation: {
-                        enabled: true,
-                        speed: 350
-                    }
+                    speed: 800
                 }
             },
             tooltip: {
                 theme: 'dark',
+                style: {
+                    fontSize: '13px',
+                    fontFamily: 'Inter, system-ui, sans-serif'
+                },
                 custom: function({
                     series,
                     seriesIndex,
@@ -121,174 +106,126 @@ class ShowtimeTimeSlotChart {
                     const doanhThu = revenueData[dataPointIndex] || 0;
 
                     return `
-                    <div class="bg-dark border border-secondary rounded-3 p-3 shadow-lg" style="min-width: 300px;">
-                        <div class="d-flex align-items-center mb-3">
-                            <span class="fs-5 me-2">🕐</span>
+                    <div class="bg-dark border border-secondary rounded-3 p-3 shadow-lg" style="min-width: 320px;">
+                        <div class="d-flex align-items-center mb-3" style="border-bottom:1px solid rgba(75,85,99,0.3);padding-bottom:8px;">
+                            <span class="me-2">🕐</span>
                             <h6 class="mb-0 text-white fw-bold">Khung giờ \${gio}</h6>
                         </div>
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-primary">🎬 Suất chiếu:</span>
-                            <span class="fw-bold fs-6 text-primary">\${suatChieu}</span>
+                            <span class="fw-bold text-primary">\${suatChieu.toLocaleString('vi-VN')}</span>
                         </div>
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-success">🛒 Đơn hàng:</span>
-                            <span class="fw-bold fs-6 text-success">\${donHang}</span>
+                            <span class="fw-bold text-success">\${donHang.toLocaleString('vi-VN')}</span>
                         </div>
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-warning">🎫 Vé bán:</span>
-                            <span class="fw-bold fs-6 text-warning">\${ve}</span>
+                            <span class="fw-bold text-warning">\${ve.toLocaleString('vi-VN')}</span>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="d-flex justify-content-between align-items-center">
                             <span class="text-danger">💰 Doanh thu:</span>
-                            <span class="fw-bold fs-6 text-danger">\${new Intl.NumberFormat('vi-VN').format(doanhThu)}đ</span>
+                            <span class="fw-bold text-danger">\${new Intl.NumberFormat('vi-VN').format(doanhThu)}đ</span>
                         </div>
                     </div>
                     `;
                 }
             },
-            dataLabels: {
-                enabled: false
-            },
-            colors: ['#007bff', '#28a745', '#ffc107', '#dc3545'],
-            series: [{
-                    name: 'Suất chiếu',
-                    type: 'column',
-                    data: $showtimes
-                },
-                {
-                    name: 'Đơn hàng',
-                    type: 'line',
-                    data: $bookings
-                },
-                {
-                    name: 'Vé bán',
-                    type: 'area',
-                    data: $tickets
-                }
+            dataLabels: { enabled: false },
+            colors: ['#3B82F6', '#F59E0B'],
+            series: [
+                { name: 'Suất chiếu', data: $showtimes },
+                { name: 'Vé bán', data: $tickets }
             ],
             plotOptions: {
                 bar: {
                     horizontal: false,
-                    columnWidth: '70%',
-                    endingShape: 'rounded',
-                    borderRadius: 4
+                    columnWidth: '55%',
+                    borderRadius: 6
                 }
             },
             fill: {
-                type: ['solid', 'solid', 'gradient'],
+                type: 'gradient',
                 gradient: {
-                    shadeIntensity: 1,
-                    opacityFrom: 0.7,
+                    shade: 'dark',
+                    type: 'vertical',
+                    shadeIntensity: 0.3,
+                    gradientToColors: ['#1E40AF', '#D97706'],
+                    inverseColors: false,
+                    opacityFrom: 0.8,
                     opacityTo: 0.3,
-                    stops: [0, 90, 100],
-                    colorStops: [
-                        [],
-                        [],
-                        [{
-                                offset: 0,
-                                color: '#ffc107',
-                                opacity: 0.7
-                            },
-                            {
-                                offset: 100,
-                                color: '#23272b',
-                                opacity: 0.1
-                            }
-                        ]
-                    ]
+                    stops: [0, 100]
                 }
             },
             stroke: {
-                width: [0, 3, 0],
-                curve: 'smooth'
+                width: 1,
+                colors: ['#111827']
             },
             xaxis: {
                 categories: $labels,
                 labels: {
                     style: {
                         colors: '#ffffff',
-                        fontSize: '12px'
+                        fontSize: '12px',
+                        fontWeight: 500
                     },
                     rotate: 0,
                     maxHeight: 60
                 },
-                axisBorder: {
-                    show: false
-                },
-                axisTicks: {
-                    show: false
-                },
+                axisBorder: { show: false },
+                axisTicks: { show: false }
             },
-            yaxis: [{
+            yaxis: {
                 title: {
                     text: 'Số lượng',
-                    style: {
-                        color: '#007bff'
-                    }
+                    style: { color: '#9CA3AF', fontSize: '14px', fontWeight: 600 }
                 },
                 labels: {
-                    style: {
-                        colors: '#ffffff',
-                        fontSize: '12px'
-                    },
-                    formatter: function(value) {
-                        return new Intl.NumberFormat('vi-VN').format(value);
-                    }
-                }
-            }, {
-                opposite: true,
-                title: {
-                    text: 'Doanh thu (VND)',
-                    style: {
-                        color: '#dc3545'
-                    }
-                },
-                labels: {
-                    style: {
-                        colors: '#dc3545',
-                        fontSize: '12px'
-                    },
-                    formatter: function(value) {
-                        return new Intl.NumberFormat('vi-VN').format(value);
-                    }
-                }
-            }],
-            legend: {
-                position: 'top',
-                horizontalAlign: 'left',
-                labels: {
-                    colors: '#ffffff'
+                    style: { colors: '#ffffff', fontSize: '12px' },
+                    formatter: function(value) { return new Intl.NumberFormat('vi-VN').format(value); }
                 }
             },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'center',
+                labels: { colors: '#ffffff', fontSize: '13px', fontWeight: 600 },
+                markers: { width: 12, height: 12, radius: 6 },
+                itemMargin: { horizontal: 20, vertical: 8 }
+            },
             grid: {
-                show: true,
-                borderColor: '#2d3748',
-                strokeDashArray: 0,
-                position: 'back'
+                borderColor: '#374151',
+                strokeDashArray: 5,
+                xaxis: { lines: { show: true } },
+                yaxis: { lines: { show: true } }
             }
         }
         JS;
     }
 
-    public function getFilterText(string $filterValue){
-        return match ($filterValue){
+    public function getFilterText(?array $filterValue)
+    {
+        return match ($filterValue) {
             default => "N/A"
         };
     }
 
-    public function getChartConfig(){
+    public function getChartConfig()
+    {
         return $this->buildChartConfig();
     }
 
-    public function getData(){
+    public function getData()
+    {
         return $this->data;
     }
 
-    public function getEventName(){
+    public function getEventName()
+    {
         return "updateDataShowtimeTimeSlotChart";
     }
 
-    public function compileJavascript(){
+    public function compileJavascript()
+    {
         $ctxText = "ctxShowtimeTimeSlotChart";
         $optionsText = "optionsShowtimeTimeSlotChart";
         $chartText = "chartShowtimeTimeSlotChart";

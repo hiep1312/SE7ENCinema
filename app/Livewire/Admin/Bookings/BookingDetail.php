@@ -2,17 +2,10 @@
 
 namespace App\Livewire\Admin\Bookings;
 
-use App\Charts\booking\FoodData;
-use App\Charts\booking\MoviesSummary;
 use App\Charts\Booking\Revenue;
-use App\Charts\booking\SeatsChart;
-use App\Charts\Booking\TopFoods;
-use App\Charts\ChartBooking;
 use App\Models\Booking;
 use App\Models\BookingSeat;
-use App\Models\FoodOrderItem;
 use App\Models\Ticket;
-use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -25,15 +18,6 @@ class BookingDetail extends Component
     use WithPagination, scAlert, scChart;
     public $booking;
     public $tabCurrent = 'information';
-
-    // Chart data properties
-    public $revenueData = [];
-    public $topMovies = [];
-    public $seatsData = [];
-    public $foodsData = [];
-    public $topMoviesAndRooms = [];
-
-    public $filterChart = '7_days';
 
     public function mount(int $booking){
         $this->booking = Booking::with('showtime.movie', 'showtime.room', 'user', 'seats', 'promotionUsage', 'foodOrderItems.variant.foodItem', 'foodOrderItems.variant.attributeValues.attribute')->findOrFail($booking);
@@ -72,32 +56,9 @@ class BookingDetail extends Component
     #[Layout('components.layouts.admin')]
     public function render()
     {
-        $topFoods = new TopFoods;
-        $Revenue = new Revenue;
-        $moviesSummary = new MoviesSummary;
-        $foodChart = new FoodData;
-        $seatsChart = new SeatsChart;
-
-        $this->realtimeUpdateCharts([$seatsChart, $this->filterChart]);
-
-        $this->realtimeUpdateCharts([$Revenue, $this->filterChart]);
-
-        $this->realtimeUpdateCharts([$topFoods, $this->filterChart]);
-
-        $this->realtimeUpdateCharts([$moviesSummary, $this->filterChart]);
-
-        $this->realtimeUpdateCharts([$foodChart, $this->filterChart]);
-
+        $Revenue = new Revenue($this->booking->id);
+        $this->realtimeUpdateCharts([$Revenue,null]);
         $tickets = BookingSeat::where('booking_id', $this->booking->id)->with('ticket')->get()->map(fn($bookingSeat) => $bookingSeat->ticket);
-
-        ($this->tabCurrent === "information" || ($this->js('chartInstances = {}') || false)) && $this->dispatch('updateData',
-            $this->revenueData ?? [],
-            $this->topMovies ?? [],
-            $this->seatsData ?? [],
-            $this->foodsData ?? [],
-            $this->topFoods ?? []
-        );
-
-        return view('livewire.admin.bookings.booking-detail', compact('tickets', 'topFoods', 'Revenue', 'moviesSummary', 'foodChart', 'seatsChart'));
+        return view('livewire.admin.bookings.booking-detail', compact('tickets', 'Revenue'));
     }
 }

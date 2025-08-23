@@ -595,34 +595,26 @@
                     <div class="border rounded-3 p-3 bg-dark shadow-lg">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="text-white mb-0">
-                                <i class="fa-regular fa-filter me-2"></i>Vé đã bán theo ngày
+                                <i class="fa-regular fa-filter me-2"></i>Bộ lọc
                             </h5>
                         </div>
 
                         <div class="row g-2">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label class="form-label"><i class="mdi mdi-calendar-start me-2"></i>Từ ngày</label>
                                 <input wire:model.live='fromDate' type="date" class="form-control">
                             </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label"><i class="mdi mdi-calendar-end me-2"></i>Ngày so sánh</label>
-                                <input wire:model.live='compareDate' type="date" class="form-control">
-                            </div>
-
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label class="form-label">
                                     <i class="mdi mdi-clock-time-four me-2"></i>Khoảng thời gian
                                 </label>
                                 <div class="input-group">
-                                    <input wire:model.live='rangeDays' type="text" class="form-control flex-grow-1"
-                                        placeholder="Nhập khoảng thời gian (ví dụ: 7 ngày, 1 tháng)">
-                                    <select wire:model.live='rangeUnit' class="form-select flex-grow-0"
-                                        style="width: 100px">
-                                        <option value="days">Chọn</option>
-                                        <option value="days">Ngày</option>
-                                        <option value="months">Tháng</option>
-                                        <option value="years">Năm</option>
+                                    <select wire:model.live='rangeDays' class="form-select flex-grow-1">
+                                        <option value="3 days">Chọn</option>
+                                        <option value="2 days">2 ngày</option>
+                                        <option value="3 days">3 ngày</option>
+                                        <option value="7 days">7 ngày</option>
+                                        <option value="15 days">15 ngày</option>
                                     </select>
                                 </div>
                             </div>
@@ -630,14 +622,12 @@
                     </div>
                 </div>
 
-
-
                 <!-- 2. Bảng so sánh vé bán theo suất chiếu -->
                 <div class="col-lg-8">
                     <div class="bg-dark rounded-3 p-3">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="text-white mb-0">
-                                <i class="fas fa-ticket me-2 text-success"></i>Vé đã bán theo suất chiếu
+                                <i class="fas fa-ticket me-2 text-success"></i>Vé đã bán theo suất chiếu của phim
                             </h5>
                         </div>
                         <div>
@@ -651,7 +641,7 @@
                     <div class="bg-dark rounded-3 p-3">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="text-white mb-0">
-                                <i class="fas fa-chart-pie me-2 text-warning"></i>Tỉ lệ lấp đầy phòng
+                                <i class="fas fa-chart-pie me-2 text-warning"></i>Tỉ lệ các loại ghế đã bán của phim
                             </h5>
                         </div>
                         <div>
@@ -664,7 +654,7 @@
                     <div class="bg-dark rounded-3 p-3">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="text-white mb-0">
-                                <i class="fas fa-chart-line me-2 text-primary"></i>Vé đã bán theo ngày
+                                <i class="fas fa-chart-line me-2 text-primary"></i>Doanh thu phim theo ngày
                             </h5>
                         </div>
                         <div>

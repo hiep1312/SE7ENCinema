@@ -19,6 +19,8 @@ class RoomDetail extends Component
     use WithPagination, scChart;
     public $room;
     public $tabCurrent = 'analytics';
+    public $fromDate;
+    public $rangeDays;
 
     public $totalShowtimes = 0;
     public $averageUtilization = 0;
@@ -31,18 +33,26 @@ class RoomDetail extends Component
     public $totalSecondsUntilMaintenance;
     public $totalDaysIn3Months;
     public $realTimeCountdown = [];
+
     public $roomStatsData = [];
     public $occupancyData = [];
     public $seatStatusData = [];
     public $roomMoviesData = [];
 
-    public $roomStatsPeriod = '7_days';
-    public $occupancyPeriod = '7_days';
-    public $seatStatusPeriod = '7_days';
-    public $roomMoviesPeriod = '7_days';
+    public array $daysOfWeek = [
+        'Monday'    => 'Thứ hai',
+        'Tuesday'   => 'Thứ ba',
+        'Wednesday' => 'Thứ tư',
+        'Thursday'  => 'Thứ năm',
+        'Friday'    => 'Thứ sáu',
+        'Saturday'  => 'Thứ bảy',
+        'Sunday'    => 'Chủ nhật',
+    ];
 
     public function mount(int $room)
     {
+        $this->fromDate = Carbon::now()->subDays(3)->format('Y-m-d');
+        $this->rangeDays = '3 days';
         $this->room = Room::with([
             'seats',
             'showtimes' => function ($query) {
@@ -55,26 +65,13 @@ class RoomDetail extends Component
         $this->loadChartData();
     }
 
-    private function getFilterText($period)
+    public function loadChartData()
     {
-        switch ($period) {
-            case '3_days':
-                return '3 ngày gần nhất';
-            case '7_days':
-                return '7 ngày gần nhất';
-            case '30_days':
-                return '30 ngày gần nhất';
-            case '1_month':
-                return '1 tháng gần nhất';
-            case '3_months':
-                return '3 tháng gần nhất';
-            case '1_year':
-                return '1 năm gần nhất';
-            case '2_years':
-                return '2 năm gần nhất';
-            default:
-                return '7 ngày gần nhất';
-        }
+        // Không cần filter theo thời gian nữa
+        $this->roomStatsData = [];
+        $this->occupancyData = [];
+        $this->seatStatusData = [];
+        $this->roomMoviesData = [];
     }
 
     public function calculateMaintenanceInfo()
@@ -83,8 +80,10 @@ class RoomDetail extends Component
         $this->totalDaysIn3Months = $this->referenceDate->copy()->diffInDays($this->referenceDate->copy()->addMonths(3));
 
         $this->nextMaintenanceDate = $this->referenceDate->copy()->addMonths(3);
-        $this->daysSinceLastMaintenance = $this->referenceDate->diffInDays(now());
-        $this->totalSecondsUntilMaintenance = now()->diffInSeconds($this->nextMaintenanceDate, true);
+
+        $currentTime = now();
+        $this->daysSinceLastMaintenance = $this->referenceDate->diffInDays($currentTime);
+        $this->totalSecondsUntilMaintenance = $currentTime->diffInSeconds($this->nextMaintenanceDate, true);
 
         $totalSeconds = $this->totalSecondsUntilMaintenance;
         $daysDiffMaintenanceDate = floor($totalSeconds / 86400);
@@ -92,8 +91,12 @@ class RoomDetail extends Component
         $minutesDiffMaintenanceDate = floor(($totalSeconds % 3600) / 60);
         $secondsDiffMaintenanceDate = $totalSeconds % 60;
 
-        if ($this->nextMaintenanceDate->isPast()) $this->maintenanceStatus = 'overdue';
-        else $secondsDiffMaintenanceDate += 1;
+        if ($this->nextMaintenanceDate->isPast()) {
+            $this->maintenanceStatus = 'overdue';
+        } else {
+            $this->maintenanceStatus = null;
+            $secondsDiffMaintenanceDate += 1;
+        }
 
         $this->realTimeCountdown = [
             'days' => $daysDiffMaintenanceDate,
@@ -101,12 +104,14 @@ class RoomDetail extends Component
             'minutes' => $minutesDiffMaintenanceDate,
             'seconds' => $secondsDiffMaintenanceDate
         ];
+
         $this->calculateMaintenanceScore();
     }
 
     protected function calculateMaintenanceScore()
     {
-        $score = max(0, 100 - (($this->daysSinceLastMaintenance / $this->totalDaysIn3Months) * 100));
+        $currentDaysSinceMaintenance = $this->referenceDate->diffInDays(now());
+        $score = max(0, 100 - (($currentDaysSinceMaintenance / $this->totalDaysIn3Months) * 100));
         $this->maintenanceScore = round($score);
     }
 
@@ -118,18 +123,33 @@ class RoomDetail extends Component
         $this->averageUtilization = round((($this->totalShowtimes / 30) / 8) * 100);
     }
 
+    public function updateMaintenanceRealtime()
+    {
+        $this->calculateMaintenanceInfo();
+
+        return [
+            'maintenanceScore' => $this->maintenanceScore,
+            'daysSinceLastMaintenance' => $this->daysSinceLastMaintenance,
+            'realTimeCountdown' => $this->realTimeCountdown,
+            'maintenanceStatus' => $this->maintenanceStatus
+        ];
+    }
+
     #[Title('Chi tiết phòng chiếu - SE7ENCinema')]
     #[Layout('components.layouts.admin')]
     public function render()
     {
-        $chartRoomStatsData = new RoomStatsData();
-        $this->realtimeUpdateCharts($chartRoomStatsData);
+        $chartRoomStatsData = new RoomStatsData($this->room);
         $chartRoomOccupancyData = new RoomOccupancyData($this->room);
-        $this->realtimeUpdateCharts($chartRoomOccupancyData);
         $chartRoomSeatStatusData = new RoomSeatStatusData($this->room);
-        $this->realtimeUpdateCharts($chartRoomSeatStatusData);
         $chartRoomMoviesData = new RoomMoviesData($this->room);
-        $this->realtimeUpdateCharts($chartRoomMoviesData);
+
+        $this->realtimeUpdateCharts(
+            [$chartRoomStatsData, [$this->fromDate, $this->rangeDays]],
+            [$chartRoomOccupancyData, [$this->fromDate, $this->rangeDays]],
+            [$chartRoomSeatStatusData, [$this->fromDate, $this->rangeDays]],
+            [$chartRoomMoviesData, [$this->fromDate, $this->rangeDays]]
+        );
 
         $recentShowtimes = $this->room->showtimes()
             ->with('movie')
@@ -146,18 +166,7 @@ class RoomDetail extends Component
 
         $this->loadChartData();
 
-        ($this->tabCurrent === "analytics" || ($this->js('chartInstances = {}') || false)) && $this->dispatch('updateData',
-            $this->occupancyData ?? [],
-            $this->seatStatusData ?? [],
-            $this->roomStatsData ?? [],
-            $this->roomMoviesData ?? [],
-            [
-                'roomStatsFilterText' => $this->getFilterText($this->roomStatsPeriod),
-                'occupancyFilterText' => $this->getFilterText($this->occupancyPeriod),
-                'seatStatusFilterText' => $this->getFilterText($this->seatStatusPeriod),
-                'roomMoviesFilterText' => $this->getFilterText($this->roomMoviesPeriod)
-            ]
-        );
+        $this->calculateMaintenanceInfo();
 
         return view('livewire.admin.rooms.room-detail', compact('recentShowtimes', 'upcomingShowtimes', 'chartRoomStatsData', 'chartRoomOccupancyData', 'chartRoomSeatStatusData', 'chartRoomMoviesData'));
     }

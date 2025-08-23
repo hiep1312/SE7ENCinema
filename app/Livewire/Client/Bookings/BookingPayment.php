@@ -66,7 +66,7 @@ class BookingPayment extends Component
             if($promotion){
                 if($promotion->min_purchase > $this->totalPrice){
                     $messageText = "Giá trị đơn hàng tối thiểu để áp dụng mã '{$this->voucherCodeSelected}' đã thay đổi";
-                }elseif($promotion->usages_count >= $promotion->usage_limit){
+                }elseif(!is_null($promotion->usage_limit) && $promotion->usages_count >= $promotion->usage_limit){
                     $messageText = "Mã giảm giá '{$this->voucherCodeSelected}' đã được sử dụng hết lượt";
                 }elseif($promotion->status === 'expired'){
                     $messageText = "Mã giảm giá '{$this->voucherCodeSelected}' đã hết hạn";
