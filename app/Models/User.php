@@ -107,4 +107,8 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return UserViolation::addViolation($this, $type, $details);
     }
+    public function hasRole($role)
+    {
+        return $this->role === $role;
+    }
 }

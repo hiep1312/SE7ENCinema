@@ -66,6 +66,9 @@ use App\Livewire\Payment\VnpayPayment;
 use App\Livewire\Client\Bookings\BookingFood;
 use App\Livewire\Client\Bookings\BookingPayment;
 use App\Livewire\Client\User\BookingDetail as UserBookingDetail;
+use App\Http\Controllers\Api\ChatController;
+use App\Livewire\Chat\CreateChat;
+use App\Livewire\Chat\Main;
 use App\Livewire\Test;
 
 Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->group(function () {
@@ -176,6 +179,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->
         Route::get('/detail/{promotion}', PromotionDetail::class)->name('detail');
     });
 
+
     /* Template */
     Route::view('/dashboard', 'livewire.admin.template.dashboard')->name('dashboard');
     Route::view('/buttons', 'livewire.admin.template.ui-features.buttons')->name('buttons');
@@ -251,7 +255,27 @@ Route::name('client.')->group(function () {
             ->whereAlphaNumeric('bookingCode')->name('food');
         Route::get('/payment', BookingPayment::class)->name('payment');
     });
+
+
+
+     /* chat bot api */
+    Route::prefix('chat')->name('chat.')->group(function () {
+        Route::get('movies', [ChatController::class, 'getMovies'])->name('movies');
+        Route::get('showtimes/{movieId}', [ChatController::class, 'getShowtimes'])->name('showtimes');
+        Route::post('request-staff', [ChatController::class, 'requestStaff'])->name('request_staff');
+        Route::post('ai-message', [ChatController::class, 'sendAIMessage'])->name('ai_message');
+    });
+
+    Route::prefix('api/chat')->name('api.chat.')->group(function () {
+        Route::get('/movies', [ChatController::class, 'getMovies'])->name('movies');
+        Route::get('/showtimes/{movieId}', [ChatController::class, 'getShowtimes'])->name('showtimes');
+        Route::post('/request-staff', [ChatController::class, 'requestStaff'])->name('request_staff');
+        Route::post('/ai-message', [ChatController::class, 'sendAIMessage'])->name('ai_message');
+    });
 });
 
+
+Route::get('/createchat', CreateChat::class)->name('createchat');
+Route::get('/chat', Main::class)->name('chat');
 // Route::view('/admintest', 'clienttest')->name('welcome');
 // Route::view('/clienttest', 'clienttest')->name('clienttest');
