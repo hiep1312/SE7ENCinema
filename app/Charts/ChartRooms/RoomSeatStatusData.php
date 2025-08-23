@@ -4,15 +4,18 @@ namespace App\Charts\ChartRooms;
 
 use App\Models\BookingSeat;
 
-class RoomSeatStatusData {
+class RoomSeatStatusData
+{
     protected $data;
     protected $room;
 
-    public function __construct($room) {
+    public function __construct($room)
+    {
         $this->room = $room;
     }
 
-    protected function queryData(?string $filter = null){
+    protected function queryData(?string $filter = null)
+    {
         $startDate = now()->subDays(2)->startOfDay();
         $endDate = now()->endOfDay();
         $seatsByType = $this->room->seats->groupBy('seat_type');
@@ -118,17 +121,21 @@ class RoomSeatStatusData {
         ];
     }
 
-    public function loadData(?string $filter = null){
+    public function loadData(?string $filter = null)
+    {
         $this->data = $this->queryData($filter);
     }
 
-    protected function bindDataToElement(){
+    protected function bindDataToElement()
+    {
         return "document.getElementById('seatStatusChart')";
     }
 
-    protected function buildChartConfig(){
+    protected function buildChartConfig()
+    {
         $roomSeatStatusData = $this->data['chart_data'];
         $roomSeatStatusDataJS = json_encode($roomSeatStatusData);
+
 
         return <<<JS
         (function() {
@@ -380,25 +387,30 @@ class RoomSeatStatusData {
         JS;
     }
 
-    public function getFilterText(string $filterValue){
-        return match ($filterValue){
+    public function getFilterText(string $filterValue)
+    {
+        return match ($filterValue) {
             default => "N/A"
         };
     }
 
-    public function getChartConfig(){
+    public function getChartConfig()
+    {
         return $this->buildChartConfig();
     }
 
-    public function getData(){
+    public function getData()
+    {
         return $this->data;
     }
 
-    public function getEventName(){
+    public function getEventName()
+    {
         return "updateDataRoomSeatStatusData";
     }
 
-    public function compileJavascript(){
+    public function compileJavascript()
+    {
         $ctxText = "ctxRoomSeatStatusData";
         $optionsText = "optionsRoomSeatStatusData";
         $chartText = "chartRoomSeatStatusData";

@@ -17,7 +17,8 @@
         "bookingPayment.css",
         "movieBooking.css",
         "movieList.css",
-        "seat.css"
+        "seat.css",
+        "showtimeIndexAdmin.css"
     ],
     "scopedCssFiles": []
 }
