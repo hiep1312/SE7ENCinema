@@ -297,7 +297,13 @@
     text-align: right;
 }
 
-.pagination1 {
+nav .text-muted {
+    display: none !important;
+}
+.d-sm-none {
+    display: none !important;
+}
+.pagination {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -306,11 +312,11 @@
     flex-wrap: wrap;
 }
 
-.pagination1 .page-item1 {
+.pagination .page-item {
     list-style: none;
 }
 
-.pagination1 .page-link1 {
+.pagination .page-link {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -329,22 +335,22 @@
     overflow: hidden;
 }
 
-.pagination1 .page-link1:hover {
-    color: #3b82f6;
+.pagination .page-link:hover {
+    color: #ff4444;
     background-color: #f8fafc;
-    border-color: #3b82f6;
+    border-color: #ff4444;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
 }
 
-.pagination1 .page-item1.active .page-link1 {
+.pagination .page-item.active .page-link {
     color: #ffffff;
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-    border-color: #3b82f6;
+    background: #ff4444;
+    border-color: #ff4444;
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
-.pagination1 .page-item1.disabled .page-link1 {
+.pagination .page-item.disabled .page-link {
     color: #d1d5db;
     background-color: #f9fafb;
     border-color: #e5e7eb;
@@ -352,7 +358,7 @@
     transform: none;
 }
 
-.pagination1 .page-item1.disabled .page-link1:hover {
+.pagination .page-item.disabled .page-link:hover {
     color: #d1d5db;
     background-color: #f9fafb;
     border-color: #e5e7eb;
@@ -744,6 +750,7 @@
 
 .booking-info {
     line-height: 35px;
+    width: 350px;
     margin-bottom: 15px;
 }
 

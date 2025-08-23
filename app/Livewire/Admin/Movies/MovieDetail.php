@@ -22,12 +22,10 @@ class MovieDetail extends Component
     public $tabCurrent = 'chart';
     public $fromDate = null;
     public $rangeDays = null;
-    public $compareDate = null;
 
     public function mount(int $movie)
     {
         $this->fromDate = Carbon::now()->subDays(3)->format('Y-m-d');
-        $this->compareDate = Carbon::now()->subDays(3)->format('Y-m-d');
         $this->rangeDays = '3 days';
         $this->movie = Movie::with('genres', 'ratings')->findOrFail($movie);
     }
@@ -77,8 +75,8 @@ class MovieDetail extends Component
         $showtimeChart = new showtimeChart($this->movie);
         $ratioChart = new ratioChart($this->movie);
         $this->realtimeUpdateCharts(
-            [$dailyChart,[$this->fromDate,$this->rangeDays,$this->compareDate]], 
-            [$showtimeChart,[$this->fromDate,$this->rangeDays,$this->compareDate]], 
+            [$dailyChart,[$this->fromDate,$this->rangeDays]], 
+            [$showtimeChart,[$this->fromDate,$this->rangeDays]], 
             [$ratioChart,[$this->fromDate,$this->rangeDays]]
         );
 

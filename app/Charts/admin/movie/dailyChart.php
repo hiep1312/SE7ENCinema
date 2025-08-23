@@ -16,18 +16,11 @@ class dailyChart
 
     protected function queryData(?array $filter = null)
     {
-        is_array($filter) && [$fromDate, $rangeDays, $compareDate] = $filter;
+        is_array($filter) && [$fromDate, $rangeDays] = $filter;
         $rangeDays = (int) $rangeDays;
 
         $fromMain = $fromDate ? Carbon::parse($fromDate)->startOfDay() : null;
         $toMain   = ($fromMain && $rangeDays) ? $fromMain->copy()->addDays($rangeDays)->endOfDay() : null;
-
-        $fromCmp = $compareDate ? Carbon::parse($compareDate)->startOfDay() : null;
-        $toCmp   = ($fromCmp && $rangeDays) ? $fromCmp->copy()->addDays($rangeDays)->endOfDay() : null;
-
-        if (!($fromMain && $toMain) && !($fromCmp && $toCmp)) {
-            return ['bookingStatByDate' => collect(), 'compareStatByDate' => collect()];
-        }
 
         $baseScope = fn($q) => $q->where('movie_id', $this->movie->id);
 
@@ -39,34 +32,12 @@ class dailyChart
                 ->get();
         }
 
-        $cmpBookings = collect();
-        if ($fromCmp && $toCmp) {
-            $cmpBookings = Booking::whereHas('showtime', $baseScope)
-                ->whereBetween('created_at', [$fromCmp, $toCmp])
-                ->with(['showtime.room'])
-                ->get();
-        }
-
         $mainBuckets = collect();
         if ($fromMain && $toMain) {
             $cur = $fromMain->copy();
             while ($cur <= $toMain) {
                 $label = $cur->format('d/m');
                 $mainBuckets->push([
-                    'start' => $cur->copy()->startOfDay(),
-                    'end'   => $cur->copy()->endOfDay(),
-                    'label' => $label
-                ]);
-                $cur->addDay();
-            }
-        }
-
-        $cmpBuckets = collect();
-        if ($fromCmp && $toCmp) {
-            $cur = $fromCmp->copy();
-            while ($cur <= $toCmp) {
-                $label = $cur->format('d/m');
-                $cmpBuckets->push([
                     'start' => $cur->copy()->startOfDay(),
                     'end'   => $cur->copy()->endOfDay(),
                     'label' => $label
@@ -86,22 +57,11 @@ class dailyChart
             ];
         }
 
-        $cmpStat = collect();
-        foreach ($cmpBuckets as $b) {
-            [$start, $end, $label] = [$b['start'], $b['end'], $b['label']];
-            $cmpIn = $cmpBookings->filter(fn($bk) => Carbon::parse($bk->created_at)->between($start, $end));
-            $cmpStat[$label] = [
-                'paid' => $cmpIn->where('status', 'paid')->count(),
-                'cancelled' => $cmpIn->whereIn('status', ['failed', 'expired'])->count(),
-                'totalRevenue' => $cmpIn->where('status', 'paid')->sum('total_price'),
-            ];
-        }
-
         return [
             'bookingStatByDate' => collect($mainStat),
-            'compareStatByDate' => collect($cmpStat),
         ];
     }
+
 
     public function loadData(?array $filter = null)
     {
@@ -120,20 +80,11 @@ class dailyChart
         $totalRevenue = $this->data['bookingStatByDate']->pluck('totalRevenue')->toArray();
         $categories = $this->data['bookingStatByDate']->keys()->toArray();
 
-        $paidCompare = $this->data['compareStatByDate']->pluck('paid')->toArray();
-        $cancelledCompare = $this->data['compareStatByDate']->pluck('cancelled')->toArray();
-        $totalRevenueCompare = $this->data['compareStatByDate']->pluck('totalRevenue')->toArray();
-        $categoriesCompare = $this->data['compareStatByDate']->keys()->toArray();
-
         $paidJs = json_encode($paid);
         $cancelledJs = json_encode($cancelled);
         $totalRevenueJs = json_encode($totalRevenue);
         $categoriesJs = json_encode($categories);
 
-        $paidCompareJs = json_encode($paidCompare);
-        $cancelledCompareJs = json_encode($cancelledCompare);
-        $totalRevenueCompareJs = json_encode($totalRevenueCompare);
-        $categoriesCompareJs = json_encode($categoriesCompare);
 
         return <<<JS
         {
@@ -141,10 +92,6 @@ class dailyChart
                 {
                     name: 'Doanh thu (Khoảng chính)',
                     data: $totalRevenueJs
-                },
-                {
-                    name: 'Doanh thu (Khoảng so sánh)',
-                    data: $totalRevenueCompareJs
                 },
             ],
             chart: {
@@ -220,35 +167,11 @@ class dailyChart
                     const cancelled = $cancelledJs;
                     const totalRevenue = $totalRevenueJs;
 
-                    const paidCompare = $paidCompareJs;
-                    const cancelledCompare = $cancelledCompareJs;
-                    const totalRevenueCompare = $totalRevenueCompareJs;
-                    const compareDates = $categoriesCompareJs;
-
                     const paidStart = paid[dataPointIndex] ?? 0;
                     const cancelledStart = cancelled[dataPointIndex] ?? 0;
                     const revenueStartVal = totalRevenue[dataPointIndex] ?? 0;
-
-                    const paidC = paidCompare[dataPointIndex] ?? 0;
-                    const cancelledC = cancelledCompare[dataPointIndex] ?? 0;
-                    const revenueCVal = totalRevenueCompare[dataPointIndex] ?? 0;
-
-                    const calcPercent = (current, compare) => {
-                        if (compare === 0 && current === 0) return '0%';
-                        if (compare === 0) return 'N/A';
-                        const diff = ((current - compare) / compare) * 100;
-                        return (diff > 0 ? '+' : '') + diff.toFixed(1) + '%';
-                    };
-
-                    const paidChange = calcPercent(paidStart, paidC);
-                    const cancelledChange = calcPercent(cancelledStart, cancelledC);
-                    const revenueChange = calcPercent(revenueStartVal, revenueCVal);
-
                     const revenueStart = revenueStartVal.toLocaleString('vi-VN');
-                    const revenueC = revenueCVal.toLocaleString('vi-VN');
-
                     const dateLabel = w.globals.labels[dataPointIndex];
-                    const compareDateLabel = compareDates[dataPointIndex] ?? 'N/A';
                     return `
                         <div style="
                             background: #ffffff;
@@ -261,20 +184,17 @@ class dailyChart
                             <div style="font-weight:600; margin-bottom:8px; font-size:14px;">
                                 📅 Ngày \${dateLabel}
                             </div>
-                            <div style="font-weight:500; font-size:13px; color:#555; margin-bottom:10px;">
-                                So sánh với: \${compareDateLabel}
+                            <div style="display:flex; gap: 10px; margin-bottom:6px;">
+                                <span>🎟️ Vé bán:</span>
+                                <span><strong>\${paidStart}</strong></span>
                             </div>
                             <div style="display:flex; gap: 10px; margin-bottom:6px;">
-                                <span>Vé bán:</span>
-                                <span><strong>\${paidStart}</strong> ↔ <strong>\${paidC}</strong> <em>(\${paidChange})</em></span>
+                                <span>❌ Vé lỗi:</span>
+                                <span><strong>\${cancelledStart}</strong></span>
                             </div>
                             <div style="display:flex; gap: 10px; margin-bottom:6px;">
-                                <span>Vé lỗi:</span>
-                                <span><strong>\${cancelledStart}</strong> ↔ <strong>\${cancelledC}</strong> <em>(\${cancelledChange})</em></span>
-                            </div>
-                            <div style="display:flex; gap: 10px; margin-bottom:6px;">
-                                <span>Doanh thu:</span>
-                                <span><strong>\${revenueStart}</strong> ↔ <strong>\${revenueC}</strong> <em>(\${revenueChange})</em></span>
+                                <span>💵 Doanh thu:</span>
+                                <span><strong>\${revenueStart}</strong></span>
                             </div>
                         </div>
                     `;

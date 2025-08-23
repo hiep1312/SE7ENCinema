@@ -11,7 +11,6 @@ use App\Charts\dashboard\SeatsAnalysisChart;
 use App\Charts\dashboard\ShowtimeTimeSlotChart;
 use App\Models\User;
 use App\Models\Booking;
-use App\Models\FoodOrderItem;
 use App\Models\Movie;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -24,11 +23,8 @@ class Dashboard extends Component
 {
     use scChart;
 
-    public $startDate;
-    public $endDate;
     public $customValue = 1;
     public $customUnit = 'months';
-    public $showComparison = false;
 
     // Thống kê tổng quan
     public $totalMoviesShowing = 0;
@@ -59,26 +55,13 @@ class Dashboard extends Component
     public $lastMonthBookings = 0;
     public $currentMonthUsers = 0;
     public $lastMonthUsers = 0;
+    public $fromDate;
+    public $rangeDays;
 
     public function mount()
     {
-        $this->endDate = Carbon::now()->format('Y-m-d');
-        $this->startDate = Carbon::now()->subDays(30)->format('Y-m-d');
-        
-    }
-
-    public function resetFilters()
-    {
-        $this->startDate = Carbon::now()->subDays(30)->format('Y-m-d');
-        $this->endDate = Carbon::now()->format('Y-m-d');
-        $this->customValue = 1;
-        $this->customUnit = 'months';
-        $this->showComparison = false;
-    }
-
-    public function toggleComparison()
-    {
-        $this->showComparison = !$this->showComparison;
+        $this->fromDate = Carbon::now()->subDays(3)->format('Y-m-d');
+        $this->rangeDays = '3 days';
     }
 
     public function getRevenueGrowth()
@@ -107,28 +90,29 @@ class Dashboard extends Component
         $lastMonthStart = Carbon::now()->subMonth()->startOfMonth();
         $lastMonthEnd = Carbon::now()->subMonth()->endOfMonth();
 
-        // 1. Tổng số phim đang chiếu (so sánh với tháng trước)
-        // Đếm phim có status = 'showing' trong tháng hiện tại
+        $rangeDays = (int) $this->rangeDays;
+        $fromDate = $this->fromDate ? Carbon::parse($this->fromDate) : Carbon::now()->subDays($rangeDays);
+        $toDate = $fromDate->copy()->addDays($rangeDays);
+
+        // Đếm phim có status = 'showing'
         $this->totalMoviesShowing = Movie::where('status', 'showing')
-            ->whereBetween('created_at', [$currentMonthStart, $currentMonthEnd])
+            ->whereBetween('created_at', [$fromDate, $toDate])
             ->count();
-        
+
         // Phim đang chiếu trong tháng trước
         $lastMonthMovies = Movie::where('status', 'showing')
             ->whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])
             ->count();
-        
+
         $this->moviesShowingGrowthPercent = $lastMonthMovies > 0 ?
-            round((($this->totalMoviesShowing - $lastMonthMovies) / $lastMonthMovies) * 100, 1) : 
-            ($this->totalMoviesShowing > 0 ? 100 : 0);
+            round((($this->totalMoviesShowing - $lastMonthMovies) / $lastMonthMovies) * 100, 1) : ($this->totalMoviesShowing > 0 ? 100 : 0);
 
         // 2. Tổng số người dùng (tất cả user đến hiện tại)
         $this->totalUsers = User::count();
         $lastMonthTotalUsers = User::where('created_at', '<=', $lastMonthEnd)->count();
-        
+
         $this->usersGrowthPercent = $lastMonthTotalUsers > 0 ?
-            round((($this->totalUsers - $lastMonthTotalUsers) / $lastMonthTotalUsers) * 100, 1) : 
-            ($this->totalUsers > 0 ? 100 : 0);
+            round((($this->totalUsers - $lastMonthTotalUsers) / $lastMonthTotalUsers) * 100, 1) : ($this->totalUsers > 0 ? 100 : 0);
 
         // 3. Doanh thu tháng hiện tại vs tháng trước
         $this->totalRevenueThisYear = Booking::where('status', 'paid')
@@ -140,8 +124,7 @@ class Dashboard extends Component
             ->sum('total_price');
 
         $this->revenueYearGrowthPercent = $lastMonthRevenue > 0 ?
-            round((($this->totalRevenueThisYear - $lastMonthRevenue) / $lastMonthRevenue) * 100, 1) : 
-            ($this->totalRevenueThisYear > 0 ? 100 : 0);
+            round((($this->totalRevenueThisYear - $lastMonthRevenue) / $lastMonthRevenue) * 100, 1) : ($this->totalRevenueThisYear > 0 ? 100 : 0);
 
         // 4. Số vé đã thanh toán tháng hiện tại vs tháng trước
         $this->totalPaidTicketsToday = DB::table('booking_seats')
@@ -157,8 +140,7 @@ class Dashboard extends Component
             ->count();
 
         $this->ticketsTodayGrowthPercent = $lastMonthTickets > 0 ?
-            round((($this->totalPaidTicketsToday - $lastMonthTickets) / $lastMonthTickets) * 100, 1) : 
-            ($this->totalPaidTicketsToday > 0 ? 100 : 0);
+            round((($this->totalPaidTicketsToday - $lastMonthTickets) / $lastMonthTickets) * 100, 1) : ($this->totalPaidTicketsToday > 0 ? 100 : 0);
 
         // 5. Người dùng mới tháng hiện tại vs tháng trước
         $this->totalActiveUsers = User::whereBetween('created_at', [$currentMonthStart, $currentMonthEnd])
@@ -168,8 +150,7 @@ class Dashboard extends Component
             ->count();
 
         $this->activeUsersGrowthPercent = $lastMonthActiveUsers > 0 ?
-            round((($this->totalActiveUsers - $lastMonthActiveUsers) / $lastMonthActiveUsers) * 100, 1) : 
-            ($this->totalActiveUsers > 0 ? 100 : 0);
+            round((($this->totalActiveUsers - $lastMonthActiveUsers) / $lastMonthActiveUsers) * 100, 1) : ($this->totalActiveUsers > 0 ? 100 : 0);
 
         // 6. Lưu lại cho các method khác (nếu cần)
         $this->currentMonthRevenue = $this->totalRevenueThisYear;
@@ -184,57 +165,49 @@ class Dashboard extends Component
     #[Layout('components.layouts.admin')]
     public function render()
     {
-        // Tính toán thống kê trước
         $this->calculateStatistics();
 
-        // Chart cơ cấu khách hàng theo giới tính và độ tuổi
         $transactionHistory = new TransactionHistoryChart;
-        $this->realtimeUpdateCharts([$transactionHistory, $this->filters]);
-
-        // Chart xu hướng doanh thu vé và đồ ăn theo thời gian
         $revenueSource = new RevenueSourceChart;
-        $this->realtimeUpdateCharts([$revenueSource, $this->filters]);
-
         $revenue = new RevenueChart;
-        $this->realtimeUpdateCharts([$revenue, $this->filters]);
-
         $topMovies = new TopMoviesChart();
         $topFoods = new TopFoodsChart();
         $seatsAnalysis = new SeatsAnalysisChart();
         $showtimeTimeSlot = new ShowtimeTimeSlotChart();
-        $this->realtimeUpdateCharts([$topMovies, $this->filters]);
-        $this->realtimeUpdateCharts([$topFoods, $this->filters]);
-        $this->realtimeUpdateCharts([$seatsAnalysis, $this->filters]);
-        $this->realtimeUpdateCharts([$showtimeTimeSlot, $this->filters]);
-
-        $this->dispatch('updateData',
-            $this->transactionHistoryData ?? [],
-            $this->revenueSourceData ?? [],
-            $this->foodManagementData ?? []
+        $this->realtimeUpdateCharts(
+            [$transactionHistory, [$this->fromDate, $this->rangeDays]],
+            [$revenueSource, [$this->fromDate, $this->rangeDays]],
+            [$revenue, [$this->fromDate, $this->rangeDays]],
+            [$topMovies, [$this->fromDate, $this->rangeDays]],
+            [$topFoods, [$this->fromDate, $this->rangeDays]],
+            [$seatsAnalysis, [$this->fromDate, $this->rangeDays]],
+            [$showtimeTimeSlot, [$this->fromDate, $this->rangeDays]]
         );
 
         $this->dispatch('updateRevenueChart', data: $this->chartData);
 
-        return view('livewire.admin.dasboard-chart.dashboard', compact(
-            'revenue',
-            'transactionHistory',
-            'revenueSource',
-            'topMovies',
-            'topFoods',
-            'seatsAnalysis',
-            'showtimeTimeSlot'
-        ))->with([
-            'totalMoviesShowing' => $this->totalMoviesShowing,
-            'moviesShowingGrowthPercent' => $this->moviesShowingGrowthPercent,
-            'totalRevenueThisYear' => $this->totalRevenueThisYear,
-            'revenueYearGrowthPercent' => $this->revenueYearGrowthPercent,
-            'totalPaidTicketsToday' => $this->totalPaidTicketsToday,
-            'ticketsTodayGrowthPercent' => $this->ticketsTodayGrowthPercent,
-            'totalActiveUsers' => $this->totalActiveUsers,
-            'activeUsersGrowthPercent' => $this->activeUsersGrowthPercent,
-            'totalUsers' => $this->totalUsers,
-            'usersGrowthPercent' => $this->usersGrowthPercent,
-            'filters' => $this->filters
-        ]);
+        return view(
+            'livewire.admin.dasboard-chart.dashboard',
+            [
+                'revenue' => $revenue,
+                'transactionHistory' => $transactionHistory,
+                'revenueSource' => $revenueSource,
+                'topMovies' => $topMovies,
+                'topFoods' => $topFoods,
+                'seatsAnalysis' => $seatsAnalysis,
+                'showtimeTimeSlot' => $showtimeTimeSlot,
+                'totalMoviesShowing' => $this->totalMoviesShowing,
+                'moviesShowingGrowthPercent' => $this->moviesShowingGrowthPercent,
+                'totalRevenueThisYear' => $this->totalRevenueThisYear,
+                'revenueYearGrowthPercent' => $this->revenueYearGrowthPercent,
+                'totalPaidTicketsToday' => $this->totalPaidTicketsToday,
+                'ticketsTodayGrowthPercent' => $this->ticketsTodayGrowthPercent,
+                'totalActiveUsers' => $this->totalActiveUsers,
+                'activeUsersGrowthPercent' => $this->activeUsersGrowthPercent,
+                'totalUsers' => $this->totalUsers,
+                'usersGrowthPercent' => $this->usersGrowthPercent,
+                'filters' => $this->filters
+            ]
+        );
     }
 }

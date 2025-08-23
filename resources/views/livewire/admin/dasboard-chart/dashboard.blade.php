@@ -30,34 +30,24 @@
                 <div class="filter-card animate-fade-in">
                     <div class="card-body p-4">
                         <div class="row g-3">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label class="form-label">
                                     <i class="mdi mdi-calendar-start me-2"></i>
                                     Từ ngày
                                 </label>
                                 <input wire:model.live='fromDate' type="date" class="form-control">
                             </div>
-                            
-                            <div class="col-md-4">
-                                <label class="form-label">
-                                    <i class="mdi mdi-calendar-end me-2"></i>
-                                    Đến ngày
-                                </label>
-                                <input wire:model.live='compareDate' type="date" class="form-control">
-                            </div>
-
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label class="form-label">
                                     <i class="mdi mdi-clock-time-four me-2"></i>
                                     Khoảng thời gian
                                 </label>
-                                <select wire:model.live='rangeUnit' class="form-select">
-                                    <option value="">Chọn khoảng thời gian</option>
-                                    <option value="7days">7 ngày qua</option>
-                                    <option value="30days">30 ngày qua</option>
-                                    <option value="3months">3 tháng qua</option>
-                                    <option value="6months">6 tháng qua</option>
-                                    <option value="1year">1 năm qua</option>
+                                <select wire:model.live='rangeDays' class="form-select">
+                                    <option value="">Chọn</option>
+                                    <option value="2 days">2 ngày</option>
+                                    <option value="3 days">3 ngày</option>
+                                    <option value="7 days">7 ngày</option>
+                                    <option value="15 days">15 ngày</option>
                                 </select>
                             </div>
                         </div>
@@ -203,8 +193,7 @@
             </div>
         </div>
 
-
-        <!-- Các biểu đồ -->
+        <!-- Các biểu đồ --> 
         <div class="row">
             <!-- Biểu đồ doanh thu -->
 
@@ -322,7 +311,6 @@
 
 @script
 <script>
-
          {!! $revenue->compileJavascript() !!}
          {!! $transactionHistory->compileJavascript() !!}
          {!! $revenueSource->compileJavascript() !!}
@@ -351,9 +339,6 @@
                 }
             });
         }
-    });
-
-    Livewire.on('updateData', function([$transactionHistoryData, $revenueSourceData, $foodManagementData]) {
     });
 </script>
 @endscript

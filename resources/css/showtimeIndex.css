@@ -138,7 +138,6 @@
     display: flex;
     flex-direction: row;
     min-height: 160px;
-    max-height: 200px;
     align-items: stretch;
 }
 

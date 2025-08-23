@@ -600,17 +600,11 @@
                         </div>
 
                         <div class="row g-2">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label class="form-label"><i class="mdi mdi-calendar-start me-2"></i>Từ ngày</label>
                                 <input wire:model.live='fromDate' type="date" class="form-control">
                             </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label"><i class="mdi mdi-calendar-end me-2"></i>Ngày so sánh</label>
-                                <input wire:model.live='compareDate' type="date" class="form-control">
-                            </div>
-
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label class="form-label">
                                     <i class="mdi mdi-clock-time-four me-2"></i>Khoảng thời gian
                                 </label>

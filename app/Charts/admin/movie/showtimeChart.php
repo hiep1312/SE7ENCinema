@@ -17,33 +17,27 @@ class showtimeChart
     }
     protected function queryData(?array $filter = null)
     {
-        is_array($filter) && [$fromDate, $rangeDays, $compareDate] = $filter;
+        is_array($filter) && [$fromDate, $rangeDays] = $filter;
         $rangeDays = (int) $rangeDays;
-        /* Viết truy vấn CSDL tại đây */
+
+        /* Xử lý thời gian */
         $fromDate = Carbon::parse($fromDate)->startOfDay();
         $toDate = (clone $fromDate)->addDays($rangeDays)->endOfDay();
 
-        $compareFromDate = Carbon::parse($compareDate)->startOfDay();
-        $compareToDate = (clone $compareFromDate)->addDays($rangeDays)->endOfDay();
-
+        /* Lấy showtime trong khoảng thời gian */
         $showtimesA = Showtime::where('movie_id', $this->movie->id)
             ->whereBetween('start_time', [$fromDate, $toDate])
             ->orderBy('start_time')
             ->get();
 
-        $showtimesB = collect();
-        if ($compareDate != null) {
-            $showtimesB = Showtime::where('movie_id', $this->movie->id)
-                ->whereBetween('start_time', [$compareFromDate, $compareToDate])
-                ->orderBy('start_time')
-                ->get();
-        }
-
+        /* Lấy booking liên quan */
         $bookingChart = Booking::whereHas('showtime', function ($q) {
             $q->where('movie_id', $this->movie->id);
         })
             ->with(['showtime'])
             ->get();
+
+        /* Hàm xử lý thống kê */
         $processRange = function ($showtimes, $bookings) {
             return $showtimes->map(function ($showtime) use ($bookings) {
                 $timeKey = Carbon::parse($showtime->start_time)->format('H:i');
@@ -54,34 +48,34 @@ class showtimeChart
                 });
 
                 return [
-                    'timeKey'   => $timeKey,
-                    'paid'      => $bookingsOfShowtime->where('status', 'paid')->count(),
+                    'timeKey'    => $timeKey,
+                    'paid'       => $bookingsOfShowtime->where('status', 'paid')->count(),
                     'seatsCount' => $bookingsOfShowtime->where('status', 'paid')->pluck('seats')->flatten()->count(),
-                    'failed'    => $bookingsOfShowtime->whereIn('status', ['failed', 'expired'])->count(),
-                    'capacity'  => $capacity,
-                    'revenue'   => $bookingsOfShowtime->where('status', 'paid')->sum('total_price'),
+                    'failed'     => $bookingsOfShowtime->whereIn('status', ['failed', 'expired'])->count(),
+                    'capacity'   => $capacity,
+                    'revenue'    => $bookingsOfShowtime->where('status', 'paid')->sum('total_price'),
                 ];
             })
                 ->groupBy('timeKey')
                 ->map(function ($items) {
                     return [
-                        'paid'      => $items->sum('paid'),
-                        'failed'    => $items->sum('failed'),
+                        'paid'       => $items->sum('paid'),
+                        'failed'     => $items->sum('failed'),
                         'seatsCount' => $items->sum('seatsCount'),
-                        'capacity'  => $items->sum('capacity'),
-                        'revenue'   => $items->sum('revenue'),
+                        'capacity'   => $items->sum('capacity'),
+                        'revenue'    => $items->sum('revenue'),
                     ];
                 })
                 ->sortKeys();
         };
+
         $dataA = $processRange($showtimesA, $bookingChart);
-        $dataB = $compareDate ? $processRange($showtimesB, $bookingChart) : null;
 
         return [
             'rangeA' => $dataA,
-            'rangeB' => $dataB,
         ];
     }
+
 
     public function loadData(?array $filter = null)
     {
@@ -96,30 +90,23 @@ class showtimeChart
     protected function buildChartConfig()
     {
         $dataA = $this->data['rangeA'];
-        $dataB = $this->data['rangeB'];
-        $allKeys = $dataA->keys()->merge($dataB ? $dataB->keys() : collect())->unique()->sort()->values();
+        $allKeys = $dataA->keys();
 
-        $mapSeries = function ($data, $keys) {
-            return $keys->map(fn($key) => $data->has($key) ? $data[$key]['seatsCount'] : 0);
+        $mapSeries = function ($data, $keys, $field) {
+            return $keys->map(fn($key) => $data->has($key) ? $data[$key][$field] : 0);
         };
 
-        $seatsA = json_encode($mapSeries($dataA, $allKeys));
-        $seatsB = json_encode($dataB ? $mapSeries($dataB, $allKeys) : $allKeys->map(fn() => 0));
-
-        $capacity = json_encode($allKeys->map(fn($key) => $dataA->has($key) ? $dataA[$key]['capacity'] : ($dataB && $dataB->has($key) ? $dataB[$key]['capacity'] : 0)));
-        $paidA = json_encode($allKeys->map(fn($key) => $dataA->has($key) ? $dataA[$key]['paid'] : 0));
-        $paidB = json_encode($allKeys->map(fn($key) => $dataB && $dataB->has($key) ? $dataB[$key]['paid'] : 0));
-        $revenueA = json_encode($allKeys->map(fn($key) => $dataA->has($key) ? $dataA[$key]['revenue'] : 0));
-        $revenueB = json_encode($allKeys->map(fn($key) => $dataB && $dataB->has($key) ? $dataB[$key]['revenue'] : 0));
-
-        $categories = json_encode($allKeys);
+        $seatsA = json_encode($mapSeries($dataA, $allKeys, 'seatsCount'));
+        $capacity = json_encode($mapSeries($dataA, $allKeys, 'capacity'));
+        $paidA = json_encode($mapSeries($dataA, $allKeys, 'paid'));
+        $revenueA = json_encode($mapSeries($dataA, $allKeys, 'revenue'));
+        $categories = json_encode($allKeys->values());
 
         return <<<JS
         {
             series: [
                 { name: 'Sức chứa', data: $capacity },
-                { name: 'Ghế đã bán (Giá trị 1)', data: $seatsA },
-                { name: 'Ghế đã bán (Giá trị 2)', data: $seatsB },
+                { name: 'Ghế đã bán', data: $seatsA },
             ],
             chart: {
                 type: 'bar',
@@ -146,7 +133,7 @@ class showtimeChart
                 horizontalAlign: 'left',
                 offsetY: -10,
                 labels: { colors: '#f8f9fa' },
-                markers: { width: 12, height: 12, fillColors: ['#34A853','#4285F4','#FFB300','#EA4335','#FF7043'], radius: 3 }
+                markers: { width: 12, height: 12, fillColors: ['#34A853','#4285F4'], radius: 3 }
             },
             tooltip: {
                 shared: true,
@@ -155,34 +142,24 @@ class showtimeChart
                 custom: function({series, seriesIndex, dataPointIndex, w}) {
                     const times = $categories;
                     const soldA = $seatsA;
-                    const soldB = $seatsB;
                     const paidA = $paidA;
-                    const paidB = $paidB;
                     const cap = $capacity;
                     const revenueA = $revenueA;
-                    const revenueB = $revenueB;
 
                     const time = times[dataPointIndex];
                     const soldWeekA = soldA[dataPointIndex];
-                    const soldWeekB = soldB[dataPointIndex];
                     const paidWeekA = paidA[dataPointIndex];
-                    const paidWeekB = paidB[dataPointIndex];
                     const capacityVal = cap[dataPointIndex];
                     const percentageA = capacityVal > 0 ? ((soldWeekA / capacityVal) * 100).toFixed(1) : 0;
-                    const percentageB = capacityVal > 0 ? ((soldWeekB / capacityVal) * 100).toFixed(1) : 0;
                     const revenueAFormatted = Number(revenueA[dataPointIndex]).toLocaleString('vi');
-                    const revenueBFormatted = Number(revenueB[dataPointIndex]).toLocaleString('vi');
 
                     return `
                         <div style="background:#fff;color:#000;padding:15px;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.3);min-width:220px;border:1px solid #495057;">
                             <div style="font-weight:600;font-size:14px;margin-bottom:8px;">🎬 Suất \${time}</div>
                             <div style="margin-bottom:6px;">🪑 Sức chứa: \${capacityVal}</div>
-                            <div style="margin-bottom:6px;">🎟️ Ghế đã bán (Giá trị 1): <strong>\${soldWeekA}</strong> | Tỷ lệ lấp đầy: \${percentageA}%</div>
-                            <div style="margin-bottom:6px;">🎟️ Ghế đã bán (Giá trị 2): <strong>\${soldWeekB}</strong> | Tỷ lệ lấp đầy: \${percentageB}%</div>
-                            <div style="margin-bottom:6px;">🎟️ Vé đã bán (Giá trị 1): <strong>\${paidWeekA}</strong></div>
-                            <div style="margin-bottom:6px;">🎟️ Vé đã bán (Giá trị 2): <strong>\${paidWeekB}</strong></div>
-                            <div style="margin-bottom:6px;">💵 Doanh thu (Giá trị 1): <strong>\${revenueAFormatted} ₫</strong></div>
-                            <div style="margin-bottom:6px;">💵 Doanh thu (Giá trị 2): <strong>\${revenueBFormatted} ₫</strong></div>
+                            <div style="margin-bottom:6px;">🎟️ Ghế đã bán: <strong>\${soldWeekA}</strong> | Tỷ lệ lấp đầy: \${percentageA}%</div>
+                            <div style="margin-bottom:6px;">🎟️ Vé đã bán: <strong>\${paidWeekA}</strong></div>
+                            <div style="margin-bottom:6px;">💵 Doanh thu: <strong>\${revenueAFormatted} ₫</strong></div>
                         </div>
                     `;
                 }

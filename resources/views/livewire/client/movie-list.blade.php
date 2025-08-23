@@ -110,7 +110,7 @@
                                     <div class="absolute inset-0 bg-black bg-opacity-30 rounded-lg"></div>
                                 </div>
                                 <h3 class="text-lg font-semibold text-white mt-2"><a
-                                        href="{{ route('client.movie_booking', $topEventMovie->id) }}">{{ $topEventMovie->title }}</a>
+                                        href="{{ route('client.movieBooking.movie', $topEventMovie->id) }}">{{ $topEventMovie->title }}</a>
                                 </h3>
                                 <p class="text-gray-300">Thời gian: {{ $topEventMovie->duration }} Phút</p>
                                 <p class="text-gray-400">Giá: {{ number_format($topEventMovie->price, 0, ',', '.') }}

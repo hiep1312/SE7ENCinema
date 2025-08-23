@@ -4,15 +4,23 @@ namespace App\Charts\dashboard;
 
 use App\Models\Booking;
 use App\Models\Showtime;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class ShowtimeTimeSlotChart {
+class ShowtimeTimeSlotChart
+{
     protected $data;
 
-    protected function queryData(?string $filter = null){
-        $startDate = now()->subDays(30)->startOfDay();
-        $endDate = now()->endOfDay();
+    protected function queryData(?array $filter = null)
+    {
+        is_array($filter) && [$fromDate, $rangeDays] = $filter;
+        $rangeDays = (int) $rangeDays;
+        $fromDate = $fromDate ? Carbon::parse($fromDate) : Carbon::now()->subDays($rangeDays);
+        $toDate = $fromDate->copy()->addDays($rangeDays);
         
+        $startDate = $fromDate->copy()->startOfDay();
+        $endDate = $toDate->copy()->endOfDay();
+
         $query = Showtime::select([
             DB::raw('HOUR(start_time) as hour'),
             DB::raw('COUNT(DISTINCT showtimes.id) as total_showtimes'),
@@ -30,15 +38,18 @@ class ShowtimeTimeSlotChart {
         return $query;
     }
 
-    public function loadData(?string $filter = null){
+    public function loadData(?array $filter = null)
+    {
         $this->data = $this->queryData($filter);
     }
 
-    protected function bindDataToElement(){
+    protected function bindDataToElement()
+    {
         return "document.getElementById('showtimeTimeSlotChart')";
     }
 
-    protected function buildChartConfig(){
+    protected function buildChartConfig()
+    {
         $timeData = $this->data;
         $labels = $timeData->map(fn($item) => $item->hour . 'h')->toJson();
         $showtimes = $timeData->map(fn($item) => $item->total_showtimes)->toJson();
@@ -191,25 +202,30 @@ class ShowtimeTimeSlotChart {
         JS;
     }
 
-    public function getFilterText(string $filterValue){
-        return match ($filterValue){
+    public function getFilterText(?array $filterValue)
+    {
+        return match ($filterValue) {
             default => "N/A"
         };
     }
 
-    public function getChartConfig(){
+    public function getChartConfig()
+    {
         return $this->buildChartConfig();
     }
 
-    public function getData(){
+    public function getData()
+    {
         return $this->data;
     }
 
-    public function getEventName(){
+    public function getEventName()
+    {
         return "updateDataShowtimeTimeSlotChart";
     }
 
-    public function compileJavascript(){
+    public function compileJavascript()
+    {
         $ctxText = "ctxShowtimeTimeSlotChart";
         $optionsText = "optionsShowtimeTimeSlotChart";
         $chartText = "chartShowtimeTimeSlotChart";

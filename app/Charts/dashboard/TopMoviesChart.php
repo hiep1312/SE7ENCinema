@@ -4,16 +4,24 @@ namespace App\Charts\dashboard;
 
 use App\Models\Booking;
 use App\Models\BookingSeat;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class TopMoviesChart {
+class TopMoviesChart
+{
     protected $data;
 
-    protected function queryData(?string $filter = null){
-        $startDate = now()->subDays(7)->startOfDay();
-        $endDate = now()->endOfDay();
+    protected function queryData(?array $filter = null)
+    {
+        is_array($filter) && [$fromDate, $rangeDays] = $filter;
+        $rangeDays = (int) $rangeDays;
+        $fromDate = $fromDate ? Carbon::parse($fromDate) : Carbon::now()->subDays($rangeDays);
+        $toDate = $fromDate->copy()->addDays($rangeDays);
         
+        $startDate = $fromDate->copy()->startOfDay();
+        $endDate = $toDate->copy()->endOfDay();
+
         $query = Booking::select([
             DB::raw('DATE(bookings.created_at) as booking_date'),
             'movies.title as movie_title',
@@ -33,21 +41,24 @@ class TopMoviesChart {
             ->get();
     }
 
-    public function loadData(?string $filter = null){
+    public function loadData(?array $filter = null)
+    {
         $this->data = $this->queryData($filter);
     }
 
-    protected function bindDataToElement(){
+    protected function bindDataToElement()
+    {
         return "document.getElementById('topMoviesChart')";
     }
 
-    protected function buildChartConfig(){
+    protected function buildChartConfig()
+    {
         $topMoviesData = $this->data;
         $labels = $topMoviesData->map(fn($item) => \Carbon\Carbon::parse($item->booking_date)->format('d/m'))->toJson();
         $revenueData = $topMoviesData->map(fn($item) => $item->total_revenue)->toJson();
         $ticketsData = $topMoviesData->map(fn($item) => $item->total_tickets)->toJson();
         $bookingsData = $topMoviesData->map(fn($item) => $item->total_bookings)->toJson();
-        
+
         // Lấy ngày và tên phim cho tooltip
         $fullDates = $topMoviesData->map(fn($item) => \Carbon\Carbon::parse($item->booking_date)->format('d/m/Y'))->toJson();
         $movieTitles = $topMoviesData->map(fn($item) => $item->movie_title)->toJson();
@@ -224,25 +235,30 @@ class TopMoviesChart {
         JS;
     }
 
-    public function getFilterText(string $filterValue){
-        return match ($filterValue){
+    public function getFilterText(string $filterValue)
+    {
+        return match ($filterValue) {
             default => "N/A"
         };
     }
 
-    public function getChartConfig(){
+    public function getChartConfig()
+    {
         return $this->buildChartConfig();
     }
 
-    public function getData(){
+    public function getData()
+    {
         return $this->data;
     }
 
-    public function getEventName(){
+    public function getEventName()
+    {
         return "updateDataTopMoviesChart";
     }
 
-    public function compileJavascript(){
+    public function compileJavascript()
+    {
         $ctxText = "ctxTopMoviesChart";
         $optionsText = "optionsTopMoviesChart";
         $chartText = "chartTopMoviesChart";

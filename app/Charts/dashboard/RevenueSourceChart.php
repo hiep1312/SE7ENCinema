@@ -3,16 +3,20 @@
 namespace App\Charts\dashboard;
 
 use App\Models\Booking;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class RevenueSourceChart {
     protected $data;
-
-    protected function queryData(?string $filter = null){
+    protected function queryData(?array $filter = null){
         /* Viết truy vấn CSDL tại đây */
-        $startDate = now()->subDays(6)->startOfDay();
-        $endDate = now()->endOfDay();
+        is_array($filter) && [$fromDate, $rangeDays] = $filter;
+        $rangeDays = (int) $rangeDays;
+        $fromDate = $fromDate ? Carbon::parse($fromDate) : Carbon::now()->subDays($rangeDays);
+        $toDate = $fromDate->copy()->addDays($rangeDays);
+
+        $startDate = $fromDate->copy()->startOfDay();
+        $endDate = $toDate->copy()->endOfDay();
         
         // Xác định định dạng thời gian dựa trên filter
         $groupFormat = '%Y-%m-%d';
@@ -109,7 +113,7 @@ class RevenueSourceChart {
         ];
     }
 
-    public function loadData(?string $filter = null){
+    public function loadData(?array $filter = null){
         $this->data = $this->queryData($filter);
     }
 

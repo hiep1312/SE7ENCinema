@@ -5,12 +5,19 @@ namespace App\Charts\dashboard;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-class SeatsAnalysisChart {
+class SeatsAnalysisChart
+{
     protected $data;
 
-    protected function queryData(?string $filter = null){
-        $startDate = now()->subDays(6)->startOfDay();
-        $endDate = now()->endOfDay();
+    protected function queryData(?array $filter = null)
+    {
+        is_array($filter) && [$fromDate, $rangeDays] = $filter;
+        $rangeDays = (int) $rangeDays;
+        $fromDate = $fromDate ? Carbon::parse($fromDate) : Carbon::now()->subDays($rangeDays);
+        $toDate = $fromDate->copy()->addDays($rangeDays);
+
+        $startDate = $fromDate->copy()->startOfDay();
+        $endDate = $toDate->copy()->endOfDay();
 
         // Tổng sức chứa theo ngày (cộng capacity của các phòng có suất chiếu trong ngày)
         $capacityByDay = DB::table('showtimes')
@@ -49,7 +56,6 @@ class SeatsAnalysisChart {
                 'capacity' => (int) ($capacityByDay[$day] ?? 0),
             ];
         }
-
         // Gán số ghế bán theo loại
         foreach ($soldByTypeAndDay as $row) {
             $day = $row->day;
@@ -81,19 +87,21 @@ class SeatsAnalysisChart {
                 'occupancy' => (int) $occupancy,
             ];
         }
-
         return collect($result);
     }
 
-    public function loadData(?string $filter = null){
+    public function loadData(?array $filter = null)
+    {
         $this->data = $this->queryData($filter);
     }
 
-    protected function bindDataToElement(){
+    protected function bindDataToElement()
+    {
         return "document.getElementById('seatsAnalysisChart')";
     }
 
-    protected function buildChartConfig(){
+    protected function buildChartConfig()
+    {
         $rows = $this->data;
         $labels = $rows->map(fn($r) => $r['label'])->toJson();
         $standard = $rows->map(fn($r) => $r['standard'])->toJson();
@@ -195,25 +203,30 @@ class SeatsAnalysisChart {
         JS;
     }
 
-    public function getFilterText(string $filterValue){
-        return match ($filterValue){
+    public function getFilterText(string $filterValue)
+    {
+        return match ($filterValue) {
             default => "N/A"
         };
     }
 
-    public function getChartConfig(){
+    public function getChartConfig()
+    {
         return $this->buildChartConfig();
     }
 
-    public function getData(){
+    public function getData()
+    {
         return $this->data;
     }
 
-    public function getEventName(){
+    public function getEventName()
+    {
         return "updateDataSeatsAnalysisChart";
     }
 
-    public function compileJavascript(){
+    public function compileJavascript()
+    {
         $ctxText = "ctxSeatsAnalysisChart";
         $optionsText = "optionsSeatsAnalysisChart";
         $chartText = "chartSeatsAnalysisChart";

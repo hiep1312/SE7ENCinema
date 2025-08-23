@@ -9,7 +9,7 @@ use Carbon\Carbon;
 class TransactionHistoryChart {
     protected $data;
 
-    protected function queryData(?string $filter = null){
+    protected function queryData(?array $filter = null){
         /* Viết truy vấn CSDL tại đây */
         $startDate = now()->subDays(6)->startOfDay();
         $endDate = now()->endOfDay();
@@ -87,7 +87,7 @@ class TransactionHistoryChart {
         return $sortedData;
     }
 
-    public function loadData(?string $filter = null){
+    public function loadData(?array $filter = null){
         $this->data = $this->queryData($filter);
     }
 
@@ -118,7 +118,7 @@ class TransactionHistoryChart {
                     enabled: true,
                     easing: 'easeinout',
                     speed: 800
-                }
+                },
             },
             series: JSON.parse('$transactionHistoryData').map(item => item.value),
             labels: JSON.parse('$transactionHistoryData').map(item => item.name),

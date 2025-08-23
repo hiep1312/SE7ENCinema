@@ -11,7 +11,6 @@ use Livewire\WithFileUploads;
 use App\Models\Booking;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\BookingSeat;
 use Livewire\WithPagination;
 
 class UserInformation extends Component

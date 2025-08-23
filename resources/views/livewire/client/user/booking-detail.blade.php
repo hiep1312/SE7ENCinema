@@ -351,7 +351,7 @@
                             <!-- Action Buttons -->
                             <div class="action-buttons" id="actionButtons">
                                 <button class="action-btn btn-rate">
-                                    <i class="fa-light fa-star"></i> Đánh Giá Phim
+                                    <i class="fa-light fa-star"></i><a style="color: black" href="{{route('client.movie_detail', $bookingInfo->showtime->movie->id)}}"> Đánh Giá Phim</a>
                                 </button>
                             </div>
                         </div>

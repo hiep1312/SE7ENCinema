@@ -3,16 +3,24 @@
 namespace App\Charts\dashboard;
 
 use App\Models\FoodOrderItem;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class TopFoodsChart {
+class TopFoodsChart
+{
     protected $data;
 
-    protected function queryData(?string $filter = null){
-        $startDate = now()->subDays(7)->startOfDay();
-        $endDate = now()->endOfDay();
-        
+    protected function queryData(?array $filter = null)
+    {
+        is_array($filter) && [$fromDate, $rangeDays] = $filter;
+        $rangeDays = (int) $rangeDays;
+        $fromDate = $fromDate ? Carbon::parse($fromDate) : Carbon::now()->subDays($rangeDays);
+        $toDate = $fromDate->copy()->addDays($rangeDays);
+
+        $startDate = $fromDate->copy()->startOfDay();
+        $endDate = $toDate->copy()->endOfDay();
+
         $query = FoodOrderItem::select([
             DB::raw('DATE(bookings.created_at) as order_date'),
             'food_items.name as food_name',
@@ -32,21 +40,24 @@ class TopFoodsChart {
             ->get();
     }
 
-    public function loadData(?string $filter = null){
+    public function loadData(?array $filter = null)
+    {
         $this->data = $this->queryData($filter);
     }
 
-    protected function bindDataToElement(){
+    protected function bindDataToElement()
+    {
         return "document.getElementById('topFoodsChart')";
     }
 
-    protected function buildChartConfig(){
+    protected function buildChartConfig()
+    {
         $topFoodsData = $this->data;
         $labels = $topFoodsData->map(fn($item) => \Carbon\Carbon::parse($item->order_date)->format('d/m'))->toJson();
         $foodQuantities = $topFoodsData->map(fn($item) => $item->total_quantity)->toJson();
         $foodRevenues = $topFoodsData->map(fn($item) => $item->total_revenue)->toJson();
         $RevenueF = $topFoodsData->map(fn($item) => $item->total_bookings)->toJson();
-        
+
         // Lấy ngày và tên món ăn cho tooltip
         $fullDates = $topFoodsData->map(fn($item) => \Carbon\Carbon::parse($item->order_date)->format('d/m/Y'))->toJson();
         $foodNames = $topFoodsData->map(fn($item) => $item->food_name)->toJson();
@@ -223,25 +234,30 @@ class TopFoodsChart {
         JS;
     }
 
-    public function getFilterText(string $filterValue){
-        return match ($filterValue){
+    public function getFilterText(string $filterValue)
+    {
+        return match ($filterValue) {
             default => "N/A"
         };
     }
 
-    public function getChartConfig(){
+    public function getChartConfig()
+    {
         return $this->buildChartConfig();
     }
 
-    public function getData(){
+    public function getData()
+    {
         return $this->data;
     }
 
-    public function getEventName(){
+    public function getEventName()
+    {
         return "updateDataTopFoodsChart";
     }
 
-    public function compileJavascript(){
+    public function compileJavascript()
+    {
         $ctxText = "ctxTopFoodsChart";
         $optionsText = "optionsTopFoodsChart";
         $chartText = "chartTopFoodsChart";
