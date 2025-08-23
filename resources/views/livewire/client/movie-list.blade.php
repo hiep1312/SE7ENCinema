@@ -26,12 +26,12 @@
     <div class="prs_mc_slider_main_wrapper">
         <div class="container">
             <div class="row">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                {{-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="prs_heading_section_wrapper">
                         <h2>Trang Danh Sách Phim</h2>
                     </div>
-                </div>
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                </div> --}}
+                {{-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="prs_mc_slider_wrapper">
                         @if($banners && $banners->count() > 0)
                             <div class="owl-carousel owl-theme">
@@ -39,7 +39,7 @@
                                     <div class="item">
                                         <img src="{{ asset('storage/' . $banner->image) }}" 
                                              alt="{{ $banner->title ?? 'Banner' }}"
-                                             style="width: 85%; height: 400px; object-fit: confit; margin: 0 auto;"> 
+                                             style="width: 85%; height: 600px; object-fit: confit; margin: 0 auto;"> 
                                     </div>
                                 @endforeach
                             </div>
@@ -60,7 +60,7 @@
                             </div>
                         @endif
                     </div>
-                </div>
+                </div> --}}
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="prs_upcome_tabs_wrapper" style="text-align: center; margin-bottom: 20px;">
                         <ul class="nav nav-tabs" role="tablist"
