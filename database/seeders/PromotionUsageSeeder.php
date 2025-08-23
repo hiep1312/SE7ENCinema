@@ -23,7 +23,7 @@ class PromotionUsageSeeder extends Seeder
             PromotionUsage::create([
                 'promotion_id'    => $promotion->id,
                 'booking_id'      => $booking->id,
-                'discount_amount' => rand(1, 4) * 5000, // số tròn
+                'discount_amount' => rand(5000, 20000),
                 'used_at'         => Carbon::parse($booking->start_transaction)
                                          ->subMinutes(rand(5, 20)),
             ]);
