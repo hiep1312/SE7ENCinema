@@ -2,76 +2,105 @@
 
 namespace App\Charts\ChartRooms;
 
-use App\Models\Booking;
+use App\Models\Seat;
 use Illuminate\Support\Facades\DB;
 
-class RoomMoviesData {
+class RoomMoviesData
+{
     protected $data;
     protected $room;
 
-    public function __construct($room) {
+    public function __construct($room)
+    {
         $this->room = $room;
     }
 
-    protected function queryData(?string $filter = null){
+    protected function queryData(?string $filter = null)
+    {
         $startDate = now()->subDays(2)->startOfDay();
         $endDate = now()->endOfDay();
 
-        $data = Booking::select('movies.title', DB::raw('COUNT(booking_seats.id) as tickets_sold'), DB::raw('SUM(bookings.total_price) as revenue'))
-            ->join('showtimes', 'bookings.showtime_id', '=', 'showtimes.id')
-            ->join('movies', 'showtimes.movie_id', '=', 'movies.id')
-            ->join('booking_seats', 'bookings.id', '=', 'booking_seats.booking_id')
-            ->where('showtimes.room_id', $this->room->id)
-            ->where('bookings.status', 'paid')
-            ->whereBetween('bookings.created_at', [$startDate, $endDate])
-            ->groupBy('movies.id', 'movies.title')
-            ->orderByDesc('tickets_sold')
-            ->limit(10)
+        $data = Seat::select(
+            'seats.seat_type',
+            DB::raw('COUNT(booking_seats.id) as tickets_sold'),
+            DB::raw('COALESCE(SUM(booking_seats.ticket_price), 0) as revenue'),
+            DB::raw('COUNT(seats.id) as total_seats')
+        )
+            ->leftJoin('booking_seats', 'seats.id', '=', 'booking_seats.seat_id')
+            ->leftJoin('bookings', function ($join) use ($startDate, $endDate) {
+                $join->on('booking_seats.booking_id', '=', 'bookings.id')
+                    ->where('bookings.status', '=', 'paid')
+                    ->whereBetween('bookings.created_at', [$startDate, $endDate]);
+            })
+            ->where('seats.room_id', $this->room->id)
+            ->groupBy('seats.seat_type')
+            ->orderBy('revenue', 'desc')
             ->get();
 
         if ($data->isEmpty()) {
             return [
                 'labels' => ['Không có dữ liệu'],
                 'tickets' => [0],
-                'revenue' => [0]
+                'revenue' => [0],
+                'total_seats' => [0]
             ];
         }
 
         $labels = [];
         $ticketsData = [];
         $revenueData = [];
+        $totalSeatsData = [];
 
         foreach ($data as $item) {
-            $labels[] = $item->title ?? 'Không có tên';
+            $seatTypeName = match ($item->seat_type) {
+                'standard' => 'Ghế thường',
+                'vip' => 'Ghế VIP',
+                'couple' => 'Ghế đôi',
+                default => 'Ghế ' . ucfirst($item->seat_type)
+            };
+
+            $labels[] = $seatTypeName;
             $ticketsData[] = max((int)$item->tickets_sold, 0);
             $revenueData[] = max((int)$item->revenue, 0);
+            $totalSeatsData[] = max((int)$item->total_seats, 0);
         }
 
         return [
             'labels' => $labels,
             'tickets' => $ticketsData,
-            'revenue' => $revenueData
+            'revenue' => $revenueData,
+            'total_seats' => $totalSeatsData
         ];
     }
 
-    public function loadData(?string $filter = null){
+    public function loadData(?string $filter = null)
+    {
         $this->data = $this->queryData($filter);
     }
 
-    protected function bindDataToElement(){
+    protected function bindDataToElement()
+    {
         return "document.getElementById('roomMoviesChart')";
     }
 
-    protected function buildChartConfig(){
-        $roomLabels=$this->data['labels'];
+    protected function buildChartConfig()
+    {
+        $roomLabels = $this->data['labels'];
         $roomLabelsJS = json_encode($roomLabels);
 
-        $roomTickets=$this->data['tickets'];
+        $roomTickets = $this->data['tickets'];
         $roomTicketsJS = json_encode($roomTickets);
+
+        $roomRevenue = $this->data['revenue'];
+        $roomRevenueJS = json_encode($roomRevenue);
+
+        $roomTotalSeats = $this->data['total_seats'];
+        $roomTotalSeatsJS = json_encode($roomTotalSeats);
+
         return <<<JS
         {
                 chart: {
-                    type: 'bar',
+                    type: 'line',
                     height: 400,
                     background: 'transparent',
                     toolbar: {
@@ -83,18 +112,22 @@ class RoomMoviesData {
                         speed: 800
                     }
                 },
-                plotOptions: {
-                    bar: {
-                        horizontal: true,
-                        borderRadius: 6,
-                        dataLabels: {
-                            position: 'top'
-                        }
-                    }
-                },
                 series: [{
-                    name: 'Số vé bán',
-                    data: $roomTicketsJS
+                    name: 'Doanh thu (VNĐ)',
+                    type: 'column',
+                    data: $roomRevenueJS,
+                    yAxisIndex: 0
+                }, {
+                    name: 'Số vé đã bán',
+                    type: 'line',
+                    data: $roomTicketsJS,
+                    yAxisIndex: 1
+                }, {
+                    name: 'Tổng ghế',
+                    type: 'column',
+                    data: $roomTotalSeatsJS,
+                    yAxisIndex: 0,
+                    opacity: 0.3
                 }],
                 xaxis: {
                     categories: $roomLabelsJS,
@@ -105,28 +138,62 @@ class RoomMoviesData {
                         }
                     }
                 },
-                yaxis: {
+                yaxis: [{
+                    title: {
+                        text: 'Doanh thu (VNĐ)',
+                        style: {
+                            color: '#ffffff'
+                        }
+                    },
                     labels: {
                         style: {
                             colors: '#ffffff',
                             fontSize: '11px'
                         },
-                        maxWidth: 150
+                        formatter: function(value) {
+                            return new Intl.NumberFormat('vi-VN').format(value);
+                        }
                     }
-                },
-                colors: ['#17A2B8'],
+                }, {
+                    opposite: true,
+                    title: {
+                        text: 'Số vé',
+                        style: {
+                            color: '#ffffff'
+                        }
+                    },
+                    labels: {
+                        style: {
+                            colors: '#ffffff',
+                            fontSize: '11px'
+                        }
+                    }
+                }],
+                colors: ['#17A2B8', '#20C997', '#6C757D'],
                 fill: {
                     type: 'gradient',
                     gradient: {
                         shade: 'dark',
-                        type: 'horizontal',
+                        type: 'vertical',
                         shadeIntensity: 0.3,
-                        gradientToColors: ['#20C997'],
+                        gradientToColors: ['#138496', '#1EA085', '#495057'],
                         inverseColors: false,
                         opacityFrom: 0.9,
                         opacityTo: 0.6,
                         stops: [0, 100]
                     }
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '60%',
+                        endingShape: 'rounded',
+                        borderRadius: 6
+                    }
+                },
+                stroke: {
+                    width: [0, 4, 0],
+                    curve: 'smooth'
                 },
                 grid: {
                     show: true,
@@ -142,44 +209,52 @@ class RoomMoviesData {
                 },
                 tooltip: {
                     theme: 'dark',
-                    y: {
+                    y: [{
+                        formatter: function(value) {
+                            return new Intl.NumberFormat('vi-VN', {
+                                style: 'currency',
+                                currency: 'VND'
+                            }).format(value);
+                        }
+                    }, {
                         formatter: function(value) {
                             return value + ' vé';
                         }
-                    }
+                    }, {
+                        formatter: function(value) {
+                            return value + ' ghế';
+                        }
+                    }]
                 },
-                dataLabels: {
-                    enabled: true,
-                    formatter: function(val) {
-                        return val + ' vé';
-                    },
-                    style: {
-                        colors: ['#ffffff']
-                    }
-                }
+
             }
         JS;
     }
 
-    public function getFilterText(string $filterValue){
-        return match ($filterValue){
+    public function getFilterText(string $filterValue)
+    {
+        return match ($filterValue) {
             default => "N/A"
         };
     }
 
-    public function getChartConfig(){
+    public function getChartConfig()
+    {
         return $this->buildChartConfig();
     }
 
-    public function getData(){
+    public function getData()
+    {
         return $this->data;
     }
 
-    public function getEventName(){
+    public function getEventName()
+    {
         return "updateDataRoomMoviesData";
     }
 
-    public function compileJavascript(){
+    public function compileJavascript()
+    {
         $ctxText = "ctxRoomMoviesData";
         $optionsText = "optionsRoomMoviesData";
         $chartText = "chartRoomMoviesData";

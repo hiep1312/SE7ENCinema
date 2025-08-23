@@ -2,40 +2,67 @@
 
 namespace App\Charts\ChartRooms;
 
-use App\Models\Room;
-class RoomStatsData {
-    protected $data;
+use App\Models\Showtime;
+use App\Models\Booking;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
-    protected function queryData(?string $filter = null){
-        $startDate = now()->subDays(6)->startOfDay();
+class RoomStatsData
+{
+    protected $data;
+    protected $room;
+
+    public function __construct($room)
+    {
+        $this->room = $room;
+    }
+
+    protected function queryData(?string $filter = null)
+    {
+        $startDate = now()->subDays(2)->startOfDay();
         $endDate = now()->endOfDay();
-        $query = Room::select('rooms.id', 'rooms.name')
-            ->leftJoin('showtimes', 'rooms.id', '=', 'showtimes.room_id')
-            ->leftJoin('bookings', function ($join) {
+
+        $data = Showtime::select(
+            'showtimes.id',
+            'showtimes.start_time',
+            'movies.title as movie_title',
+            DB::raw('COUNT(booking_seats.id) as tickets_sold'),
+            DB::raw('COALESCE(SUM(bookings.total_price), 0) as revenue')
+        )
+            ->join('movies', 'showtimes.movie_id', '=', 'movies.id')
+            ->leftJoin('bookings', function ($join) use ($startDate, $endDate) {
                 $join->on('showtimes.id', '=', 'bookings.showtime_id')
-                    ->where('bookings.status', '=', 'paid');
+                    ->where('bookings.status', '=', 'paid')
+                    ->whereBetween('bookings.created_at', [$startDate, $endDate]);
             })
-            ->leftJoin('booking_seats', 'bookings.id', '=', 'booking_seats.booking_id');
-            $roomStats = $query->whereBetween('bookings.created_at',[$startDate, $endDate])
-            ->groupBy('rooms.id', 'rooms.name')
-            ->selectRaw('COUNT(booking_seats.id) as tickets_sold, COALESCE(SUM(bookings.total_price), 0) as revenue')
+            ->leftJoin('booking_seats', 'bookings.id', '=', 'booking_seats.booking_id')
+            ->where('showtimes.room_id', $this->room->id)
+            ->whereBetween('showtimes.start_time', [$startDate, $endDate])
+            ->where('showtimes.start_time', '<=', now())
+            ->groupBy('showtimes.id', 'showtimes.start_time', 'movies.title')
+            ->orderBy('showtimes.start_time', 'asc')
             ->get();
 
-        if ($roomStats->isEmpty() || $roomStats->every(fn($room) => $room->tickets_sold == 0)) {
+        $filtered = $data->filter(function ($item) {
+            return $item->tickets_sold > 0 || $item->revenue > 0;
+        });
 
-            $allRooms = Room::select('id', 'name')->get();
-            $labels = $allRooms->pluck('name')->toArray();
+        if ($filtered->isEmpty()) {
+            return [
+                'labels' => ['Không có dữ liệu'],
+                'tickets' => [0],
+                'revenue' => [0]
+            ];
+        }
 
-            if (empty($labels)) {
-                $labels = ['Không có dữ liệu'];
-            }
+        $labels = [];
+        $ticketsData = [];
+        $revenueData = [];
 
-            $ticketsData = array_fill(0, count($labels), 0);
-            $revenueData = array_fill(0, count($labels), 0);
-        } else {
-            $labels = $roomStats->pluck('name')->toArray();
-            $ticketsData = $roomStats->pluck('tickets_sold')->map(fn($val) => (int)$val)->toArray();
-            $revenueData = $roomStats->pluck('revenue')->map(fn($val) => (int)$val)->toArray();
+        foreach ($filtered as $item) {
+            $labels[] = $item->movie_title . ' (' . $item->start_time->format('H:i') . ')';
+            $ticketsData[] = (int) $item->tickets_sold;
+            $revenueData[] = (int) $item->revenue;
         }
 
         return [
@@ -45,22 +72,26 @@ class RoomStatsData {
         ];
     }
 
-    public function loadData(?string $filter = null){
+
+    public function loadData(?string $filter = null)
+    {
         $this->data = $this->queryData($filter);
     }
 
-    protected function bindDataToElement(){
+    protected function bindDataToElement()
+    {
         return "document.getElementById('allRoomsStatsChart')";
     }
 
-    protected function buildChartConfig(){
-        $roomLabels=$this->data['labels'];
+    protected function buildChartConfig()
+    {
+        $roomLabels = $this->data['labels'];
         $roomLabelsJS = json_encode($roomLabels);
 
-        $roomTickets=$this->data['tickets'];
+        $roomTickets = $this->data['tickets'];
         $roomTicketsJS = json_encode($roomTickets);
 
-            $roomRevenue=$this->data['revenue'];
+        $roomRevenue = $this->data['revenue'];
         $roomRevenueJS = json_encode($roomRevenue);
 
         return <<<JS
@@ -95,8 +126,10 @@ class RoomStatsData {
                     labels: {
                         style: {
                             colors: '#ffffff',
-                            fontSize: '12px'
-                        }
+                            fontSize: '11px'
+                        },
+                        rotate: -45,
+                        rotateAlways: false
                     },
                     axisBorder: {
                         show: false
@@ -197,25 +230,30 @@ class RoomStatsData {
         JS;
     }
 
-    public function getFilterText(string $filterValue){
-        return match ($filterValue){
+    public function getFilterText(string $filterValue)
+    {
+        return match ($filterValue) {
             default => "N/A"
         };
     }
 
-    public function getChartConfig(){
+    public function getChartConfig()
+    {
         return $this->buildChartConfig();
     }
 
-    public function getData(){
+    public function getData()
+    {
         return $this->data;
     }
 
-    public function getEventName(){
+    public function getEventName()
+    {
         return "updateDataChartRoom";
-}
+    }
 
-    public function compileJavascript(){
+    public function compileJavascript()
+    {
         $ctxText = "ctxChartRoom";
         $optionsText = "optionsChartRoom";
         $chartText = "chartRoom";
