@@ -70,15 +70,16 @@ class ShowtimeIndex extends Component
             })
             ->when($this->statusFilter, fn($query) => $query->where('status', $this->statusFilter))
             ->select('*', DB::raw('DATE(start_time) as show_date'));
-        if($this->sortByDate) {
-            $query->where('start_time', '>=', now()->subDays($this->sortByDate));
-        } else {
-            $query->where('start_time', '>=', now()->startOfDay());
-        }
+
+        $today = now()->startOfDay();
+        $endDate = $today->copy()->addDays(6)->endOfDay();
+
+        $query->whereBetween('start_time', [$today, $endDate]);
+
         $showtimes = $query->orderBy('start_time', 'asc')->orderBy('status', 'asc')->get()->groupBy(['show_date', 'movie_id']);
-        $today = now()->toDateString();
-        $showtimes = $showtimes->filter(function ($movies, $date) use ($today) {
-            return $date >= $today;
+        $showtimes = $showtimes->filter(function ($movies, $date) use ($today, $endDate) {
+            $dateObj = \Carbon\Carbon::parse($date);
+            return $dateObj->between($today, $endDate);
         });
         $showtimes = $showtimes->sortKeys();
 
@@ -90,12 +91,9 @@ class ShowtimeIndex extends Component
             } elseif (!$dateKeys->contains($this->activeDate)) {
                 $this->activeDate = $dateKeys->contains($today) ? $today : $dateKeys->first();
             }
-
-
         } else {
             $this->activeDate = null;
         }
-
         return view('livewire.admin.showtimes.showtime-index', compact('showtimes'));
     }
 }
