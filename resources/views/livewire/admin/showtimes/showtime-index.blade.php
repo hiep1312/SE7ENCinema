@@ -2,7 +2,7 @@
     @vite('resources/css/showtimeIndexAdmin.css')
 @endassets
 @use("Carbon\Carbon")
-<div class="scRender">
+<div class="scRender scShowtimeIndexAdmin">
     @if (session()->has('success'))
         <div class="alert alert-success alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
             {{ session('success') }}
@@ -74,15 +74,8 @@
                         @foreach($showtimes as $date => $movies)
                             @php $tabId = 'tab-' . str_replace(['-', '/'], '', $date); @endphp
                             <li class="nav-item" role="presentation" wire:key="tab-{{ $date }}">
-                                <a class="nav-link {{ ($activeDate === $date) ? 'active' : '' }}"
-                                   id="{{ $tabId }}"
-                                   data-bs-toggle="tab"
-                                   href="#pane-{{ $tabId }}"
-                                   role="tab"
-                                   aria-controls="pane-{{ $tabId }}"
-                                   aria-selected="{{ ($activeDate === $date) ? 'true' : 'false' }}"
-                                   wire:click="setActiveDate('{{ $date }}')">
-                                    {{ ucfirst(Carbon::parse($date)->translatedFormat('l, d/m')) }}
+                                <a class="nav-link {{ ($activeDate === $date) ? 'active' : '' }}" id="{{ $tabId }}" data-bs-toggle="tab" href="#pane-{{ $tabId }}" role="tab" aria-controls="pane-{{ $tabId }}" aria-selected="{{ ($activeDate === $date) ? 'true' : 'false' }}" wire:click="setActiveDate('{{ $date }}')">
+                                    {{ ucfirst(Carbon::parse($date)->translatedFormat('d/m/Y')) }}
                                 </a>
                             </li>
                         @endforeach
@@ -93,7 +86,7 @@
                         @php $tabId = 'tab-' . str_replace(['-', '/'], '', $date); @endphp
                         <div class="tab-pane fade {{ ($activeDate === $date) ? 'show active' : '' }}" id="pane-{{ $tabId }}" role="tabpanel" aria-labelledby="{{ $tabId }}" wire:key="pane-{{ $date }}">
                             <div class="date-info fw-bold mb-3">
-                                {{ ucfirst(Carbon::parse($date)->translatedFormat('l, d/m/Y')) }} ({{ (clone $movies)->flatten()->count() }} suất chiếu - {{ $movies->count() }} phim)
+                              {{ (clone $movies)->flatten()->count() }} suất chiếu - {{ $movies->count() }} phim
                             </div>
                             @foreach ($movies as $movieId => $movieShowtimes)
                                 <div class="movie-card border rounded p-3 mb-3" wire:key="movie-{{ $date }}-{{ $movieId }}">
@@ -160,6 +153,11 @@
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex gap-2 justify-content-center">
+                                                                        <a href="{{ route('admin.showtimes.detail', $showtime->id) }}"
+                                                                        class="btn btn-sm btn-info"
+                                                                        title="Chi tiết">
+                                                                        <i class="fas fa-eye" style="margin-right: 0"></i>
+                                                                    </a>
                                                                         @if($showtime->status !== "completed" && $showtime->start_time->isFuture())
                                                                             <a href="{{ route('admin.showtimes.edit', $showtime->id) }}"
                                                                                 class="btn btn-sm btn-warning"

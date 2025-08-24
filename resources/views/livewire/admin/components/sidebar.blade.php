@@ -188,6 +188,21 @@
       </div>
     </li>
     <li class="nav-item menu-items">
+      <a class="nav-link" data-toggle="collapse" href="#manage-comments">
+        <span class="menu-icon">
+          <i class="fa-solid fa-comment-captions"></i>
+        </span>
+        <span class="menu-title">Quản lý bình luận</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="manage-comments">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.comments.index') }}">Danh sách bình luận</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.comments.create') }}">Tạo bình luận nới</a></li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item menu-items">
       <a class="nav-link" data-toggle="collapse" href="#manage-ratings">
         <span class="menu-icon">
           <i class="fa-classic fa-solid fa-star-sharp fa-fw"></i>

@@ -12,6 +12,10 @@ use App\Livewire\Admin\Bookings\BookingIndex;
 use App\Livewire\Admin\FoodAttributes\FoodAttributeIndex;
 use App\Livewire\Client\MovieBooking\MovieBooking;
 use Illuminate\Support\Facades\Route;
+use App\Livewire\Admin\Comments\CommentCreate;
+use App\Livewire\Admin\Comments\CommentDetail;
+use App\Livewire\Admin\Comments\CommentEdit;
+use App\Livewire\Admin\Comments\CommentIndex;
 use App\Livewire\Admin\Rooms\RoomCreate;
 use App\Livewire\Admin\Rooms\RoomDetail;
 use App\Livewire\Admin\Rooms\RoomEdit;
@@ -54,20 +58,16 @@ use App\Livewire\Client\ClientMovieDetail;
 use App\Livewire\Client\User\UserConfirm;
 use App\Livewire\Client\User\UserInformation;
 use App\Http\Controllers\VnpayController;
-use App\Http\Livewire\Admin\BookingManager;
-use App\Http\Livewire\Client\BookingTicket;
 use App\Livewire\Admin\DasboardChart\Dashboard;
+use App\Livewire\Admin\Showtimes\ShowtimeDetail;
 use App\Livewire\Client\SelectMovieShowtime;
 use App\Livewire\Client\SelectSeats;
-use App\Livewire\Client\SelectFood;
 use App\Livewire\Client\ConfirmBooking;
 use App\Livewire\Payment\VnpayPayment;
-// use App\Livewire\Booking\BookingFood;
 use App\Livewire\Client\Bookings\BookingFood;
 use App\Livewire\Client\Bookings\BookingPayment;
 use App\Livewire\Client\Bookings\HandlePayment;
 use App\Livewire\Client\User\BookingDetail as UserBookingDetail;
-use App\Livewire\Test;
 
 Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->group(function () {
     /* Dashboard */
@@ -80,6 +80,14 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->
         Route::get('/', BannerIndex::class)->name('index');
         Route::get('/create', BannerCreate::class)->name('create');
         Route::get('/edit/{banner}', BannerEdit::class)->name('edit');
+    });
+
+    /* Comments */
+     Route::prefix('/comments')->name('comments.')->group(function () {
+        Route::get('/', CommentIndex::class)->name('index');
+        Route::get('/create', CommentCreate::class)->name('create');
+        Route::get('/edit/{comment}', CommentEdit::class)->name('edit');
+        Route::get('/detail/{comment}', CommentDetail::class)->name('detail');
     });
 
     /* Rooms */
@@ -137,6 +145,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->
         Route::get('/', ShowtimeIndex::class)->name('index');
         Route::get('/create', ShowtimeCreate::class)->name('create');
         Route::get('/edit/{showtime}', ShowtimeEdit::class)->name('edit');
+        Route::get('/detail/{showtime}', ShowtimeDetail::class)->name('detail');
     });
 
     /* Bookings */
