@@ -382,11 +382,15 @@ class ClientMovieDetail extends Component
 
         $this->validate(['replyContent' => 'required|string|max:1000']);
 
+        // Tìm comment gốc để làm parent
+        $targetComment = Comment::find($this->replyingTo);
+        $parentCommentId = $targetComment->parent_comment_id ?? $targetComment->id;
+
         Comment::create([
             'user_id' => Auth::id(),
             'movie_id' => $this->movie->id,
             'content' => $this->replyContent,
-            'parent_comment_id' => $this->replyingTo,
+            'parent_comment_id' => $parentCommentId,
             'status' => 'active',
         ]);
 
@@ -468,17 +472,26 @@ class ClientMovieDetail extends Component
     private function getCommentsWithReplies()
     {
         $allComments = $this->movie->comments()
-            ->with(['user'])
+            ->with(['user:id,name,avatar,email'])
             ->where('status', 'active')
             ->get();
 
         $parentComments = $allComments->whereNull('parent_comment_id');
         $childComments = $allComments->whereNotNull('parent_comment_id')->groupBy('parent_comment_id');
 
-        $commentsWithReplyCount = $parentComments->map(function ($comment) use ($childComments) {
+        $commentsWithReplyCount = $parentComments->map(function ($comment) use ($childComments, $allComments) {
             $replies = $childComments->get($comment->id, collect());
+            
+            // Thêm nested replies cho mỗi reply
+            $repliesWithNested = $replies->map(function ($reply) use ($allComments) {
+                $nestedReplies = $allComments->where('parent_comment_id', $reply->id);
+                $reply->nested_replies = $nestedReplies->sortBy('created_at');
+                $reply->nested_reply_count = $nestedReplies->count();
+                return $reply;
+            });
+            
             $comment->reply_count = $replies->count();
-            $comment->replies = $replies->sortBy('created_at');
+            $comment->replies = $repliesWithNested->sortBy('created_at');
             return $comment;
         });
 
@@ -564,7 +577,7 @@ class ClientMovieDetail extends Component
         $visibleComments = $comments->slice($start, $this->commentsPerPage);
 
         // Ratings
-        $allRatings = $this->movie->ratings()->with('user')->withTrashed()->latest()->get();
+        $allRatings = $this->movie->ratings()->with('user:id,name,avatar,email')->withTrashed()->latest()->get();
         $activeRatings = $allRatings->whereNull('deleted_at');
         $hiddenRatings = $allRatings->whereNotNull('deleted_at');
 

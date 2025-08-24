@@ -1,8 +1,9 @@
 @assets
     <link rel="stylesheet" href="{{ asset('client/assets/css/style.css') }}">
+    @vite('resources/css/seat.css')
 @endassets
 
-<div class="scRender" wire:poll.5000ms="refreshSeatStatus">
+<div class="scRender scSeat" wire:poll.1000ms="refreshSeatStatus">
     <div style="clear: both"></div>
     @if ($isBanned && $banInfo)
         <div class="container mt-5">

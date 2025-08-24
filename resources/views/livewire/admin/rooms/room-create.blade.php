@@ -1,11 +1,11 @@
 @assets
-<link rel="stylesheet" href="{{ asset('client/assets/css/style.css') }}">
-<script>
-    function formatPrice(element){
+    <link rel="stylesheet" href="{{ asset('client/assets/css/style.css') }}">
+    <script>
+        function formatPrice(element){
             const currentValue = element.value.replaceAll(/,|\./g, '');
             element.value = (isNaN(currentValue) || currentValue === '') ? currentValue : (parseInt(currentValue)).toLocaleString('vi');
         }
-</script>
+    </script>
 @endassets
 <div class="scRender scSeat">
     @if (session()->has('error'))

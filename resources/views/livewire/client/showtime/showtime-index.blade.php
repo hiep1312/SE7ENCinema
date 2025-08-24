@@ -36,7 +36,7 @@
         @forelse($moviesWithShowtimes as $movie)
             <div class="cinema-schedule__movie-card cinema-schedule__animate-fadeInUp" style="display: flex; flex-direction: row; gap: 0; min-height: 320px;">
                 <!-- Movie Poster (Left) -->
-                <div class="cinema-schedule__movie-poster-wrapper" style="flex: 0 0 210px; height: 320px; border-radius: 1rem 0 0 1rem; overflow: hidden; position: relative;">
+                <div class="cinema-schedule__movie-poster-wrapper" style="flex: 0 0 210px; height: 100%; border-radius: 1rem 0 0 1rem; overflow: hidden; position: relative;">
                     <img
                         src="{{ $movie->poster ? (Storage::exists('public/' . $movie->poster) ? $movie->poster : asset('storage/' . $movie->poster)) : asset('storage/404.webp') }}"
                         class="cinema-schedule__movie-poster"
@@ -48,7 +48,7 @@
                     @endif
                 </div>
                 <!-- Movie Info (Right) -->
-                <div class="cinema-schedule__movie-info" style="flex: 1 1 0; padding: 2rem 2rem 2rem 2rem; display: flex; flex-direction: column; justify-content: space-around; position: relative;">
+                <div class="cinema-schedule__movie-info" style="flex: 1 1 0; padding: 2rem 2rem 1em 2rem; display: flex; flex-direction: column; position: relative;">
                     <!-- Format Badge moved to top right of info section -->
                     <span class="cinema-schedule__format-badge" style="position: absolute; top: 10px; right: 10px;">{{ $movie->format ?? '2D' }}</span>
                     <div>

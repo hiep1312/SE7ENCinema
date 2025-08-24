@@ -361,7 +361,7 @@ document.addEventListener('livewire:init', () => {
     });
 
     Livewire.on('_scAlert', ([options, model]) => {
-        const $wire = Livewire.find(document.querySelector("[wire\\:id][sc-root]")?.getAttribute('wire:id') ?? document.querySelector("[wire\\:id]")?.getAttribute('wire:id'));
+        const $wire = Livewire.find(document.querySelector("[wire\\:id][sc-root]")?.getAttribute('wire:id') ?? document.querySelector("[wire\\:id]")?.getAttribute('wire:id')) ?? Livewire.first();
 
         let params = [];
         const checkCallFunction = model.match(/(\w+)(?:\(([^\)]*)\))/u);
@@ -388,7 +388,7 @@ document.addEventListener('livewire:init', () => {
     });
 
     Livewire.on('_scConfirm', ([options, model]) => {
-        const $wire = Livewire.find(document.querySelector("[wire\\:id][sc-root]")?.getAttribute('wire:id') ?? document.querySelector("[wire\\:id]")?.getAttribute('wire:id'));
+        const $wire = Livewire.find(document.querySelector("[wire\\:id][sc-root]")?.getAttribute('wire:id') ?? document.querySelector("[wire\\:id]")?.getAttribute('wire:id')) ?? Livewire.first();
 
         let params = [];
         const checkCallFunction = model.match(/(\w+)(?:\(([^\)]*)\))/u);
@@ -417,7 +417,7 @@ document.addEventListener('livewire:init', () => {
     });
 
     Livewire.on('_scPrompt', ([options, model]) => {
-        const $wire = Livewire.find(document.querySelector("[wire\\:id][sc-root]")?.getAttribute('wire:id') ?? document.querySelector("[wire\\:id]")?.getAttribute('wire:id'));
+        const $wire = Livewire.find(document.querySelector("[wire\\:id][sc-root]")?.getAttribute('wire:id') ?? document.querySelector("[wire\\:id]")?.getAttribute('wire:id')) ?? Livewire.first();
 
         let params = [];
         const checkCallFunction = model.match(/(\w+)(?:\(([^\)]*)\))/u);
@@ -451,7 +451,7 @@ document.addEventListener('livewire:init', () => {
     });
 
     Livewire.on('_scToast', ([options, model]) => {
-        const $wire = Livewire.find(document.querySelector("[wire\\:id][sc-root]")?.getAttribute('wire:id') ?? document.querySelector("[wire\\:id]")?.getAttribute('wire:id'));
+        const $wire = Livewire.find(document.querySelector("[wire\\:id][sc-root]")?.getAttribute('wire:id') ?? document.querySelector("[wire\\:id]")?.getAttribute('wire:id')) ?? Livewire.first();
 
         let params = [];
         const checkCallFunction = model.match(/(\w+)(?:\(([^\)]*)\))/u);
@@ -480,7 +480,7 @@ document.addEventListener('livewire:init', () => {
     });
 
     Livewire.on('_scProgress', ([options, model]) => {
-        const $wire = Livewire.find(document.querySelector("[wire\\:id][sc-root]")?.getAttribute('wire:id') ?? document.querySelector("[wire\\:id]")?.getAttribute('wire:id'));
+        const $wire = Livewire.find(document.querySelector("[wire\\:id][sc-root]")?.getAttribute('wire:id') ?? document.querySelector("[wire\\:id]")?.getAttribute('wire:id')) ?? Livewire.first();
 
         let params = [];
         const checkCallFunction = model.match(/(\w+)(?:\(([^\)]*)\))/u);

@@ -4,16 +4,27 @@ namespace App\Charts\ChartRooms;
 
 use App\Models\BookingSeat;
 use App\Models\Showtime;
-class RoomOccupancyData {
+use Carbon\Carbon;
+
+class RoomOccupancyData
+{
     protected $data;
     protected $room;
 
-    public function __construct($room) {
+    public function __construct($room)
+    {
         $this->room = $room;
     }
-    protected function queryData(?string $filter = null){
-        $startDate = now()->subDays(2)->startOfDay();
-        $endDate = now()->endOfDay();
+    protected function queryData(?array $filter = null)
+    {
+        is_array($filter) && [$fromDate, $rangeDays] = $filter;
+        $rangeDays = (int) $rangeDays;
+        $fromDate = $fromDate ? Carbon::parse($fromDate) : Carbon::now()->subDays($rangeDays);
+        $toDate = $fromDate->copy()->addDays($rangeDays);
+
+        $startDate = $fromDate->copy()->startOfDay();
+        $endDate = $toDate->copy()->endOfDay();
+
 
         $totalBooked = BookingSeat::join('bookings', 'booking_seats.booking_id', '=', 'bookings.id')
             ->join('showtimes', 'bookings.showtime_id', '=', 'showtimes.id')
@@ -37,16 +48,19 @@ class RoomOccupancyData {
         ];
     }
 
-    public function loadData(?string $filter = null){
+    public function loadData(?array $filter = null)
+    {
         $this->data = $this->queryData($filter);
     }
 
-    protected function bindDataToElement(){
+    protected function bindDataToElement()
+    {
         return "document.getElementById('occupancyChart')";
     }
 
-    protected function buildChartConfig(){
-        $roomOccupancyRate=$this->data['occupancy_rate'];
+    protected function buildChartConfig()
+    {
+        $roomOccupancyRate = $this->data['occupancy_rate'];
         $roomOccupancyRateJS = json_encode($roomOccupancyRate);
         return <<<JS
         {
@@ -123,25 +137,30 @@ class RoomOccupancyData {
         JS;
     }
 
-    public function getFilterText(string $filterValue){
-        return match ($filterValue){
+    public function getFilterText(string $filterValue)
+    {
+        return match ($filterValue) {
             default => "N/A"
         };
     }
 
-    public function getChartConfig(){
+    public function getChartConfig()
+    {
         return $this->buildChartConfig();
     }
 
-    public function getData(){
+    public function getData()
+    {
         return $this->data;
     }
 
-    public function getEventName(){
+    public function getEventName()
+    {
         return "updateDataRoomOccupancyData";
     }
 
-    public function compileJavascript(){
+    public function compileJavascript()
+    {
         $ctxText = "ctxRoomOccupancyData";
         $optionsText = "optionsRoomOccupancyData";
         $chartText = "chartRoomOccupancyData";

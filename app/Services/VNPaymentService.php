@@ -27,7 +27,7 @@ class VNPaymentService {
             'vnp_IpAddr' => request()->ip(),
             'vnp_Locale' => 'vn',
             'vnp_OrderType' => 250000,
-            'vnp_ReturnUrl' => route('test'),
+            'vnp_ReturnUrl' => route('admin.bookings.index'),
         ];
     }
 
@@ -101,7 +101,7 @@ class VNPaymentService {
             'vnp_TransactionDate' => $configInput['vnp_CreateDate'] ?? throw new InvalidArgumentException('The vnp_CreateDate attribute is required'),
             'vnp_CreateDate' => $configInput['vnp_CreateDate'],
             'vnp_IpAddr' => $configInput['vnp_IpAddr'] ?? request()->ip(),
-            'vnp_OrderInfo' => "Truy vấn kết quả giao dịch cho mã {$configInput['vnp_TxnRef']}",
+            'vnp_OrderInfo' => "Truy van ket qua giao dich cho ma {$configInput['vnp_TxnRef']}",
         ];
 
         isset($configInput['vnp_TransactionNo']) && ($config['vnp_TransactionNo'] = $configInput['vnp_TransactionNo']);
@@ -125,7 +125,7 @@ class VNPaymentService {
                 }while(Booking::where('transaction_code', $txnRef)->exists());
                 return $txnRef;
             },
-            'vnp_OrderInfo' => fn(): string => "SE7ENCinema - Thanh toán vé xem phim",
+            'vnp_OrderInfo' => fn(): string => "SE7ENCinema - Thanh toan ve xem phim",
             'vnp_BankCode' => fn(): null => null,
             'vnp_ReturnUrl' => fn(): null => null,
             'vnp_CreateDate' => fn(): string => now()->format('YmdHis'),

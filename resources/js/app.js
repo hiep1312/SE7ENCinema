@@ -7,3 +7,4 @@ import './scAlert';
 import './scChart';
 import './scSortable';
 import './generateSeats';
+import './chatbot';

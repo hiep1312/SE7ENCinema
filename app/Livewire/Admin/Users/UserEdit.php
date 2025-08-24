@@ -52,8 +52,7 @@ class UserEdit extends Component
     public function mount(User $user)
     {
         $this->user = $user;
-        $this->fill($user->only('email', 'name', 'phone', 'address', 'birthday', 'gender', 'role', 'status'));
-        $this->birthday = !$this->birthday ?: $this->birthday->format('Y-m-d');
+        $this->fill($user->only('email', 'name', 'phone', 'address', 'gender', 'role', 'status') + ['birthday' => $user->birthday->format('Y-m-d')]);
     }
 
     public function updateUser()

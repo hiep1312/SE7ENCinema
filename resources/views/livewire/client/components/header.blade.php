@@ -48,10 +48,7 @@
             </div>
             @guest
             <div class="prs_top_login_btn_wrapper">
-                <div class="prs_animate_btn1">
-                            <a href="{{ route('login') }}" class="button button--tamaya"
-                                data-text="Đăng nhập"><span>Đăng
-                                    nhập</span></a>
+                <div class="prs_animate_btn1"><a href="{{ route('login') }}" class="button button--tamaya" data-text="Đăng nhập"><span>Đăng nhập</span></a>
                 </div>
             </div>
             @endguest

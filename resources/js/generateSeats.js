@@ -388,6 +388,7 @@ document.addEventListener("livewire:init", () => {
         return frame.cloneNode(true);
     };
 
+
     window.generateClientDOMSeats = function ({ seats, selectedSeats = [], sessionId, holdExpiresAt = null }, pathScreen, modelBinding = "selectedSeats") {
         window.currentSelectedSeats = selectedSeats;
         window.currentSessionId = sessionId;
@@ -396,6 +397,7 @@ document.addEventListener("livewire:init", () => {
             exp > now ? seatSynchronizer.startCountdown(exp) : seatSynchronizer.stopCountdown();
         } else seatSynchronizer.stopCountdown();
         if (!seats || !seats.length) return;
+
         const rowSet = new Set(), rowInfo = {};
         for (const s of seats) {
             const r = s.seat_row.toUpperCase();
@@ -403,23 +405,29 @@ document.addEventListener("livewire:init", () => {
             rowInfo[r] ||= { maxNumber: 0, type: s.seat_type };
             if (s.seat_number > rowInfo[r].maxNumber) rowInfo[r].maxNumber = s.seat_number;
         }
+
         const rowsSorted = Array.from(rowSet).sort();
         const rows = rowsSorted.length;
         const seatsPerRow = Math.max(...Object.values(rowInfo).map(r => r.maxNumber));
         const vipArr = rowsSorted.filter(r => rowInfo[r].type === "vip");
         const coupleArr = rowsSorted.filter(r => rowInfo[r].type === "couple");
+
         const frame = generateDOMFrameSeats(pathScreen);
         const layout = qs("#seats-layout", frame);
         const aislesCol = calcAisles(seatsPerRow);
         const aislesRow = calcAisles(rows);
+
         for (let i = 0; i < rowsSorted.length; i++) {
             const rowChar = rowsSorted[i];
             const isVip = vipArr.includes(rowChar), isCouple = coupleArr.includes(rowChar);
             const ul = generateDOMFrameRow(rowChar, undefined, false);
+            const uiPositionMap = new Map();
+            let uiPosition = 1;
             for (let j = 1; j <= seatsPerRow; j++) {
-                const sid = seatIdOf(rowChar, j);
                 const seat = seats.find(s => s.seat_row.toUpperCase() === rowChar && s.seat_number === j);
                 if (!seat) continue;
+                uiPositionMap.set(j, uiPosition);
+                const sid = seatIdOf(rowChar, j);
                 const type = isCouple ? "double" : isVip ? "vip" : "standard";
                 const sCls = `seat seat-${type}`;
                 const isChecked = selectedSeats.includes(sid) ? "checked" : "";
@@ -429,7 +437,6 @@ document.addEventListener("livewire:init", () => {
                     const s = (v ?? "").toString().trim().toLowerCase();
                     return v === 1 || v === true || s === "1" || s === "true";
                 };
-
                 const isMaintenance = (v) => {
                     const s = (v ?? "").toString().trim().toLowerCase();
                     return s === "maintenance" || isTrueish(v);
@@ -439,14 +446,14 @@ document.addEventListener("livewire:init", () => {
                 const dataDis = isBooked || isHeld || isMaint ? "true" : "false";
                 const li = make("li", "seat-item");
                 setHtml(li, `
-                   <input type="checkbox" class="${sCls}" id="${sid}" value="${sid}" wire:model.live="${modelBinding}"
-                    data-number="${j}"
-                    data-disabled="${dataDis}"
-                    data-booked="${isBooked ? "true" : "false"}"
-                    data-held="${isHeld ? "true" : "false"}"
-                    data-maintenance="${isMaint ? "true" : "false"}"
-                    data-type="${isCouple ? "couple" : (isVip ? "vip" : "standard")}"
-                    ${isChecked} ${disabled} wire:sc-model="noop">`);
+                <input type="checkbox" class="${sCls}" id="${sid}" value="${sid}" wire:model.live="${modelBinding}"
+                data-number="${j}"
+                data-disabled="${dataDis}"
+                data-booked="${isBooked ? "true" : "false"}"
+                data-held="${isHeld ? "true" : "false"}"
+                data-maintenance="${isMaint ? "true" : "false"}"
+                data-type="${isCouple ? "couple" : (isVip ? "vip" : "standard")}"
+                ${isChecked} ${disabled} wire:sc-model="noop">`);
                 li.dataset.seat = type;
                 if (isMaint) li.classList.add("seat-maintenance");
                 else if (isBooked) li.classList.add("seat-booked");
@@ -455,11 +462,19 @@ document.addEventListener("livewire:init", () => {
                 else li.classList.add("seat-available");
                 if (isBooked || isHeld) addSeatOverlay(li, sid, isBooked ? "booked" : "held");
                 ul.appendChild(li);
-                pushAisleIf(ul, aislesCol.includes(j + 1) && j < seatsPerRow, false);
+                pushAisleIf(ul, aislesCol.includes(uiPosition + 1) && uiPosition < seatsPerRow, false);
+                if (isCouple) {
+                    uiPosition += 2;
+                } else {
+                    uiPosition += 1;
+                }
             }
+
             layout.appendChild(ul);
             if (aislesRow.includes(i + 2) && i < rows) {
-                const r = make("div", "row-aisle"); r.style.height = "20px"; r.style.width = "100%";
+                const r = make("div", "row-aisle");
+                r.style.height = "20px";
+                r.style.width = "100%";
                 layout.appendChild(r);
             }
         }
@@ -677,7 +692,7 @@ document.addEventListener("livewire:init", () => {
             const el = qs("#seat-countdown"); if (!el || !(this.countdownTimer && typeof this.countdownTimer.formatTime === "function")) return;
             const t = this.countdownTimer.formatTime(remain);
             let icon = "fas fa-clock"; if (remain <= 30) icon = "fas fa-exclamation-triangle"; else if (remain <= 120) icon = "fas fa-exclamation-circle";
-            setHtml(el, `<div class="d-flex align-items-center justify-content-center fs-3 text-light alert-dark p-2 rounded"><i class="${icon} me-2"></i><strong>Thời gian giữ ghế: ${t}</strong></div>`);
+            setHtml(el, `<div class="d-flex align-items-center justify-content-center fs-3 text-light alert-dark p-2 rounded"><p>Thời gian giữ ghế: ${t}</p></div>`);
         }
         stopCountdown() { this.countdownTimer?.stop(); this.countdownTimer = null; const el = qs("#seat-countdown"); if (el) el.innerHTML = ""; }
     }

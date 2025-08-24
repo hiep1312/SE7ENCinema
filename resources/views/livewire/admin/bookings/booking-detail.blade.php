@@ -1,4 +1,11 @@
 @use('chillerlan\QRCode\QRCode')
+@assets
+    <style>
+        .apexcharts-menu {
+            color: black;
+        }
+    </style>
+@endassets
 <div class="scRender">
     <div class="container-lg mb-4" @if (session()->missing('deleteExpired')) wire:poll="cleanupBookingsAndUpdateData" @endif>
         <!-- Header -->
@@ -137,11 +144,11 @@
             <div class="container-fluid">
                 <div class="row g-4">
                     <!-- Revenue Chart -->
-                    <div class="col-xl-6 col-lg-12">
+                    <div class="col-xl-12 col-lg-12">
                         <div class="bg-dark rounded-3 p-3">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="text-white mb-0">
-                                    <i class="fas fa-chart-line me-2 text-primary"></i>Doanh thu
+                                    <i class="fas fa-chart-line me-2 text-primary"></i>Tỉ lệ các loại ghế đã đặt
                                 </h5>
                             </div>
                             <div>
@@ -149,65 +156,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Movies Summary Chart (Top phim theo doanh thu) -->
-                    <div class="col-xl-6 col-lg-12">
-                        <div class="bg-dark rounded-3 p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="text-white mb-0">
-                                    <i class="fas fa-film me-2 text-info"></i>Top phim theo doanh thu
-                                </h5>
-                                {{-- Top Movies Chart Filter --}}
-                            </div>
-                            <div>
-                                <div wire:ignore id="moviesSummaryChart" style="height: 400px;"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Phân tích đặt đồ ăn & thức uống -->
-                    <div class="col-xl-6 col-lg-12">
-                        <div class="bg-dark rounded-3 p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="text-white mb-0">
-                                    <i class="fas fa-utensils me-2 text-warning"></i>Phân tích đặt đồ ăn & thức
-                                    uống
-                                </h5>
-                            </div>
-                            <div>
-                                <div wire:ignore id="foodsChart" style="height: 400px;"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Top món ăn & thức uống bán chạy -->
-                    <div class="col-xl-6 col-lg-12">
-                        <div class="bg-dark rounded-3 p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="text-white mb-0">
-                                    <i class="fas fa-trophy me-2 text-danger"></i>Top đồ ăn bán chạy
-                                </h5>
-                            </div>
-                            <div>
-                                <div wire:ignore id="topFoodsChart" style="height: 400px;"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Phân tích đặt ghế -->
-                    <div class="col-xl-12 col-lg-12">
-                        <div class="bg-dark rounded-3 p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="text-white mb-0">
-                                    <i class="fas fa-chair me-2 text-success"></i>Phân tích đặt ghế
-                                </h5>
-                            </div>
-                            <div>
-                                <div wire:ignore id="seatsChart" style="height: 500px;"></div>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
             @elseif ($tabCurrent === 'overview')
@@ -396,7 +344,7 @@
                                 class="d-flex align-items-start justify-content-center flex-wrap flex-lg-nowrap p-3 compact-dark rounded">
                                 <div class="d-flex flex-column align-items-center me-md-3 gap-2">
                                     <div class="user-avatar-clean"
-                                        style="width: 160px; aspect-ratio: 1; height: auto; margin-bottom: 0; border-radius: 50%;">
+                                        style="width: 160px; aspect-ratio: 1; height: 160px; margin-bottom: 0; border-radius: 50%;">
                                         @if ($userBooking->avatar)
                                         <img src="{{ asset('storage/' . $userBooking->avatar) }}" alt
                                             style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">
@@ -729,10 +677,6 @@
                                                 <td><strong>{{ $promotion->title }}</strong></td>
                                             </tr>
                                             <tr>
-                                                <td><strong class="text-warning">Mô tả:</strong></td>
-                                                <td class="text-start text-wrap text-muted lh-base">{{ $promotion->description ?? 'Không có mô tả' }}</td>
-                                            </tr>
-                                            <tr>
                                                 <td><strong class="text-warning">Giảm giá:</strong></td>
                                                 <td>{{ number_format($promotion->discount_value, 0, '.', '.') . ($promotion->discount_type === 'percentage' ? '%' : 'đ') }}</td>
                                             </tr>
@@ -821,27 +765,9 @@
             @endif
         </div>
     </div>
-    <style>
-        .apexcharts-menu {
-            color: black;
-        }
-    </style>
 </div>
 @script
 <script>
-            {!! $topFoods->compileJavascript() !!}
-            {!! $moviesSummary->compileJavascript() !!}
-            {!! $foodChart->compileJavascript() !!}
-            {!! $Revenue->compileJavascript() !!}
-            {!! $seatsChart->compileJavascript() !!}
-    globalThis.chartInstances = {};
-        // Function to update filter text
-        // function updateFilterText(elementId, text) {
-        //     const element = document.getElementById(elementId);
-        //     if (element) {
-        //         element.textContent = text;
-        //     }
-        // }
-        Livewire.on('updateData', function([$revenueData, $topMovies, $seatsData, $foodsData, $topFoods, $filterTexts]) {})
+    {!! $Revenue->compileJavascript() !!}
 </script>
 @endscript

@@ -37,8 +37,8 @@ class RatingSeeder extends Seeder
                 Rating::create([
                     'user_id' => $users->random()->id,
                     'movie_id' => $movie->id,
-                    'score'   => rand(3, 5),
-                    'review'  => $sampleReviews[array_rand($sampleReviews)],
+                    'score' => rand(3, 5),
+                    'review' => $sampleReviews[array_rand($sampleReviews)],
                 ]);
             }
         }

@@ -107,7 +107,7 @@
                             <div class="date-tab-item @if ($activeDateTab === $index) active @endif"
                                 wire:click="selectDate('{{ $date->format('Y-m-d') }}', {{ $index }})">
                                 <div class="date-tab-content">
-                                    <span class="day-name">{{ strtoupper($date->format('D')) }}</span>
+                                    <span class="day-name">{{ ucfirst($date->translatedFormat('l')) }}</span>
                                     <span class="day-number">{{ $date->format('d') }}</span>
                                 </div>
                             </div>
