@@ -184,7 +184,7 @@
                                         <div class="detail-item">
                                             <span class="detail-label">Số lượng vé:</span>
                                             <span class="detail-value" id="ticketCount">{{
-                                                number_format($bookingInfo->seats->count(), 0, '.', '.') }} vé</span>
+                                                number_format($bookingInfo->bookingSeats->count(), 0, '.', '.') }} vé</span>
                                         </div>
                                     </div>
                                 </div>
@@ -244,11 +244,7 @@
                                         <div style="text-align: right">
                                             @if ($bookingInfo->promotionUsage != null)
                                                 <div style="color: red">
-                                                    @if ($bookingInfo->promotionUsage->promotion->discount_type == 'percentage')
-                                                    -{{ number_format($bookingInfo->total_price * ($bookingInfo->promotionUsage->promotion->discount_value/100), 0, '.', '.') . 'đ' }}
-                                                    @else
-                                                    -{{ number_format($bookingInfo->promotionUsage->promotion->discount_value, 0, '.', '.') . 'đ' }}
-                                                    @endif
+                                                    - {{ number_format($bookingInfo->promotionUsage->discount_amount, 0, '.', '.') }}đ
                                                 </div>
                                             @else
                                             Không có
@@ -256,22 +252,16 @@
                                         </div>
                                     </div>
                                     <div class="detail-item">
-                                        @php
-                                            $total = 0;
-                                            foreach ($bookingInfo->seats as $seat) {
-                                               $total += $bookingInfo->showtime->movie->price + $seat->price;
-                                            }
-                                        @endphp
                                         <span class="detail-label">Giá vé
                                             ({{number_format($bookingInfo->seats->count(),0, '.', '.') }}x):</span>
                                         <span class="detail-value">
-                                            {{number_format($total, 0, '.','.')}}
+                                            {{number_format($bookingInfo->bookingSeats->sum('ticket_price'), 0, '.','.')}}
                                         </span>
                                     </div>
                                     <div class="detail-item">
                                         <span class="detail-label">Tổng tiền:</span>
                                         <span class="detail-value price"
-                                            id="totalAmount">{{number_format($total + $bookingInfo->foodOrderItems->sum(fn($foodOrderItem) => $foodOrderItem->price * $foodOrderItem->quantity), 0, '.',
+                                            id="totalAmount">{{number_format($bookingInfo->total_price, 0, '.',
                                             '.')}}</span>
                                     </div>
                                     <div class="detail-item">

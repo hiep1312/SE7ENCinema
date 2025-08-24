@@ -153,6 +153,11 @@
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex gap-2 justify-content-center">
+                                                                        <a href="{{ route('admin.showtimes.detail', $showtime->id) }}"
+                                                                        class="btn btn-sm btn-info"
+                                                                        title="Chi tiết">
+                                                                        <i class="fas fa-eye" style="margin-right: 0"></i>
+                                                                    </a>
                                                                         @if($showtime->status !== "completed" && $showtime->start_time->isFuture())
                                                                             <a href="{{ route('admin.showtimes.edit', $showtime->id) }}"
                                                                                 class="btn btn-sm btn-warning"

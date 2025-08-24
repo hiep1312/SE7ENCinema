@@ -180,7 +180,7 @@
                                                     </div>
                                                 @endif
                                             </div>
-                                            
+
                                             <div class="comment-main-col">
                                                 <div class="comment-user-row">
                                                     <span class="comment-user">{{ $comment->user->name ?? 'Ẩn danh' }}</span>
@@ -188,12 +188,12 @@
                                                         <span class="comment-user-icon">💕</span>
                                                     @endif
                                                 </div>
-                                                
+
                                                 @php
                                                     $commentWords = str_word_count(strip_tags($comment->content));
                                                     $showFull = $showMoreComments[$comment->id] ?? false;
                                                 @endphp
-                                                
+
                                                 @if($editingComment === $comment->id)
                                                     <form wire:submit.prevent="updateComment" class="comment-edit-form">
                                                         <textarea wire:model.defer="editCommentContent" rows="2" class="form-control comment-input" placeholder="Sửa bình luận..." style="resize: none;"></textarea>
@@ -217,7 +217,7 @@
                                                         </button>
                                                     @endif
                                                 @endif
-                                                
+
                                                 <div class="comment-footer">
                                                     <span class="comment-date">{{ $comment->created_at->format('d/m/Y') }}</span>
                                                     @if($editingComment !== $comment->id && $replyingTo !== $comment->id)
@@ -230,7 +230,7 @@
                                                         @endif
                                                     @endif
                                                 </div>
-                                                
+
                                                 <!-- Reply Form - Hiển thị ngay dưới comment cha -->
                                                 @if($replyingTo === $comment->id)
                                                     <form wire:submit.prevent="submitReply" class="reply-form">
@@ -294,7 +294,7 @@
                                                                     @endif
                                                                 @endif
                                                             </div>
-                                                            
+
                                                             <!-- Reply Form cho comment con -->
                                                             @if($replyingTo === $reply->id)
                                                                 <form wire:submit.prevent="submitReply" class="reply-form reply-form-nested">
@@ -306,7 +306,7 @@
                                                                     </div>
                                                                 </form>
                                                             @endif
-                                                            
+
                                                             <!-- Nested Replies -->
                                                             @if($reply->nested_replies && $reply->nested_replies->count() > 0)
                                                                 <div class="nested-replies">
@@ -406,7 +406,7 @@
                                     @php
                                         $carbonDate = \Carbon\Carbon::parse($date);
                                         $isToday = $carbonDate->isToday();
-                                        $weekday = $isToday ? 'Hôm Nay' : $carbonDate->isoFormat('dddd');
+                                        $weekday = $isToday ? 'Hôm nay' : ucfirst($carbonDate->translatedFormat('l'));
                                         $dayMonth = $carbonDate->format('d/m');
                                     @endphp
                                     <button

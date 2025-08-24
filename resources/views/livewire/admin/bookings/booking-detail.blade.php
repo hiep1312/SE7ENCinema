@@ -1,4 +1,11 @@
 @use('chillerlan\QRCode\QRCode')
+@assets
+    <style>
+        .apexcharts-menu {
+            color: black;
+        }
+    </style>
+@endassets
 <div class="scRender">
     <div class="container-lg mb-4" @if (session()->missing('deleteExpired')) wire:poll="cleanupBookingsAndUpdateData" @endif>
         <!-- Header -->
@@ -337,7 +344,7 @@
                                 class="d-flex align-items-start justify-content-center flex-wrap flex-lg-nowrap p-3 compact-dark rounded">
                                 <div class="d-flex flex-column align-items-center me-md-3 gap-2">
                                     <div class="user-avatar-clean"
-                                        style="width: 160px; aspect-ratio: 1; height: auto; margin-bottom: 0; border-radius: 50%;">
+                                        style="width: 160px; aspect-ratio: 1; height: 160px; margin-bottom: 0; border-radius: 50%;">
                                         @if ($userBooking->avatar)
                                         <img src="{{ asset('storage/' . $userBooking->avatar) }}" alt
                                             style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">
@@ -670,10 +677,6 @@
                                                 <td><strong>{{ $promotion->title }}</strong></td>
                                             </tr>
                                             <tr>
-                                                <td><strong class="text-warning">Mô tả:</strong></td>
-                                                <td class="text-start text-wrap text-muted lh-base">{{ $promotion->description ?? 'Không có mô tả' }}</td>
-                                            </tr>
-                                            <tr>
                                                 <td><strong class="text-warning">Giảm giá:</strong></td>
                                                 <td>{{ number_format($promotion->discount_value, 0, '.', '.') . ($promotion->discount_type === 'percentage' ? '%' : 'đ') }}</td>
                                             </tr>
@@ -762,11 +765,6 @@
             @endif
         </div>
     </div>
-    <style>
-        .apexcharts-menu {
-            color: black;
-        }
-    </style>
 </div>
 @script
 <script>

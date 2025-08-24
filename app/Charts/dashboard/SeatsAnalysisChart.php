@@ -77,7 +77,7 @@ class SeatsAnalysisChart
 
             $result[] = [
                 'day' => $day,
-                'label' => Carbon::parse($day)->locale('vi')->dayName, // tên ngày trong tuần
+                'label' => Carbon::parse($day)->format('d/m'),
                 'standard' => (int) $stats['standard'],
                 'vip' => (int) $stats['vip'],
                 'couple' => (int) $stats['couple'],

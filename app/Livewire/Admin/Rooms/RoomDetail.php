@@ -150,7 +150,7 @@ class RoomDetail extends Component
             [$chartRoomSeatStatusData, [$this->fromDate, $this->rangeDays]],
             [$chartRoomMoviesData, [$this->fromDate, $this->rangeDays]]
         );
-        
+
         $recentShowtimes = $this->room->showtimes()
             ->with('movie')
             ->where('start_time', '<=', now())

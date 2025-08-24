@@ -40,11 +40,6 @@ class VnpayPayment extends Component
         }
     }
 
-    public function testdeletesession()
-    {
-        session()->forget('payment_deadline_' . $this->booking_id);
-    }
-
     public function redirectToVnpay()
     {
         $deadlineKey = 'payment_deadline_' . $this->booking_id;
@@ -53,10 +48,10 @@ class VnpayPayment extends Component
         // Check hết hạn cũ trước
         $deadline = session()->get($deadlineKey);
 
-        if (!$deadline || now()->timestamp * 1000 > $deadline) {
+        /* if (!$deadline || now()->timestamp * 1000 > $deadline) {
             session()->flash('error', 'Đã hết thời gian thanh toán. Vui lòng đặt lại vé.');
             return redirect()->route('client.index');
-        }
+        } */
 
         // 👉 THÊM: chỉ cộng thêm 1 lần
         if (!session()->has($extendedKey)) {
@@ -76,7 +71,7 @@ class VnpayPayment extends Component
         $booking->update(['total_price' => $this->total_amount, 'transaction_code' => strtoupper(Str::random(10))]);
 
         $vnp_TmnCode = 'P8QX0KGT'; // Mã website VNPay
-        $vnp_HashSecret = 'ITBJ2BGWRYTN5J2Z2QMXMXVAEEK5WBVA'; // Secret key
+        $vnp_HashSecret = 'ITBJ2BGWRYTN5J2Z2QMXMXVAEEK5WBVA';
         $vnp_Url = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
         $vnp_Returnurl = route('client.vnpay.return');
 

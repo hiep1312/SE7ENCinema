@@ -2,11 +2,11 @@
     @vite('resources/css/movieList.css')
 @endassets
 <div class="scMovieList prz_main_wrapper scMovieList">
-    <div class="prs_title_main_sec_wrapper" 
-     style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
-             url('https://media.canva.com/v2/files/uri:ifs%3A%2F%2FM%2Fc36b55c4-973f-4678-ba6b-0e00cac174e8?csig=AAAAAAAAAAAAAAAAAAAAACCDi1HIF3Jm9xVDvPb6UH_cs-DSur6gvhsvWewSeOaE&exp=1755948760&signer=media-rpc&token=AAIAAU0AJGMzNmI1NWM0LTk3M2YtNDY3OC1iYTZiLTBlMDBjYWMxNzRlOAAAAAABmNazu8BsfuW98ebf4Hxzx2jEWQuz-OGpVkvsoEP5cvfeC8gmSw'); 
-            background-size: cover; 
-            background-position: center; 
+    <div class="prs_title_main_sec_wrapper"
+     style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+             url('https://media.canva.com/v2/files/uri:ifs%3A%2F%2FM%2Fc36b55c4-973f-4678-ba6b-0e00cac174e8?csig=AAAAAAAAAAAAAAAAAAAAACCDi1HIF3Jm9xVDvPb6UH_cs-DSur6gvhsvWewSeOaE&exp=1755948760&signer=media-rpc&token=AAIAAU0AJGMzNmI1NWM0LTk3M2YtNDY3OC1iYTZiLTBlMDBjYWMxNzRlOAAAAAABmNazu8BsfuW98ebf4Hxzx2jEWQuz-OGpVkvsoEP5cvfeC8gmSw');
+            background-size: cover;
+            background-position: center;
             padding: 50px 0;">
     <div class="container">
         <div class="row">
@@ -26,20 +26,20 @@
     <div class="prs_mc_slider_main_wrapper">
         <div class="container">
             <div class="row">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                {{-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="prs_heading_section_wrapper">
                         <h2>Trang Danh Sách Phim</h2>
                     </div>
-                </div>
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                </div> --}}
+                {{-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="prs_mc_slider_wrapper">
                         @if($banners && $banners->count() > 0)
                             <div class="owl-carousel owl-theme">
                                 @foreach($banners as $banner)
                                     <div class="item">
-                                        <img src="{{ asset('storage/' . $banner->image) }}" 
+                                        <img src="{{ asset('storage/' . $banner->image) }}"
                                              alt="{{ $banner->title ?? 'Banner' }}"
-                                             style="width: 85%; height: 400px; object-fit: confit; margin: 0 auto;"> 
+                                             style="width: 85%; height: 600px; object-fit: confit; margin: 0 auto;">
                                     </div>
                                 @endforeach
                             </div>
@@ -60,7 +60,7 @@
                             </div>
                         @endif
                     </div>
-                </div>
+                </div> --}}
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="prs_upcome_tabs_wrapper" style="text-align: center; margin-bottom: 20px;">
                         <ul class="nav nav-tabs" role="tablist"
@@ -163,7 +163,6 @@
                                 <div class="tab-content">
                                     <div id="coming_soon" class="cinema-tab__content cinema-tab__content--active">
                                         <div class="cinema-movie-list">
-                                           
                                             <div class="movie-grid">
                                                 @forelse ($movies as $movie)
                                                     <div class="movie-card">
@@ -178,19 +177,19 @@
                                                                 <span class="badge-age badge-age-{{ $age }}">
                                                                     {{ $age }}
                                                                 </span>
-                                    
+
                                                                 <div class="movie-poster__overlay">
                                                                     <div class="movie-actions">
                                                                         <div class="movie-actions__list">
                                                                             @if ($movie->trailer_url)
-                                                                                <a href="{{ $movie->trailer_url }}" 
-                                                                                   target="_blank" 
+                                                                                <a href="{{ $movie->trailer_url }}"
+                                                                                   target="_blank"
                                                                                    class="movie-actions__button movie-actions__button--trailer">
                                                                                     <i class="fas fa-play"></i>
                                                                                     Trailer
                                                                                 </a>
                                                                             @endif
-                                                                            <a href="{{ route('client.movie_detail', $movie->id) }}" 
+                                                                            <a href="{{ route('client.movie_detail', $movie->id) }}"
                                                                                class="movie-actions__button movie-actions__button--details">
                                                                                 <i class="fas fa-info-circle"></i>
                                                                                 Chi tiết
@@ -199,35 +198,35 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            
+
                                                             <div class="movie-info">
                                                                 <div class="movie-info__header">
                                                                     <h3 class="movie-info__title">
-                                                                        <a href="{{ route('client.movie_detail', $movie->id) }}" 
+                                                                        <a href="{{ route('client.movie_detail', $movie->id) }}"
                                                                            class="movie-info__title-link">
                                                                             {{ $movie->title }}
                                                                         </a>
                                                                     </h3>
                                                                 </div>
-                                                                
+
                                                                 <div class="movie-info__details">
                                                                     <div class="movie-detail">
                                                                         <span class="movie-detail__label">Thể loại:</span>
                                                                         <span class="movie-detail__value">{{ $movie->genres->pluck('name')->implode(', ') }}</span>
                                                                     </div>
-                                                                    
+
                                                                     <div class="movie-detail">
                                                                         <span class="movie-detail__label">Thời lượng:</span>
                                                                         <span class="movie-detail__value">{{ $movie->duration }} phút</span>
                                                                     </div>
-                                                                    
+
                                                                     <div class="movie-detail">
                                                                         <span class="movie-detail__label">Giá vé:</span>
                                                                         <span class="movie-detail__value movie-detail__value--price">
                                                                             {{ number_format($movie->price, 0, ',', '.') }} VND
                                                                         </span>
                                                                     </div>
-                                                                    
+
                                                                     <div class="movie-rating">
                                                                         <div class="movie-rating__stars">
                                                                             @for ($i = 1; $i <= 5; $i++)
@@ -243,7 +242,7 @@
                                                                         <span class="movie-rating__score">({{ number_format($movie->rating, 1) }}/5)</span>
                                                                     </div>
                                                                 </div>
-                                                                
+
                                                                 <div class="booking-section">
                                                                     @auth
                                                                         <a href="{{ route('client.movieBooking.movie', $movie->id) }}"
@@ -275,7 +274,7 @@
                                                 @endforelse
                                             </div>
                                         </div>
-                                        
+
                                         {{-- <div style="clear: both;"></div> --}}
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="prs_pagination_wrapper">

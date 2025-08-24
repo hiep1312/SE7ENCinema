@@ -272,9 +272,6 @@
             <strong>Vui lòng hoàn tất thanh toán trong:</strong>
             <div id="countdown" class="countdown-timer mt-1"></div>
         </div>
-        <button wire:click="testdeletesession" class="btn btn-clear text-light">
-            <i class="bi bi-trash3-fill me-1"></i> Xóa phiên
-        </button>
     </div>
 </div>
     <!-- Main Checkout Card -->

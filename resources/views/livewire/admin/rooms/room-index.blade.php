@@ -1,3 +1,8 @@
+@assets
+<link rel="stylesheet" href="{{ asset('client/assets/css/style.css') }}">
+@vite('resources/css/seat.css')
+@endassets
+
 <div class="scRender scSeat">
     @if (session()->has('success'))
     <div class="alert alert-success alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
@@ -32,7 +37,7 @@
             </div>
         </div>
 
-        <div class="card bg-dark" wire:poll.5s>
+        <div class="card bg-dark" wire:poll.6s>
             <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <div class="row g-3">
                     <!-- Tìm kiếm -->
@@ -114,26 +119,26 @@
                                 </td>
                                 <td class="text-center">
                                     @if(!$showDeleted && !$room->trashed())
-                                    @switch($room->status)
-                                    @case('active')
-                                    <span class="badge bg-success">Hoạt động</span>
-                                    @break
-                                    @case('maintenance')
-                                    <span class="badge bg-warning text-dark">Bảo trì</span>
-                                    @break
-                                    @case('inactive')
-                                    <span class="badge bg-danger">Ngừng hoạt động</span>
-                                    @break
-                                    @endswitch
+                                        @switch($room->status)
+                                        @case('active')
+                                            <span class="badge bg-success">Hoạt động</span>
+                                            @break
+                                        @case('maintenance')
+                                            <span class="badge bg-warning text-dark">Bảo trì</span>
+                                            @break
+                                        @case('inactive')
+                                            <span class="badge bg-danger">Ngừng hoạt động</span>
+                                            @break
+                                        @endswitch
                                     @else
-                                    <span class="badge bg-secondary">Đã xóa</span>
+                                        <span class="badge bg-secondary">Đã xóa</span>
                                     @endif
                                 </td>
                                 <td class="text-center">
                                     @if($room->last_maintenance_date)
-                                    <span class="text-light">{{ $room->last_maintenance_date->format('d/m/Y') }}</span>
+                                        <span class="text-light">{{ $room->last_maintenance_date->format('d/m/Y') }}</span>
                                     @else
-                                    <span class="text-muted">Chưa có</span>
+                                        <span class="text-muted">Chưa có</span>
                                     @endif
                                 </td>
 
@@ -235,18 +240,18 @@
                                         </button>
                                         @endif
                                         @if(!$room->hasActiveShowtimes())
-                                        <button type="button" class="btn btn-sm btn-danger"
-                                            wire:sc-model="deleteRoom({{ $room->id }})"
-                                            wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa phòng '{{ $room->name }}'?"
-                                            title="Xóa">
-                                            <i class="fas fa-trash" style="margin-right: 0"></i>
-                                        </button>
+                                            <button type="button" class="btn btn-sm btn-danger"
+                                                wire:sc-model="deleteRoom({{ $room->id }})"
+                                                wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa phòng '{{ $room->name }}'?"
+                                                title="Xóa">
+                                                <i class="fas fa-trash" style="margin-right: 0"></i>
+                                            </button>
                                         @else
-                                        <button type="button" class="btn btn-sm btn-danger"
-                                            wire:sc-alert.error="Không thể xóa phòng có suất chiếu trong tương lai"
-                                            wire:sc-model title="Xóa">
-                                            <i class="fas fa-trash" style="margin-right: 0"></i>
-                                        </button>
+                                            <button type="button" class="btn btn-sm btn-danger"
+                                                wire:sc-alert.error="Không thể xóa phòng có suất chiếu trong tương lai"
+                                                wire:sc-model title="Xóa">
+                                                <i class="fas fa-trash" style="margin-right: 0"></i>
+                                            </button>
                                         @endif
                                     </div>
                                     @endif

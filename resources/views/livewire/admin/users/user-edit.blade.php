@@ -81,7 +81,7 @@
                                             <label for="avatar" class="form-label text-light">Ảnh đại diện</label>
                                             <input type="file" id="avatar" wire:model.live="avatar"
                                                 class="form-control bg-dark text-light border-light @error('avatar') is-invalid @enderror"
-                                                accept="image/*">
+                                                accept="image/*" @if($user->avatar) disabled @endif>
                                             @error('avatar')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -92,7 +92,8 @@
                                             <label for="address" class="form-label text-light">Địa chỉ</label>
                                             <textarea id="address" wire:model="address"
                                                 class="form-control bg-dark text-light border-light @error('address') is-invalid @enderror"
-                                                placeholder="VD: 123 Đường Lê Lợi, Phường Bến Thành, Quận 1, TP. Hồ Chí Minh" @if($user->address) readonly @endif></textarea>
+                                                placeholder="VD: 123 Đường Lê Lợi, Phường Bến Thành, Quận 1, TP. Hồ Chí Minh"
+                                                @if($user->address) readonly @endif></textarea>
                                             @error('address')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -103,7 +104,7 @@
                                             <label for="birthday" class="form-label text-light">Ngày sinh</label>
                                             <input type="date" id="birthday" wire:model="birthday"
                                                 class="form-control bg-dark text-light border-light @error('birthday') is-invalid @enderror"
-                                                placeholder="VD: 2014-03-22" @if($user->birthday) readonly @endif>
+                                                placeholder="VD: 2002-03-22" @if($user->birthday) readonly @endif>
                                             @error('birthday')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -112,7 +113,8 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="gender" class="form-label text-light">Giới tính </label>
-                                            <select id="gender" wire:model="gender" class="form-select bg-dark text-light border-light @error('gender') is-invalid @enderror" @if($user->gender) disabled @endif>
+                                            <select id="gender" wire:model="gender" class="form-select bg-dark text-light border-light @error('gender') is-invalid @enderror"
+                                                @if($user->gender) disabled @endif>
                                                 <option value="man">Nam</option>
                                                 <option value="woman">Nữ</option>
                                                 <option value="other">Khác</option>

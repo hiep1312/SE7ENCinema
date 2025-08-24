@@ -33,7 +33,7 @@
                     </div>
                 </div>
                 <div class="col-sm-4">
-                    <div class="booking-food-timer" wire:ignore>
+                    <div class="text-center" wire:ignore>
                         <i class="fas fa-clock text-warning"></i>
                         <span class="text-warning">Thời gian giữ ghế:</span>
                         <div class="booking-food-countdown text-warning fw-bold fs-4" id="countdown">00:00</div>
@@ -203,7 +203,7 @@
                     </div>
                     @if($foodItems->hasPages())
                         <div class="d-flex justify-content-center mt-2">
-                            {{ $foodItems->links() }}
+                            {{ $foodItems->links(data: ['scrollTo' => false]) }}
                         </div>
                     @endif
                 </div>
@@ -226,7 +226,6 @@
                         </div>
                         <div class="booking-food-summary-item small">
                             <span>Rạp SE7ENCinema - {{ $booking->showtime->room->name }}</span>
-                            <span></span>
                         </div>
 
                         <!-- Chi tiết từng loại ghế -->

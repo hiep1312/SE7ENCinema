@@ -26,10 +26,6 @@
     flex-shrink: 0;
 }
 
-.booking-food-timer {
-    text-align: center;
-}
-
 .booking-food-countdown {
     font-family: "Courier New", monospace;
     background: rgba(255, 193, 7, 0.1);

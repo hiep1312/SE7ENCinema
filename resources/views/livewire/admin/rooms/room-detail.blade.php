@@ -1,4 +1,9 @@
-<div class="scRender">
+@assets
+<link rel="stylesheet" href="{{ asset('client/assets/css/style.css') }}">
+@vite('resources/css/seat.css')
+@endassets
+
+<div class="scRender scSeat">
     <div class="container-lg mb-4">
         <div class="d-flex justify-content-between align-items-center my-3">
             <h2 class="text-light">Chi tiết phòng chiếu: {{ $room->name }}</h2>
@@ -494,7 +499,7 @@
                                                 <td>
                                                     {{ $nextMaintenanceDate->format('d/m/Y') }}
                                                     <br><small
-                                                        class="text-muted">{{ $daysOfWeek[$nextMaintenanceDate->format('l')] }}</small>
+                                                        class="text-muted">{{ $nextMaintenanceDate->translatedFormat('l') }}</small>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -637,14 +642,14 @@
                     <div class="card-body bg-dark"
                         style="border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);">
                         @if ($room->seats->count() > 0)
-                            <div class="st_seatlayout_main_wrapper w-100 mt-2 overflow-x-auto">
+                            <div class="st_seatlayout_main_wrapper w-100 mt-2 overflow-x-auto" style="padding-top: 20px">
                                 <div class="container">
                                     <div class="st_seat_lay_heading float_left text-center">
                                         <h3 class="text-warning mb-4">{{ $room->name }}</h3>
                                     </div>
                                     <div class="st_seat_full_container" style="float: none">
                                         <div class="st_seat_lay_economy_wrapper float_left w-100">
-                                            <div class="screen text-center mb-4">
+                                            <div class="screen text-center mb-4 mx-auto">
                                                 <img src="{{ asset('client/assets/images/content/screen.png') }}"
                                                     alt="Màn hình" style="max-width: 100%;">
                                             </div>
@@ -659,7 +664,7 @@
                                             @foreach ($seatsByRow as $rowLetter => $rowSeats)
                                                 <ul id="row-{{ $rowLetter }}"
                                                     wire:sc-sortable.onmove="updateseatid"
-                                                    class="seat-row-layout list-unstyled float_left d-flex flex-nowrap gap-2 justify-content-start align-items-center mb-2"
+                                                    class="seat-row-layout list-unstyled float_left d-flex flex-nowrap gap-2 justify-content-center align-items-center mb-2"
                                                     data-row="{{ $rowLetter }}"
                                                     wire:key="row-{{ $rowLetter }}">
 
@@ -684,12 +689,12 @@
                                                                     };
                                                                 @endphp
                                                                 <li data-seat="{{ $gSeat->seat_type }}"
-                                                                    class="seat-item"
+                                                                    class="seat-item disable"
                                                                     sc-id="{{ $gSeat->seat_row . $gSeat->seat_number }}">
                                                                     <span class="seat-helper">Chỗ ngồi
                                                                         {{ $gSeat->seat_row . $gSeat->seat_number }}</span>
                                                                     <input type="checkbox"
-                                                                        class="seat {{ $seatClass }}"
+                                                                        class="seat {{ $seatClass }} "
                                                                         id="{{ $gSeat->seat_row . $gSeat->seat_number }}"
                                                                         data-number="{{ $gSeat->seat_number }}">
                                                                     <label
