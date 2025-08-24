@@ -6,7 +6,7 @@ export default defineConfig({
         laravel({
             input: [
                 "resources/css/app.css",
-                'resources/css/NotificationIndex.css',
+                'resources/css/notificationIndex.css',
                 "resources/js/app.js",
                 "resources/css/auth.css",
                 "resources/css/ticket.css",
