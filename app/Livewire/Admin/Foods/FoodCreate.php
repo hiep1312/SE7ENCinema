@@ -116,24 +116,6 @@ class FoodCreate extends Component
         return $messages;
     }
 
-    public function mount()
-    {
-        $this->displayBasePrice = $this->basePrice
-            ? number_format($this->basePrice, 0, ',', '.')
-            : '';
-    }
-
-    public function updateBasePrice($value)
-    {
-        // Bỏ tất cả ký tự không phải số
-        $numericValue = preg_replace('/\D/', '', $value);
-
-        $this->basePrice = $numericValue !== '' ? (int) $numericValue : null;
-        $this->displayBasePrice = $this->basePrice
-            ? number_format($this->basePrice, 0, ',', '.')
-            : '';
-    }
-
     public function addAttribute()
     {
         $name = trim($this->newAttributeName);

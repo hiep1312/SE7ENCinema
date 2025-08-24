@@ -105,13 +105,25 @@
                         <h5 class="my-1">Thông tin giá & kho cơ bản</h5>
                     </div>
                     <div class="card-body row">
-                        <div class="col-md-4 mb-3">
-                            <label for="displayBasePrice" class="form-label text-light">
+                        <div class="col-md-4 mb-3" x-data="{
+                            d: '',
+                            sync() {
+                                const v = $wire.get('basePrice');
+                                this.d = v ? String(v).replace(/\B(?=(\d{3})+(?!\d))/g, '.') : '';
+                            }
+                        }" x-init="sync();
+                        $watch(() => $wire.get('basePrice'), () => sync())"
+                            wire:key="base-price">
+                            <label for="basePrice" class="form-label text-light">
                                 Giá <span class="text-danger">*</span>
                             </label>
                             <div class="input-group">
-                                <input type="text" id="displayBasePrice" wire:model.defer="displayBasePrice"
-                                    wire:input="updateBasePrice($event.target.value)"
+                                <input type="text" id="basePrice" x-model="d"
+                                    @input="
+                  const raw = (d||'').replace(/\D/g,'');
+                  $wire.set('basePrice', raw ? parseInt(raw) : null);
+                  d = raw.replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+               "
                                     class="form-control bg-dark text-light border-secondary @error('basePrice') is-invalid @enderror"
                                     placeholder="VD: 75.000">
                                 <span class="input-group-text">đ</span>
@@ -120,6 +132,7 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+
 
                         <div class="col-md-4 mb-3">
                             <label for="baseQuantity" class="form-label text-light">Số lượng tồn kho <span
@@ -413,12 +426,41 @@
                                     </div>
 
                                     @if ($bulkAction === 'price' || $bulkAction === 'quantity' || $bulkAction === 'quantity_limit')
-                                        <div class="col-md-4">
+                                        <div class="col-md-4" x-data="{
+                                            d: '',
+                                            sync() {
+                                                // chỉ đồng bộ hiển thị khi đang set theo 'price'
+                                                if ($wire.get('bulkAction') === 'price') {
+                                                    const v = $wire.get('bulkValue');
+                                                    this.d = v ? String(v).replace(/\B(?=(\d{3})+(?!\d))/g, '.') : '';
+                                                }
+                                            }
+                                        }" x-init="sync();
+                                        // khi đổi loại bulkAction -> đồng bộ lại hiển thị
+                                        $watch(() => $wire.get('bulkAction'), () => sync());
+                                        // khi bulkValue đổi từ code khác -> đồng bộ lại hiển thị nếu đang là price
+                                        $watch(() => $wire.get('bulkValue'), () => sync());"
+                                            wire:key="bulk-input">
                                             <label class="form-label">
                                                 {{ $bulkAction === 'price' ? 'Giá' : ($bulkAction === 'quantity' ? 'Số lượng' : 'Giới hạn') }}
                                             </label>
-                                            <input type="number" wire:model="bulkValue"
-                                                class="form-control bg-dark text-light border-secondary">
+
+                                            {{-- Input cho "Giá" (hiển thị có dấu chấm, Livewire luôn giữ số nguyên) --}}
+                                            <input type="text" x-show="$wire.get('bulkAction') === 'price'"
+                                                x-model="d"
+                                                @input="
+                                                const raw = (d||'').replace(/\D/g,'');
+                                                $wire.set('bulkValue', raw ? parseInt(raw) : null);
+                                                d = raw.replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+                                                "
+                                                class="form-control bg-dark text-light border-secondary"
+                                                placeholder="VD: 75.000">
+
+                                            {{-- Input cho "Số lượng" và "Giới hạn" (số nguyên thuần) --}}
+                                            <input type="number" x-show="$wire.get('bulkAction') !== 'price'"
+                                                wire:model="bulkValue"
+                                                class="form-control bg-dark text-light border-secondary"
+                                                min="0">
                                         </div>
                                     @elseif ($bulkAction === 'status')
                                         <div class="col-md-4">
@@ -488,19 +530,36 @@
                                                         </div>
                                                         <div class="col-md-9 col-xl-10 row">
                                                     @endif
-                                                    <div class="col-md-4 mb-3">
+                                                    {{-- GIÁ BIẾN THỂ (paste thay thế block input giá cũ) --}}
+                                                    <div class="col-md-4 mb-3" x-data="{
+                                                        d: '',
+                                                        syncFromWire() {
+                                                            const v = $wire.get('generatedVariants.{{ $index }}.price');
+                                                            this.d = v ? String(v).replace(/\B(?=(\d{3})+(?!\d))/g, '.') : '';
+                                                        }
+                                                    }"
+                                                        x-init="syncFromWire();
+                                                        $watch(() => $wire.get('generatedVariants.{{ $index }}.price'), () => syncFromWire())"
+                                                        wire:key="variant-price-{{ $index }}">
                                                         <label class="form-label">Giá <span
                                                                 class="text-danger">*</span></label>
-                                                        <input type="number"
-                                                            wire:model="generatedVariants.{{ $index }}.price"
-                                                            class="form-control bg-dark text-light border-secondary @error('generatedVariants.' . $index . '.price') is-invalid @enderror"
-                                                            placeholder="Giá biến thể">
+                                                        <div class="input-group">
+                                                            <input type="text" x-model="d"
+                                                                @input="
+                                                                    const raw = (d||'').replace(/\D/g,'');
+                                                                    $wire.set('generatedVariants.{{ $index }}.price', raw ? parseInt(raw) : null);
+                                                                    d = raw.replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+                                                                    "
+                                                                class="form-control bg-dark text-light border-secondary @error('generatedVariants.' . $index . '.price') is-invalid @enderror"
+                                                                placeholder="VD: 75.000">
+                                                            <span class="input-group-text">đ</span>
+                                                        </div>
                                                         @error('generatedVariants.' . $index . '.price')
-                                                            <div class="invalid-feedback d-block">
-                                                                {{ $message }}
+                                                            <div class="invalid-feedback d-block">{{ $message }}
                                                             </div>
                                                         @enderror
                                                     </div>
+
                                                     <div class="col-md-4 mb-3">
                                                         <label class="form-label">Số lượng tồn kho <span
                                                                 class="text-danger">*</span></label>

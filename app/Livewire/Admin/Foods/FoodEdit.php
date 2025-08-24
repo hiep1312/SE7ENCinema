@@ -103,37 +103,53 @@ class FoodEdit extends Component
         $this->availableAttributes = FoodAttribute::with('values')
             ->whereNull('food_item_id')
             ->get();
-
-        foreach ($this->variants as $i => $variant) {
-            $this->variants[$i]['price'] = number_format((int) $variant['price'], 0, ',', '.');
-        }
     }
-
-    public function formatPrice($index)
-    {
-        $value = preg_replace('/\D/', '', $this->variants[$index]['price']); // bỏ ký tự không phải số
-        $this->variants[$index]['price'] = number_format((int) $value, 0, ',', '.');
-    }
-
 
     public function applyBulkValues(): void
     {
         foreach ($this->variants as $index => &$variant) {
-            if ($this->bulkReplace || !$variant['price']) {
+            if (
+                $this->bulkTarget === 'price'
+                && ($this->bulkReplace || !isset($variant['price']) || $variant['price'] === null)
+            ) {
                 $variant['price'] = $this->bulkPrice;
             }
-            if ($this->bulkReplace || !$variant['quantity_available']) {
+
+            if (
+                $this->bulkTarget === 'quantity'
+                && ($this->bulkReplace || !isset($variant['quantity_available']) || $variant['quantity_available'] === null)
+            ) {
                 $variant['quantity_available'] = $this->bulkQuantity;
             }
-            if ($this->bulkReplace || !$variant['limit']) {
+
+            if (
+                $this->bulkTarget === 'limit'
+                && ($this->bulkReplace || !isset($variant['limit']) || $variant['limit'] === null)
+            ) {
                 $variant['limit'] = $this->bulkLimit;
             }
-            if ($this->bulkReplace || !$variant['status']) {
+
+            if (
+                $this->bulkTarget === 'status'
+                && ($this->bulkReplace || !isset($variant['status']) || $variant['status'] === null || $variant['status'] === '')
+            ) {
                 $variant['status'] = $this->bulkStatus ?? 'available';
             }
+
+            
+            if (
+                isset($variant['quantity_available'], $variant['limit']) &&
+                $variant['quantity_available'] !== null && $variant['limit'] !== null &&
+                (int)$variant['quantity_available'] > (int)$variant['limit']
+            ) {
+                $variant['quantity_available'] = (int)$variant['limit'];
+            }
         }
+        unset($variant);
+
         session()->flash('success_general', 'Đã áp dụng giá trị cho các biến thể.');
     }
+
 
     public function addManualVariant(): void
     {
