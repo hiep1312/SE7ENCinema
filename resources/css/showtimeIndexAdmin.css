@@ -19,20 +19,6 @@
     height: 8px;
 }
 
-.sc-date-tabs-container::-webkit-scrollbar-track {
-    background: #2d3748;
-    border-radius: 4px;
-}
-
-.sc-date-tabs-container::-webkit-scrollbar-thumb {
-    background: #4a5568;
-    border-radius: 4px;
-}
-
-.sc-date-tabs-container::-webkit-scrollbar-thumb:hover {
-    background: #718096;
-}
-
 .sc-date-tabs {
     border-bottom: none;
     gap: .5rem;
