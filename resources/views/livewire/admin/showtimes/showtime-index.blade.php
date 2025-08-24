@@ -24,17 +24,18 @@
                 </a>
             </div>
         </div>
-        <div class="card bg-dark" wire:poll.6s>
-            <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="card bg-dark shadow-lg" wire:poll.6s>
+            <div class="card-header bg-gradient border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <div class="row g-3">
                     <div class="col-md-4 col-lg-3">
                         <div class="input-group">
                             <input type="text"
                                    wire:model.live.debounce.300ms="search"
                                    class="form-control bg-dark text-light"
-                                   placeholder="Tìm kiếm suất chiếu...">
+                                   placeholder="Tìm kiếm suất chiếu..."
+                                   aria-label="Tìm kiếm suất chiếu">
                             <span class="input-group-text">
-                                <i class="fas fa-search"></i>
+                                <i class="fas fa-search text-light"></i>
                             </span>
                         </div>
                     </div>
@@ -47,15 +48,7 @@
                         </select>
                     </div>
                     <div class="col-md-3 col-lg-2">
-                        <select wire:model.live="sortByDate" class="form-select bg-dark text-light">
-                            <option disabled>Sắp xếp theo thời gian</option>
-                            <option value="">Mới nhất</option>
-                            <option value="7">7 ngày trước</option>
-                            <option value="30">30 ngày trước</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <button wire:click="resetFilters" class="btn btn-outline-warning">
+                        <button wire:click="resetFilters" class="btn btn-outline-warning border-2">
                             <i class="fas fa-refresh me-1"></i>Reset
                         </button>
                     </div>
@@ -64,10 +57,10 @@
             <div class="card-body bg-dark">
                 @php $dateIndex = 0; @endphp
                 <div class="sc-date-tabs-container">
-                    <button type="button" class="scroll-button left" id="scrollLeft" style="display: none;">
+                    <button type="button" class="scroll-button left d-none" id="scrollLeft" aria-label="Cuộn trái">
                         <i class="fas fa-chevron-left"></i>
                     </button>
-                    <button type="button" class="scroll-button right" id="scrollRight" style="display: none;">
+                    <button type="button" class="scroll-button right d-none" id="scrollRight" aria-label="Cuộn phải">
                         <i class="fas fa-chevron-right"></i>
                     </button>
                     <ul class="nav sc-date-tabs" role="tablist" id="dateTabsContainer">
@@ -93,13 +86,16 @@
                                     <div class="row">
                                         @php $movie = $movieShowtimes->first()->movie; @endphp
                                         <div class="col-lg-4" style="cursor: pointer;">
-                                            <div class="d-flex">
-                                                <div class="movie-poster">
+                                            <div class="d-flex align-items-start">
+                                                <div class="movie-poster me-3">
                                                     @if($movie->poster)
                                                         <img src="{{ asset('storage/' . $movie->poster) }}"
-                                                            alt="Ảnh phim {{ $movie->title }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
+                                                            alt="Ảnh phim {{ $movie->title }}"
+                                                            class="img-fluid rounded shadow-sm">
                                                     @else
-                                                        <i class="fas fa-film" style="font-size: 22px;"></i>
+                                                        <div class="placeholder-poster d-flex align-items-center justify-content-center">
+                                                            <i class="fas fa-film text-muted"></i>
+                                                        </div>
                                                     @endif
                                                 </div>
                                                 <div class="flex-grow-1">
