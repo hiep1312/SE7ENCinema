@@ -6,9 +6,8 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Movie;
 use App\Models\Genre;
+use App\Models\Banner;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
-use Livewire\Attributes\Url;
 
 class MovieList extends Component
 {
@@ -76,8 +75,15 @@ class MovieList extends Component
             $query->whereHas('genres', function ($q) {
                 $q->where('genres.id', $this->genreFilter);
             });
-        })->where('age_restriction', '!=', 'C')->orderBy('created_at', 'desc')->paginate(20);
+        })->where('age_restriction', '!=', 'C')->orderBy('created_at', 'desc')->paginate(12);
 
-        return view('livewire.client.movie-list', compact('movies', 'genres', 'topMovies', 'topEventMovie'));
+        $banners = Banner::where('status', 'active')
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->orderBy('priority', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('livewire.client.movie-list', compact('movies', 'genres', 'topMovies', 'topEventMovie', 'banners'));
     }
 }

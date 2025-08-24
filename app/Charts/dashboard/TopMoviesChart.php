@@ -4,19 +4,27 @@ namespace App\Charts\dashboard;
 
 use App\Models\Booking;
 use App\Models\BookingSeat;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class TopMoviesChart {
+class TopMoviesChart
+{
     protected $data;
 
-    protected function queryData(?string $filter = null){
-        $startDate = now()->subDays(30)->startOfDay();
-        $endDate = now()->endOfDay();
+    protected function queryData(?array $filter = null)
+    {
+        is_array($filter) && [$fromDate, $rangeDays] = $filter;
+        $rangeDays = (int) $rangeDays;
+        $fromDate = $fromDate ? Carbon::parse($fromDate) : Carbon::now()->subDays($rangeDays);
+        $toDate = $fromDate->copy()->addDays($rangeDays);
         
+        $startDate = $fromDate->copy()->startOfDay();
+        $endDate = $toDate->copy()->endOfDay();
+
         $query = Booking::select([
-            'movies.title as original_title',
-            DB::raw('SUBSTRING(movies.title, 1, 25) as movie_title'),
+            DB::raw('DATE(bookings.created_at) as booking_date'),
+            'movies.title as movie_title',
             DB::raw('SUM(bookings.total_price) as total_revenue'),
             DB::raw('COUNT(*) as total_bookings'),
             DB::raw('SUM(booking_seats_count) as total_tickets')
@@ -27,29 +35,33 @@ class TopMoviesChart {
             ->whereBetween('bookings.created_at', [$startDate, $endDate])
             ->join(DB::raw('(SELECT booking_id, COUNT(*) as booking_seats_count FROM booking_seats GROUP BY booking_id) as seat_counts'), 'bookings.id', '=', 'seat_counts.booking_id');
 
-        return $query->groupBy('movies.title')
-            ->orderByDesc('total_revenue')
-            ->limit(8)
+        return $query->groupBy(DB::raw('DATE(bookings.created_at)'), 'movies.title')
+            ->orderBy('booking_date')
+            ->orderBy('total_revenue', 'desc')
             ->get();
     }
 
-    public function loadData(?string $filter = null){
+    public function loadData(?array $filter = null)
+    {
         $this->data = $this->queryData($filter);
     }
 
-    protected function bindDataToElement(){
+    protected function bindDataToElement()
+    {
         return "document.getElementById('topMoviesChart')";
     }
 
-    protected function buildChartConfig(){
+    protected function buildChartConfig()
+    {
         $topMoviesData = $this->data;
-        $labels = $topMoviesData->map(fn($item) => $item->movie_title)->toJson();
+        $labels = $topMoviesData->map(fn($item) => \Carbon\Carbon::parse($item->booking_date)->format('d/m'))->toJson();
         $revenueData = $topMoviesData->map(fn($item) => $item->total_revenue)->toJson();
         $ticketsData = $topMoviesData->map(fn($item) => $item->total_tickets)->toJson();
         $bookingsData = $topMoviesData->map(fn($item) => $item->total_bookings)->toJson();
-        
-        // Lấy tên phim đầy đủ cho tooltip
-        $fullTitles = $topMoviesData->map(fn($item) => $item->original_title ?? $item->movie_title)->toJson();
+
+        // Lấy ngày và tên phim cho tooltip
+        $fullDates = $topMoviesData->map(fn($item) => \Carbon\Carbon::parse($item->booking_date)->format('d/m/Y'))->toJson();
+        $movieTitles = $topMoviesData->map(fn($item) => $item->movie_title)->toJson();
 
         return <<<JS
         {
@@ -71,7 +83,7 @@ class TopMoviesChart {
                         csv: {
                             filename: 'top-phim',
                             columnDelimiter: ',',
-                            headerCategory: 'Phim',
+                            headerCategory: 'Ngày',
                             headerValue: 'Doanh thu',
                             categoryFormatter: function(x) {
                                 return x;
@@ -114,13 +126,15 @@ class TopMoviesChart {
                     dataPointIndex,
                     w
                 }) {
-                    const movies = $labels;
+                    const dates = $labels;
                     const revenueData = $revenueData;
                     const ticketsData = $ticketsData;
                     const bookingsData = $bookingsData;
-                    const fullTitles = $fullTitles;
+                    const fullDates = $fullDates;
+                    const movieTitles = $movieTitles;
 
-                    const phim = fullTitles[dataPointIndex] || '';
+                    const ngay = fullDates[dataPointIndex] || '';
+                    const tenPhim = movieTitles[dataPointIndex] || '';
                     const doanhThu = revenueData[dataPointIndex] || 0;
                     const veBan = ticketsData[dataPointIndex] || 0;
                     const donHang = bookingsData[dataPointIndex] || 0;
@@ -128,8 +142,12 @@ class TopMoviesChart {
                     return `
                     <div class="bg-dark border border-secondary rounded-3 p-3 shadow-lg" style="min-width: 320px;">
                         <div class="d-flex align-items-center mb-3">
+                            <span class="fs-5 me-2">📅</span>
+                            <h6 class="mb-0 text-white fw-bold">Ngày \${ngay}</h6>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
                             <span class="fs-5 me-2">🎬</span>
-                            <h6 class="mb-0 text-white fw-bold">\${phim}</h6>
+                            <h6 class="mb-0 text-white fw-bold">\${tenPhim}</h6>
                         </div>
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-warning">💰 Doanh thu:</span>
@@ -152,28 +170,17 @@ class TopMoviesChart {
             },
             series: [{
                     name: 'Doanh thu',
-                    type: 'column',
                     data: $revenueData
-                },
-                {
-                    name: 'Vé bán',
-                    type: 'line',
-                    data: $ticketsData
                 }
             ],
-            stroke: {
-                width: [0, 4],
-                curve: 'smooth'
-            },
             xaxis: {
                 categories: $labels,
                 labels: {
                     style: {
                         colors: '#ffffff',
-                        fontSize: '11px'
+                        fontSize: '12px'
                     },
-                    rotate: -45,
-                    rotateAlways: false,
+                    rotate: 0,
                     maxHeight: 60
                 },
                 axisBorder: {
@@ -183,43 +190,26 @@ class TopMoviesChart {
                     show: false
                 }
             },
-            yaxis: [{
-                    title: {
-                        text: 'Doanh thu (VND)',
-                        style: {
-                            color: '#ffd700'
-                        }
-                    },
-                    labels: {
-                        style: {
-                            colors: '#ffd700',
-                            fontSize: '12px'
-                        },
-                        formatter: function(value) {
-                            return new Intl.NumberFormat('vi-VN').format(value);
-                        }
+            yaxis: {
+                title: {
+                    text: 'Doanh thu (VND)',
+                    style: {
+                        color: '#9CA3AF',
+                        fontSize: '14px',
+                        fontWeight: 600
                     }
                 },
-                {
-                    opposite: true,
-                    title: {
-                        text: 'Vé bán',
-                        style: {
-                            color: '#4bc3e6'
-                        }
+                labels: {
+                    style: {
+                        colors: '#ffffff',
+                        fontSize: '12px'
                     },
-                    labels: {
-                        style: {
-                            colors: '#4bc3e6',
-                            fontSize: '12px'
-                        },
-                        formatter: function(value) {
-                            return new Intl.NumberFormat('vi-VN').format(value);
-                        }
+                    formatter: function(value) {
+                        return new Intl.NumberFormat('vi-VN').format(value);
                     }
                 }
-            ],
-            colors: ['#ffd700', '#4bc3e6'],
+            },
+            colors: ['#ffd700'],
             plotOptions: {
                 bar: {
                     horizontal: false,
@@ -245,25 +235,30 @@ class TopMoviesChart {
         JS;
     }
 
-    public function getFilterText(string $filterValue){
-        return match ($filterValue){
+    public function getFilterText(string $filterValue)
+    {
+        return match ($filterValue) {
             default => "N/A"
         };
     }
 
-    public function getChartConfig(){
+    public function getChartConfig()
+    {
         return $this->buildChartConfig();
     }
 
-    public function getData(){
+    public function getData()
+    {
         return $this->data;
     }
 
-    public function getEventName(){
+    public function getEventName()
+    {
         return "updateDataTopMoviesChart";
     }
 
-    public function compileJavascript(){
+    public function compileJavascript()
+    {
         $ctxText = "ctxTopMoviesChart";
         $optionsText = "optionsTopMoviesChart";
         $chartText = "chartTopMoviesChart";

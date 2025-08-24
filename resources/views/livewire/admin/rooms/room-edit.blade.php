@@ -6,8 +6,8 @@
         element.value = (isNaN(currentValue) || currentValue === '') ? currentValue : (parseInt(currentValue)).toLocaleString('vi');
     }
 </script>
+@vite('resources/css/seat.css')
 @endassets
-
 <div class="scRender scSeat">
     @if (session()->has('error'))
         <div class="alert alert-danger alert-dismissible fade show mt-2 mx-2" role="alert">

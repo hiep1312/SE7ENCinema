@@ -19,7 +19,6 @@ class TicketSeeder extends Seeder
 
         foreach ($bookingSeatsId as $bookingSeatId) {
 
-
             Ticket::create([
                 'booking_seat_id' => $bookingSeatId,
                 'note' => fake()->optional()->sentence(),

@@ -47,7 +47,9 @@
     -webkit-touch-callout: none; }
   .owl-carousel .owl-item img {
     display: block;
-    width: 100%; }
+    width: auto;
+   height: 60px;
+margin: 0 auto; }
   .owl-carousel .owl-nav.disabled,
   .owl-carousel .owl-dots.disabled {}
   .owl-carousel .owl-nav .owl-prev,

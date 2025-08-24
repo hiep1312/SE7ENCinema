@@ -68,8 +68,7 @@
                                     }}đ</b></span>
                             <div class="text-secondary small" style="margin:10px 0px !important ">HSD: <b
                                     class="text-dark">{{ $promotion->end_date->format('d/m/Y') }}</b></div>
-                            <div class="my-1 text-secondary small">Mô tả: <span class="fw-medium text-dark">{{
-                                    Str::limit($promotion->description, 50) }}</span></div>
+                            <div class="my-1 text-secondary small">Mô tả: <span class="fw-medium text-dark">{{ $promotion->title }}</span></div>
                             <div class="d-flex justify-content-between align-items-center mt-2" style="gap: 0.5rem;">
                                 <div>
                                     <button
@@ -108,8 +107,7 @@
                                     <div class="row mb-1">
                                         <div class="col-5 fw-bold text-secondary" style="font-size: 0.95rem;">Mô tả:
                                         </div>
-                                        <div class="col-7 text-dark" style="font-size: 0.95rem;">{{
-                                            $promotion->description }}</div>
+                                        <div class="col-7 text-dark" style="font-size: 0.95rem;">{!! $promotion->description !!}</div>
                                     </div>
                                     <div class="row mb-1">
                                         <div class="col-5 fw-bold text-secondary" style="font-size: 0.95rem;">Trạng
@@ -179,7 +177,7 @@
                     <div class="row g-4">
                         @forelse($hotMovies as $movie)
                         <div class="col-lg-6 col-md-6 col-sm-12">
-                            <div class="card movie-hot p-0 border-0" style="height: 440px; min-height: 440px;">
+                            <div class="card movie-hot p-0 border-0" style="min-height: 440px;">
                                 <div class="position-relative movie-img-wrapper"
                                     style="height: 400px; border-radius: 1.2rem; overflow: hidden;">
                                     <img src="{{ $movie->poster ? (Str::startsWith($movie->poster, ['http://', 'https://']) ? $movie->poster : asset('storage/' . $movie->poster)) : asset('404.webp') }}"
@@ -201,7 +199,7 @@
                                 </div>
                                 <div class="card-body text-center p-2">
                                     <a href="{{route('client.movie_detail',$movie->id)}}"
-                                        class="card-title mb-2 movie-title-main text-decoration-none"
+                                        class="card-title mb-2 movie-title-main text-decoration-none text-wrap"
                                         style="max-width: 100%; font-size: 25px; font-weight: 700; color: #1976d2;">{{
                                         Str::limit($movie->title, 40) }}</a>
                                 </div>

@@ -42,6 +42,8 @@
         @else
             {{ $slot }}
         @endif
+
+        @include('chatbox')
         @include('livewire.client.components.footer')
     </div>
     <!-- Main JS files -->

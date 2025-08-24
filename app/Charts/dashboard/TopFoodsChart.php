@@ -3,19 +3,27 @@
 namespace App\Charts\dashboard;
 
 use App\Models\FoodOrderItem;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class TopFoodsChart {
+class TopFoodsChart
+{
     protected $data;
 
-    protected function queryData(?string $filter = null){
-        $startDate = now()->subDays(30)->startOfDay();
-        $endDate = now()->endOfDay();
-        
+    protected function queryData(?array $filter = null)
+    {
+        is_array($filter) && [$fromDate, $rangeDays] = $filter;
+        $rangeDays = (int) $rangeDays;
+        $fromDate = $fromDate ? Carbon::parse($fromDate) : Carbon::now()->subDays($rangeDays);
+        $toDate = $fromDate->copy()->addDays($rangeDays);
+
+        $startDate = $fromDate->copy()->startOfDay();
+        $endDate = $toDate->copy()->endOfDay();
+
         $query = FoodOrderItem::select([
-            'food_items.name as original_name',
-            DB::raw('SUBSTRING(food_items.name, 1, 20) as food_name'),
+            DB::raw('DATE(bookings.created_at) as order_date'),
+            'food_items.name as food_name',
             DB::raw('SUM(food_order_items.quantity) as total_quantity'),
             DB::raw('SUM(food_order_items.price * food_order_items.quantity) as total_revenue'),
             DB::raw('COUNT(DISTINCT food_order_items.booking_id) as total_bookings')
@@ -26,29 +34,33 @@ class TopFoodsChart {
             ->where('bookings.status', 'paid')
             ->whereBetween('bookings.created_at', [$startDate, $endDate]);
 
-        return $query->groupBy('food_items.name')
-            ->orderByDesc('total_quantity')
-            ->limit(8)
+        return $query->groupBy(DB::raw('DATE(bookings.created_at)'), 'food_items.name')
+            ->orderBy('order_date')
+            ->orderBy('total_quantity', 'desc')
             ->get();
     }
 
-    public function loadData(?string $filter = null){
+    public function loadData(?array $filter = null)
+    {
         $this->data = $this->queryData($filter);
     }
 
-    protected function bindDataToElement(){
+    protected function bindDataToElement()
+    {
         return "document.getElementById('topFoodsChart')";
     }
 
-    protected function buildChartConfig(){
+    protected function buildChartConfig()
+    {
         $topFoodsData = $this->data;
-        $labels = $topFoodsData->map(fn($item) => $item->food_name)->toJson();
+        $labels = $topFoodsData->map(fn($item) => \Carbon\Carbon::parse($item->order_date)->format('d/m'))->toJson();
         $foodQuantities = $topFoodsData->map(fn($item) => $item->total_quantity)->toJson();
         $foodRevenues = $topFoodsData->map(fn($item) => $item->total_revenue)->toJson();
         $RevenueF = $topFoodsData->map(fn($item) => $item->total_bookings)->toJson();
-        
-        // Lấy tên đồ ăn đầy đủ cho tooltip
-        $fullNames = $topFoodsData->map(fn($item) => $item->original_name)->toJson();
+
+        // Lấy ngày và tên món ăn cho tooltip
+        $fullDates = $topFoodsData->map(fn($item) => \Carbon\Carbon::parse($item->order_date)->format('d/m/Y'))->toJson();
+        $foodNames = $topFoodsData->map(fn($item) => $item->food_name)->toJson();
 
         return <<<JS
         {
@@ -70,7 +82,7 @@ class TopFoodsChart {
                         csv: {
                             filename: 'top-mon-an',
                             columnDelimiter: ',',
-                            headerCategory: 'Món ăn',
+                            headerCategory: 'Ngày',
                             headerValue: 'Số lượng',
                             categoryFormatter: function(x) {
                                 return x;
@@ -113,19 +125,25 @@ class TopFoodsChart {
                     dataPointIndex,
                     w
                 }) {
-                    const foodNames = $labels;
+                    const dates = $labels;
                     const quantities = $foodQuantities;
                     const revenues = $foodRevenues;
                     const bookings = $RevenueF;
-                    const fullNames = $fullNames;
+                    const fullDates = $fullDates;
+                    const foodNames = $foodNames;
 
-                    const tenMon = fullNames[dataPointIndex] || '';
+                    const ngay = fullDates[dataPointIndex] || '';
+                    const tenMon = foodNames[dataPointIndex] || '';
                     const soLuong = quantities[dataPointIndex] || 0;
                     const doanhThu = revenues[dataPointIndex] || 0;
                     const donHang = bookings[dataPointIndex] || 0;
 
                     return `
                     <div class="bg-dark border border-secondary rounded-3 p-3 shadow-lg" style="min-width: 320px;">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="fs-5 me-2">📅</span>
+                            <h6 class="mb-0 text-white fw-bold">Ngày \${ngay}</h6>
+                        </div>
                         <div class="d-flex align-items-center mb-3">
                             <span class="fs-5 me-2">🍽️</span>
                             <h6 class="mb-0 text-white fw-bold">\${tenMon}</h6>
@@ -152,19 +170,9 @@ class TopFoodsChart {
             colors: ['#dc3545', '#fd7e14', '#ffc107', '#28a745', '#17a2b8', '#6f42c1', '#e83e8c', '#20c997'],
             series: [{
                     name: 'Số lượng bán',
-                    type: 'bar',
                     data: $foodQuantities
-                },
-                {
-                    name: 'Doanh thu',
-                    type: 'line',
-                    data: $foodRevenues
                 }
             ],
-            stroke: {
-                width: [0, 4],
-                curve: 'smooth'
-            },
             plotOptions: {
                 bar: {
                     horizontal: false,
@@ -178,10 +186,9 @@ class TopFoodsChart {
                 labels: {
                     style: {
                         colors: '#ffffff',
-                        fontSize: '11px'
+                        fontSize: '12px'
                     },
-                    rotate: -45,
-                    rotateAlways: false,
+                    rotate: 0,
                     maxHeight: 60
                 },
                 axisBorder: {
@@ -191,42 +198,25 @@ class TopFoodsChart {
                     show: false
                 }
             },
-            yaxis: [{
-                    title: {
-                        text: 'Số lượng',
-                        style: {
-                            color: '#dc3545'
-                        }
-                    },
-                    labels: {
-                        style: {
-                            colors: '#dc3545',
-                            fontSize: '12px'
-                        },
-                        formatter: function(value) {
-                            return new Intl.NumberFormat('vi-VN').format(value);
-                        }
+            yaxis: {
+                title: {
+                    text: 'Số lượng',
+                    style: {
+                        color: '#9CA3AF',
+                        fontSize: '14px',
+                        fontWeight: 600
                     }
                 },
-                {
-                    opposite: true,
-                    title: {
-                        text: 'Doanh thu (VND)',
-                        style: {
-                            color: '#fd7e14'
-                        }
+                labels: {
+                    style: {
+                        colors: '#ffffff',
+                        fontSize: '12px'
                     },
-                    labels: {
-                        style: {
-                            colors: '#fd7e14',
-                            fontSize: '12px'
-                        },
-                        formatter: function(value) {
-                            return new Intl.NumberFormat('vi-VN').format(value);
-                        }
+                    formatter: function(value) {
+                        return new Intl.NumberFormat('vi-VN').format(value);
                     }
                 }
-            ],
+            },
             legend: {
                 position: 'top',
                 horizontalAlign: 'left',
@@ -244,25 +234,30 @@ class TopFoodsChart {
         JS;
     }
 
-    public function getFilterText(string $filterValue){
-        return match ($filterValue){
+    public function getFilterText(string $filterValue)
+    {
+        return match ($filterValue) {
             default => "N/A"
         };
     }
 
-    public function getChartConfig(){
+    public function getChartConfig()
+    {
         return $this->buildChartConfig();
     }
 
-    public function getData(){
+    public function getData()
+    {
         return $this->data;
     }
 
-    public function getEventName(){
+    public function getEventName()
+    {
         return "updateDataTopFoodsChart";
     }
 
-    public function compileJavascript(){
+    public function compileJavascript()
+    {
         $ctxText = "ctxTopFoodsChart";
         $optionsText = "optionsTopFoodsChart";
         $chartText = "chartTopFoodsChart";

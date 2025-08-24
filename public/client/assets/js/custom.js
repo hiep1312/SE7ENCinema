@@ -58,6 +58,20 @@
             }, 500);
         });
 
+        	 // ===== Scroll to Top ====
+             $(window).scroll(function() {
+                if ($(this).scrollTop() >= 100) {
+                    $('#return-to-top2').fadeIn(200);
+                } else {
+                    $('#return-to-top2').fadeOut(200);
+                }
+            });
+            $('#return-to-top2').on('click', function() {
+                $('body,html').animate({
+                    scrollTop: 0
+                }, 500);
+            });
+
 
 	/*--------------------------
 nice Select active
@@ -763,6 +777,92 @@ $(window).load(function() {
 /******color change script end******/
 
 
+    });
+
+    // Chatbox Functionality
+    $(document).ready(function() {
+        const chatIcon = $('#chat-icon');
+        const chatWindow = $('#chat-window');
+        const chatClose = $('.chat-close');
+        const chatMinimize = $('.chat-minimize');
+        const chatSendBtn = $('#chat-send-btn');
+        const chatMessageInput = $('#chat-message-input');
+        const chatMessages = $('.chat-messages');
+        const quickReplyBtns = $('.quick-reply');
+        const chatNotification = $('.chat-notification');
+
+        // Toggle chat window
+        chatIcon.on('click', function() {
+            chatWindow.fadeIn(300);
+            chatIcon.hide();
+            chatNotification.hide();
+        });
+
+        // Close chat window
+        chatClose.on('click', function() {
+            chatWindow.fadeOut(300);
+            chatIcon.fadeIn(300);
+        });
+
+        // Minimize chat window
+        chatMinimize.on('click', function() {
+            chatWindow.fadeOut(300);
+            chatIcon.fadeIn(300);
+        });
+
+        // Send button click
+        chatSendBtn.on('click', function() {
+            const message = chatMessageInput.val().trim();
+            if (message) {
+                sendMessage(message);
+                chatMessageInput.val('');
+            }
+        });
+
+        // Enter key press
+        chatMessageInput.on('keypress', function(e) {
+            if (e.which === 13) {
+                const message = $(this).val().trim();
+                if (message) {
+                    sendMessage(message);
+                    $(this).val('');
+                }
+            }
+        });
+
+        // Quick reply buttons
+        quickReplyBtns.on('click', function() {
+            const message = $(this).text();
+            sendMessage(message);
+        });
+
+        // Hover effects
+        chatIcon.hover(
+            function() {
+                $(this).css('transform', 'scale(1.1)');
+            },
+            function() {
+                $(this).css('transform', 'scale(1)');
+            }
+        );
+
+        chatSendBtn.hover(
+            function() {
+                $(this).css('transform', 'scale(1.1)');
+            },
+            function() {
+                $(this).css('transform', 'scale(1)');
+            }
+        );
+
+        quickReplyBtns.hover(
+            function() {
+                $(this).css('background', '#f8f9fa');
+            },
+            function() {
+                $(this).css('background', 'white');
+            }
+        );
     });
 
 })(jQuery);

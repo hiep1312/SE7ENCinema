@@ -294,10 +294,9 @@
                                                         </small>
                                                     </td>
                                                     <td class="text-center" style="max-width: 150px;">
-                                                        <strong class="text-light text-wrap lh-base">{{ Str::limit($booking->foodOrderItems()->with('variant.foodItem')->get()->pluck('variant.foodItem.name')->implode(', '), 30, '...') }}</strong>
+                                                        <strong class="text-light text-wrap lh-base">{{ Str::limit($booking->foodOrderItems()->with('variant.foodItem')->get()->pluck('variant.foodItem.name')->unique()->implode(', ') ?: 'Không có món ăn', 30, '...') }}</strong>
                                                     </td>
-                                                    <td class="text-center">
-                                                        {{ $booking->foodOrderItems->sum('quantity') }}</td>
+                                                    <td class="text-center">{{ $booking->foodOrderItems?->sum('quantity') ?: 'N/A' }}</td>
                                                     <td class="text-center text-warning">
                                                         {{ number_format($booking->total_price, 0, ',', '.') }}đ
                                                     </td>
@@ -328,7 +327,7 @@
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <a href="{{ /* route('admin.bookings.detail', $variant->id) */ '#' }}"
+                                                            <a href="{{ route('admin.bookings.detail', $booking->id) }}"
                                                                 class="btn btn-sm btn-info" title="Xem chi tiết">
                                                                 <i class="fas fa-eye" style="margin-right: 0"></i>
                                                             </a>

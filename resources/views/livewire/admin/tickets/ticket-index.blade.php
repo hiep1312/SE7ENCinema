@@ -202,7 +202,7 @@
                                                                 @endforeach
                                                             </tbody>
                                                         </table>
-                                                        <div class="mt-2">{{ $this->getBookingTickets($booking->id)->links() }}</div>
+                                                    <div class="mt-2">{{ $this->getBookingTickets($booking->id)->links(data:['scrollTo'=>false]) }}</div>
                                                     </div>
                                                 </div>
                                             </div>

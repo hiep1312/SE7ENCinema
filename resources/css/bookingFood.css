@@ -1,12 +1,3 @@
-/* Overrides */
-.pagination{
-    margin-top: 0;
-}
-
-body .menu_fixed {
-    position: relative !important;
-}
-
 /* Header Styles */
 .booking-food-header {
     background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
@@ -33,10 +24,6 @@ body .menu_fixed {
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     flex-shrink: 0;
-}
-
-.booking-food-timer {
-    text-align: center;
 }
 
 .booking-food-countdown {
@@ -915,4 +902,72 @@ body .menu_fixed {
     border-color: #6b7280;
     background: #f9fafb;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* custom paginate */
+nav .text-muted {
+    display: none !important;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+}
+
+.pagination .page-item {
+    list-style: none;
+}
+
+.pagination .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #6b7280;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.pagination .page-link:hover {
+    color: #ff4444;
+    background-color: #f8fafc;
+    border-color: #ff4444;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.pagination .page-item.active .page-link {
+    color: #ffffff;
+    background: #ff4444;
+    border-color: #ff4444;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #d1d5db;
+    background-color: #f9fafb;
+    border-color: #e5e7eb;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.pagination .page-item.disabled .page-link:hover {
+    color: #d1d5db;
+    background-color: #f9fafb;
+    border-color: #e5e7eb;
+    transform: none;
+    box-shadow: none;
 }
