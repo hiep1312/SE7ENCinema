@@ -25,43 +25,38 @@ class TicketSeeder extends Seeder
             if ($booking && $showtime) {
                 switch ($booking->status) {
                     case 'paid':
-                        if (fake()->boolean(10)) {
-                            // 10% đã thanh toán nhưng chưa lấy vé
+                        $random = rand(1, 100);
+                        if ($random <= 20) {
+                            // 20% đã trả tiền nhưng chưa lấy vé
                             $status = 'active';
                             $taken = 0;
-                        } else {
-                            // 90% đã lấy vé
+                        } elseif ($random <= 70) {
+                            // 50% đã lấy vé nhưng chưa check-in
+                            $status = 'active';
                             $taken = 1;
-                            $takenAt = $showtime->start_time->copy()
-                                ->subMinutes(fake()->numberBetween(15, 60));
-
-                            if (fake()->boolean(30)) {
-                                // 30% trong số này đã check-in
-                                $status = 'used';
-                                $checkinAt = $showtime->start_time->copy()
-                                    ->subMinutes(fake()->numberBetween(0, 10));
-                            } else {
-                                $status = 'active';
-                            }
+                            $takenAt = $showtime->start_time->copy()->subMinutes(rand(15, 60));
+                        } else {
+                            // 30% đã check-in
+                            $status = 'used';
+                            $taken = 1;
+                            $takenAt = $showtime->start_time->copy()->subMinutes(rand(15, 60));
+                            $checkinAt = $showtime->start_time->copy()->subMinutes(rand(0, 10));
                         }
                         break;
 
                     case 'pending':
+                        // Pending => luôn active
                         $status = 'active';
-                        $taken = fake()->boolean(40); // 40% đã in vé nhưng chưa check-in
-                        $takenAt = $taken
-                            ? $showtime->start_time->copy()
-                                ->subMinutes(fake()->numberBetween(20, 90))
-                            : null;
-                        $checkinAt = null;
+                        $taken = rand(0, 1);
+                        if ($taken) {
+                            $takenAt = $showtime->start_time->copy()->subMinutes(rand(20, 90));
+                        }
                         break;
 
                     case 'expired':
                     case 'failed':
                         $status = 'canceled';
                         $taken = 0;
-                        $takenAt = null;
-                        $checkinAt = null;
                         break;
                 }
             }
