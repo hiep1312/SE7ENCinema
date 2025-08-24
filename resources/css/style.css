@@ -1,3 +1,6 @@
+.link_a ul li a{
+    text-decoration: none;
+}
 /* Override Library */
 .page-link{
     line-height: var(--bs-body-line-height) !important;
