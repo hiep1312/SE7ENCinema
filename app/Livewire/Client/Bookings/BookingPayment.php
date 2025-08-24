@@ -3,6 +3,7 @@
 namespace App\Livewire\Client\Bookings;
 
 use App\Models\Booking;
+use App\Models\FoodVariant;
 use App\Models\Promotion;
 use App\Models\PromotionUsage;
 use App\Models\SeatHold;
@@ -11,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -29,8 +31,10 @@ class BookingPayment extends Component
     public $seatHold;
     public $totalPrice = 0;
 
-    protected $config = null;
-    protected $urlPayment = null;
+    #[Locked]
+    public $config = null;
+    #[Locked]
+    public $urlPayment = null;
     public $isPaymentMode = false;
     public $statusWindow = null;
 
@@ -42,6 +46,11 @@ class BookingPayment extends Component
         $this->totalPrice = $this->booking->bookingSeats->sum('ticket_price') + ($this->booking->foodOrderItems?->sum(fn($foodOrderItem) => $foodOrderItem->quantity * $foodOrderItem->price, 0) ?? 0);
 
         if(session()->has("__sc-voucher__") && session("__sc-voucher__")[0] === $bookingCode) $this->voucherCodeSelected = session("__sc-voucher__")[1];
+        if(session()->has('__sc-payment__') && session('__sc-payment__')[0] === $bookingCode){
+            $this->isPaymentMode = true;
+            [$this->config, $this->urlPayment] = session('__sc-payment__')[2];
+            $this->js('openPaymentPopup', $this->urlPayment, $this->seatHold->expires_at->toIso8601String(), $this->seatHold->expires_at->subMinutes(5)->isFuture() ?: (($this->statusWindow = "closed") && false));
+        }
     }
 
     public function applyVoucher(){
@@ -83,49 +92,74 @@ class BookingPayment extends Component
     }
 
     public function payment(){
-        if($this->paymentSelected && $this->voucherCodeSelected && in_array($this->paymentSelected, ['momo', 'vnpay', 'atm', 'bank'], true)){
+        if($this->paymentSelected && !$this->isPaymentMode && in_array($this->paymentSelected, ['momo', 'vnpay', 'atm', 'bank'], true)){
             $mappedPaymentMethod = match($this->paymentSelected){
                 'momo' => ['e_wallet', null],
                 'vnpay' => ['e_wallet', null],
                 'atm' => ['credit_card', 'VNBANK'],
-                'bank' => ['bank_transfer', 'VNPAYQR']
+                'bank' => ['bank_transfer', 'ZALOPAY'],
             };
 
-            PromotionUsage::create([
-                'promotion_id' => Promotion::where('code', $this->voucherCodeSelected)->first()->id,
-                'booking_id' => $this->booking->id,
-                'discount_amount' => $this->discountAmount,
-                'used_at' => now(),
+            if($this->voucherCodeSelected){
+                PromotionUsage::create([
+                    'promotion_id' => Promotion::where('code', $this->voucherCodeSelected)->first()->id,
+                    'booking_id' => $this->booking->id,
+                    'discount_amount' => $this->discountAmount,
+                    'used_at' => now()
+                ]);
+            }
+
+            $totalPriceOrder = $this->totalPrice - ($this->discountAmount ?? 0);
+            $transitionCode = str_replace('.', '', uniqid('se7encinema-payment-', true));
+            $startTransaction = now();
+            $endTransaction = null;
+
+            $vnpay = new VNPaymentService;
+            $vnpay->createPaymentUrl($totalPriceOrder, $transitionCode, "SE7ENCinema - Thanh toan don hang dat ve xem phim {$this->booking->code}", $mappedPaymentMethod[1], route('client.booking.handle-payment', $this->booking->booking_code));
+
+            $this->config = $vnpay->config();
+            $this->urlPayment = $vnpay->paymentUrl();
+            $this->seatHold->update(['expires_at' => ($endTransaction = Carbon::parse($vnpay->config()['vnp_ExpireDate']))]);
+
+            $this->booking->update([
+                'total_price' => $totalPriceOrder,
+                'transaction_code' => $transitionCode,
+                'start_transaction' => $startTransaction,
+                'end_transaction' => $endTransaction,
+                'payment_method' => $mappedPaymentMethod[0],
             ]);
 
-            if(in_array($this->paymentSelected, ['vnpay', 'atm', 'bank'])){
-                $transitionCode = uniqid('se7encinema-payment-', true);
-                $vnpay = new VNPaymentService;
-                $vnpay->createPaymentUrl($this->totalPrice - ($this->discountAmount ?? 0), $transitionCode, "SE7ENCinema - Thanh toan don hang dat ve xem phim {$this->booking->code}", $mappedPaymentMethod[1], route('client.booking.handle-payment', $this->booking->booking_code));
-
-                $this->config = $vnpay->config();
-                $this->booking->update([
-                    'transaction_code' => $transitionCode,
-                    'start_transaction' => now(),
-                    'end_transaction' => Carbon::parse($vnpay->config()['vnp_ExpireDate']),
-                    'payment_method' => $mappedPaymentMethod[0],
-                    'total_price' => $this->totalPrice - ($this->discountAmount ?? 0),
-                ]);
-
-                $this->seatHold->update(['expires_at' => Carbon::parse($vnpay->config()['vnp_ExpireDate'])]);
-
-                $this->js('openPaymentPopup', $vnpay->paymentUrl(), Carbon::parse($vnpay->config()['vnp_ExpireDate'])->toIso8601String());
-                session(['isPaymentMode' => [$this->booking->booking_code, ($this->isPaymentMode = true)]]);
-            }
+            $this->js('openPaymentPopup', $this->urlPayment, $endTransaction->toIso8601String());
+            session(['__sc-payment__' => [$this->booking->booking_code, ($this->isPaymentMode = true), [$this->config, $this->urlPayment]]]);
         }
     }
 
-    /* public function retryPayment(){
+    public function retryPayment(){
+        if($this->statusWindow === "closed" && $this->urlPayment && $this->config && $this->seatHold->expires_at->subMinutes(5)->isFuture()){
+            $this->js('openPaymentPopup', $this->urlPayment, Carbon::parse($this->config['vnp_ExpireDate'])->toIso8601String());
+            $this->statusWindow = null;
+        }
+    }
 
-    } */
+    public function cancelPayment(?array $status = null){
+        if(is_array($status) && $status['isConfirmed']){
+            if($this->booking->foodOrderItems) foreach($this->booking->foodOrderItems as $foodOrderItem){
+                FoodVariant::where('id', $foodOrderItem->variant_id)->increment('quantity_available', $foodOrderItem->quantity);
+                $foodOrderItem->delete();
+            }
 
-    /* public function cancelPayment(){
-    } */
+            if($this->booking->bookingSeats) foreach ($this->booking->bookingSeats as $bookingSeat) $bookingSeat->delete();
+
+            $this->booking->promotionUsage?->delete();
+            $this->seatHold->delete();
+            $this->booking->delete();
+            session()->forget(['__sc-cart__', '__sc-voucher__', '__sc-payment__']);
+
+            return redirect()->route('client.movieBooking.movie', $this->booking->showtime->movie->id)->with('success', 'Hủy đặt vé thành công! Đơn đặt vé của bạn đã được xóa.');
+        }elseif(is_null($status)){
+            $this->scConfirm('Xác nhận hủy đặt vé', 'Bạn có chắc chắn muốn hủy đặt vé này không? Hành động này sẽ xóa ghế và sản phẩm đã chọn.', 'info', 'cancelPayment');
+        }
+    }
 
     #[Title('Thanh toán đơn hàng - SE7ENCinema')]
     #[Layout('components.layouts.client')]

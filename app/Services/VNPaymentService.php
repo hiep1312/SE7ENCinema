@@ -93,7 +93,7 @@ class VNPaymentService {
         $configInput = is_array($configInput) ? $configInput : $configInput->toArray();
 
         $config = [
-            'vnp_RequestId' => Str::upper(uniqid('SE7ENCinema')),
+            'vnp_RequestId' => "SE7ENCinema" . Str::uuid(),
             'vnp_Version' => $configInput['vnp_Version'] ?? '2.1.0',
             'vnp_Command' => 'querydr',
             'vnp_TmnCode' => $configInput['vnp_TmnCode'] ?? config('services.vnpay.vnp_TmnCode'),

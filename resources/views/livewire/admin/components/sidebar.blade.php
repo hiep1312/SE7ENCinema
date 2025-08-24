@@ -67,14 +67,14 @@
       </a>
     </li>
     <li class="nav-item menu-items">
-      <a class="nav-link" data-toggle="collapse" href="#manage-banner">
+      <a class="nav-link" data-toggle="collapse" href="#admin-banners-create">
         <span class="menu-icon">
           <i class="fa-solid fa-display"></i>
         </span>
         <span class="menu-title">Quản lý banner</span>
         <i class="menu-arrow"></i>
       </a>
-      <div class="collapse" id="manage-banner">
+      <div class="collapse" id="admin-banners-create">
         <ul class="nav flex-column sub-menu">
           <li class="nav-item"><a class="nav-link" href="{{ route('admin.banners.create') }}">Tạo banner mới</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ route('admin.banners.index') }}">Danh sách banner</a></li>
