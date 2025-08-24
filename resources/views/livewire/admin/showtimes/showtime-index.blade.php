@@ -99,7 +99,7 @@
                                                     @endif
                                                 </div>
                                                 <div class="flex-grow-1">
-                                                    <h3 class="movie-title">{{ $movie->title }}</h3>
+                                                    <h3 class="movie-title text-start">{{ $movie->title }}</h3>
                                                     <div class="movie-genre" style="margin-bottom: 0; margin-top: 3px;">
                                                         <i class="fas fa-tags me-1"></i>
                                                         {{ $movie->genres->take(1)->implode('name', ', ') ?: 'Không có thể loại' }} • {{ $movie->duration }} phút
@@ -149,6 +149,11 @@
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex gap-2 justify-content-center">
+                                                                        <a href="{{ route('admin.showtimes.detail', $showtime->id) }}"
+                                                                            class="btn btn-sm btn-info"
+                                                                            title="Chi tiết">
+                                                                            <i class="fas fa-eye" style="margin-right: 0"></i>
+                                                                        </a>
                                                                         @if($showtime->status !== "completed" && $showtime->start_time->isFuture())
                                                                             <a href="{{ route('admin.showtimes.edit', $showtime->id) }}"
                                                                                 class="btn btn-sm btn-warning"

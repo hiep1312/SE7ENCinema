@@ -20,6 +20,7 @@
 }
 
 .sc-date-tabs .nav-link {
+    border-top: 1px solid #495057;
     border-right: 1px solid #495057;
     color: #ffffff;
     background: transparent;
