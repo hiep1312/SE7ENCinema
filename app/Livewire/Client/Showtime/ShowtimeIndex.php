@@ -84,7 +84,6 @@ class ShowtimeIndex extends Component
 
     public function bookShowtime($showtimeId)
     {
-        // Kiểm tra showtime còn hợp lệ không trước khi booking
         $showtime = Showtime::find($showtimeId);
 
         if (!$showtime || $showtime->start_time->lte(now())) {
@@ -110,8 +109,7 @@ class ShowtimeIndex extends Component
             null
         ]);
 
-        // Redirect logic here
-        return redirect()->route('client.booking.select_seats', ['showtime_id' => $showtime->movie_id]);
+        return redirect()->route('client.booking.select_seats', ['showtime_id' => $showtime->id]);
     }
 
 

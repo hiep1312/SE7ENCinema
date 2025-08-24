@@ -591,109 +591,54 @@
             </div>
             @elseif($tabCurrent === 'chart')
             <div class="row">
+                <div class="col-12 px-4">
+                    <div class="border rounded-3 p-3 bg-dark shadow-lg">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="text-white mb-0">
+                                <i class="fa-regular fa-filter me-2"></i>Vé đã bán theo ngày
+                            </h5>
+                        </div>
+
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <label class="form-label"><i class="mdi mdi-calendar-start me-2"></i>Từ ngày</label>
+                                <input wire:model.live='fromDate' type="date" class="form-control">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label"><i class="mdi mdi-calendar-end me-2"></i>Ngày so sánh</label>
+                                <input wire:model.live='compareDate' type="date" class="form-control">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">
+                                    <i class="mdi mdi-clock-time-four me-2"></i>Khoảng thời gian
+                                </label>
+                                <div class="input-group">
+                                    <input wire:model.live='rangeDays' type="text" class="form-control flex-grow-1"
+                                        placeholder="Nhập khoảng thời gian (ví dụ: 7 ngày, 1 tháng)">
+                                    <select wire:model.live='rangeUnit' class="form-select flex-grow-0"
+                                        style="width: 100px">
+                                        <option value="days">Chọn</option>
+                                        <option value="days">Ngày</option>
+                                        <option value="months">Tháng</option>
+                                        <option value="years">Năm</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
                 <!-- 2. Bảng so sánh vé bán theo suất chiếu -->
-                <div class="col-lg-6">
+                <div class="col-lg-8">
                     <div class="bg-dark rounded-3 p-3">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="text-white mb-0">
                                 <i class="fas fa-ticket me-2 text-success"></i>Vé đã bán theo suất chiếu
                             </h5>
-                            <div wire:ignore class="dropdown">
-                                <button class="btn btn-outline-success btn-sm dropdown-toggle" type="button"
-                                    data-bs-toggle="dropdown">
-                                    <i class="fas fa-filter me-1"></i>
-                                    <span id="filterShowtimeChart">
-                                        @switch('3_days')
-                                        @case('3_days')
-                                        3 ngày gần nhất
-                                        @break
-                                        @case('7_days')
-                                        7 ngày gần nhất
-                                        @break
-                                        @case('15_days')
-                                        15 ngày gần nhất
-                                        @break
-                                        @case('30_days')
-                                        30 ngày gần nhất
-                                        @break
-                                        @case('3_months')
-                                        3 tháng gần nhất
-                                        @break
-                                        @case('6_months')
-                                        6 tháng gần nhất
-                                        @break
-                                        @case('9_months')
-                                        9 tháng gần nhất
-                                        @break
-                                        @case('1_year')
-                                        1 năm gần nhất
-                                        @break
-                                        @case('2_years')
-                                        2 năm gần nhất
-                                        @break
-                                        @case('3_years')
-                                        3 năm gần nhất
-                                        @break
-                                        @case('6_years')
-                                        6 năm gần nhất
-                                        @break
-                                        @default
-                                        @endswitch
-                                    </span>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li>
-                                        <h6 class="dropdown-header text-success">Ngày</h6>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('showtimeChart','3_days')">3 ngày gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('showtimeChart','7_days')">7 ngày gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('showtimeChart','15_days')">15 ngày gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('showtimeChart','30_days')">30 ngày gần nhất</a>
-                                    </li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li>
-                                        <h6 class="dropdown-header text-success">Tháng</h6>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('showtimeChart','3_months')">3 tháng gần
-                                            nhất</a></li>
-                                    <li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('showtimeChart','6_months')">6 tháng gần
-                                            nhất</a></li>
-                                    <li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('showtimeChart','9_months')">9 tháng gần
-                                            nhất</a></li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li>
-                                        <h6 class="dropdown-header text-success">Năm</h6>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('showtimeChart','1_years')">1 năm gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('showtimeChart','2_years')">2 năm gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('showtimeChart','3_years')">3 năm gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('showtimeChart','6_years')">6 năm gần nhất</a>
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
                         <div>
                             <div id="showtimeChart" style="height: 400px;color:black" wire:ignore></div>
@@ -702,109 +647,12 @@
                 </div>
 
                 <!-- 3. Tỷ lệ check-in -->
-                <div class="col-lg-6">
+                <div class="col-lg-4">
                     <div class="bg-dark rounded-3 p-3">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="text-white mb-0">
-                                <i class="fas fa-chart-pie me-2 text-warning"></i>Tỉ lệ vé đã bán so với vé chưa bán
+                                <i class="fas fa-chart-pie me-2 text-warning"></i>Tỉ lệ lấp đầy phòng
                             </h5>
-                            {{-- filter --}}
-                            <div wire:ignore class="dropdown">
-                                <button class="btn btn-outline-warning btn-sm dropdown-toggle" type="button"
-                                    data-bs-toggle="dropdown">
-                                    <i class="fas fa-filter me-1"></i>
-                                    <span id="checkinFilter">
-                                        @switch($checkinChart)
-                                        @case('3_days')
-                                        3 ngày gần nhất
-                                        @break
-                                        @case('7_days')
-                                        7 ngày gần nhất
-                                        @break
-                                        @case('15_days')
-                                        15 ngày gần nhất
-                                        @break
-                                        @case('30_days')
-                                        30 ngày gần nhất
-                                        @break
-                                        @case('3_months')
-                                        3 tháng gần nhất
-                                        @break
-                                        @case('6_months')
-                                        6 tháng gần nhất
-                                        @break
-                                        @case('9_months')
-                                        9 tháng gần nhất
-                                        @break
-                                        @case('1_year')
-                                        1 năm gần nhất
-                                        @break
-                                        @case('2_years')
-                                        2 năm gần nhất
-                                        @break
-                                        @case('3_years')
-                                        3 năm gần nhất
-                                        @break
-                                        @case('6_years')
-                                        6 năm gần nhất
-                                        @break
-                                        @default
-                                        @endswitch
-                                    </span>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li>
-                                        <h6 class="dropdown-header text-warning">Ngày</h6>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('checkinChart','3_days')">3 ngày gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('checkinChart','7_days')">7 ngày gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('checkinChart','15_days')">15 ngày gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('checkinChart','30_days')">30 ngày gần nhất</a>
-                                    </li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li>
-                                        <h6 class="dropdown-header text-warning">Tháng</h6>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('checkinChart','3_months')">3 tháng gần
-                                            nhất</a></li>
-                                    <li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('checkinChart','6_months')">6 tháng gần
-                                            nhất</a></li>
-                                    <li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('checkinChart','9_months')">9 tháng gần
-                                            nhất</a></li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li>
-                                        <h6 class="dropdown-header text-warning">Năm</h6>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('checkinChart','1_years')">1 năm gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('checkinChart','2_years')">2 năm gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('checkinChart','3_years')">3 năm gần nhất</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            wire:click.prevent="$set('checkinChart','6_years')">6 năm gần nhất</a>
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
                         <div>
                             <div id="checkinChart" style="height: 400px;color:black" wire:ignore></div>
@@ -818,15 +666,6 @@
                             <h5 class="text-white mb-0">
                                 <i class="fas fa-chart-line me-2 text-primary"></i>Vé đã bán theo ngày
                             </h5>
-                            <div class="btn-group" role="group">
-                                <button wire:click="$set('dailyChart', 'daily')" type="button"
-                                    class="btn btn-sm {{ $dailyChart === 'daily' ? 'btn-primary' : 'btn-outline-primary' }}">Ngày
-                                </button>
-                                <button wire:click="$set('dailyChart', 'monthly')" type="button"
-                                    class="btn btn-sm {{ $dailyChart === 'monthly' ? 'btn-primary' : 'btn-outline-primary' }}">Tháng</button>
-                                <button wire:click="$set('dailyChart', 'yearly')" type="button"
-                                    class="btn btn-sm {{ $dailyChart === 'yearly' ? 'btn-primary' : 'btn-outline-primary' }}">Năm</button>
-                            </div>
                         </div>
                         <div>
                             <div id="dailyChart" style="height: 400px;color:black" wire:ignore></div>
@@ -840,342 +679,8 @@
 </div>
 @script
 <script>
-    globalThis.chartInstances = {};
-    function updateFilterText(elementId, text) {
-        const element = document.getElementById(elementId);
-        element.textContent = text;
-    }
-    Livewire.on('updateData', function([$bookingCountFormatted, $bookingStatByDate, $result, $totalMax,filterTexts]) {
-
-        filterShowtimeChart = document.getElementById('filterShowtimeChart');
-        checkinFilter = document.getElementById('checkinFilter');
-        updateFilterText('filterShowtimeChart', filterTexts.filterShowtimeChart);
-        updateFilterText('checkinFilter', filterTexts.checkinFilter);
-
-        // showtime chart
-        const showtimeDate = $bookingCountFormatted;
-        const failedCounts = Object.values(showtimeDate).map(count => count.failed);
-        const paidCounts = Object.values(showtimeDate).map(count => count.paid);
-        const capacityCounts = Object.values(showtimeDate).map(count => count.capacity);
-        const revenueShowtime = Object.values(showtimeDate).map(count => count.revenue);
-        // dayli chart
-        const stats = $bookingStatByDate;
-        const labels = Object.keys(stats);
-        console.log(labels);
-        
-        const paid = labels.map(d => stats[d].paid);
-        const cancelled = labels.map(d => stats[d].cancelled);
-        const totalRevenue = labels.map(d => stats[d].totalRevenue || 0);
-
-        const optionsDailyChart = {
-            series: [{
-                name: 'Số vé đã bán',
-                data: paid
-            }],
-            chart: {
-                height: 400,
-                type: 'area',
-                background: 'transparent',
-                toolbar: {
-                    show: true,
-                    tools: {
-                        download: true, // Cho phép nút download
-                        selection: true,
-                        zoom: true,
-                        zoomin: true,
-                        zoomout: true,
-                        pan: true,
-                        reset: true,
-                        customIcons: []
-                    }
-                },
-                zoom: { enabled: false },
-                animations: {
-                    enabled: true,
-                    easing: 'easeinout',
-                    speed: 800,
-                }
-            },
-            colors: ['#4285F4'],
-            stroke: {
-                curve: 'smooth',
-                width: 3
-            },
-            fill: {
-                type: 'gradient',
-                gradient: {
-                    shade: 'dark',
-                    type: 'vertical',
-                    shadeIntensity: 0.3,
-                    gradientToColors: ['#4285F4'],
-                    inverseColors: false,
-                    opacityFrom: 0.4,
-                    opacityTo: 0.1,
-                    stops: [0, 100]
-                }
-            },
-            dataLabels: { enabled: false },
-            markers: {
-                size: 6,
-                colors: ['#4285F4'],
-                strokeColors: '#2c3034',
-                strokeWidth: 2,
-                hover: { size: 8 }
-            },
-            xaxis: {
-                categories: labels,
-                axisBorder: { show: false },
-                axisTicks: { show: false },
-                labels: {
-                    style: {
-                        colors: '#adb5bd',
-                        fontSize: '12px',
-                        fontWeight: 600
-                    }
-                }
-            },
-            yaxis: {
-                min: 0,
-                max: $totalMax,
-                tickAmount: 5,
-                labels: {
-                    style: {
-                        colors: '#adb5bd', /* Muted text color */
-                        fontSize: '12px'
-                    }
-                }
-            },
-            grid: {
-                show: true,
-                borderColor: '#495057', /* Darker grid lines */
-                strokeDashArray: 2
-            },
-            tooltip: {
-                theme: 'dark',
-                custom: function({series, seriesIndex, dataPointIndex, w}) {
-                    const value = paid[dataPointIndex];
-                    const cancelledValue = cancelled[dataPointIndex];
-                    const revenue = totalRevenue.map(n => n.toLocaleString('vi'))[dataPointIndex];
-                    return `
-                        <div style="
-                            background: linear-gradient(135deg, #4285F4 0%, #1976D2 100%);
-                            color: white;
-                            padding: 15px;
-                            border-radius: 10px;
-                            box-shadow: 0 4px 20px rgba(66, 133, 244, 0.3);
-                            min-width: 200px;
-                        ">
-                            <div style="margin-bottom: 6px;">
-                                🎟️ Vé bán: <strong>${value}</strong>
-                            </div>
-                            <div style="margin-bottom: 6px;">
-                                ❌ Hủy: <strong>${cancelledValue}</strong>
-                            </div>
-                            <div style="margin-bottom: 6px;">
-                                💵 Doanh thu: <strong>${revenue}</strong>
-                            </div>
-                        </div>
-                    `;
-                }
-            }
-        };
-
-        const optionsShowtimeChart = {
-            series: [
-                {
-                    name: 'Vé đã bán',
-                    data: paidCounts
-                },
-                {
-                    name: 'Sức chứa',
-                    data: capacityCounts
-                }
-            ],
-            chart: {
-                type: 'bar',
-                height: 400,
-                background: 'transparent',
-                toolbar: { show: true },
-                animations: {
-                    enabled: true,
-                    easing: 'easeinout',
-                    speed: 800
-                }
-            },
-            colors: ['#4285F4', '#34A853'],
-            plotOptions: {
-                bar: {
-                    horizontal: false,
-                    columnWidth: '60%',
-                    endingShape: 'rounded',
-                    borderRadius: 6
-                }
-            },
-            dataLabels: { enabled: false },
-            stroke: { show: false },
-            xaxis: {
-                categories: Object.keys(showtimeDate),
-                axisBorder: { show: false },
-                axisTicks: { show: false },
-                labels: {
-                    style: {
-                        colors: '#adb5bd',
-                        fontSize: '12px',
-                        fontWeight: 600
-                    }
-                }
-            },
-            yaxis: {
-                min: 0,
-                max: Math.max(...capacityCounts),
-                tickAmount: 7,
-                labels: {
-                    style: {
-                        colors: '#adb5bd', /* Muted text color */
-                        fontSize: '12px'
-                    }
-                }
-            },
-            grid: {
-                show: true,
-                borderColor: '#495057', /* Darker grid lines */
-                strokeDashArray: 2,
-                xaxis: { lines: { show: false } }
-            },
-            legend: {
-                show: true,
-                position: 'top',
-                horizontalAlign: 'left',
-                offsetY: -10,
-                labels: { colors: '#f8f9fa' }, /* Light text color */
-                markers: {
-                    width: 12,
-                    height: 12,
-                    fillColors: ['#4285F4', '#34A853'],
-                    radius: 3
-                }
-            },
-            tooltip: {
-                shared: true,
-                intersect: false,
-                theme: 'dark',
-                custom: function({series, seriesIndex, dataPointIndex, w}) {
-                    const time = Object.keys(showtimeDate)[dataPointIndex];
-                    const sold = paidCounts[dataPointIndex];
-                    const failed = failedCounts[dataPointIndex];
-                    const capacity = capacityCounts[dataPointIndex];
-                    const percentage = ((sold / capacity) * 100).toFixed(1);
-                    const revenue = revenueShowtime.map(n => n.toLocaleString('vi'))[dataPointIndex];
-                    return `
-                        <div style="
-                            background: #2c3034; /* Card background color */
-                            color: #f8f9fa; /* Light text color */
-                            padding: 15px;
-                            border-radius: 10px;
-                            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-                            min-width: 200px;
-                            border: 1px solid #495057; /* Darker border */
-                        ">
-                            <div style="font-weight: 600; font-size: 14px; margin-bottom: 8px;">
-                                🎬 Suất ${time}
-                            </div>
-                            <div style="margin-bottom: 6px;">
-                                🎟️ Vé bán: <strong>${sold}</strong>
-                            </div>
-                            <div style="margin-bottom: 6px;">
-                                🎟️ Sức chứa: ${capacity}
-                            </div>
-                            <div style="margin-bottom: 6px;">
-                                📊 Tỷ lệ lấp đầy: <strong>${percentage}%</strong>
-                            </div>
-                            <div style="margin-bottom: 6px;">
-                                ❌ Đã hủy: <strong>${failed}</strong>
-                            </div>
-                            <div style="margin-bottom: 6px;">
-                                💵 Doanh thu: <strong>${revenue}</strong>
-                            </div>
-                        </div>
-                    `;
-                }
-            }
-        };
-
-        const optionsCheckinChart = {
-            series: [$result.totalCount,$result.caps],
-            chart: {
-                type: 'pie',
-                height: 400,
-                background: 'transparent',
-                toolbar: { show: true },
-                animations: {
-                    enabled: false,
-                },
-            },
-            labels: ['Số vé đã bán', 'Số vé còn lại'],
-            colors: ['#34A853', '#FBBC04'],
-            stroke: { show: false },
-            dataLabels: {
-                enabled: true,
-                style: {
-                    fontSize: '14px',
-                    fontWeight: 600,
-                    colors: ['#fff']
-                },
-                formatter: function (val, opts) {
-                    return Math.round(val) + '%';
-                }
-            },
-            plotOptions: {
-                pie: {
-                    expandOnClick: false,
-                    donut: { size: '0%' }
-                }
-            },
-            legend: {
-                show: true,
-                position: 'bottom',
-                horizontalAlign: 'center',
-                offsetY: 10,
-                labels: { colors: '#f8f9fa' }, /* Light text color */
-                markers: {
-                    width: 12,
-                    height: 12,
-                    fillColors: ['#34A853', '#FBBC04'],
-                    radius: 3
-                }
-            },
-            tooltip: {
-                theme: 'dark',
-                y: {
-                    formatter: function (val) {
-                        const percentage = ((val / ($result.totalCount+$result.caps)) * 100).toFixed(1);
-                        return `${val.toLocaleString()} vé (${percentage}%)`;
-                    }
-                }
-            }
-        };
-
-        window.renderAllCharts = function() {
-            if(Object.values(chartInstances).length > 0){
-                chartInstances.dailyChart.updateOptions(optionsDailyChart);
-                chartInstances.showtimeChart.updateOptions(optionsShowtimeChart);
-                chartInstances.checkinChart.updateOptions(optionsCheckinChart);
-                chartInstances.dailyChart.updateOptions({
-                    xaxis: {
-                        categories: labels
-                    }
-                });
-            }else{
-                const dailyChartEl = document.querySelector("#dailyChart");
-                const showtimeChartEl = document.querySelector("#showtimeChart");
-                const checkinChartEl = document.querySelector("#checkinChart");
-                if (dailyChartEl) chartInstances.dailyChart = createScChart(dailyChartEl, optionsDailyChart);
-                if (showtimeChartEl) chartInstances.showtimeChart = createScChart(showtimeChartEl, optionsShowtimeChart);
-                if (checkinChartEl) chartInstances.checkinChart = createScChart(checkinChartEl, optionsCheckinChart);
-            }
-        }
-        renderAllCharts();
-    });
-
+    {!! $showtimeChart->compileJavascript() !!}
+    {!! $dailyChart->compileJavascript() !!}
+    {!! $ratioChart->compileJavascript() !!}
 </script>
 @endscript

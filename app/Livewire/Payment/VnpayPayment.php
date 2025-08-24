@@ -4,33 +4,27 @@ namespace App\Livewire\Payment;
 
 use App\Models\Booking;
 use App\Models\BookingSeat;
-use App\Models\Ticket;
 use Livewire\Component;
 use Illuminate\Support\Str;
 
 class VnpayPayment extends Component
 {
-    public function render()
-    {
-        return view('livewire.payment.vnpay-payment');
-    }
-
     public $cart = [];
     public $seats = [];
     public $food_total = 0;
     public $seat_total = 0;
-    public $total_amount = 0;
     public $booking_id;
     public $payment_deadline;
+    public $total_amount = 0;
 
     public function mount($booking_id)
     {
         $this->booking_id = $booking_id;
-
+        $booking = Booking::with('bookingSeats', 'foodOrderItems')->find($this->booking_id);
+        $this->total_amount = ($booking->bookingSeats?->sum('ticket_price') ?? 0) + ($booking->foodOrderItems?->reduce(fn($totalPriceFoodOrderItem, $foodOrderItem) => $totalPriceFoodOrderItem + ($foodOrderItem->price * $foodOrderItem->quantity), 0) ?? 0);
         $this->cart = session()->get('cart', []);
         $this->food_total = session()->get('cart_food_total', 0);
         $this->seat_total = session()->get('cart_seat_total', 0);
-        $this->total_amount = $this->food_total + $this->seat_total;
 
         $this->seats = BookingSeat::where('booking_id', $this->booking_id)
             ->with('seat')
@@ -73,11 +67,13 @@ class VnpayPayment extends Component
         session()->put('booking_locked_' . $this->booking_id, true);
 
         // Check booking status
-        $booking = Booking::find($this->booking_id);
+        $booking = Booking::with('bookingSeats', 'foodOrderItems')->find($this->booking_id);
         if (!$booking || $booking->status !== 'pending') {
             session()->flash('error', 'Đơn hàng không tồn tại hoặc không còn khả dụng.');
             return redirect()->route('client.index');
         }
+
+        $booking->update(['total_price' => $this->total_amount, 'transaction_code' => strtoupper(Str::random(10))]);
 
         $vnp_TmnCode = 'P8QX0KGT'; // Mã website VNPay
         $vnp_HashSecret = 'ITBJ2BGWRYTN5J2Z2QMXMXVAEEK5WBVA'; // Secret key
@@ -87,7 +83,6 @@ class VnpayPayment extends Component
         $vnp_TxnRef = $this->booking_id; // Mã giao dịch
         $vnp_OrderInfo = 'Thanh toan demo';
         $vnp_OrderType = 'billpayment';
-        $vnp_Amount = intval($this->total_amount) * 100; // VNPay yêu cầu x100
         $vnp_Locale = 'vn';
         $vnp_BankCode = '';
 
@@ -96,7 +91,7 @@ class VnpayPayment extends Component
         $inputData = array(
             "vnp_Version" => "2.1.0",
             "vnp_TmnCode" => $vnp_TmnCode,
-            "vnp_Amount" => $vnp_Amount,
+            "vnp_Amount" => $this->total_amount * 100,
             "vnp_Command" => "pay",
             "vnp_CreateDate" => date('YmdHis'),
             "vnp_CurrCode" => "VND",
@@ -128,5 +123,10 @@ class VnpayPayment extends Component
         $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
 
         return redirect()->away($vnp_Url);
+    }
+
+    public function render()
+    {
+        return view('livewire.payment.vnpay-payment');
     }
 }

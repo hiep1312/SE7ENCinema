@@ -14,7 +14,6 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
-
 #[Title('Chọn món ăn - SE7ENCinema')]
 #[Layout('components.layouts.client')]
 

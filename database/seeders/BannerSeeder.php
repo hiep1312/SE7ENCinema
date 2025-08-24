@@ -88,7 +88,7 @@ class BannerSeeder extends Seeder
             ],
             [
                 'title' => 'Mưa Đỏ',
-                'image' => 'https://iguov8nhvyobj.vcdn.cloud/media/catalog/product/cache/1/image/1800x/71252117777b696995f01934522c402d/6/4/640x396-muado.jpg',
+                'image' => 'https://files.betacorp.vn/media/images/2025/08/18/1702x621-3-090826-180825-27.jpg',
                 'start_date' => now()->addDays(7),
                 'end_date' => now()->addDays(44),
                 'status' => 'inactive',

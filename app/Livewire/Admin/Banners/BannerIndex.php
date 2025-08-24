@@ -63,7 +63,6 @@ class BannerIndex extends Component
     #[Layout('components.layouts.admin')]
     public function render()
     {
-
         $query = Banner::query()
             ->when($this->search, function ($query) {
                 $query->where(function($subQuery) {

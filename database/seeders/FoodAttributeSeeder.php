@@ -98,12 +98,22 @@ class FoodAttributeSeeder extends Seeder
             ]
         ];
 
+        $attribute = ['Size', 'Vị', 'Sốt', 'Topping', 'Đá', 'Đường'];
+
         foreach ($data as $foodAttribute) {
             $food_item_id = FoodItem::where('name', $foodAttribute['food'])->first()->id;
 
             foreach ($foodAttribute['attributes'] as [$name, $description]) {
                 FoodAttribute::create(compact('food_item_id', 'name', 'description'));
             }
+        }
+
+        foreach ($attribute as $name) {
+            FoodAttribute::create([
+                'food_item_id' => null,
+                'name' => $name,
+                'description' => 'Mô tả cho ' . $name
+            ]);
         }
     }
 }
