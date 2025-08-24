@@ -4,7 +4,7 @@
         Object.defineProperty(window, 'expiredAt', {
             configurable: false,
             enumerable: false,
-            value: new Date(@json($seatHold->expires_at->toIso8601String())),
+            value: new Date(@json({{-- $seatHold->expires_at->toIso8601String() --}} now()->addMinutes(30)->toIso8601String())),
             writable: false
         });
     </script>
@@ -248,7 +248,6 @@
                     </div>
                 </div>
 
-                <!-- Payment Methods Section -->
                 <div class="booking-payment-section mb-4">
                     <h3 class="booking-payment-section-title pt-1 mb-4">
                         <i class="fas fa-credit-card text-success me-2"></i>Phương thức thanh toán
@@ -368,48 +367,40 @@
     @if($isPaymentMode)
         <div class="booking-payment-overlay">
             <div class="booking-payment-overlay-content">
-                <div class="booking-payment-processing" id="processingState">
-                    <div class="booking-payment-spinner"></div>
-                    <h4 class="mt-3">Đang chờ thanh toán...</h4>
-                    <p class="text-muted">Vui lòng không tắt trình duyệt</p>
-                    <div class="booking-payment-timer">
-                        <span>Thời gian chờ: </span>
-                        <span id="paymentTimer" class="fw-bold text-warning" wire:ignore>00:00</span>
-                    </div>
-                    @if($statusWindow === 'closed')
-                        <div class="booking-payment-timeout-actions d-flex gap-2">
-                            <button class="booking-payment-btn-retry" wire:click="retryPayment">
-                                <i class="fas fa-redo me-2"></i>Thanh toán lại
-                            </button>
-                            <button class="booking-payment-btn-cancel" wire:click="cancelPayment">
-                                <i class="fas fa-times me-2"></i>Hủy đặt vé
-                            </button>
+                @if($seatHold->expires_at->isFuture())
+                    <div class="booking-payment-processing">
+                        <div class="booking-payment-spinner"></div>
+                        <h4 class="mt-3">Đang chờ thanh toán...</h4>
+                        <p class="text-muted">Vui lòng không tắt trình duyệt</p>
+                        <div class="booking-payment-timer">
+                            <span>Thời gian chờ: </span>
+                            <span id="paymentTimer" class="fw-bold text-warning" wire:ignore>00:00</span>
                         </div>
-                    @endif
-                </div>
-
-                {{-- <div class="booking-payment-timeout" id="timeoutState">
-                    <i class="fas fa-exclamation-triangle text-warning mb-3" style="font-size: 48px;"></i>
-                    <h4>Hết thời gian chờ</h4>
-                    <p class="text-muted">Giao dịch đã hết thời gian chờ. Vui lòng thử lại.</p>
-                    <div class="booking-payment-timeout-actions d-flex gap-2">
-                        <button class="booking-payment-btn-retry" onclick="retryPayment()">
-                            <i class="fas fa-redo me-2"></i>Thanh toán lại
-                        </button>
-                        <button class="booking-payment-btn-cancel" onclick="cancelPayment()">
-                            <i class="fas fa-times me-2"></i>Hủy giao dịch
-                        </button>
+                        @if($statusWindow === 'closed')
+                            <div class="booking-payment-timeout-actions d-flex gap-2 justify-content-center">
+                                @if($seatHold->expires_at->clone()->subMinutes(5)->isFuture())
+                                    <button class="booking-payment-btn-retry" wire:click="retryPayment">
+                                        <i class="fas fa-redo me-2"></i>Thanh toán lại
+                                    </button>
+                                @endif
+                                <button class="booking-payment-btn-cancel" wire:click="cancelPayment">
+                                    <i class="fas fa-times me-2"></i>Hủy đặt vé
+                                </button>
+                            </div>
+                        @endif
                     </div>
-                </div> --}}
-
-                {{-- <div class="booking-payment-success" id="successState">
-                    <i class="fas fa-check-circle text-success mb-3" style="font-size: 48px;"></i>
-                    <h4>Thanh toán thành công!</h4>
-                    <p class="text-muted">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi</p>
-                    <button class="booking-payment-btn-continue" onclick="goToTickets()">
-                        <i class="fas fa-ticket-alt me-2"></i>Xem vé của tôi
-                    </button>
-                </div> --}}
+                @else
+                    <div class="booking-payment-timeout" id="timeoutState">
+                        <i class="fas fa-exclamation-triangle text-warning mb-3" style="font-size: 48px;"></i>
+                        <h4>Thời gian giữ vé đã hết</h4>
+                        <p class="text-muted">Rất tiếc, bạn đã vượt quá thời gian thanh toán. Vui lòng thực hiện đặt vé lại.</p>
+                        <div class="booking-payment-timeout-actions d-flex justify-content-center">
+                            <a href="{{ route('client.movieBooking.movie', $booking->showtime->movie->id) }}" class="booking-payment-btn-retry" style="text-decoration: none">
+                                <i class="fas fa-redo me-2"></i>Đặt vé lại
+                            </a>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
     @endif
@@ -418,6 +409,8 @@
 <script>
     const countdownEl = document.getElementById('countdown');
     const timer = () => {
+        if($wire.isPaymentMode) return;
+
         const now = Date.now();
         const diffMs = expiredAt - now;
 

@@ -27,12 +27,14 @@ class BookingFood extends Component
     public $seatHold;
 
     public function mount(string $bookingCode){
-        $this->booking = Booking::with('showtime.movie', 'showtime.room', 'user', 'seats', 'bookingSeats')->where('booking_code', $bookingCode)->first();
+        $this->booking = Booking::with('showtime.movie', 'showtime.room', 'user', 'seats', 'bookingSeats', 'foodOrderItems.variant')->where('booking_code', $bookingCode)->first();
         $this->seatHold = SeatHold::where('showtime_id', $this->booking?->showtime_id)->where('user_id', Auth::id())->where('status', 'holding')->where('expires_at', '>', now())->first();
-
         if(!$this->booking || $this->booking->user_id !== Auth::id() || !$this->seatHold) abort(404);
 
         if(session()->has("__sc-cart__") && session("__sc-cart__")[0] === $bookingCode) $this->carts = session("__sc-cart__")[1];
+        if($this->booking->foodOrderItems) $this->carts = array_replace($this->carts, $this->booking->foodOrderItems->mapWithKeys(fn($foodOrderItem) => [$foodOrderItem->variant->id => [$foodOrderItem->quantity, $foodOrderItem->price, $foodOrderItem->variant]])->toArray());
+
+        if(session()->has('__sc-payment__') && session('__sc-payment__')[0] === $bookingCode) return redirect()->route('client.booking.payment', ['bookingCode' => $this->booking->code]);
     }
 
     public function updatedCartTempVariantId(){
@@ -49,6 +51,13 @@ class BookingFood extends Component
             foreach($this->carts as $cart){
                 $foodVariantCurrent = FoodVariant::where('id', $cart[2]->id)->first();
                 if($foodVariantCurrent && $foodVariantCurrent->quantity_available > 0){
+                    if($this->booking->foodOrderItems){
+                        foreach($this->booking->foodOrderItems as $foodOrderItem){
+                            FoodVariant::where('id', $foodOrderItem->variant_id)->increment('quantity_available', $foodOrderItem->quantity);
+                            $foodOrderItem->delete();
+                        }
+                    }
+
                     $orderQuantity = $foodVariantCurrent->quantity_available > $cart[0] ? $cart[0] : $foodVariantCurrent->quantity_available;
                     FoodOrderItem::create([
                         'booking_id' => $this->booking->id,
@@ -60,6 +69,8 @@ class BookingFood extends Component
                     $foodVariantCurrent->decrement('quantity_available', $orderQuantity);
                 }
             }
+
+            session()->forget('__sc-cart__');
         }
 
         return redirect()->route('client.booking.payment', ['bookingCode' => $this->booking->booking_code]);

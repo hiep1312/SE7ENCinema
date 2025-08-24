@@ -39,10 +39,10 @@
                                     <i class="fas fa-hourglass-half"></i>
                                 </div>
                                 <div class="success-timer-text">
-                                    Trang sẽ tự động đóng sau <span id="countdown">6</span> giây
+                                    Trang sẽ tự động đóng sau <span id="countdown" wire:ignore>6</span> giây
                                 </div>
                                 <div class="success-timer-progress">
-                                    <div class="success-timer-bar" id="progressBar"></div>
+                                    <div class="success-timer-bar" id="progressBar" wire:ignore></div>
                                 </div>
                             </div>
                         </div>
@@ -54,12 +54,21 @@
 </div>
 @script
 <script>
-    window.opener.location = @json(route('client.userBooking', $booking->id));
+    const countdown = document.getElementById('countdown');
+    const progressBar = document.getElementById('progressBar');
+    let countdownTime = 6;
+
+    if(window.opener){
+        window.opener.redirectAfterPayment();
+    }
+
     setInterval(() => {
-        document.getElementById('countdown').textContent = parseInt(document.getElementById('countdown').textContent) - 1;
-        const progressPercent = (parseInt(document.getElementById('countdown').textContent) / 6) * 100;
-        document.getElementById('progressBar').style.width = progressPercent + "%";
-        if(parseInt(document.getElementById('countdown').textContent) <= 0) window.close();
+        countdown.textContent = (countdownTime = --countdownTime);
+        progressBar.style.width = `${(countdownTime / 6) * 100}%`;
+        if(countdownTime <= 0){
+            if(window.opener) window.close();
+            else window.location.href = @json(route('client.userBooking', $booking->id));
+        }
     }, 1000);
 </script>
 @endscript

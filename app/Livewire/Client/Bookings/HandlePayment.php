@@ -18,21 +18,26 @@ class HandlePayment extends Component
     public $seatHold;
 
     public function mount(string $bookingCode){
-        $this->booking = Booking::with('bookingSeats')->where('booking_code', $bookingCode)->first();
-        $this->seatHold = SeatHold::where('showtime_id', $this->booking?->showtime_id)->where('user_id', Auth::id())->where('status', 'holding')->where('expires_at', '>', now())->first();
+        $this->booking = Booking::with('showtime.movie', 'showtime.room', 'user', 'seats', 'bookingSeats', 'foodOrderItems.variant.foodItem')->where('booking_code', $bookingCode)->first();
+        $this->seatHold = SeatHold::where('showtime_id', $this->booking?->showtime_id)->where('user_id', Auth::id())->where('status', 'holding')->where('expires_at', '>=', now())->first();
 
         if(!$this->booking || $this->booking->user_id !== Auth::id() || !$this->seatHold) abort(404);
 
         $this->booking->update(['status' => 'paid']);
-        foreach($this->booking->bookingSeats as $bookingSeat){
-            Ticket::create([
+        foreach($this->booking->bookingSeats ?? [] as $bookingSeat) Ticket::create([
                 'booking_seat_id' => $bookingSeat->id,
+                'note' => null,
                 'qr_code' => Str::uuid(),
                 'taken' => false,
+                'taken_at' => null,
+                'checkin_at' => null,
                 'status' => 'active'
             ]);
-        }
         $this->seatHold->delete();
+    }
+
+    public function redirectAfterPayment(){
+
     }
 
     #[Title('Kết quả thanh toán - SE7ENCinema')]

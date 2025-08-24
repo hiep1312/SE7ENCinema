@@ -7,9 +7,12 @@ use App\Models\Showtime;
 use App\Models\Movie;
 use App\Models\Booking;
 use Carbon\Carbon;
+use SE7ENCinema\scAlert;
 
 class MovieBooking extends Component
 {
+    use scAlert;
+
     public $showtime;
     public $movie;
     public $showTrailerModal = false;
@@ -88,7 +91,6 @@ class MovieBooking extends Component
             return;
         }
 
-        // Redirect đến trang booking với showtime_id (Cái này để tạm Thằng QUÂN THÊM LINK ĐẶT GHẾ VÀO ĐÂY)
         return redirect()->route('client.booking.select_seats', ['showtime_id' => $showtime->id]);
     }
 
@@ -104,6 +106,7 @@ class MovieBooking extends Component
 
     public function render()
     {
+        if(session()->has('success')) $this->scToast(session('success'), 'success', 5000, true);
         return view('livewire.client.movie-booking.movie-booking');
     }
 }

@@ -45,7 +45,7 @@ document.addEventListener('livewire:init', () => {
             if(voucherStatus && !isReactivating) voucherStatus.innerHTML = `<i class="fas fa-check me-1"></i><span>Đã chọn</span>`;
             else voucherStatus.innerHTML = `<i class="fas fa-check-circle me-1"></i><span>Có thể sử dụng</span>`;
 
-            $wire.$set('voucherCodeSelected', isReactivating ? null : voucherCodeSelection, true);
+            !$wire.isPaymentMode && $wire.$set('voucherCodeSelected', isReactivating ? null : voucherCodeSelection, true);
         }
     }
 
@@ -56,22 +56,25 @@ document.addEventListener('livewire:init', () => {
 
         methodOther.forEach(otherMethod => otherMethod.classList.remove('selected'));
         methodElement.classList.add('selected');
-        $wire.$set('paymentSelected', methodSelection, true);
+        !$wire.isPaymentMode && $wire.$set('paymentSelected', methodSelection, true);
     };
 
-    window.openPaymentPopup = function(urlPayment, expiredAtPopup) {
-        const windowPayment = window.open(urlPayment, '_blank', 'width=1200,height=700,left=160,top=20,popup');
-        const $wire = Livewire.find(document.querySelector("[wire\\:id][sc-root]")?.getAttribute('wire:id'));
-        const expiredAt = new Date(expiredAtPopup);
-        setInterval(() => {
+    window.openPaymentPopup = function(urlPayment, paymentExpiredAt, openTab = true){
+        const windowPayment = openTab ? window.open(urlPayment, '_blank', 'width=1200,height=700,left=160,top=20,popup') : null;
+        let $wire = Livewire.find(document.querySelector("[wire\\:id][sc-root]")?.getAttribute('wire:id'));
+        const expiredAt = new Date(paymentExpiredAt);
+        let timer = null;
+        clearInterval(timer);
+        timer = setInterval(() => {
+            if(!$wire) $wire = Livewire.find(document.querySelector("[wire\\:id][sc-root]")?.getAttribute('wire:id'));
             const diffSeconds = Math.floor((expiredAt - Date.now()) / 1000);
             const minutes = Math.floor(diffSeconds / 60);
             const seconds = diffSeconds % 60;
-            if(windowPayment.closed) $wire.$set('statusWindow', 'closed', true);
+            if(windowPayment?.closed) $wire?.$set('statusWindow', 'closed', true);
             document.querySelector('#paymentTimer').textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }, 1000);
 
-        $wire.on('closePaymentPopup', () => windowPayment.close());
+        $wire?.on('closePaymentPopup', () => windowPayment?.close());
     }
 
     Livewire.on('reservationExpired', function(redirectUrl){
