@@ -169,23 +169,23 @@
 
                                         <div class="d-flex flex-wrap gap-3">
 
-                                            <label class="form-switch form-switch-md">
+                                            <label class="form-check form-switch form-check-reverse">
                                                 <input type="checkbox" class="form-check-input" id="rule-lonely"
                                                     wire:model="seatAlgorithms.check_lonely">
-                                                <span class="form-switch-label">Cấm chỗ lẻ (ví dụ A1, A3)</span>
+                                                <span style="margin-left: 40px" class="form-switch-label">Cấm chỗ lẻ (ví dụ A1, A3)</span>
                                             </label>
 
-                                            <label class="form-switch form-switch-md">
+                                            <label class="form-check form-switch form-check-reverse">
                                                 <input type="checkbox" class="form-check-input" id="rule-sole"
                                                     wire:model="seatAlgorithms.check_sole">
-                                                <span class="form-switch-label">Cấm ghế lẻ sát tường (A1 trống → chọn
+                                                <span style="margin-left: 40px" class="form-switch-label">Cấm ghế lẻ sát tường (A1 trống → chọn
                                                     A2)</span>
                                             </label>
 
-                                            <label class="form-switch form-switch-md">
+                                            <label class="form-check form-switch form-check-reverse">
                                                 <input type="checkbox" class="form-check-input" id="rule-diagonal"
                                                     wire:model="seatAlgorithms.check_diagonal">
-                                                <span class="form-switch-label">Cấm chọn chéo (A1, B2)</span>
+                                                <span style="margin-left: 40px" class="form-switch-label">Cấm chọn chéo (A1, B2)</span>
                                             </label>
 
                                         </div>
@@ -242,6 +242,10 @@
         const rowCurrent = evt.to.dataset.row;
         evt.to.querySelectorAll('input[type=checkbox]').forEach(updatedpointseat);
         evt.from.querySelectorAll('input[type=checkbox]').forEach(updatedpointseat);
+    }
+
+    window.redirectAfterPayment = function(){
+        $wire.redirectAfterPayment();
     }
 </script>
 @endscript

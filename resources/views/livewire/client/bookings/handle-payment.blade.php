@@ -1,5 +1,5 @@
 <div>
-    <div class="success-background">
+    <div class="@if($statusPayment) success-background @else failed-background @endif">
         <div class="success-particles">
             <div class="particle"></div>
             <div class="particle"></div>
@@ -22,17 +22,30 @@
                     <div class="success-card">
                         <!-- Success Icon -->
                         <div class="success-icon-container">
-                            <div class="success-icon-wrapper">
-                                <i class="fas fa-check success-icon"></i>
-                            </div>
-                            <div class="success-ripple"></div>
-                            <div class="success-ripple success-ripple-delay"></div>
+                            @if($statusPayment)
+                                <div class="success-icon-wrapper">
+                                    <i class="fas fa-check success-icon"></i>
+                                </div>
+                                <div class="success-ripple"></div>
+                                <div class="success-ripple success-ripple-delay"></div>
+                            @else
+                                <div class="failed-icon-wrapper">
+                                    <i class="fas fa-exclamation-triangle success-icon"></i>
+                                </div>
+                                <div class="failed-ripple"></div>
+                                <div class="failed-ripple success-ripple-delay"></div>
+                            @endif
                         </div>
 
                         <!-- Success Content -->
                         <div class="success-content">
-                            <h1 class="success-title">Thanh Toán Thành Công!</h1>
-                            <p class="success-subtitle">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi</p>
+                            @if($statusPayment)
+                                <h1 class="success-title">Thanh Toán Thành Công!</h1>
+                                <p class="success-subtitle">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi</p>
+                            @else
+                                <h1 class="failed-title">Thanh Toán Thất Bại!</h1>
+                                <p class="success-subtitle">Rất tiếc, giao dịch của bạn không thành công. Vui lòng thử lại sau.</p>
+                            @endif
 
                             <div class="success-timer">
                                 <div class="success-timer-icon">
@@ -59,7 +72,7 @@
     let countdownTime = 6;
 
     if(window.opener){
-        window.opener.redirectAfterPayment();
+        window.opener.location.assign(@json(route('client.userBooking', $booking->id)));
     }
 
     setInterval(() => {
@@ -67,7 +80,7 @@
         progressBar.style.width = `${(countdownTime / 6) * 100}%`;
         if(countdownTime <= 0){
             if(window.opener) window.close();
-            else window.location.href = @json(route('client.userBooking', $booking->id));
+            else window.location.location.assign(@json(route('client.userBooking', $booking->id)));
         }
     }, 1000);
 </script>

@@ -73,7 +73,7 @@
                 </div>
 
                 <!-- Cột phải: Nút tiếp tục -->
-                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                <div style="cursor:pointer" class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                     <div class="st_seatlay_btn float_left">
                         <a wire:click="goToSelectFood" class="text-decoration-none w-100 {{ empty($selectedSeats) ? 'disabled' : '' }}">
                             Tiếp tục đặt đồ ăn

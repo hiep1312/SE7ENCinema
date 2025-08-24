@@ -6,24 +6,38 @@ use App\Livewire\Payment\VnpayPayment;
 use App\Models\Booking;
 use App\Models\SeatHold;
 use App\Models\Ticket;
+use App\Services\VNPaymentService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Illuminate\Support\Str;
+use Throwable;
 
 class HandlePayment extends Component
 {
     public $booking;
     public $seatHold;
+    public $statusPayment;
 
     public function mount(string $bookingCode){
-        $this->booking = Booking::with('showtime.movie', 'showtime.room', 'user', 'seats', 'bookingSeats', 'foodOrderItems.variant.foodItem')->where('booking_code', $bookingCode)->first();
+        /* $this->booking = Booking::with('showtime.movie', 'showtime.room', 'user', 'seats', 'bookingSeats', 'foodOrderItems.variant.foodItem')->where('booking_code', $bookingCode)->first();
         $this->seatHold = SeatHold::where('showtime_id', $this->booking?->showtime_id)->where('user_id', Auth::id())->where('status', 'holding')->where('expires_at', '>=', now())->first();
 
-        if(!$this->booking || $this->booking->user_id !== Auth::id() || !$this->seatHold) abort(404);
+        $checkSum = true;
+        try{ $analysisPayment = VNPaymentService::parseWithQueryString(null, true); }
+        catch(Throwable){ $checkSum = false; }
 
-        $this->booking->update(['status' => 'paid']);
+        if(!$this->booking || $this->booking->user_id !== Auth::id() || !$this->seatHold || !$checkSum || $analysisPayment['vnp_TxnRef'] !== $this->booking->transaction_code) abort(404);
+
+        if(($this->statusPayment = ($analysisPayment['vnp_TransactionStatus'] === '00'))){
+            $this->booking->update(['status' => 'paid']);
+            $this->seatHold->update(['status' => 'released']);
+        }else{
+            $this->booking->update(['status' => 'failed']);
+            $this->seatHold->delete();
+        }
+
         foreach($this->booking->bookingSeats ?? [] as $bookingSeat) Ticket::create([
                 'booking_seat_id' => $bookingSeat->id,
                 'note' => null,
@@ -32,8 +46,9 @@ class HandlePayment extends Component
                 'taken_at' => null,
                 'checkin_at' => null,
                 'status' => 'active'
-            ]);
-        $this->seatHold->delete();
+            ]); */
+
+            $this->statusPayment = false;
     }
 
     public function redirectAfterPayment(){

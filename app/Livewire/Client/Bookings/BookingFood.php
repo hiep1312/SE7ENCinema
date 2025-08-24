@@ -34,7 +34,7 @@ class BookingFood extends Component
         if(session()->has("__sc-cart__") && session("__sc-cart__")[0] === $bookingCode) $this->carts = session("__sc-cart__")[1];
         if($this->booking->foodOrderItems) $this->carts = array_replace($this->carts, $this->booking->foodOrderItems->mapWithKeys(fn($foodOrderItem) => [$foodOrderItem->variant->id => [$foodOrderItem->quantity, $foodOrderItem->price, $foodOrderItem->variant]])->toArray());
 
-        if(session()->has('__sc-payment__') && session('__sc-payment__')[0] === $bookingCode) return redirect()->route('client.booking.payment', ['bookingCode' => $this->booking->code]);
+        if(session()->has('__sc-payment__') && session('__sc-payment__')[0] === $bookingCode) return redirect()->route('client.booking.payment', ['bookingCode' => $this->booking->booking_code]);
     }
 
     public function updatedCartTempVariantId(){

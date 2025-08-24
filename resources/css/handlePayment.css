@@ -23,6 +23,17 @@ body {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
+/* Background Animation */
+.failed-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+}
+
 .success-particles {
     position: absolute;
     width: 100%;
@@ -179,6 +190,36 @@ body {
     animation: iconPop 0.6s ease-out 0.3s both;
 }
 
+.failed-icon-wrapper {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    animation: iconShake 0.8s ease-out 0.3s both;
+}
+
+@keyframes iconShake {
+    0% {
+        transform: scale(0) rotate(0deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2) rotate(-10deg);
+    }
+    75% {
+        transform: scale(1.1) rotate(5deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
 .success-icon {
     font-size: 48px;
     color: white;
@@ -224,6 +265,16 @@ body {
     opacity: 0;
 }
 
+.failed-ripple {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border: 3px solid #dc3545;
+    border-radius: 50%;
+    animation: ripple 2.5s linear infinite;
+    opacity: 0;
+}
+
 .success-ripple-delay {
     animation-delay: 1s;
 }
@@ -261,6 +312,17 @@ body {
     color: #2c3e50;
     margin-bottom: 15px;
     background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.failed-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

@@ -707,11 +707,3 @@ li[data-seat="aisle"] .btn-delete-aisle {
 li[data-seat="aisle"]:hover .btn-delete-aisle {
   display: block;
 }
-.form-switch { display:flex; align-items:center; gap:.5rem; cursor:pointer; }
-  .form-switch .form-check-input {
-      width:3rem; height:1.5rem; background:#6c757d; border:0;
-      cursor:pointer; position:relative; transition:all .2s ease;
-  }
-  .form-switch .form-check-input:checked { background:#22c55e; }
-  .form-switch .form-switch-label { color:#e5e7eb; font-weight:500; }
-  .form-switch.form-switch-md .form-check-input { width:2rem; height:1rem; }

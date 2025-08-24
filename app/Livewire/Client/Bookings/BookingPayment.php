@@ -92,12 +92,11 @@ class BookingPayment extends Component
     }
 
     public function payment(){
-        if($this->paymentSelected && !$this->isPaymentMode && in_array($this->paymentSelected, ['momo', 'vnpay', 'atm', 'bank'], true)){
+        if($this->paymentSelected && !$this->isPaymentMode && in_array($this->paymentSelected, ['vnpay', 'atm', 'bank'], true)){
             $mappedPaymentMethod = match($this->paymentSelected){
-                'momo' => ['e_wallet', null],
                 'vnpay' => ['e_wallet', null],
                 'atm' => ['credit_card', 'VNBANK'],
-                'bank' => ['bank_transfer', 'ZALOPAY'],
+                'bank' => ['bank_transfer', 'VNPAYQR'],
             };
 
             if($this->voucherCodeSelected){

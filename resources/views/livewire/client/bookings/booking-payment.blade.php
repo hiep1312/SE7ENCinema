@@ -4,7 +4,7 @@
         Object.defineProperty(window, 'expiredAt', {
             configurable: false,
             enumerable: false,
-            value: new Date(@json({{-- $seatHold->expires_at->toIso8601String() --}} now()->addMinutes(30)->toIso8601String())),
+            value: new Date(@json($seatHold->expires_at->toIso8601String())),
             writable: false
         });
     </script>
@@ -258,12 +258,6 @@
                             <h6 class="booking-payment-method-title">Ví điện tử</h6>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <div class="booking-payment-method" onclick="selectPaymentMethod(this)" data-method="momo">
-                                        <img src="{{ asset('storage/momo-icon.png') }}" alt="MoMo Payment" class="booking-payment-method-logo">
-                                        <span>MoMo</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
                                     <div class="booking-payment-method" onclick="selectPaymentMethod(this)" data-method="vnpay">
                                         <img src="{{ asset('storage/vnpay-icon.webp') }}" alt="VNPAY Payment" class="booking-payment-method-logo" style="width: 40px;">
                                         <span>VNPAY</span>
@@ -326,10 +320,6 @@
                             <h6>Phương thức thanh toán</h6>
                             <div class="booking-payment-method-display">
                                 @switch($paymentSelected)
-                                    @case('momo')
-                                        <img src="{{ asset('storage/momo-icon.png') }}" alt="MoMo Payment" class="booking-payment-method-logo">
-                                        <span>MoMo</span>
-                                        @break
                                     @case('vnpay')
                                         <img src="{{ asset('storage/vnpay-icon.webp') }}" alt="VNPAY Payment" class="booking-payment-method-logo" style="width: 40px;">
                                         <span>VNPAY</span>
@@ -355,7 +345,7 @@
                         <button class="booking-payment-btn-back" href="{{ route('client.booking.food', $booking->booking_code) }}">
                             <i class="fas fa-arrow-left me-2"></i>Quay lại
                         </button>
-                        <button class="booking-payment-btn-pay" @unless($paymentSelected && in_array($paymentSelected, ['momo', 'vnpay', 'atm', 'bank'], true)) disabled @endunless @unless($isPaymentMode) wire:click="payment" @endunless>
+                        <button class="booking-payment-btn-pay" @unless($paymentSelected && in_array($paymentSelected, ['vnpay', 'atm', 'bank'], true)) disabled @endunless @unless($isPaymentMode) wire:click="payment" @endunless>
                             <i class="fas fa-lock me-2"></i>Thanh toán
                         </button>
                     </div>
