@@ -14,7 +14,7 @@ class SeatSeeder extends Seeder
      */
     public function run(): void
     {
-        $seatTypes = ['standard', 'vip', 'couple', 'disabled'];
+        
 
         Room::all()->each(function ($room) {
             $rows = range('A', 'E'); // 5 hàng A - E
@@ -22,21 +22,21 @@ class SeatSeeder extends Seeder
             foreach ($rows as $row) {
                 for ($num = 1; $num <= 10; $num++) {
                     $seatType = 'standard';
-                    $price = 80000;
+                    $price = 30000;
 
                     // Quy định loại ghế theo hàng
                     if (in_array($row, ['C', 'D'])) {
                         $seatType = 'vip';
-                        $price = 120000;
+                        $price = 50000;
                     } elseif ($row === 'E' && in_array($num, [4, 5, 6, 7])) {
                         $seatType = 'couple';
-                        $price = 150000;
+                        $price = 80000;
                     }
 
                     // Ghế disabled (ưu tiên), thường ở ngoài cùng
                     if ($num == 1 || $num == 10) {
                         $seatType = 'disabled';
-                        $price = 60000;
+                        $price = 40000;
                     }
 
                     Seat::create([
