@@ -1,5 +1,4 @@
 @assets
-    <link rel="stylesheet" href="{{ asset('client/assets/css/style.css') }}">
     @vite('resources/css/seat.css')
 @endassets
 
@@ -57,7 +56,7 @@
                 <!-- Cột trái: Nút back -->
                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                     <div class="st_bt_top_back_btn st_bt_top_back_btn_seatl float_left">
-                        <a href="{{ url('/') }}"><i class="fas fa-long-arrow-alt-left"></i> &nbsp;Back</a>
+                        <a style="text-decoration: none" href="{{ route('client.showtimes.index') }}"><i class="fas fa-long-arrow-alt-left"></i> &nbsp;Back</a>
                     </div>
                 </div>
 

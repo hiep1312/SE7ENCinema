@@ -169,7 +169,7 @@
                                                 </div>
                                                 <div class="col-lg-8 mt-3 mt-lg-0">
                                                     <div class="table-responsive">
-                                                        <table class="table table-dark table-hover mb-0">
+                                                        <table class="table table-striped table-dark table-hover mb-0">
                                                             <thead>
                                                                 <tr>
                                                                     <th class="text-center" style="width: 60px;">STT</th>

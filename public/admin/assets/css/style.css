@@ -13894,4 +13894,10 @@ div.tagsinput {
   -webkit-flex-grow: 1;
   flex-grow: 1; }
 
-/*# sourceMappingURL=maps/style.css.map */
+/*# sourceMappingURL=maps/style.css.map */  
+.nav-item.active > .nav-link .menu-title {
+  color: #fff !important;
+}
+.sub-menu .nav-link.active {
+  color: #fff !important; /* màu link con active */
+}

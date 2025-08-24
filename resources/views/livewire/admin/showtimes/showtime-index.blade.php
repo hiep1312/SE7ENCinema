@@ -92,7 +92,7 @@
                                 <div class="movie-card border rounded p-3 mb-3" wire:key="movie-{{ $date }}-{{ $movieId }}">
                                     <div class="row">
                                         @php $movie = $movieShowtimes->first()->movie; @endphp
-                                        <div class="col-lg-4" data-bs-toggle="collapse" data-bs-target="#data-{{ $date }}-{{ $movieId }}" style="cursor: pointer;">
+                                        <div class="col-lg-4" style="cursor: pointer;">
                                             <div class="d-flex">
                                                 <div class="movie-poster">
                                                     @if($movie->poster)
@@ -118,7 +118,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-8 mt-3 mt-lg-0 collapse" id="data-{{ $date }}-{{ $movieId }}" wire:ignore.self>
+                                        <div class="col-lg-8 mt-3 mt-lg-0" id="data-{{ $date }}-{{ $movieId }}" wire:ignore.self>
                                             <div class="table-responsive">
                                                 <table class="table table-dark table-hover mb-0">
                                                     <thead>
@@ -153,11 +153,6 @@
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex gap-2 justify-content-center">
-                                                                        <a href="{{ route('admin.showtimes.detail', $showtime->id) }}"
-                                                                        class="btn btn-sm btn-info"
-                                                                        title="Chi tiết">
-                                                                        <i class="fas fa-eye" style="margin-right: 0"></i>
-                                                                    </a>
                                                                         @if($showtime->status !== "completed" && $showtime->start_time->isFuture())
                                                                             <a href="{{ route('admin.showtimes.edit', $showtime->id) }}"
                                                                                 class="btn btn-sm btn-warning"

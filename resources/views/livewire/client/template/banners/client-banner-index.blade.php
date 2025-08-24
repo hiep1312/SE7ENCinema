@@ -132,12 +132,12 @@
                                                         <div class="prs_upcom_movie_content_box">
                                                             <div class="prs_upcom_movie_content_box_inner"
                                                                 style="max-width: 100% !important;">
-                                                                <h2><a style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; display: block;"
+                                                                <h2><a style="text-overflow: ellipsis;overflow: hidden;white-space: nowrap;display: block;text-des;text-decoration: none;"
                                                                         href="#">{{ $movie->title }}</a></h2>
                                                                 <p>Thể loại:
                                                                     {{
-                                                                    Str::limit($movie->genres->pluck('name')->implode(',
-                                                                    '), 20) }}
+                                                                    $movie->genres->pluck('name')->implode(',
+                                                                    '), 20 }}
                                                                 </p>
                                                                 <p>Thời lượng: {{ $movie->duration }} phút</p>
                                                                 <p>Giá vé:

@@ -715,3 +715,66 @@ li[data-seat="aisle"]:hover .btn-delete-aisle {
   .form-switch .form-check-input:checked { background:#22c55e; }
   .form-switch .form-switch-label { color:#e5e7eb; font-weight:500; }
   .form-switch.form-switch-md .form-check-input { width:2rem; height:1rem; }
+.st_bt_top_back_btn_seatl a {
+    float: left;
+    width: 100px;
+    height: 35px;
+    text-align: center;
+    line-height: 35px;
+    background: #3f414f;
+    border-radius: 5px;
+    text-transform: uppercase;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.38);
+    letter-spacing: 1px;
+    -webkit-transition: all 0.5s;
+    -o-transition: all 0.5s;
+    -ms-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    transition: all 0.5s;
+}
+.st_bt_top_center_heading {
+    text-align: center;
+}
+
+.st_bt_top_center_heading {
+    text-align: center;
+}
+
+.st_bt_top_center_heading h3 {
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.38);
+    letter-spacing: 0.62px;
+    text-transform: uppercase;
+    padding-top: 6px;
+}
+.st_bt_top_center_heading h4 {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.38);
+    letter-spacing: 0.44px;
+    text-transform: uppercase;
+    padding-top: 10px;
+}
+.st_seatlay_btn a {
+    float: left;
+    width: 150px;
+    height: 35px;
+    text-align: center;
+    line-height: 35px;
+    background: #ff4444;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    text-transform: uppercase;
+    font-size: 14px;
+    color: #fff;
+    letter-spacing: 1px;
+    margin-right: 30px;
+    margin-top: 10px;
+}
+.st_seat_lay_heading h3 {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.38);
+    letter-spacing: 1px;
+    text-align: center;
+    text-transform: uppercase;
+}

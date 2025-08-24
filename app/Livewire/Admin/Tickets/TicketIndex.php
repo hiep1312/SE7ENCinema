@@ -91,6 +91,7 @@ class TicketIndex extends Component
         }));
         $bookings = Booking::with(['user', 'showtime.room', 'showtime.movie'])
             ->whereIn('id', (clone $query)->get()->pluck('bookingSeat.booking.id')->unique())
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
         $tickets = $query->orderBy('created_at', 'desc')->paginate(10);
         return view('livewire.admin.tickets.ticket-index',compact('tickets', 'movies', 'bookings'));

@@ -43,6 +43,8 @@ class ShowtimeIndex extends Component
         $this->resetPage();
     }
 
+
+
     public function realtimeUpdateShowtimes(){
         Showtime::all()->each(function ($showtime) {
             $startTime = $showtime->start_time;
@@ -68,11 +70,17 @@ class ShowtimeIndex extends Component
             })
             ->when($this->statusFilter, fn($query) => $query->where('status', $this->statusFilter))
             ->select('*', DB::raw('DATE(start_time) as show_date'));
-
-        if($this->sortByDate) $query->where('start_time', '>=', now()->subDays($this->sortByDate));
-        else $query->where('start_time', '>=', now()->startOfDay());
-
-        $showtimes = $query->orderBy('start_time', 'asc')->orderBy('status', 'asc')->paginate(30)->groupBy(['show_date', 'movie_id']);
+        if($this->sortByDate) {
+            $query->where('start_time', '>=', now()->subDays($this->sortByDate));
+        } else {
+            $query->where('start_time', '>=', now()->startOfDay());
+        }
+        $showtimes = $query->orderBy('start_time', 'asc')->orderBy('status', 'asc')->get()->groupBy(['show_date', 'movie_id']);
+        $today = now()->toDateString();
+        $showtimes = $showtimes->filter(function ($movies, $date) use ($today) {
+            return $date >= $today;
+        });
+        $showtimes = $showtimes->sortKeys();
 
         $dateKeys = $showtimes->keys();
         if ($dateKeys->isNotEmpty()) {
