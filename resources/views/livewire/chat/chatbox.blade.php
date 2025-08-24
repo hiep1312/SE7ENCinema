@@ -1,32 +1,88 @@
-<div>
-    @if ($selectedConversation)
-        <div class="chatbox_header">
-            <div class="return">
-                <i class="bi bi-arrow-left"></i>
-            </div>
+@assets
+    <script>
+        const đáasasd = true;
+    </script>
+    <link rel="stylesheet" href="{{ asset('resources/css/staffchat.css') }}" @role('admin', 'staff') disabled @endrole>
+    @role('user')
+        <style>
+                :root {
+                    --green-primary: #28a745;
+                    --green-secondary: #20c997;
+                    --green-dark: #1e7e34;
+                    --text-color-dark: #ffffff;
+                    --text-color-light: #ffffff;
+                    --background-color: #ffffff;
+                    --border-color: #dee2e6;
+                    --danger-color: #dc3545;
+                    --background-color--chat:#201b1b;
+                    --date-color: #ffe8e8;
+                    --text-color-title: #000000;
+                    --background-color--input: #ffffff;
+                    --border-input--chat: #000000;
+                    --sendMessage: #000000;
+                }
+        </style>
+    @else
+        <style>
+            :root {
+                --green-primary: #2889a7;
+                    --green-secondary: #20c997;
+                    --green-dark: #1e7e34;
+                    --text-color-dark: #000000;
+                    --text-color-light: #ffffff;
+                    --background-color: #212529;
+                    --border-color: #dee2e6;
+                    --danger-color: #dc3545;
+                    --background-color--chat:#d3d3d3;
+                    --date-color: #000000;
+                    --text-color-title: #ffffff;
+                    --background-color--input: #212529;
+                    --border-input--chat: #ffffff;
+                    --sendMessage: #ffffff;
 
-            <div class="img_container">
-                <img src="https://ui-avatars.com/api/?name={{ $receiverInstance->name }}" alt="">
-            </div>
+            }
+        </style>
+    @endrole
+    @vite('resources/css/staffchat.css')
+@endassets
 
-            <div class="name">
-                {{ $receiverInstance->name }}
-            </div>
-
-            <div class="info">
-                <div class="info_item">
-                    <i class="bi bi-telephone-fill"></i>
-                </div>
-                <div class="info_item">
-                    <i class="bi bi-image"></i>
-                </div>
-                <div class="info_item">
-                    <i class="bi bi-info-circle-fill"></i>
-                </div>
-            </div>
+<div class="scRender scStaffchat">
+    @if (!$isLoggedIn)
+        <div class="fs-4 text-center text-warning mt-5">
+            <i class="bi bi-exclamation-triangle mb-3"></i>
+            <p>Please log in to access chat</p>
+            <a href="{{ route('login') }}" class="btn btn-primary">Login</a>
         </div>
+    @elseif ($selectedConversation)
+        @role('admin', 'staff')
+            {{-- <div class="chatbox_header">
+                <div class="return">
+                    <i class="bi bi-arrow-left"></i>
+                </div>
 
-        <div class="chatbox_body" id="chatbox-body">
+                <div class="img_container">
+                    <img src="https://avatar.iran.liara.run/public/boy" alt="">
+                </div>
+
+                <div class="name">
+                    {{ $receiverInstance->name }}
+                </div>
+
+                <div class="info">
+                    <div class="info_item">
+                        <i class="bi bi-telephone-fill"></i>
+                    </div>
+                    <div class="info_item">
+                        <i class="bi bi-image"></i>
+                    </div>
+                    <div class="info_item">
+                        <i class="bi bi-info-circle-fill"></i>
+                    </div>
+                </div>
+            </div> --}}
+        @endrole
+
+        <div class="chatbox_body @role('admin', 'staff') '' @else no-header @endrole" id="chatbox-body">
             @foreach ($messages as $message)
                 <div class="msg_body {{ auth()->id() == $message->sender_id ? 'msg_body_me' : 'msg_body_receiver' }}"
                     style="width:80%;max-width:80%;max-width:max-content">
@@ -75,11 +131,13 @@
                     }
                 });
 
+                @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('staff'))
                 document.addEventListener('click', function(event) {
                     if (event.target.closest('.return')) {
                         Livewire.dispatch('resetComponent');
                     }
                 });
+                @endif
 
                 window.addEventListener('markMessageAsRead', function() {
                     const statusTicks = document.querySelectorAll('.status_tick');
@@ -91,8 +149,5 @@
             });
         </script>
     @else
-        <div class="fs-4 text-center text-primary mt-5">
-            No conversation selected
-        </div>
     @endif
 </div>

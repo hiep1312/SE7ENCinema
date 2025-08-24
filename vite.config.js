@@ -27,7 +27,7 @@ export default defineConfig({
                 'resources/css/movieBooking.css',
                 'resources/css/movieList.css',
                 'resources/css/seat.css',
-                'resources/css/chatstaff.css',
+                'resources/css/staffchat.css',
             ],
             refresh: true,
         }),

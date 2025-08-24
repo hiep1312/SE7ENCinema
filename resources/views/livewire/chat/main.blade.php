@@ -1,4 +1,8 @@
-<div>
+@assets
+    @vite('resources/css/staffchat.css')
+@endassets
+
+<div class="scRender scStaffchat">
     <div class="chat_container">
         <div class="chat_list_container">
             @livewire('chat.chat-list')

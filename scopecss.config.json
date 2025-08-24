@@ -18,7 +18,7 @@
         "movieBooking.css",
         "movieList.css",
         "seat.css",
-        "chatstaff.css"
+        "staffchat.css"
     ],
     "scopedCssFiles": []
 }

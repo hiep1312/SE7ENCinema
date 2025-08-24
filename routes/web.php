@@ -179,7 +179,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->
         Route::get('/detail/{promotion}', PromotionDetail::class)->name('detail');
     });
 
-
+    Route::get('/createchat', CreateChat::class)->name('createchat');
+    Route::get('/chat', Main::class)->name('chat');
     /* Template */
     Route::view('/dashboard', 'livewire.admin.template.dashboard')->name('dashboard');
     Route::view('/buttons', 'livewire.admin.template.ui-features.buttons')->name('buttons');
@@ -274,8 +275,5 @@ Route::name('client.')->group(function () {
     });
 });
 
-
-Route::get('/createchat', CreateChat::class)->name('createchat');
-Route::get('/chat', Main::class)->name('chat');
 // Route::view('/admintest', 'clienttest')->name('welcome');
 // Route::view('/clienttest', 'clienttest')->name('clienttest');

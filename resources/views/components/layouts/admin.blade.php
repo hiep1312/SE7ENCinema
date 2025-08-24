@@ -28,6 +28,6 @@
     <script src="{{ asset('admin/assets/vendors/js/vendor.bundle.base.js') }}"></script>
     <script src="{{ asset('admin/assets/js/misc.js') }}"></script>
 
-    @vite(['resources/js/app.js' , 'resources/js/chatbot.js'])
+    @vite('resources/js/app.js')
 </body>
 </html>
