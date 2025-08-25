@@ -97,24 +97,19 @@ class SeatHoldService
             SeatHold::where('expires_at', '<', now())->update(['status' => 'expired']);
 
             $now = now();
+
             $existingHold = SeatHold::where('user_id', $userId)
                 ->where('showtime_id', $showtimeId)
                 ->where('status', 'holding')
                 ->where('expires_at', '>', $now)
                 ->first();
 
-            if ($existingHold) {
-                SeatHold::where('user_id', $userId)
-                    ->where('showtime_id', $showtimeId)
-                    ->where('status', 'holding')
-                    ->update(['status' => 'released']);
-            } else {
-                SeatHold::where('user_id', $userId)
-                    ->where('status', 'holding')
-                    ->update(['status' => 'released']);
-            }
-
             $expiresAt = $existingHold ? $existingHold->expires_at : $now->copy()->addMinutes(self::HOLD_DURATION_MINUTES);
+
+            SeatHold::where('user_id', $userId)
+                ->where('showtime_id', $showtimeId)
+                ->whereIn('status', ['holding', 'released'])
+                ->delete();
 
             $conflictingHolds = SeatHold::whereIn('seat_id', $seatIds)
                 ->where('showtime_id', $showtimeId)

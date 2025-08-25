@@ -47,15 +47,25 @@ class SelectSeats extends Component
 
         $this->showtime = Showtime::with('room')->findOrFail($showtime_id);
         $this->room = $this->showtime->room;
+
+        if ($this->userId) {
+            $paidBooking = Booking::where('showtime_id', $this->showtime_id)
+                ->where('user_id', $this->userId)
+                ->where('status', 'paid')
+                ->first();
+        }
+
         $this->checkCurrentHoldStatus();
         $this->loadSeats();
         $this->generateSeatsLayout();
 
-        if(session()->has('__sc-payment__') && $booking = Booking::where('showtime_id', $this->showtime_id)->where('user_id', $this->userId)->where('booking_code', session('__sc-payment__')[0])->first()){
+        if (session()->has('__sc-payment__') && $booking = Booking::where('showtime_id', $this->showtime_id)->where('user_id', $this->userId)->where('booking_code', session('__sc-payment__')[0])->first()) {
             return redirect()->route('client.booking.payment', ['bookingCode' => $booking->booking_code]);
-        }elseif(session()->has('__sc-payment__')) session()->forget('__sc-payment__');
+        } elseif (session()->has('__sc-payment__')) {
+            session()->forget('__sc-payment__');
+        }
 
-        if(!(Booking::where('showtime_id', $this->showtime_id)->where('user_id', $this->userId)->where('booking_code', session('__sc-seat__', -99999))->exists())){
+        if (!(Booking::where('showtime_id', $this->showtime_id)->where('user_id', $this->userId)->where('booking_code', session('__sc-seat__', -99999))->exists())) {
             session()->forget('__sc-seat__');
         }
     }
@@ -73,6 +83,12 @@ class SelectSeats extends Component
     {
         if ($this->isBanned || !$this->userId) return;
 
+        $pendingBooking = Booking::with('bookingSeats.seat')
+            ->where('showtime_id', $this->showtime_id)
+            ->where('user_id', $this->userId)
+            ->where('status', 'pending')
+            ->first();
+
         $holdStatus = $this->seatHoldService->getUserHoldStatus($this->showtime_id, $this->userId);
 
         if ($holdStatus) {
@@ -84,10 +100,26 @@ class SelectSeats extends Component
             $this->selectedSeats = $holdStatus['seat_codes'];
             $this->holdExpiresAt = $holdStatus['expires_at'];
             $this->remainingSeconds = max(0, $holdStatus['remaining_seconds']);
+        } else if ($pendingBooking && $pendingBooking->bookingSeats->isNotEmpty()) {
+            $this->selectedSeats = $pendingBooking->bookingSeats->map(function ($bs) {
+                return $bs->seat->seat_row . $bs->seat->seat_number;
+            })->toArray();
+
+            try {
+                $seatIds = $pendingBooking->bookingSeats->pluck('seat_id')->toArray();
+                $expiresAt = $this->seatHoldService->holdSeats(
+                    $this->showtime_id,
+                    $seatIds,
+                    $this->userId
+                );
+                $this->holdExpiresAt = $expiresAt;
+                $this->remainingSeconds = max(0, $expiresAt->diffInSeconds(now()));
+            } catch (\Exception $e) {
+                $this->clearHoldData();
+            }
         } else {
             $this->clearHoldData();
         }
-
     }
 
     private function handleExpiredHold()
@@ -131,13 +163,58 @@ class SelectSeats extends Component
 
         if (!empty($this->selectedSeats)) {
             $this->updateSeatHolds();
+
+            $pendingBooking = Booking::where('showtime_id', $this->showtime_id)
+                ->where('user_id', $this->userId)
+                ->where('status', 'pending')
+                ->first();
+
+            if ($pendingBooking) {
+                $this->updateBookingSeats($pendingBooking);
+            }
         } else {
             $this->seatHoldService->releaseHolds($this->userId);
             $this->clearHoldData();
+
+            $pendingBooking = Booking::where('showtime_id', $this->showtime_id)
+                ->where('user_id', $this->userId)
+                ->where('status', 'pending')
+                ->first();
+
+            if ($pendingBooking) {
+                $pendingBooking->bookingSeats()->delete();
+            }
         }
 
         $this->loadSeats();
         $this->generateSeatsLayout();
+    }
+
+    private function updateBookingSeats($booking)
+    {
+        try {
+            DB::beginTransaction();
+
+            $booking->bookingSeats()->delete();
+
+            $seatIds = $this->getSeatIdsFromCodes($this->selectedSeats);
+            foreach ($seatIds as $seatId) {
+                $seat = Seat::find($seatId);
+                $seatPrice = $seat->price;
+                $ticketPrice = $seatPrice + $this->showtime->movie->price;
+
+                BookingSeat::create([
+                    'booking_id' => $booking->id,
+                    'seat_id' => $seatId,
+                    'ticket_price' => $ticketPrice,
+                ]);
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     private function updateSeatHolds()
@@ -286,28 +363,13 @@ class SelectSeats extends Component
 
     public function goToSelectFood()
     {
-        if(empty($this->selectedSeats)) return $this->scAlert('Ghế chưa được chọn', 'Vui lòng chọn ghế trước khi tiếp tục đặt vé.', 'warning');
+        if (empty($this->selectedSeats)) return $this->scAlert('Ghế chưa được chọn', 'Vui lòng chọn ghế trước khi tiếp tục đặt vé.', 'warning');
 
         DB::beginTransaction();
         try {
-
             $seatIds = $this->getSeatIdsFromCodes($this->selectedSeats);
 
-            $conflict = BookingSeat::whereIn('seat_id', $seatIds)
-                ->whereHas('booking', function ($q) {
-                    $q->where('showtime_id', $this->showtime_id)
-                        ->where('status', 'paid');
-                })->exists();
-
-            if ($conflict) {
-                $this->dispatch('sc-alert.error', 'Ghế đã được đặt', 'Một số ghế đã bị đặt bởi người khác.');
-                DB::rollBack();
-                $this->loadSeats();
-                $this->generateSeatsLayout();
-                return;
-            }
-
-            if(!($booking = Booking::with('bookingSeats')->where('showtime_id', $this->showtime_id)->where('user_id', $this->userId)->where('booking_code', session('__sc-seat__', -99999))->first())){
+            if (!($booking = Booking::with('bookingSeats')->where('showtime_id', $this->showtime_id)->where('user_id', $this->userId)->where('booking_code', session('__sc-seat__', -99999))->first())) {
                 $booking = Booking::create([
                     'user_id' => $this->userId,
                     'showtime_id' => $this->showtime_id,
@@ -315,18 +377,14 @@ class SelectSeats extends Component
                     'total_price' => 0,
                     'status' => 'pending',
                 ]);
-
-                DB::commit();
                 session(['__sc-seat__' => $booking->booking_code]);
             }
 
-
-            if($booking->bookingSeats) $booking->bookingSeats()->delete();
+            if ($booking->bookingSeats) $booking->bookingSeats()->delete();
 
             foreach ($seatIds as $seatId) {
                 $seat = Seat::find($seatId);
                 $seatPrice = $seat->price;
-
                 $ticketPrice = $seatPrice + $this->showtime->movie->price;
 
                 BookingSeat::create([
@@ -335,14 +393,25 @@ class SelectSeats extends Component
                     'ticket_price' => $ticketPrice,
                 ]);
             }
+            $expiresAt = $this->seatHoldService->holdSeats(
+                $this->showtime_id,
+                $seatIds,
+                $this->userId
+            );
+
+
+            DB::commit();
 
             return redirect()->route('client.booking.food', ['bookingCode' => $booking->booking_code]);
-        } catch (Exception) {
+        } catch (Exception $e) {
             DB::rollBack();
             $this->loadSeats();
             $this->generateSeatsLayout();
+            throw $e;
         }
     }
+
+    public function noop() {}
 
     #[Title('Chọn ghế - SE7ENCinema')]
     #[Layout('components.layouts.client')]

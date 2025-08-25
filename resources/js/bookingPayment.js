@@ -74,6 +74,8 @@ document.addEventListener('livewire:init', () => {
             document.querySelector('#paymentTimer').textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }, 1000);
 
+        console.log($wire)
+
         $wire?.on('closePaymentPopup', () => windowPayment?.close());
     }
 
