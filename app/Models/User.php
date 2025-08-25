@@ -107,4 +107,22 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return UserViolation::addViolation($this, $type, $details);
     }
+
+    public function hasRole($role)
+    {
+        return $this->role === $role;
+    }
+
+    public function scopeStaff($query)
+    {
+        return $query->whereIn('role', ['admin', 'staff']);
+    }
+
+    /**
+     * Scope để lấy regular users
+     */
+    public function scopeRegularUsers($query)
+    {
+        return $query->where('role', 'user')->orWhereNull('role');
+    }
 }

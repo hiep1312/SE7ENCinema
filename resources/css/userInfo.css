@@ -507,7 +507,6 @@ nav .text-muted {
 .info-value {
     color: #666;
     text-wrap: balance;
-    max-inline-size: 17ch;
     text-align: right;
 }
 

@@ -29,7 +29,8 @@ export default defineConfig({
                 'resources/css/movieList.css',
                 'resources/css/seat.css',
                 'resources/css/handlePayment.css',
-                'resources/css/showtimeIndexAdmin.css'
+                'resources/css/showtimeIndexAdmin.css',
+                'resources/css/staffchat.css',
             ],
             refresh: true,
         }),

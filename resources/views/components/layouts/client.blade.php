@@ -76,6 +76,6 @@
     <script src="{{ asset('client/assets/js/plugin/rs_slider/revolution.extension.video.min.js') }}"></script>
     <script src="{{ asset('client/assets/js/contact_form.js') }}"></script>
     <script src="{{ asset('client/assets/js/custom.js') }}"></script>
-    @vite('resources/js/app.js')
+    @vite(['resources/js/app.js' , 'resources/js/chatbot.js'])
 </body>
 </html>

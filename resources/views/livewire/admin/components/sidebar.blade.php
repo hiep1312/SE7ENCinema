@@ -278,5 +278,19 @@
         </ul>
       </div>
     </li>
+     <li class="nav-item menu-items">
+      <a class="nav-link" data-toggle="collapse" href="#manage-chat">
+        <span class="menu-icon">
+          <i class="mdi mdi-timetable"></i>
+        </span>
+        <span class="menu-title">Chat với khách hàng</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="manage-chat">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.chat')}}">Khung chat</a></li>
+        </ul>
+      </div>
+    </li>
   </ul>
 </nav>

@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Showtime;
 use App\Models\Movie;
 use App\Models\Booking;
+use App\Models\SeatHold;
 use Carbon\Carbon;
 use SE7ENCinema\scAlert;
 
@@ -104,8 +105,14 @@ class MovieBooking extends Component
         $this->showTrailerModal = false;
     }
 
+    public function realtimeUpdateOrder(){
+        Booking::where('status', 'pending')->where('created_at', '<', now()->subMinutes(20))->delete();
+        SeatHold::where('status', 'holding')->where('expires_at', '<', now())->update(['status' => 'expired']);
+    }
+
     public function render()
     {
+        $this->realtimeUpdateOrder();
         if(session()->has('success')) $this->scToast(session('success'), 'success', 5000, true);
         return view('livewire.client.movie-booking.movie-booking');
     }

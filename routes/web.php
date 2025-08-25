@@ -68,6 +68,10 @@ use App\Livewire\Client\Bookings\BookingFood;
 use App\Livewire\Client\Bookings\BookingPayment;
 use App\Livewire\Client\Bookings\HandlePayment;
 use App\Livewire\Client\User\BookingDetail as UserBookingDetail;
+use App\Http\Controllers\Api\ChatController;
+use App\Livewire\Chat\CreateChat;
+use App\Livewire\Chat\Main;
+use App\Models\Booking;
 
 Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->group(function () {
     /* Dashboard */
@@ -185,6 +189,9 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'role:staff,admin')->
         Route::get('/edit/{promotion}', PromotionEdit::class)->name('edit');
         Route::get('/detail/{promotion}', PromotionDetail::class)->name('detail');
     });
+
+    Route::get('/createchat', CreateChat::class)->name('createchat');
+    Route::get('/chat', Main::class)->name('chat');
 });
 
 Route::name('client.')->group(function () {
@@ -194,7 +201,6 @@ Route::name('client.')->group(function () {
 
     Route::get('/movie-list', MovieList::class)->name('movies.index');
     Route::get('/booking', SelectMovieShowtime::class)->name('booking.select_showtime');
-    Route::get('/booking/seats/{showtime_id}', SelectSeats::class)->name('booking.select_seats');
     // Route::get('/booking/food/{booking_id}', SelectFood::class)->name('booking.select_food');
     Route::get('/booking/confirm/{booking_id}', ConfirmBooking::class)->name('booking.confirm');
     Route::get('/booking-food', BookingFood::class);
@@ -222,12 +228,13 @@ Route::name('client.')->group(function () {
     Route::get('/user-confirm', UserConfirm::class)->name('userConfirm')->middleware('auth');
     Route::get('/booking-detail/{booking}', UserBookingDetail::class)->name('userBooking')->middleware('auth');
     Route::get('/thanh-toan/{booking_id}', VnpayPayment::class)->name('thanh-toan');
-    Route::get('/vnpay-return', [VnpayController::class, 'vnpayReturn'])->name('vnpay.return');
     Route::get('/booking-food', BookingFood::class);
     Route::view('/faq', 'livewire.client.template.abouts.faq')->name('faq');
 
     /* Bookings */
-    Route::prefix('/booking')->name('booking.')->group(function () {
+    Route::prefix('/booking')->name('booking.')->middleware('auth')->group(function () {
+        Route::get('/seats/{showtime_id}', SelectSeats::class)
+            ->name('select_seats');
         Route::get('/food/{bookingCode}', BookingFood::class)
             ->whereAlphaNumeric('bookingCode')->name('food');
         Route::get('/payment/{bookingCode}', BookingPayment::class)
@@ -235,7 +242,24 @@ Route::name('client.')->group(function () {
         Route::get('/handle-payment/{bookingCode}', HandlePayment::class)
             ->whereAlphaNumeric('bookingCode')->name('handle-payment');
     });
+
+     /* chat bot api */
+    Route::prefix('chat')->name('chat.')->group(function () {
+        Route::get('movies', [ChatController::class, 'getMovies'])->name('movies');
+        Route::get('showtimes/{movieId}', [ChatController::class, 'getShowtimes'])->name('showtimes');
+        Route::post('request-staff', [ChatController::class, 'requestStaff'])->name('request_staff');
+        Route::post('ai-message', [ChatController::class, 'sendAIMessage'])->name('ai_message');
+    });
+
+    Route::prefix('api/chat')->name('api.chat.')->group(function () {
+        Route::get('/movies', [ChatController::class, 'getMovies'])->name('movies');
+        Route::get('/showtimes/{movieId}', [ChatController::class, 'getShowtimes'])->name('showtimes');
+        Route::post('/request-staff', [ChatController::class, 'requestStaff'])->name('request_staff');
+        Route::post('/ai-message', [ChatController::class, 'sendAIMessage'])->name('ai_message');
+    });
 });
 
+
+Route::view('/test', 'livewire.client.bookings.ticket-invoice', ['booking' => Booking::first()])->name('test');
 // Route::view('/admintest', 'clienttest')->name('welcome');
 // Route::view('/clienttest', 'clienttest')->name('clienttest');

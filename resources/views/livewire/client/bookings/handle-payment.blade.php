@@ -67,6 +67,8 @@
 </div>
 @script
 <script>
+    window.history.replaceState(null, null, `${window.location.origin}${window.location.pathname}`);
+
     const countdown = document.getElementById('countdown');
     const progressBar = document.getElementById('progressBar');
     let countdownTime = 6;

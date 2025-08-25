@@ -3,11 +3,10 @@
     @vite('resources/css/seat.css')
 @endassets
 
-<div class="scRender scSeat" wire:poll.1000ms="refreshSeatStatus">
-    <div style="clear: both"></div>
+<div class="scRender scSeat" style="clear: both" wire:poll.1000ms="refreshSeatStatus">
     @if ($isBanned && $banInfo)
-        <div class="container mt-5">
-            <div class="row justify-content-center mt-5">
+        <div class="container">
+            <div class="row justify-content-center mt-3 mb-5">
                 <div class="col-md-12">
                     <div class="alert alert-danger shadow rounded-4 p-4 text-center mt-5 pt-5" role="alert"
                         style="background: url('https://static.vecteezy.com/system/resources/previews/048/724/727/non_2x/cyber-security-hacking-concept-attention-warning-attacker-alert-sign-and-computer-security-protection-notify-danger-technology-background-free-vector.jpg');  background-size: cover; color: white; height: 50vh;">
@@ -38,7 +37,7 @@
                         @endif
 
                         <div class="mt-3">
-                            <a href="{{ url('/') }}"
+                            <a href="{{ route('client.index') }}"
                                 class="btn btn-light text-danger fw-semibold px-4 py-2 rounded-pill shadow-sm border-0 fs-3 p-3"
                                 style="transition: 0.3s;">
                                 <i class="fa-solid fa-house me-2"></i> Về trang chủ
@@ -57,7 +56,7 @@
                 <!-- Cột trái: Nút back -->
                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                     <div class="st_bt_top_back_btn st_bt_top_back_btn_seatl float_left">
-                        <a href="{{ url('/') }}"><i class="fas fa-long-arrow-alt-left"></i> &nbsp;Back</a>
+                        <a href="{{ route('client.movieBooking.movie', $showtime_id) }}"><i class="fas fa-long-arrow-alt-left"></i> &nbsp;Back</a>
                     </div>
                 </div>
 

@@ -9,11 +9,13 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use App\Models\Booking;
 use App\Models\BookingSeat;
+use App\Models\UserViolation;
 use App\Services\SeatHoldService;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Exception;
 use SE7ENCinema\scAlert;
 
 class SelectSeats extends Component
@@ -42,15 +44,20 @@ class SelectSeats extends Component
     {
         $this->showtime_id = $showtime_id;
         $this->userId = Auth::id();
-        if (!$this->userId) {
-            return redirect()->route('login');
-        }
 
         $this->showtime = Showtime::with('room')->findOrFail($showtime_id);
         $this->room = $this->showtime->room;
         $this->checkCurrentHoldStatus();
         $this->loadSeats();
         $this->generateSeatsLayout();
+
+        if(session()->has('__sc-payment__') && $booking = Booking::where('showtime_id', $this->showtime_id)->where('user_id', $this->userId)->where('booking_code', session('__sc-payment__')[0])->first()){
+            return redirect()->route('client.booking.payment', ['bookingCode' => $booking->booking_code]);
+        }elseif(session()->has('__sc-payment__')) session()->forget('__sc-payment__');
+
+        if(!(Booking::where('showtime_id', $this->showtime_id)->where('user_id', $this->userId)->where('booking_code', session('__sc-seat__', -99999))->exists())){
+            session()->forget('__sc-seat__');
+        }
     }
 
     public function boot(SeatHoldService $seatHoldService)
@@ -261,9 +268,8 @@ class SelectSeats extends Component
         ]);
 
         $this->js(<<<JS
-        window.seatRuleConfig = {$ruleConfig};
-        const wrapper = document.getElementById('user-seat-wrapper');
-        try {
+            window.seatRuleConfig = {$ruleConfig};
+            const wrapper = document.getElementById('user-seat-wrapper');
             wrapper.innerHTML = '';
             const dom = window.generateClientDOMSeats({
                 seats: {$seats},
@@ -275,18 +281,16 @@ class SelectSeats extends Component
                 banInfo: {$banInfo}
             });
             wrapper.appendChild(dom);
-            console.log('Seats generated successfully');
-        } catch (error) {
-            console.error('Error generating seats:', error);
-        }
-    JS);
+        JS);
     }
-
 
     public function goToSelectFood()
     {
+        if(empty($this->selectedSeats)) return $this->scAlert('Ghế chưa được chọn', 'Vui lòng chọn ghế trước khi tiếp tục đặt vé.', 'warning');
+
         DB::beginTransaction();
         try {
+
             $seatIds = $this->getSeatIdsFromCodes($this->selectedSeats);
 
             $conflict = BookingSeat::whereIn('seat_id', $seatIds)
@@ -303,22 +307,27 @@ class SelectSeats extends Component
                 return;
             }
 
-            $moviePrice = $this->showtime->movie->price;
+            if(!($booking = Booking::with('bookingSeats')->where('showtime_id', $this->showtime_id)->where('user_id', $this->userId)->where('booking_code', session('__sc-seat__', -99999))->first())){
+                $booking = Booking::create([
+                    'user_id' => $this->userId,
+                    'showtime_id' => $this->showtime_id,
+                    'booking_code' => strtoupper(Str::random(8)),
+                    'total_price' => 0,
+                    'status' => 'pending',
+                ]);
 
-            $booking = Booking::create([
-                'user_id' => $this->userId,
-                'showtime_id' => $this->showtime_id,
-                'booking_code' => strtoupper(Str::random(8)),
-                'total_price' => 0,
-                'status' => 'pending',
-                'start_transaction' => now(),
-            ]);
+                DB::commit();
+                session(['__sc-seat__' => $booking->booking_code]);
+            }
+
+
+            if($booking->bookingSeats) $booking->bookingSeats()->delete();
 
             foreach ($seatIds as $seatId) {
                 $seat = Seat::find($seatId);
                 $seatPrice = $seat->price;
 
-                $ticketPrice = $seatPrice + $moviePrice;
+                $ticketPrice = $seatPrice + $this->showtime->movie->price;
 
                 BookingSeat::create([
                     'booking_id' => $booking->id,
@@ -326,23 +335,14 @@ class SelectSeats extends Component
                     'ticket_price' => $ticketPrice,
                 ]);
             }
-            $booking->save();
-            DB::commit();
 
-            return redirect()->route('client.booking.food', [
-                'bookingCode' => $booking->booking_code,
-            ]);
-        } catch (\Exception $e) {
-            dd($e);
+            return redirect()->route('client.booking.food', ['bookingCode' => $booking->booking_code]);
+        } catch (Exception) {
             DB::rollBack();
-            $this->dispatch('sc-alert.error', 'Lỗi tạo đặt chỗ', 'Lỗi khi tạo booking: ' . $e->getMessage());
             $this->loadSeats();
             $this->generateSeatsLayout();
         }
     }
-
-
-    public function noop() {}
 
     #[Title('Chọn ghế - SE7ENCinema')]
     #[Layout('components.layouts.client')]

@@ -342,9 +342,9 @@
 
                     <!-- Payment Button -->
                     <div class="booking-payment-actions">
-                        <button class="booking-payment-btn-back" href="{{ route('client.booking.food', $booking->booking_code) }}">
+                        <a class="booking-payment-btn-back" href="{{ route('client.booking.food', $booking->booking_code) }}" style="text-decoration: none">
                             <i class="fas fa-arrow-left me-2"></i>Quay lại
-                        </button>
+                        </a>
                         <button class="booking-payment-btn-pay" @unless($paymentSelected && in_array($paymentSelected, ['vnpay', 'atm', 'bank'], true)) disabled @endunless @unless($isPaymentMode) wire:click="payment" @endunless>
                             <i class="fas fa-lock me-2"></i>Thanh toán
                         </button>

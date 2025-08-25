@@ -5,6 +5,7 @@ namespace App\Livewire\Client\Showtime;
 use Livewire\Component;
 use App\Models\Movie;
 use App\Models\Booking;
+use App\Models\SeatHold;
 use Carbon\Carbon;
 use App\Models\Showtime;
 class ShowtimeIndex extends Component
@@ -112,9 +113,14 @@ class ShowtimeIndex extends Component
         return redirect()->route('client.booking.select_seats', ['showtime_id' => $showtime->id]);
     }
 
+    public function realtimeUpdateOrder(){
+        Booking::where('status', 'pending')->where('created_at', '<', now()->subMinutes(20))->delete();
+        SeatHold::where('status', 'holding')->where('expires_at', '<', now())->update(['status' => 'expired']);
+    }
 
     public function render()
     {
+        $this->realtimeUpdateOrder();
         return view('livewire.client.showtime.showtime-index');
     }
 }
