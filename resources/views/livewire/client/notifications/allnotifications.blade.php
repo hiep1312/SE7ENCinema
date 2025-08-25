@@ -1,8 +1,10 @@
 @php
 $isAllNotifications = request()->routeIs('client.notifications.allnotification');
 @endphp
-
-<div class="scRender scAllNotifications full-notifications" wire:poll.15s="refreshNotifications">
+@assets
+    @vite('resources/css/notificationIndex.css')
+@endassets
+<div class="scRender scNotifications full-notifications" wire:poll.15s="refreshNotifications">
      <div class="tbt "style="clear: both;" ></div>
     <div class="full-notifications__container my-3">
         <!-- Header -->

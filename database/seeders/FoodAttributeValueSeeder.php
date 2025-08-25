@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\FoodAttribute;
 use App\Models\FoodAttributeValue;
 use App\Models\FoodItem;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class FoodAttributeValueSeeder extends Seeder
@@ -15,6 +14,7 @@ class FoodAttributeValueSeeder extends Seeder
      */
     public function run(): void
     {
+        // Dữ liệu cho từng món ăn
         $data = [
             [
                 'food' => 'Bắp Rang Bơ',
@@ -99,12 +99,38 @@ class FoodAttributeValueSeeder extends Seeder
             ],
         ];
 
-        foreach($data as $id => $attributeValue) {
+        // Chèn dữ liệu cho các món cụ thể
+        foreach($data as $attributeValue) {
             $foodId = FoodItem::where('name', $attributeValue['food'])->first()->id;
             foreach($attributeValue['attributeValues'] as $name => $values) {
-                $food_attribute_id = FoodAttribute::where('food_item_id', $foodId)->where('name', $name)->first()->id;
+                $food_attribute_id = FoodAttribute::where('food_item_id', $foodId)
+                    ->where('name', $name)
+                    ->first()->id;
 
-                FoodAttributeValue::insert(array_map(fn($value) => ['food_attribute_id' => $food_attribute_id, 'value' => $value], $values));
+                FoodAttributeValue::insert(
+                    array_map(fn($value) => ['food_attribute_id' => $food_attribute_id, 'value' => $value], $values)
+                );
+            }
+        }
+
+        // =============================
+        // Thêm dữ liệu cho Attribute chung (food_item_id = null)
+        // =============================
+        $globalData = [
+            'Size' => ['S', 'M', 'L'],
+            'Vị' => ['Nguyên bản', 'Phô mai', 'Cay', 'Caramel', 'Socola', 'Matcha', 'Mặn'],
+            'Sốt' => ['Không sốt', 'Tương ớt', 'Tương cà', 'Mayonnaise', 'BBQ', 'Mù tạt', 'Xì dầu'],
+            'Topping' => ['Trân châu đen', 'Trân châu trắng', 'Thạch rau câu', 'Phô mai', 'Bánh flan', 'Pudding'],
+            'Đá' => ['Không đá', 'Ít đá', 'Vừa đá', 'Nhiều đá'],
+            'Đường' => ['Không đường', 'Đường 30%', 'Đường 50%', 'Đường 70%', 'Đường 100%'],
+        ];
+
+        foreach ($globalData as $name => $values) {
+            $attribute = FoodAttribute::whereNull('food_item_id')->where('name', $name)->first();
+            if ($attribute) {
+                FoodAttributeValue::insert(
+                    array_map(fn($value) => ['food_attribute_id' => $attribute->id, 'value' => $value], $values)
+                );
             }
         }
     }

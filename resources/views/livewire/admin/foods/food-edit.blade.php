@@ -269,10 +269,24 @@
                                         </div>
 
                                         @if ($bulkTarget === 'price')
-                                            <div class="col-md-4">
+                                            <div class="col-md-4" x-data="{
+                                                d: '',
+                                                sync() {
+                                                    const v = $wire.get('bulkPrice');
+                                                    this.d = v ? String(v).replace(/\B(?=(\d{3})+(?!\d))/g, '.') : '';
+                                                }
+                                            }" x-init="sync();
+                                            $watch(() => $wire.get('bulkPrice'), () => sync())"
+                                                wire:key="bulk-price">
                                                 <label class="form-label">Giá</label>
-                                                <input type="number" wire:model="bulkPrice"
-                                                    class="form-control bg-dark text-light border-secondary">
+                                                <input type="text" x-model="d"
+                                                    @input="
+              const raw = (d||'').replace(/\D/g,'');
+              $wire.set('bulkPrice', raw ? parseInt(raw) : null);
+              d = raw.replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+           "
+                                                    class="form-control bg-dark text-light border-secondary"
+                                                    placeholder="VD: 75.000">
                                             </div>
                                         @elseif ($bulkTarget === 'quantity')
                                             <div class="col-md-4">
@@ -457,38 +471,50 @@
                                                         </div>
 
                                                         <div class="col-md-9 col-xl-10 row g-3">
-                                                            <div class="col-lg-4 col-sm-6">
+                                                            <div class="col-lg-4 col-sm-6" x-data="{
+                                                                d: '',
+                                                                sync() {
+                                                                    const v = $wire.get('variants.{{ $vIndex }}.price');
+                                                                    this.d = v ? String(v).replace(/\B(?=(\d{3})+(?!\d))/g, '.') : '';
+                                                                }
+                                                            }"
+                                                                x-init="sync();
+                                                                $watch(() => $wire.get('variants.{{ $vIndex }}.price'), () => sync())"
+                                                                wire:key="variant-price-{{ $vIndex }}">
                                                                 <label class="form-label">Giá *</label>
-                                                                <input type="text"
-                                                                    wire:model.live="variants.{{ $vIndex }}.price"
-                                                                    wire:input="formatPrice({{ $vIndex }})"
-                                                                    class="form-control bg-dark text-light border-secondary @error('variants.' . $vIndex . '.price') is-invalid @enderror">
+                                                                <input type="text" x-model="d"
+                                                                    @input="
+                                                                      const raw = (d||'').replace(/\D/g,'');
+                                                                      $wire.set('variants.{{ $vIndex }}.price', raw ? parseInt(raw) : null);
+                                                                      d = raw.replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+                                                                      "
+                                                                    class="form-control bg-dark text-light border-secondary @error('variants.' . $vIndex . '.price') is-invalid @enderror"
+                                                                    placeholder="VD: 75.000">
                                                                 @error('variants.' . $vIndex . '.price')
                                                                     <div class="invalid-feedback">{{ $message }}
                                                                     </div>
                                                                 @enderror
                                                             </div>
+
                                                             <div class="col-lg-4 col-sm-6">
                                                                 <label class="form-label">Số lượng *</label>
                                                                 <input type="number"
                                                                     wire:model="variants.{{ $vIndex }}.quantity_available"
-                                                                    class="form-control bg-dark text-light border-secondary @error("
-                                                            variants.$vIndex.quantity_available") is-invalid
-                                                            @enderror"
+                                                                    class="form-control bg-dark text-light border-secondary @error('variants.' . $vIndex . '.quantity_available') is-invalid @enderror"
                                                                     min="0">
-                                                                @error("variants.$vIndex.quantity_available")
+                                                                @error('variants.' . $vIndex . '.quantity_available')
                                                                     <div class="invalid-feedback">{{ $message }}
                                                                     </div>
                                                                 @enderror
                                                             </div>
+
                                                             <div class="col-lg-4 col-sm-6">
                                                                 <label class="form-label">Giới hạn</label>
                                                                 <input type="number"
                                                                     wire:model="variants.{{ $vIndex }}.limit"
-                                                                    class="form-control bg-dark text-light border-secondary @error("
-                                                            variants.$vIndex.limit") is-invalid @enderror"
+                                                                    class="form-control bg-dark text-light border-secondary @error('variants.' . $vIndex . '.limit') is-invalid @enderror"
                                                                     min="0">
-                                                                @error("variants.$vIndex.limit")
+                                                                @error('variants.' . $vIndex . '.limit')
                                                                     <div class="invalid-feedback">{{ $message }}
                                                                     </div>
                                                                 @enderror
@@ -521,16 +547,16 @@
                                                                 <label class="form-label">Trạng thái *</label>
                                                                 <select
                                                                     wire:model="variants.{{ $vIndex }}.status"
-                                                                    class="form-select bg-dark text-light border-secondary @error("
-                                                            variants.$vIndex.status") is-invalid @enderror">
+                                                                    class="form-select bg-dark text-light border-secondary @error('variants.' . $vIndex . '.status') is-invalid @enderror">
                                                                     <option value="available">Còn hàng</option>
                                                                     <option value="out_of_stock">Hết hàng</option>
                                                                     <option value="hidden">Ẩn</option>
                                                                 </select>
-                                                                @error("variants.$vIndex.status")
+                                                                @error('variants.' . $vIndex . '.status')
                                                                     <div class="invalid-feedback">{{ $message }}
                                                                     </div>
                                                                 @enderror
+
                                                             </div>
                                                         </div>
                                                     </div>

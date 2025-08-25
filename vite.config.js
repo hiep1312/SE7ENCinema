@@ -6,9 +6,10 @@ export default defineConfig({
         laravel({
             input: [
                 "resources/css/app.css",
-                'resources/css/notificationIndex.css',
+                'resources/css/ .css',
                 "resources/js/app.js",
                 "resources/css/auth.css",
+                "resources/css/notificationIndex.css",
                 "resources/css/ticket.css",
                 "resources/css/scanner.css",
                 "resources/js/scannerQR.js",

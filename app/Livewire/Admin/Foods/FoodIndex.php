@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Foods;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\FoodItem;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -20,7 +21,7 @@ class FoodIndex extends Component
     public $sortDateFilter = 'desc';
 
     public function deleteFood(array $status, int $foodId, bool $statusDeleteVariants = false)
-    {
+    {   
         if (!$status['isConfirmed']) return;
         $food = FoodItem::find($foodId);
 

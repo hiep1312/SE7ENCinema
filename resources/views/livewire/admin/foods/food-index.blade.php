@@ -18,9 +18,11 @@
             <h2 class="text-light">Quản lý món ăn</h2>
             <div>
                 @if (!$showDeleted)
-                    <a href="{{ route('admin.foods.create') }}" class="btn btn-success me-2">
-                        <i class="fas fa-plus me-1"></i>Thêm món ăn
-                    </a>
+                    @role('admin')
+                        <a href="{{ route('admin.foods.create') }}" class="btn btn-success me-2">
+                            <i class="fas fa-plus me-1"></i>Thêm món ăn
+                        </a>
+                    @endrole
                 @endif
                 <button wire:click="$toggle('showDeleted')" class="btn btn-outline-danger">
                     @if ($showDeleted)
@@ -100,9 +102,10 @@
                                     <td>
                                         <div class="d-flex justify-content-center">
                                             <div class="food-image">
-                                                @if($food->image)
+                                                @if ($food->image)
                                                     <img src="{{ asset('storage/' . $food->image) }}"
-                                                        alt="Ảnh món ăn {{ $food->name }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
+                                                        alt="Ảnh món ăn {{ $food->name }}"
+                                                        style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
                                                 @else
                                                     <i class="fa-solid fa-burger-soda"></i>
                                                 @endif
@@ -116,7 +119,8 @@
                                         @endif
                                     </td>
                                     <td class="text-center" style="max-width: 300px;">
-                                        <p class="text-wrap text-muted lh-base" style="margin-bottom: 0;">{{ Str::limit($food->description ?? 'Không có mô tả', 100, '...') }}</p>
+                                        <p class="text-wrap text-muted lh-base" style="margin-bottom: 0;">
+                                            {{ Str::limit($food->description ?? 'Không có mô tả', 100, '...') }}</p>
                                     </td>
                                     <td class="text-center">
                                         @if (!$showDeleted && !$food->trashed())
@@ -206,12 +210,14 @@
                                                     class="btn btn-sm btn-success" title="Khôi phục">
                                                     <i class="fas fa-undo" style="margin-right: 0"></i>
                                                 </button>
-                                                <button type="button" class="btn btn-sm btn-danger"
-                                                    wire:sc-model="forceDeleteFood({{ $food->id }})"
-                                                    wire:sc-confirm.warning="Bạn có chắc chắn muốn XÓA VĨNH VIỄN món ăn '{{ $food->name }}'? Hành động này KHÔNG THỂ HOÀN TÁC!"
-                                                    title="Xóa vĩnh viễn">
-                                                    <i class="fas fa-trash-alt" style="margin-right: 0"></i>
-                                                </button>
+                                                @role('admin')
+                                                    <button type="button" class="btn btn-sm btn-danger"
+                                                        wire:sc-model="deleteFood({{ $food->id }})"
+                                                        wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa món ăn '{{ $food->name }}'?"
+                                                        title="Xóa">
+                                                        <i class="fas fa-trash" style="margin-right: 0"></i>
+                                                    </button>
+                                                @endrole
                                             </div>
                                         @else
                                             <div class="d-flex gap-2 justify-content-center">
@@ -223,39 +229,41 @@
                                                     class="btn btn-sm btn-warning" title="Chỉnh sửa">
                                                     <i class="fas fa-edit" style="margin-right: 0"></i>
                                                 </a>
-                                                <button type="button" class="btn btn-sm btn-danger"
-                                                    wire:sc-model="deleteFood({{ $food->id }})"
-                                                    wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa món ăn '{{ $food->name }}'?"
-                                                    title="Xóa">
-                                                    <i class="fas fa-trash" style="margin-right: 0"></i>
-                                                </button>
+                                                @role('admin')
+                                                    <button type="button" class="btn btn-sm btn-danger"
+                                                        wire:sc-model="deleteFood({{ $food->id }})"
+                                                        wire:sc-confirm.warning="Bạn có chắc chắn muốn xóa món ăn '{{ $food->name }}'?"
+                                                        title="Xóa">
+                                                        <i class="fas fa-trash" style="margin-right: 0"></i>
+                                                    </button>
+                                                @endrole
                                             </div>
                                         @endif
                                     </td>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="8" class="text-center py-4">
-                                        <div class="text-muted">
-                                            <i class="fas fa-inbox fa-3x mb-3"></i>
-                                            <p>
-                                                @if ($showDeleted)
-                                                    Không có món ăn nào đã xóa
-                                                @else
-                                                    Không có món ăn nào
-                                                @endif
-                                            </p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-                <div class="mt-3">
-                    {{ $foodItems->links() }}
+                                @empty
+                                    <tr>
+                                        <td colspan="8" class="text-center py-4">
+                                            <div class="text-muted">
+                                                <i class="fas fa-inbox fa-3x mb-3"></i>
+                                                <p>
+                                                    @if ($showDeleted)
+                                                        Không có món ăn nào đã xóa
+                                                    @else
+                                                        Không có món ăn nào
+                                                    @endif
+                                                </p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-3">
+                        {{ $foodItems->links() }}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
