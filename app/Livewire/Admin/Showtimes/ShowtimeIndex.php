@@ -16,7 +16,12 @@ class ShowtimeIndex extends Component
     public $search = '';
     public $statusFilter = '';
     public $sortByDate = '';
-    public $activeDate = '';
+    public $activeDate = null;
+
+    public function setActiveDate(string $date): void
+    {
+        $this->activeDate = $date;
+    }
 
     public function deleteShowtime(array $status, int $showtimeId)
     {
@@ -36,11 +41,6 @@ class ShowtimeIndex extends Component
     {
         $this->reset(['search', 'statusFilter', 'sortByDate']);
         $this->resetPage();
-    }
-
-    public function setActiveDate($date)
-    {
-        $this->activeDate = $date;
     }
 
     public function realtimeUpdateShowtimes(){
@@ -69,38 +69,45 @@ class ShowtimeIndex extends Component
             ->when($this->statusFilter, fn($query) => $query->where('status', $this->statusFilter))
             ->select('*', DB::raw('DATE(start_time) as show_date'));
 
-        // Sửa logic lọc ngày
         if($this->sortByDate) {
-            // Lọc từ quá khứ đến hôm nay
-            $query->where('start_time', '>=', now()->subDays($this->sortByDate))
-                  ->where('start_time', '<=', now()->endOfDay());
+            $query->where('start_time', '>=', now()->subDays($this->sortByDate)->startOfDay())
+                  ->where('start_time', '<', now()->startOfDay());
         } else {
-            // Hiển thị từ hôm nay đến 6 ngày tiếp theo (có suất chiếu)
             $query->where('start_time', '>=', now()->startOfDay());
         }
 
-        $showtimes = $query->orderBy('start_time', 'asc')
-                          ->orderBy('status', 'asc')
-                          ->paginate(30)
-                          ->groupBy(['show_date', 'movie_id']);
+        $showtimes = $query->orderBy('start_time', 'asc')->orderBy('status', 'asc')->get()->groupBy(['show_date', 'movie_id']);
 
-        // Nếu không có sortByDate, giới hạn hiển thị 7 ngày (từ hôm nay)
-        if (!$this->sortByDate && $showtimes->isNotEmpty()) {
+        $showtimes = $showtimes->sortKeys();
+
+        if (!$this->sortByDate || $this->sortByDate === '' || $this->sortByDate === '0') {
             $limitedShowtimes = collect();
-            $dayCount = 0;
-            $maxDays = 7;
-
+            $dateCount = 0;
             foreach ($showtimes as $date => $movies) {
-                if ($dayCount >= $maxDays) break;
-                $limitedShowtimes[$date] = $movies;
-                $dayCount++;
+                if ($dateCount < 7) {
+                    $limitedShowtimes->put($date, $movies);
+                    $dateCount++;
+                } else {
+                    break;
+                }
             }
             $showtimes = $limitedShowtimes;
         }
 
-        // Set active date to first date if not set
-        if (empty($this->activeDate) && $showtimes->isNotEmpty()) {
-            $this->activeDate = $showtimes->keys()->first();
+        $dateKeys = $showtimes->keys();
+        if ($dateKeys->isNotEmpty()) {
+            $today = now()->toDateString();
+            if ($this->sortByDate && $this->sortByDate !== '' && $this->sortByDate !== '0') {
+                $this->activeDate = $dateKeys->first();
+            } else {
+                if ($this->activeDate === null) {
+                    $this->activeDate = $dateKeys->contains($today) ? $today : $dateKeys->first();
+                } elseif (!$dateKeys->contains($this->activeDate)) {
+                    $this->activeDate = $dateKeys->contains($today) ? $today : $dateKeys->first();
+                }
+            }
+        } else {
+            $this->activeDate = null;
         }
 
         return view('livewire.admin.showtimes.showtime-index', compact('showtimes'));
