@@ -1,138 +1,104 @@
-
-.sc-date-tabs-container {
-    position: relative;
-    margin-bottom: 1rem;
-}
-
-.sc-date-tabs {
-    display: flex;
-    overflow-x: auto;
-    margin: 0;
-    list-style: none;
-    border-bottom: 2px solid #495057;
-}
-
-.sc-date-tabs::-webkit-scrollbar {
-    display: none;
-}
-.sc-date-tabs .nav-item {
-    flex-shrink: 0;
-}
-
-.sc-date-tabs .nav-link {
-    border-top: 1px solid #495057;
-    border-right: 1px solid #495057;
-    color: #ffffff;
-    background: transparent;
-    padding: 0.5rem 1rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-    text-decoration: none;
-}
-
-.sc-date-tabs .nav-link:hover {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.sc-date-tabs .nav-link.active {
-    color: #000000;
-    background: #fdfdfd;
-}
-.scroll-button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-    width: 40px;
-    height: 40px;
-    border: none;
-    border-radius: 50%;
-    background: rgba(33, 37, 41, 0.9);
-    color: #fff;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-}
-
-.scroll-button:hover {
-    background: rgba(33, 37, 41, 1);
-    transform: translateY(-50%) scale(1.1);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-}
-
-.scroll-button.left {
-    left: -20px;
-}
-
-.scroll-button.right {
-    right: -20px;
-}
-
 .time-slot::before {
     content: "●";
     color: #10b981;
     margin-right: 8px;
 }
 
-.movie-poster {
+.sc-date-tabs-container {
+    position: sticky;
+    top: 70px;
+    z-index: 1000;
+    background: #1f2125;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #4a5568 #2d3748;
+    border-bottom: none;
+    padding: 0 16px;
+}
+.sc-date-tabs-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.sc-date-tabs-container::-webkit-scrollbar-track {
+    background: #2d3748;
+    border-radius: 4px;
+}
+
+.sc-date-tabs-container::-webkit-scrollbar-thumb {
+    background: #4a5568;
+    border-radius: 4px;
+}
+
+.sc-date-tabs-container::-webkit-scrollbar-thumb:hover {
+    background: #718096;
+}
+
+.sc-date-tabs {
+    border-bottom: none;
+    gap: .5rem;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    min-width: max-content;
+    margin: 0;
+    padding: 12px 0;
+}
+
+.sc-date-tabs .nav-item {
     flex-shrink: 0;
-    width: 80px;
-    height: 120px;
-    position: relative;
-    overflow: hidden;
 }
 
-.movie-poster img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 8px;
-    transition: transform 0.3s ease;
-}
-
-.movie-poster:hover img {
-    transform: scale(1.05);
-}
-
-.placeholder-poster {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
-    border-radius: 8px;
-    color: #adb5bd;
-    font-size: 24px;
-}
-
-.movie-card {
-    background: rgba(33, 37, 41, 0.8);
-    border: 1px solid #495057 !important;
-    transition: all 0.3s ease;
-}
-
-.movie-card:hover {
-    background: rgba(33, 37, 41, 1);
-    border-color: #6c757d !important;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-}
-
-.movie-title {
+.sc-date-tabs .nav-link {
+    border: 0;
+    background: #2b2d31;
     color: #fff;
-    font-size: 1.1rem;
     font-weight: 600;
-    margin-bottom: 0.5rem;
-    line-height: 1.3;
+    padding: .55rem 1rem;
+    border-radius: .4rem;
+    white-space: nowrap;
+    transition: all 0.2s ease;
 }
 
-.movie-genre {
-    color: #adb5bd;
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
+.sc-date-tabs .nav-link:hover {
+    background: #34363c;
+}
+
+.sc-date-tabs .nav-link.active {
+    background: #000;
+    color: #fff;
+    position: relative;
+}
+
+.scroll-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1001;
+    transition: background 0.2s ease;
+}
+
+.scroll-button:hover {
+    background: rgba(0, 0, 0, 0.9);
+}
+
+.scroll-button.left {
+    left: 8px;
+}
+
+.scroll-button.right {
+    right: 8px;
+}
+
+.scroll-button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
 }

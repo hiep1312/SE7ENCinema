@@ -25,20 +25,22 @@
             </div>
         </div>
         <div class="card bg-dark shadow-lg" wire:poll.6s>
-            <div class="card-header bg-gradient border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <div class="row g-3">
+                    <!-- Tìm kiếm -->
                     <div class="col-md-4 col-lg-3">
                         <div class="input-group">
                             <input type="text"
                                    wire:model.live.debounce.300ms="search"
                                    class="form-control bg-dark text-light"
-                                   placeholder="Tìm kiếm suất chiếu..."
-                                   aria-label="Tìm kiếm suất chiếu">
+                                   placeholder="Tìm kiếm suất chiếu...">
                             <span class="input-group-text">
-                                <i class="fas fa-search text-light"></i>
+                                <i class="fas fa-search"></i>
                             </span>
                         </div>
                     </div>
+
+                    <!-- Lọc theo trạng thái -->
                     <div class="col-md-3 col-lg-2">
                         <select wire:model.live="statusFilter" class="form-select bg-dark text-light">
                             <option value="">Tất cả trạng thái</option>
@@ -47,8 +49,20 @@
                             <option value="completed">Đã hoàn thành</option>
                         </select>
                     </div>
+
+                    <!-- Lọc theo phương thức thanh toán -->
                     <div class="col-md-3 col-lg-2">
-                        <button wire:click="resetFilters" class="btn btn-outline-warning border-2">
+                        <select wire:model.live="sortByDate" class="form-select bg-dark text-light">
+                            <option disabled>Sắp xếp theo thời gian</option>
+                            <option value="">Mới nhất</option>
+                            <option value="7">7 ngày trước</option>
+                            <option value="30">30 ngày trước</option>
+                        </select>
+                    </div>
+
+                    <!-- Reset filters -->
+                    <div class="col-md-2">
+                        <button wire:click="resetFilters" class="btn btn-outline-warning">
                             <i class="fas fa-refresh me-1"></i>Reset
                         </button>
                     </div>
