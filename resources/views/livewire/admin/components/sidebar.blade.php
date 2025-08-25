@@ -171,6 +171,21 @@
       </div>
     </li>
     <li class="nav-item menu-items">
+      <a class="nav-link" data-toggle="collapse" href="#manage-promotions">
+        <span class="menu-icon">
+          <i class="fa-solid fa-percent"></i>
+        </span>
+        <span class="menu-title">Quản lý khuyến mãi</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="manage-promotions">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.promotions.create') }}">Tạo khuyến mãi mới</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.promotions.index') }}">Danh sách khuyến mãi</a></li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item menu-items">
       <a class="nav-link" data-toggle="collapse" href="#manage-notifications">
         <span class="menu-icon">
           <i class="fa-solid fa-bell"></i>

@@ -1,5 +1,4 @@
 @assets
-    <link rel="stylesheet" href="{{ asset('client/assets/css/style.css') }}">
     @vite('resources/css/seat.css')
 @endassets
 
@@ -56,7 +55,7 @@
                 <!-- Cột trái: Nút back -->
                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                     <div class="st_bt_top_back_btn st_bt_top_back_btn_seatl float_left">
-                        <a href="{{ route('client.movieBooking.movie', $showtime_id) }}"><i class="fas fa-long-arrow-alt-left"></i> &nbsp;Back</a>
+                        <a style="text-decoration: none; padding: 0 3px;" href="{{ route('client.showtimes.index') }}"><i class="fas fa-long-arrow-alt-left"></i> &nbsp;Quay lại</a>
                     </div>
                 </div>
 
@@ -72,7 +71,7 @@
                 </div>
 
                 <!-- Cột phải: Nút tiếp tục -->
-                <div style="cursor:pointer" class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                <div style="cursor: pointer" class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                     <div class="st_seatlay_btn float_left">
                         <a wire:click="goToSelectFood" class="text-decoration-none w-100 {{ empty($selectedSeats) ? 'disabled' : '' }}">
                             Tiếp tục đặt đồ ăn

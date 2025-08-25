@@ -19,7 +19,8 @@
         "movieList.css",
         "seat.css",
         "showtimeIndexAdmin.css",
-        "staffchat.css"
+        "staffchat.css",
+        "ticketAdmin.css"
     ],
     "scopedCssFiles": []
 }

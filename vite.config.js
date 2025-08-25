@@ -31,6 +31,7 @@ export default defineConfig({
                 'resources/css/handlePayment.css',
                 'resources/css/showtimeIndexAdmin.css',
                 'resources/css/staffchat.css',
+                'resources/css/ticketAdmin.css'
             ],
             refresh: true,
         }),

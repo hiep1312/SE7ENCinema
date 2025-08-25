@@ -1,14 +1,8 @@
-@assets
-<style>
-    .collapsing {
-        transition: none !important;
-        height: auto !important;
-    }
-</style>
-@endassets
 @use('chillerlan\QRCode\QRCode')
-<div class="scRender">
-    {{-- Hiển thị thông báo --}}
+@assets
+    @vite('resources/css/ticketAdmin.css')
+@endassets
+<div class="scRender scTicketAdmin">
     @if (session()->has('success'))
     <div class="alert alert-success alert-dismissible fade show mt-2 mx-2" role="alert" wire:ignore>
         {{ session('success') }}
@@ -74,152 +68,180 @@
                 </div>
             </div>
 
-            {{-- Danh sách vé --}}
             <div class="card-body bg-dark">
                 <div class="table-responsive">
-                    <table class="table table-dark table-striped align-middle">
-                        <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <table class="table table-dark table-striped table-hover">
+                        <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); ">
                             <tr>
                                 <th class="text-center">STT</th>
                                 <th class="text-center">Mã đơn hàng</th>
-                                <th>Chi tiết đơn hàng</th>
+                                <th class="text-center">Chi tiết đơn hàng</th>
                                 <th class="text-center">Thời gian đặt vé</th>
                                 <th class="text-center">Tình trạng vé</th>
+                                <th class="text-center">Thời gian lấy vé</th>
                                 <th class="text-center">Hành động</th>
                             </tr>
                         </thead>
                         @forelse($bookings as $booking)
-                        @php
-                        $ticket = $booking->tickets;
-                        $collapseId = 'collapse-'.$booking->id;
-                        @endphp
-                        <tbody class="border rounded-3 shadow-sm mb-3">
-                            {{-- Hàng chính --}}
-                            <tr>
-                                <td class="text-center fw-bold">{{ $loop->iteration }}</td>
-                                <td class="text-center"><strong class="text-light">{{ $booking->booking_code }}</strong>
-                                </td>
-                                <td>
-                                    <div class="mb-1 text-primary fw-bold">
-                                        <i class="fa-solid fa-person-booth me-1"></i>
-                                        {{ $booking->showtime->room->name ?? 'Không tìm thấy phòng' }}
-                                    </div>
-                                    <div class="mb-1 text-info fw-bold">
-                                        <i class="fas fa-film me-1"></i>
-                                        {{ Str::limit($booking->showtime->movie->title ?? 'Không tìm thấy phim', 20,
-                                        '...') }}
-                                    </div>
-                                    <div class="text-success">
-                                        <i class="fas fa-clock me-1"></i>
-                                        {{ $booking->showtime->start_time->format('d/m/Y H:i') }} - {{
-                                        $booking->showtime->end_time->format('H:i') }}
-                                    </div>
-                                </td>
-                                <td class="text-center">{{ $booking->created_at->format('d/m/Y H:i') }}</td>
-                                <td class="text-center">
-                                    @if($ticket->first()?->taken)
-                                    <span class="badge-clean-base badge-clean-green">
-                                        <i class="fas fa-check-circle me-1"></i>Đã lấy vé
-                                    </span>
-                                    @else
-                                    <span class="badge-clean-base badge-clean-orange">
-                                        <i class="fas fa-times-circle me-1"></i>Chưa lấy vé
-                                    </span>
-                                    @endif
-                                </td>
-                                <td class="text-center">
-                                    @if($ticket->first()?->isValidTicketOrder())
-                                    <a wire:click='loadTickets({{ $booking->id }})' class="btn btn-sm btn-outline-info "
-                                        data-bs-toggle="collapse" data-bs-target="#{{ $collapseId }}"
-                                        style="cursor: pointer;" title="Xem chi tiết">
-                                        <i class="fas fa-eye ms-1"></i>
-                                    </a>
-                                    @endif
-                                </td>
-                            </tr>
-                            {{-- Hàng chi tiết --}}
-                            <tr class="collapse" id="{{ $collapseId }}" wire:ignore.self>
-                                <td colspan="6">
-                                    <div class="card shadow-sm border-0">
-                                        <div class="movie-card border rounded p-3">
-                                            <div class="row">
-                                                <div class="col-lg-4 text-wrap lh-base">
-                                                    <div style="font-size:15px; font-weight:600" class="mt-2">
-                                                        <i
-                                                            class="fa-regular fa-film me-2"></i>{{$booking->showtime->movie->title
-                                                        }}
+                            <tbody class="border rounded-3 shadow-sm mb-3">
+                                <tr class="tickets">
+                                    <td class="text-center fw-bold">{{ $loop->iteration }}</td>
+                                    <td class="text-center"><strong class="text-light">{{ $booking->booking_code }}</strong>
+                                    </td>
+                                    <td class="text-center detail-bookings">
+                                        <div class="booking-details-container">
+                                            <div class="booking-detail-item">
+                                                <i class="fas fa-door-open booking-detail-icon"></i>
+                                                <span class="booking-detail-text fw-600">
+                                                    {{ $booking->showtime->room?->name ?? 'Không tìm thấy phòng' }}
+                                                </span>
+                                            </div>
+                                            <div class="booking-detail-item">
+                                                <i class="fas fa-film booking-detail-icon movie-info"></i>
+                                                <span class="booking-detail-text movie-info">
+                                                    {{ Str::limit($booking->showtime->movie?->title ?? 'Không tìm thấy phim', 25, '...') }}
+                                                </span>
+                                            </div>
+                                            <div class="booking-detail-item">
+                                                <i class="fas fa-clock booking-detail-icon time-info"></i>
+                                                <span class="booking-detail-text time-info">
+                                                    {{ $booking->showtime->start_time->format('d/m/Y H:i') }} - {{ $booking->showtime->end_time->format('H:i') }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">{{ $booking->created_at->format('d/m/Y H:i') }}</td>
+                                    <td class="text-center">
+                                        @if($booking->tickets->first()?->taken)
+                                            <span class="badge-clean-base badge-clean-green">
+                                                <i class="fas fa-check-circle me-1"></i>Đã lấy vé
+                                            </span>
+                                        @else
+                                            <span class="badge-clean-base badge-clean-orange">
+                                                <i class="fas fa-times-circle me-1"></i>Chưa lấy vé
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">{{ $booking->tickets?->first()->taken_at?->format('d/m/Y H:i') ?? 'Chưa lấy vé' }}</td>
+                                    <td class="text-center">
+                                        @if($booking->tickets->first()?->isValidTicketOrder())
+                                            <a class="btn btn-sm btn-outline-info"
+                                                data-bs-toggle="collapse" data-bs-target="#{{ "collapse-{$booking->id}" }}"
+                                                style="cursor: pointer" title="Xem chi tiết">
+                                                <i class="fas fa-eye" style="margin-right: 0"></i>
+                                            </a>
+                                        @endif
+                                    </td>
+                                </tr>
+
+                                <tr class="collapse" id="{{ "collapse-{$booking->id}" }}" wire:ignore.self>
+                                    <td colspan="7">
+                                        <div class="ticket-detail-card mt-2 mb-2">
+                                            <div class="row g-3">
+                                                <div class="col-xl-4">
+                                                    <div class="ticket-info-section">
+                                                        <div class="info-item">
+                                                            <i class="fa-solid fa-film"></i>
+                                                            <strong>Phim:</strong>
+                                                            <span class="ms-2">{{ Str::limit($booking->showtime->movie?->title ?? 'Không tìm thấy phim', 27, '...') }}</span>
+                                                        </div>
+
+                                                        <div class="info-item">
+                                                            <i class="fas fa-clock"></i>
+                                                            <strong>Suất chiếu:</strong>
+                                                            <span class="ms-2">{{ $booking->showtime->start_time->format('d/m/Y H:i') }} - {{ $booking->showtime->end_time->format('H:i') }}</span>
+                                                        </div>
+
+                                                        <div class="info-item">
+                                                            <i class="fas fa-door-open"></i>
+                                                            <strong>Phòng chiếu:</strong>
+                                                            <span class="ms-2">{{ $booking->showtime->room?->name ?? 'Không tìm thấy phòng chiếu' }}</span>
+                                                        </div>
+
+                                                        <div class="info-item">
+                                                            <i class="fas fa-money-bill"></i>
+                                                            <strong>Tổng tiền:</strong>
+                                                            <span class="ms-2 text-warning fw-bold">{{ number_format($booking->total_price, 0,'.','.') }} VNĐ</span>
+                                                        </div>
+
+                                                        <div class="info-item mb-0">
+                                                            <i class="fas fa-user"></i>
+                                                            <strong>Khách hàng:</strong>
+                                                            <span class="ms-2">{{ Str::limit($booking->user->name, 25, '...') }}</span>
+                                                        </div>
                                                     </div>
-                                                    <p class="mb-0 mt-3">
-                                                        <i class="fas fa-clock me-2"></i>
-                                                        {{ $booking->showtime->start_time->format('d/m/Y H:i') }} - {{
-                                                        $booking->showtime->end_time->format('H:i') }}
-                                                    </p>
-                                                    <p class="mb-0 mt-3">
-                                                        <i class="fas fa-door-open me-2"></i>
-                                                        {{ $booking->showtime->room->name }}
-                                                    </p>
-                                                    <p class="mb-0 mt-3">
-                                                        <i class="fas fa-money-bill me-2"></i>Giá vé:
-                                                        {{ number_format($booking->total_price, 0,'.','.') }} VNĐ
-                                                    </p>
-                                                    <p class="mb-0 mt-3">
-                                                        <i class="fas fa-user me-2"></i>Người đặt:
-                                                        {{ Str::limit($booking->user->name, 20, '...') }}
-                                                    </p>
                                                 </div>
-                                                <div class="col-lg-8 mt-3 mt-lg-0">
-                                                    <div class="table-responsive">
-                                                        <table class="table table-dark table-hover mb-0">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th class="text-center" style="width: 60px;">STT</th>
-                                                                    <th class="text-center">Ghế đã đặt</th>
-                                                                    <th class="text-center">Thời gian vào phòng</th>
-                                                                    <th class="text-center">Trạng thái</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                @foreach($this->getBookingTickets($booking->id) as $tickets)
-                                                                <tr>
-                                                                    <td class="text-center">{{ $loop->iteration }}</td>
-                                                                    <td class="text-center">
-                                                                        {{ $tickets->bookingSeat->seat->seat_row }}{{
-                                                                        $tickets->bookingSeat->seat->seat_number }}
-                                                                    </td>
-                                                                    <td class="text-center">{{ $tickets->taken_at ?? 'Chưa
-                                                                        vào phòng' }}</td>
-                                                                    <td class="text-center">
-                                                                        @switch($tickets->status)
-                                                                        @case('active') <span class="badge bg-primary">Chưa
-                                                                            sử dụng</span> @break
-                                                                        @case('used') <span class="badge bg-success">Đã sử
-                                                                            dụng</span> @break
-                                                                        @case('canceled') <span class="badge bg-danger">Đã
-                                                                            bị hủy</span> @break
-                                                                        @endswitch
-                                                                    </td>
-                                                                </tr>
-                                                                @endforeach
-                                                            </tbody>
-                                                        </table>
-                                                    <div class="mt-2">{{ $this->getBookingTickets($booking->id)->links(data:['scrollTo'=>false]) }}</div>
+
+                                                <div class="col-xl-8">
+                                                    <div class="ticket-table-section">
+                                                        <h6 class="text-light mb-3">
+                                                            <i class="fas fa-list me-2"></i>Chi tiết vé
+                                                        </h6>
+                                                        <div class="table-responsive">
+                                                            <table class="table detail-table mb-0">
+                                                                <thead class="collapse-header">
+                                                                    <tr>
+                                                                        <th class="text-center">STT</th>
+                                                                        <th class="text-center">Ghế đã đặt</th>
+                                                                        <th class="text-center">Thời gian vào phòng</th>
+                                                                        <th class="text-center">Trạng thái</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @foreach($ticketsList[$booking->id] as $ticket)
+                                                                        <tr>
+                                                                            <td class="text-center fw-bold">{{ $loop->iteration }}</td>
+                                                                            <td class="text-center">
+                                                                                <span class="seat-badge">
+                                                                                    {{ $ticket->bookingSeat->seat->seat_row }}{{ $ticket->bookingSeat->seat->seat_number }}
+                                                                                </span>
+                                                                            </td>
+                                                                            <td class="text-center">
+                                                                                {{ $ticket->taken_at ?? 'Chưa vào phòng' }}
+                                                                            </td>
+                                                                            <td class="text-center">
+                                                                                @switch($ticket->status)
+                                                                                    @case('active')
+                                                                                        <span class="badge-clean-base badge-clean-yellow">
+                                                                                            <i class="fas fa-clock me-1"></i>Chưa sử dụng
+                                                                                        </span>
+                                                                                    @break
+                                                                                    @case('used')
+                                                                                        <span class="badge-clean-base badge-clean-green">
+                                                                                            <i class="fas fa-check me-1"></i>Đã sử dụng
+                                                                                        </span>
+                                                                                    @break
+                                                                                    @case('canceled')
+                                                                                        <span class="badge-clean-base badge-clean-red">
+                                                                                            <i class="fas fa-times me-1"></i>Đã bị hủy
+                                                                                        </span>
+                                                                                    @break
+                                                                                @endswitch
+                                                                            </td>
+                                                                        </tr>
+                                                                    @endforeach
+                                                                </tbody>
+                                                            </table>
+                                                            <div class="mt-3">
+                                                                {{ $ticketsList[$booking->id]->links(data: ['scrollTo' => false]) }}
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center py-4">
+                                    <div class="text-muted">
+                                        <i class="fas fa-inbox fa-3x mb-3"></i>
+                                        <p>Không có vé nào</p>
                                     </div>
                                 </td>
                             </tr>
-                        </tbody>
-                        @empty
-                        <tr>
-                            <td colspan="6" class="text-center py-4">
-                                <div class="text-muted">
-                                    <i class="fas fa-inbox fa-3x mb-3"></i>
-                                    <p>Không có vé nào</p>
-                                </div>
-                            </td>
-                        </tr>
                         @endforelse
                     </table>
                 </div>

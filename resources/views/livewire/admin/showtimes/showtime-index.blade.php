@@ -24,9 +24,10 @@
                 </a>
             </div>
         </div>
-        <div class="card bg-dark" wire:poll.6s>
+        <div class="card bg-dark shadow-lg" wire:poll.6s>
             <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <div class="row g-3">
+                    <!-- Tìm kiếm -->
                     <div class="col-md-4 col-lg-3">
                         <div class="input-group">
                             <input type="text"
@@ -38,6 +39,8 @@
                             </span>
                         </div>
                     </div>
+
+                    <!-- Lọc theo trạng thái -->
                     <div class="col-md-3 col-lg-2">
                         <select wire:model.live="statusFilter" class="form-select bg-dark text-light">
                             <option value="">Tất cả trạng thái</option>
@@ -46,6 +49,8 @@
                             <option value="completed">Đã hoàn thành</option>
                         </select>
                     </div>
+
+                    <!-- Lọc theo phương thức thanh toán -->
                     <div class="col-md-3 col-lg-2">
                         <select wire:model.live="sortByDate" class="form-select bg-dark text-light">
                             <option disabled>Sắp xếp theo thời gian</option>
@@ -54,6 +59,8 @@
                             <option value="30">30 ngày trước</option>
                         </select>
                     </div>
+
+                    <!-- Reset filters -->
                     <div class="col-md-2">
                         <button wire:click="resetFilters" class="btn btn-outline-warning">
                             <i class="fas fa-refresh me-1"></i>Reset
@@ -64,18 +71,18 @@
             <div class="card-body bg-dark">
                 @php $dateIndex = 0; @endphp
                 <div class="sc-date-tabs-container">
-                    <button type="button" class="scroll-button left" id="scrollLeft" style="display: none;">
+                    <button type="button" class="scroll-button left d-none" id="scrollLeft" aria-label="Cuộn trái">
                         <i class="fas fa-chevron-left"></i>
                     </button>
-                    <button type="button" class="scroll-button right" id="scrollRight" style="display: none;">
+                    <button type="button" class="scroll-button right d-none" id="scrollRight" aria-label="Cuộn phải">
                         <i class="fas fa-chevron-right"></i>
                     </button>
                     <ul class="nav sc-date-tabs" role="tablist" id="dateTabsContainer">
-                        @foreach($showtimes as $date => $movies)
+                        @foreach($showtimes->take(7) as $date => $movies)
                             @php $tabId = 'tab-' . str_replace(['-', '/'], '', $date); @endphp
                             <li class="nav-item" role="presentation" wire:key="tab-{{ $date }}">
                                 <a class="nav-link {{ ($activeDate === $date) ? 'active' : '' }}" id="{{ $tabId }}" data-bs-toggle="tab" href="#pane-{{ $tabId }}" role="tab" aria-controls="pane-{{ $tabId }}" aria-selected="{{ ($activeDate === $date) ? 'true' : 'false' }}" wire:click="setActiveDate('{{ $date }}')">
-                                    {{ ucfirst(Carbon::parse($date)->translatedFormat('d/m/Y')) }}
+                                    {{ ucfirst(Carbon::parse($date)->format('d/m/Y')) }}
                                 </a>
                             </li>
                         @endforeach
@@ -92,18 +99,21 @@
                                 <div class="movie-card border rounded p-3 mb-3" wire:key="movie-{{ $date }}-{{ $movieId }}">
                                     <div class="row">
                                         @php $movie = $movieShowtimes->first()->movie; @endphp
-                                        <div class="col-lg-4" data-bs-toggle="collapse" data-bs-target="#data-{{ $date }}-{{ $movieId }}" style="cursor: pointer;">
-                                            <div class="d-flex">
-                                                <div class="movie-poster">
+                                        <div class="col-lg-4" style="cursor: pointer;">
+                                            <div class="d-flex align-items-start">
+                                                <div class="movie-poster me-3">
                                                     @if($movie->poster)
                                                         <img src="{{ asset('storage/' . $movie->poster) }}"
-                                                            alt="Ảnh phim {{ $movie->title }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">
+                                                            alt="Ảnh phim {{ $movie->title }}"
+                                                            class="img-fluid rounded shadow-sm">
                                                     @else
-                                                        <i class="fas fa-film" style="font-size: 22px;"></i>
+                                                        <div class="placeholder-poster d-flex align-items-center justify-content-center">
+                                                            <i class="fas fa-film text-muted"></i>
+                                                        </div>
                                                     @endif
                                                 </div>
                                                 <div class="flex-grow-1">
-                                                    <h3 class="movie-title">{{ $movie->title }}</h3>
+                                                    <h3 class="movie-title text-start">{{ $movie->title }}</h3>
                                                     <div class="movie-genre" style="margin-bottom: 0; margin-top: 3px;">
                                                         <i class="fas fa-tags me-1"></i>
                                                         {{ $movie->genres->take(1)->implode('name', ', ') ?: 'Không có thể loại' }} • {{ $movie->duration }} phút
@@ -118,7 +128,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-8 mt-3 mt-lg-0 collapse" id="data-{{ $date }}-{{ $movieId }}" wire:ignore.self>
+                                        <div class="col-lg-8 mt-3 mt-lg-0" id="data-{{ $date }}-{{ $movieId }}" wire:ignore.self>
                                             <div class="table-responsive">
                                                 <table class="table table-dark table-hover mb-0">
                                                     <thead>
@@ -154,10 +164,10 @@
                                                                 <td>
                                                                     <div class="d-flex gap-2 justify-content-center">
                                                                         <a href="{{ route('admin.showtimes.detail', $showtime->id) }}"
-                                                                        class="btn btn-sm btn-info"
-                                                                        title="Chi tiết">
-                                                                        <i class="fas fa-eye" style="margin-right: 0"></i>
-                                                                    </a>
+                                                                            class="btn btn-sm btn-info"
+                                                                            title="Chi tiết">
+                                                                            <i class="fas fa-eye" style="margin-right: 0"></i>
+                                                                        </a>
                                                                         @if($showtime->status !== "completed" && $showtime->start_time->isFuture())
                                                                             <a href="{{ route('admin.showtimes.edit', $showtime->id) }}"
                                                                                 class="btn btn-sm btn-warning"
